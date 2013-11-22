@@ -1,0 +1,137 @@
+﻿<UserControl x:Class="BuzzardWPF.Windows.FileFolderInfoViewer"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 xmlns:converters="clr-namespace:BuzzardWPF.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+	<UserControl.Resources>
+		<converters:ByteToKBConverter x:Key="FileSizeConverter"/>
+		
+		<Style TargetType="TextBlock">
+			<Setter Property="FontSize" Value="13"/>
+			<Setter Property="Margin" Value="1"/>
+		</Style>
+		
+		<!-- 
+		  * This template lets us leverage the ability to display a specefic 
+		  * tab and switch between tabs as we want, while hiding the tab 
+		  * selection abilities from the user.
+		-->
+		<ControlTemplate x:Key="TabControlTemplate" TargetType="TabControl">
+			<ContentPresenter ContentSource="SelectedContent"
+							  Name="PART_SelectedContentHost"/>
+		</ControlTemplate>
+	</UserControl.Resources>
+	<TabControl x:Name="m_tabControl"
+				Template="{StaticResource TabControlTemplate}">
+		<TabItem Header="No Item">
+			<Grid>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="auto"/>
+					<RowDefinition Height="*"/>
+				</Grid.RowDefinitions>
+				
+				<TextBlock FontWeight="Bold">Nothing found under:</TextBlock>
+				<TextBlock Text="{Binding Path=PathName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+						   Grid.Row="1"
+						   TextWrapping="Wrap"
+						   Margin="15,1,1,1"/>
+			</Grid>
+		</TabItem>
+		
+		<TabItem Header="Is File">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="auto"/>
+					<ColumnDefinition Width="*"/>
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="auto"/>
+					<RowDefinition Height="auto"/>
+					<RowDefinition Height="auto"/>
+					<RowDefinition Height="auto"/>
+					<RowDefinition Height="*"/>
+				</Grid.RowDefinitions>
+				
+				<TextBlock Text="File Name:"
+						   Grid.Column="0" Grid.Row="0"
+						   Margin="1,1,1,6"/>
+				<TextBlock Text="Creation Date:"
+						   Grid.Column="0" Grid.Row="1"
+						   Margin="1,1,1,6"/>
+				<TextBlock Text="Last Write Date:"
+						   Grid.Column="0" Grid.Row="2"
+						   Margin="1,1,1,6"/>
+				<TextBlock Text="File Size:"
+						   Grid.Column="0" Grid.Row="3"
+						   Margin="1,1,1,6"/>
+
+				<TextBlock Text="{Binding Path=PathName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+						   Grid.Column="1" Grid.Row="0"
+						   Margin="1,1,1,6"
+						   TextWrapping="Wrap"/>
+				<TextBlock Text="{Binding Path=CreationDate, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+						   Grid.Column="1" Grid.Row="1"
+						   Margin="1,1,1,6"/>
+				<TextBlock Text="{Binding Path=LastModifiedDate, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+						   Grid.Column="1" Grid.Row="2"
+						   Margin="1,1,1,6"/>
+				<TextBlock Text="{Binding Path=SizeBytes, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource FileSizeConverter}}"
+						   Grid.Column="1" Grid.Row="3"
+						   Margin="1,1,1,6"/>
+			</Grid>
+		</TabItem>
+		
+		<TabItem Header="Is Folder">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="auto"/>
+					<ColumnDefinition Width="*"/>
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="auto"/>
+					<RowDefinition Height="auto"/>
+					<RowDefinition Height="auto"/>
+					<RowDefinition Height="auto"/>
+					<RowDefinition Height="auto"/>
+					<RowDefinition Height="*"/>
+				</Grid.RowDefinitions>
+
+				<TextBlock Text="Directory Name:"
+						   Grid.Column="0" Grid.Row="0"
+						   Margin="1,1,1,6"/>
+				<TextBlock Text="Creation Date:"
+						   Grid.Column="0" Grid.Row="1"
+						   Margin="1,1,1,6"/>
+				<TextBlock Text="Last Write Date:"
+						   Grid.Column="0" Grid.Row="2"
+						   Margin="1,1,1,6"/>
+				<TextBlock Text="Directory Count:"
+						   Grid.Column="0" Grid.Row="3"
+						   Margin="1,1,1,6"/>
+				<TextBlock Text="File Count:"
+						   Grid.Column="0" Grid.Row="4"
+						   Margin="1,1,1,6"/>
+
+				<TextBlock Text="{Binding Path=PathName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+						   Grid.Column="1" Grid.Row="0"
+						   Margin="1,1,1,6"
+						   TextWrapping="Wrap"/>
+				<TextBlock Text="{Binding Path=CreationDate, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+						   Grid.Column="1" Grid.Row="1"
+						   Margin="1,1,1,6"/>
+				<TextBlock Text="{Binding Path=LastModifiedDate, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+						   Grid.Column="1" Grid.Row="2"
+						   Margin="1,1,1,6"/>
+				<TextBlock Text="{Binding Path=FolderCount, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+						   Grid.Column="1" Grid.Row="3"
+						   Margin="1,1,1,6"/>
+				<TextBlock Text="{Binding Path=FileCount, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+						   Grid.Column="1" Grid.Row="4"
+						   Margin="1,1,1,6"/>
+			</Grid>
+		</TabItem>
+	</TabControl>
+</UserControl>

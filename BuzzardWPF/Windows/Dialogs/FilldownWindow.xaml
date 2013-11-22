@@ -1,0 +1,257 @@
+﻿<Window x:Class="BuzzardWPF.Windows.FilldownWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:extk="clr-namespace:Xceed.Wpf.Toolkit;assembly=WPFToolkit.Extended"
+        Title="Dataset Filldown" 
+        Height="604" Width="475"
+		MinWidth="400"
+		MaxWidth="475"
+		MinHeight="505"
+		MaxHeight="800"
+		ShowInTaskbar="False"
+		SnapsToDevicePixels="True"
+		Topmost="True"
+		UseLayoutRounding="True"
+		WindowStyle="ToolWindow"
+        WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+		<Style x:Key="ButtonStyle" TargetType="ButtonBase">
+			<Setter Property="MinHeight" Value="28"/>
+			<Setter Property="MinWidth" Value="100"/>
+			<Setter Property="Margin" Value="2"/>
+		</Style>
+		
+        <Style TargetType="ToggleButton" BasedOn="{StaticResource ButtonStyle}">
+            <Setter Property="Content"              Value="Use"/>
+            <Setter Property="Background"           Value="White"/>
+            <Setter Property="Foreground"           Value="LightGray"/>
+            <Style.Triggers>
+                <Trigger Property="IsChecked"       Value="True">
+                    <Setter Property="Background"   Value="AliceBlue"/>
+                    <Setter Property="Foreground"   Value="Black"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+		
+		<Style TargetType="Label">
+			<Setter Property="VerticalAlignment" Value="Center"/>
+			<Setter Property="Margin" Value="2,0"/>
+		</Style>
+    </Window.Resources>
+    
+    <DockPanel>
+        <Grid DockPanel.Dock="Bottom">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="48" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="128"/>
+                <ColumnDefinition Width="128"/>
+            </Grid.ColumnDefinitions>
+
+			<Button Content="Ok" 
+					IsDefault="True"
+							     MinHeight="32"                       
+                                 Width="100"
+		                         Style="{StaticResource SimpleButtonStyle}"
+					Grid.Row="0" Grid.Column="1"
+					Click="m_okButton_Click"/>
+			<Button Content="Cancel"
+					IsCancel="True"
+							     MinHeight="32"    
+                    Width="100"
+		                         Style="{StaticResource SimpleButtonStyle}"
+					Grid.Row="0" Grid.Column="2"/>
+        </Grid>
+		
+		<StackPanel DockPanel.Dock="Bottom"
+					Orientation="Horizontal">
+			<Button Content="Use All"
+					Click="UseAll_Click"       
+							     MinHeight="32"                       
+		                         Style="{StaticResource SimpleButtonStyle}"/>
+			<Button Content="Use None"
+					Click="UseNone_Click"
+							     MinHeight="32"                       
+		                         Style="{StaticResource SimpleButtonStyle}"/>
+		</StackPanel>
+        
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="auto"/>
+				<RowDefinition Height="auto"/>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                
+                <RowDefinition Height="*" />                
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="128"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!--Operator-->
+			<ToggleButton IsChecked="{Binding Path=Dataset.ShouldUseOperator, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"                                 
+						  Grid.Row="0" Grid.Column="0"/>
+			<Label Content="Operator"
+				   Grid.Row="0"
+				   Grid.Column="1"/>
+            <ComboBox x:Name="m_operators"
+					  Margin="2"
+					  ItemsSource="{Binding Path=OperatorsSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+					  SelectedValue="{Binding Path=Dataset.Operator, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+					  Grid.Row="0" Grid.Column="2"/>
+
+            <!--Dataset Type-->
+            <ToggleButton IsChecked="{Binding Path=Dataset.ShouldUseDatasetType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+						  Grid.Row="1" Grid.Column="0"/> 
+            <Label Content="Dataset Type"
+				   Grid.Row="1" Grid.Column="1" />
+            <ComboBox x:Name="m_datasetTypes"
+					  Margin="2"
+					  ItemsSource="{Binding Path=DatasetTypesSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+					  SelectedValue="{Binding Path=Dataset.DMSData.DatasetType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+					  Grid.Row="1" Grid.Column="2"/>
+
+            <!--Separation Type-->
+			<ToggleButton IsChecked="{Binding Path=Dataset.ShouldUseSeparationType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+						  Grid.Row="2" Grid.Column="0"/>
+			<Label Content="Separation Type"
+				   Grid.Row="2" Grid.Column="1"/>
+            <ComboBox x:Name="m_separationType"
+					  Margin="2"
+					  ItemsSource="{Binding Path=SeparationTypeSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+					  SelectedValue="{Binding Path=Dataset.SeparationType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+					  Grid.Row="2" Grid.Column="2"/>
+			
+			<!-- Column Type -->
+			<ToggleButton IsChecked="{Binding Path=Dataset.ShouldUseLCColumn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+						  Grid.Row="3" Grid.Column="0"/>
+			<Label Content="LC Column"
+				   Grid.Row="3" Grid.Column="1"/>
+			<ComboBox ItemsSource="{Binding Path=LCColumnSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+					  SelectedValue="{Binding Path=Dataset.LCColumn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+					  Margin="2"
+					  Grid.Row="3" Grid.Column="2"/>
+
+            <!--Instrument Type-->
+			<ToggleButton IsChecked="{Binding Path=Dataset.ShouldUseInstrumentType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"       
+						  Grid.Row="4" Grid.Column="0"/>
+			<Label Content="Instrument Name"
+				   Grid.Row="4" Grid.Column="1"/>
+			<ComboBox x:Name="m_instruments"
+					  Margin="2"
+					  ItemsSource="{Binding Path=InstrumentSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+					  SelectedValue="{Binding Path=Dataset.Instrument, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+					  Grid.Row="4" Grid.Column="2"/>
+            
+            <!--Cart-->
+			<ToggleButton IsChecked="{Binding Path=Dataset.ShouldUseCart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+						  Grid.Row="5" Grid.Column="0"/>
+            <Label Content="Cart"
+				   Grid.Row="5" Grid.Column="1"/>
+            <ComboBox x:Name="m_cartNameList"
+					  Margin="2"
+					  ItemsSource="{Binding Path=CartNameListSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+					  SelectedValue="{Binding Path=Dataset.DMSData.CartName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+					  Grid.Row="5" Grid.Column="2"/>
+			
+			<!-- Dataset Intrest Rating -->
+			<ToggleButton Grid.Column="0" Grid.Row="6"
+						  IsChecked="{Binding Path=Dataset.ShouldUseInterestRating, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+			<Label Content="Interest Rating"
+				   Grid.Column="1" Grid.Row="6"/>
+			<ComboBox Grid.Column="3" Grid.Row="6"
+					  ItemsSource="{Binding Path=InterestRatingSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+					  SelectedValue="{Binding Path=Dataset.InterestRating, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+					  Margin="2"/>
+			
+            <!--EMSL Proposal ID-->
+			<ToggleButton IsChecked="{Binding Path=Dataset.ShouldUseEMSLProposalID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+						  Grid.Row="8" Grid.Column="0"/>
+            <Label Content="EMSL Proposal ID"
+				   Grid.Row="8" Grid.Column="1"/>
+			<Grid Grid.Column="2" Grid.Row="8">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="auto"/>
+				</Grid.ColumnDefinitions>
+
+				<TextBox x:Name="m_emslProposalID"
+						 Margin="2"
+						 Text="{Binding Path=Dataset.DMSData.EMSLProposalID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+						 Grid.Column="0"/>
+
+				<ComboBox Grid.Column="1" 
+						  Margin="2"
+						  x:Name="ProposalIDSelector"
+						  ItemsSource="{Binding Path=EMSLProposalIDs, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+						  SelectionChanged="ProposalIDSelector_SelectionChanged"/>
+						  
+			</Grid>
+			
+			<!-- EMSL Proposal Users -->
+			<ToggleButton Grid.Row="9" Grid.Column="0"
+						  IsChecked="{Binding Path=Dataset.ShouldUseEMSLProposalUsers, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+			<Label Content="EMSL Proposal Users:"
+				   Grid.Row="9" Grid.Column="1"/>            
+			<extk:CheckComboBox Grid.Column="2" Grid.Row="9"
+								x:Name="PUserSelector"
+								Margin="2"
+								DisplayMemberPath="UserName"
+								Delimiter="; "
+								ItemsSource="{Binding Path=EMSLProposalUsersSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+								SelectedItems="{Binding Path=Dataset.EMSLProposalUsers, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            
+            <!--EMSL Usage Type-->
+			<ToggleButton IsChecked="{Binding Path=Dataset.ShouldUseEMSLUsageType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+						  Grid.Row="7" Grid.Column="0"/>
+            <Label Content="EMSL Usage Type"
+				   Grid.Row="7" Grid.Column="1"/>
+            <ComboBox x:Name="m_emslUsageType"
+					  ItemsSource="{Binding Path=EmslUsageTypeSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+					  SelectedValue="{Binding Path=Dataset.DMSData.EMSLUsageType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+					  Margin="2"
+					  Grid.Row="7" Grid.Column="2"/>  
+			
+			<!-- Experiment Name -->
+			<ToggleButton IsChecked="{Binding Path=Dataset.ShouldUseExperimentName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+						  Grid.Row="10" Grid.Column="0"/>
+			<Label Content="Experiment Name"
+				   Grid.Row="10" Grid.Column="1"/>
+			<TextBox Text="{Binding Path=Dataset.ExperimentName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+					 Margin="2"
+					 Grid.Row="10" Grid.Column="2"
+					 FontSize="15"/>
+			<Button Content="Experiments..."
+					Grid.Row="11" Grid.Column="2"
+							     MinHeight="32"      
+                    HorizontalAlignment="Right"
+		                         Style="{StaticResource SimpleButtonStyle}"
+					Click="PickExperiment_Click"/>
+
+            <!-- Comment -->
+            <ToggleButton IsChecked="{Binding Path=Dataset.ShouldUseComment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+						  Grid.Row="12" Grid.Column="0"/>
+            <Label Content="Comment"
+				   Grid.Row="12" Grid.Column="1"/>
+            <TextBox Text="{Binding Path=Dataset.Comment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+					 Margin="2,2,2,6"
+					 Grid.Row="12"
+                     Grid.Column="2"
+					 FontSize="15" Grid.RowSpan="2" />
+
+        </Grid>        
+    </DockPanel>
+</Window>

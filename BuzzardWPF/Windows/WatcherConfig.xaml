@@ -1,0 +1,160 @@
+﻿<UserControl x:Class="BuzzardWPF.Windows.WatcherConfig"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 xmlns:windows="clr-namespace:BuzzardWPF.Windows"
+             mc:Ignorable="d" 
+             d:DesignHeight="400" d:DesignWidth="1100">
+	<UserControl.Resources>
+		<Style TargetType="GroupBox">
+			<Setter Property="FontSize" Value="16"/>
+			<Setter Property="Margin" Value="1,2"/>
+		</Style>
+		
+		<Style x:Key="TextBlockStyle"	TargetType="TextBlock">
+			<Setter Property="FontSize"					Value="16"/>
+			<Setter Property="Margin"					Value="6,4,4,4"/>
+			<Setter Property="VerticalAlignment"		Value="Center"/>
+		</Style>
+		
+		<Style x:Key="ComboBoxStyle"	TargetType="ComboBox">
+			<Setter Property="MinHeight"				Value="32"/>
+			<Setter Property="Margin"					Value="2"/>
+			<Setter Property="MinWidth"					Value="300"/>
+			<Setter Property="FontSize"					Value="15"/>
+			<Setter Property="VerticalContentAlignment" Value="Center"/>
+		</Style>
+		
+		<Style x:Key="TextBoxStyle" TargetType="TextBox">
+			<Setter Property="MinHeight"				Value="32"/>
+			<Setter Property="Margin"					Value="2"/>
+			<Setter Property="MinWidth"					Value="300"/>
+			<Setter Property="FontSize"					Value="15"/>
+			<Setter Property="VerticalAlignment"		Value="Center"/>
+		</Style>
+	</UserControl.Resources>
+
+	<Grid Margin="0" Grid.IsSharedSizeScope="True">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="auto"/>
+			<ColumnDefinition Width="*"/>
+		</Grid.ColumnDefinitions>
+		
+		<StackPanel Grid.Column="1"
+					Margin="5,5,5,5">
+			
+			<GroupBox Header="If No Request in DMS">
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="auto"/>
+						<RowDefinition Height="auto"/>
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="auto" SharedSizeGroup="A"/>
+						<ColumnDefinition Width="auto" SharedSizeGroup="B"/>
+						<ColumnDefinition Width="*"/>
+					</Grid.ColumnDefinitions>
+
+					<TextBlock Text="Experiment Name:"
+							   Grid.Row="0" Grid.Column="0"
+							   Style="{StaticResource TextBlockStyle}"/>
+
+					<TextBox Grid.Row="0" Grid.Column="1"
+							 Text="{Binding Path=ExperimentName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+							 Style="{StaticResource TextBoxStyle}" />
+
+					<Button Content="Select Experiment..."
+							Grid.Row="1" Grid.Column="1"
+							Click="SelectExperiment_Click"
+							HorizontalAlignment="Right"													
+		                    Style="{StaticResource SimpleButtonStyle}"/>
+				</Grid>
+			</GroupBox>
+
+            <windows:EMSL_UsageSelectionView 
+										 x:Name="EMSL_DataSelector"/>
+        </StackPanel>
+		
+		<StackPanel Grid.Column="0"
+					Margin="1,1,4,1">
+
+            <GroupBox Header="Mass Spectrometer Instrument" FontWeight="Bold">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" SharedSizeGroup="A"/>
+                        <ColumnDefinition Width="auto" SharedSizeGroup="B"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="Available Instruments:"
+                               FontWeight="Regular"
+							   Grid.Row="0" Grid.Column="0"
+							   Style="{StaticResource TextBlockStyle}"/>
+                    <ComboBox Grid.Row="0" Grid.Column="1" FontWeight="Regular"
+							  Style="{StaticResource ComboBoxStyle}"
+							  ItemsSource="{Binding Path=InstrumentsSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+							  SelectedItem="{Binding Path=SelectedInstrument, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                </Grid>
+            </GroupBox>
+
+            <GroupBox Header="Separation Instrument" FontWeight="Bold">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" SharedSizeGroup="A"/>
+                        <ColumnDefinition Width="auto" SharedSizeGroup="B"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Text="Cart Name:" FontWeight="Regular"
+							   Grid.Row="0" Grid.Column="0"
+							   Style="{StaticResource TextBlockStyle}"/>
+                    <TextBlock Text="Separation/Acquistion Type:" FontWeight="Regular"
+							   Grid.Row="1" Grid.Column="0"
+							   Style="{StaticResource TextBlockStyle}"/>
+                    <TextBlock Text="Dataset Type:" FontWeight="Regular"
+							   Grid.Row="2" Grid.Column="0"
+							   Style="{StaticResource TextBlockStyle}"/>
+                    <TextBlock Text="LC Column:" FontWeight="Regular"
+							   Grid.Row="3" Grid.Column="0"
+							   Style="{StaticResource TextBlockStyle}"/>
+
+                    <TextBlock Text="Operator" FontWeight="Regular"
+							   Grid.Row="4" Grid.Column="0"
+							   Style="{StaticResource TextBlockStyle}"/>
+
+                    <ComboBox Grid.Row="0" Grid.Column="1" FontWeight="Regular"
+							  Style="{StaticResource ComboBoxStyle}"
+							  ItemsSource="{Binding Path=CartNameListSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+							  SelectedItem="{Binding Path=SelectedCartName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    <ComboBox Grid.Row="1" Grid.Column="1" FontWeight="Regular"
+							  Style="{StaticResource ComboBoxStyle}"
+							  ItemsSource="{Binding Path=SeparationTypeSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+							  SelectedItem="{Binding Path=SelectedSeparationType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    <ComboBox Grid.Row="2" Grid.Column="1" FontWeight="Regular"
+							  Style="{StaticResource ComboBoxStyle}"
+							  ItemsSource="{Binding Path=DatasetTypesSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+							  SelectedItem="{Binding Path=SelectedDatasetType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    <ComboBox Grid.Row="3" Grid.Column="1" FontWeight="Regular"
+							  Style="{StaticResource ComboBoxStyle}"
+							  ItemsSource="{Binding Path=LCColumnSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+							  SelectedItem="{Binding Path=LCColumn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <ComboBox Grid.Row="4" Grid.Column="1" FontWeight="Regular"
+							  Style="{StaticResource ComboBoxStyle}"
+							  ItemsSource="{Binding Path=OperatorsSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+							  SelectedItem="{Binding Path=SelectedOperator, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                </Grid>
+            </GroupBox>
+
+            
+        </StackPanel>
+	</Grid>
+</UserControl>

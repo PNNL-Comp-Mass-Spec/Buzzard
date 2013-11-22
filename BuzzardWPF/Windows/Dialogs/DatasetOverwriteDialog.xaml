@@ -1,0 +1,70 @@
+﻿<Window x:Class="BuzzardWPF.Windows.DatasetOverwriteDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:local="clr-namespace:BuzzardWPF.Windows"
+        Title="File Conflict Found" 
+		SnapsToDevicePixels="True"
+		UseLayoutRounding="True"
+		Topmost="True"
+		ShowInTaskbar="False"
+		WindowStartupLocation="CenterScreen"
+		WindowStyle="None"
+		MinHeight="500"
+		MinWidth="400"
+		MaxWidth="700"
+		Height="575" Width="425">
+    <Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="auto"/>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="60"/>
+			<RowDefinition Height="60"/>
+			<RowDefinition Height="auto" MinHeight="22"/>
+		</Grid.RowDefinitions>
+		
+		<ScrollViewer Grid.Row="0"
+					  Grid.RowSpan="2"
+					  VerticalScrollBarVisibility="Auto"
+					  HorizontalScrollBarVisibility="Disabled">
+			<Grid>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="auto"/>
+					<RowDefinition Height="auto" MinHeight="100"/>
+					<RowDefinition Height="auto"/>
+					<RowDefinition Height="auto" MinHeight="100"/>
+					<RowDefinition Height="*"/>
+				</Grid.RowDefinitions>
+
+				<TextBlock Grid.Row="0"
+						   Text="Item being moved:"
+						   Margin="1"
+						   FontWeight="Black"
+						   FontSize="14"/>
+				<TextBlock Grid.Row="2"
+						   Text="Item being replaced:"
+						   Margin="1"
+						   FontWeight="Black"
+						   FontSize="14"/>
+
+				<local:FileFolderInfoViewer x:Name="m_sourcePathDataViewer"
+											Grid.Row="1"
+											Margin="1,2,1,20"/>
+				<local:FileFolderInfoViewer x:Name="m_destinationPathDataViewer"
+											Grid.Row="3"
+											Margin="1,2,1,20"/>
+			</Grid>
+		</ScrollViewer>
+		
+		<Button Grid.Row="2"
+				Content="Copy and Replace" 
+				Click="CopyAndReplace_Click" />
+		<Button Grid.Row="3"
+				Content="Dont Move" 
+				Click="SkipDataset_Click" />
+		<CheckBox Grid.Row="4"
+				  Margin="1,4,1,1"
+				  FontSize="14"
+				  IsChecked="{Binding Path=DoSameToOtherConflicts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+				  Content="Do this for all Dataset move conflicts."/>
+	</Grid>
+</Window>

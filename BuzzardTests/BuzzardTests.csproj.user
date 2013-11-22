@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <StartAction>Program</StartAction>
+    <StartProgram>C:\development\Proteomics\LCMS-svn\trunk\LCMSnet\lib\net-2.0\nunit-x86.exe</StartProgram>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'PNNLRelease|AnyCPU'">
+    <StartProgram>C:\development\Proteomics\LCMS-svn\trunk\LCMSnet\lib\net-2.0\nunit-x86.exe</StartProgram>
+    <StartAction>Program</StartAction>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <StartProgram>C:\development\Proteomics\LCMS-svn\trunk\LCMSnet\lib\net-2.0\nunit-x86.exe</StartProgram>
+    <StartAction>Program</StartAction>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'PNNLRelease|x86'">
+    <StartProgram>C:\development\Proteomics\LCMS-svn\trunk\LCMSnet\lib\net-2.0\nunit-x86.exe</StartProgram>
+    <StartAction>Project</StartAction>
+  </PropertyGroup>
+</Project>

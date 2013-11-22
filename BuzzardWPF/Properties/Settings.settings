@@ -1,0 +1,165 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="BuzzardWPF.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="CacheFileName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">offlinecache.db3</Value>
+    </Setting>
+    <Setting Name="AutoMonitor" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="DMSPwd" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Mprptq3v</Value>
+    </Setting>
+    <Setting Name="CreateTriggerFiles" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="DMSVersion" Type="System.String" Scope="User">
+      <Value Profile="(Default)">DMS5</Value>
+    </Setting>
+    <Setting Name="ErrorPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">c:\my documents\Error</Value>
+    </Setting>
+    <Setting Name="FirstTime" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="InstName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">PegasaurusRex</Value>
+    </Setting>
+    <Setting Name="TriggerFileFolder" Type="System.String" Scope="User">
+      <Value Profile="(Default)">\\proto-5\BionetXfer\Run_Complete_Trigger</Value>
+    </Setting>
+    <Setting Name="TurdAlert" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="WatchDirectory" Type="System.String" Scope="User">
+      <Value Profile="(Default)">m:\data</Value>
+    </Setting>
+    <Setting Name="WatchExtension" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.MS</Value>
+    </Setting>
+    <Setting Name="WriteTriggerFiles" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="CopyTriggerFiles" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="WatcherConfig_SelectedInstrument" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="WatcherConfig_SelectedCartName" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="WatcherConfig_SelectedSeperationType" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="WatcherConfig_SelectedColumnData" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="WatcherConfig_SelectedOperator" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="Watcher_WatchDir" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\</Value>
+    </Setting>
+    <Setting Name="Watcher_SearchType" Type="System.IO.SearchOption" Scope="User">
+      <Value Profile="(Default)">TopDirectoryOnly</Value>
+    </Setting>
+    <Setting Name="Watcher_FilePattern" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.raw</Value>
+    </Setting>
+    <Setting Name="Watcher_WaitTime" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">10</Value>
+    </Setting>
+    <Setting Name="WatcherConfig_CreateTriggerOnDMS_Fail" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="WatcherConfig_ExperimentName" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="WatcherConfig_LCColumn" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="Searcher_IncludedArchivedItems" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="QC_ExperimentName" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="QC_SelectedUsageType" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="QC_ProposalID" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="QC_CreateTriggerOnDMS_Fail" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="Watcher_EMSL_UsageType" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="Watcher_EMSL_ProposalID" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="Watcher_EMSL_Users" Type="System.Collections.Specialized.StringCollection" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="QC_EMSL_Users" Type="System.Collections.Specialized.StringCollection" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="FilldownOperator" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="FilldownDatasetType" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="FilldownSeparationType" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="FilldownColumn" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="FilldownInstrument" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="FilldownCart" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="FilldownInterest" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="FilldownEMSLUsage" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="FilldownEMSLProposal" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="FilldownExperimentName" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="FilldownComment" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="SearchPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="SearchDirectoryOptions" Type="System.IO.SearchOption" Scope="User">
+      <Value Profile="(Default)">TopDirectoryOnly</Value>
+    </Setting>
+    <Setting Name="SearchExtension" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="SearchDateFrom" Type="System.DateTime" Scope="User">
+      <Value Profile="(Default)">2002-12-31</Value>
+    </Setting>
+    <Setting Name="SearchDateTo" Type="System.DateTime" Scope="User">
+      <Value Profile="(Default)">2016-12-31</Value>
+    </Setting>
+    <Setting Name="Setting" Type="System.DateTime" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="Watcher_FileSize" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">100</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
