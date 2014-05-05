@@ -121,7 +121,7 @@ namespace BuzzardWPF.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("M:\\test\\trigger")]
+        [global::System.Configuration.DefaultSettingValueAttribute("\\\\proto-5\\BionetXfer\\Run_Complete_Trigger")]
         public string TriggerFileFolder {
             get {
                 return ((string)(this["TriggerFileFolder"]));

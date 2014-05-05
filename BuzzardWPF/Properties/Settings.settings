@@ -27,7 +27,7 @@
       <Value Profile="(Default)">PegasaurusRex</Value>
     </Setting>
     <Setting Name="TriggerFileFolder" Type="System.String" Scope="User">
-      <Value Profile="(Default)">M:\test\trigger</Value>
+      <Value Profile="(Default)">\\proto-5\BionetXfer\Run_Complete_Trigger</Value>
     </Setting>
     <Setting Name="TurdAlert" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
