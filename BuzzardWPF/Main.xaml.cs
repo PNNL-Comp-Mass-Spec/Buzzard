@@ -6,21 +6,12 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-
-using Forms = System.Windows.Forms;
-
 using BuzzardWPF.Data;
 using BuzzardWPF.Properties;
 using BuzzardWPF.Searching;
-
 using LcmsNetDataClasses.Logging;
-using LcmsNetDmsTools;
-
 
 namespace BuzzardWPF
 {
@@ -35,7 +26,9 @@ namespace BuzzardWPF
 		#endregion
 
 
-		#region Attributes
+        #region Attributes
+
+        private object                  m_cacheLoadingSync;
 		private DispatcherTimer         m_timer;
         private int                     m_counter;
         private Collection<BitmapImage> m_images;
@@ -51,39 +44,35 @@ namespace BuzzardWPF
 		public Main()
         {
             InitializeComponent();
-			this.DataContext = this;
+			DataContext         = this;
+            m_cacheLoadingSync  = new object();
+            var assembly        = System.Reflection.Assembly.GetExecutingAssembly();
+            var version         = assembly.GetName().Version.ToString();
+            Title               = "Buzzard - v." + version;
 
-            System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
-
-            string version = assembly.GetName().Version.ToString();
-
-            this.Title = "Buzzard - v." + version;
-
-			/// This gives the dataset manager a way to talk to the main window 
-			/// in case it needs to. One example is adding items to the dataset 
-			/// collection. We need to make sure we only change that collection 
-			/// from the UI thread, or anything bound to it will throw a fit and 
-			/// crash the progam. So, we'll just use the main window's Dispatcher
-			/// to make sure changes are done in the correct thread. We could 
-			/// just pass the dispatcher along, but this way we can access other 
-			/// parts of the main window if they are ever needed in the future.
-			/// -FCT
+			// This gives the dataset manager a way to talk to the main window 
+			// in case it needs to. One example is adding items to the dataset 
+			// collection. We need to make sure we only change that collection 
+			// from the UI thread, or anything bound to it will throw a fit and 
+			// crash the progam. So, we'll just use the main window's Dispatcher
+			// to make sure changes are done in the correct thread. We could 
+			// just pass the dispatcher along, but this way we can access other 
+			// parts of the main window if they are ever needed in the future.
+			// -FCT
 			DatasetManager.Manager.MainWindow = this;
 
-			this.m_firstTimeLoading = true;
-			this.Closed += new EventHandler(Main_Closed);
-			this.Loaded += new RoutedEventHandler(Main_Loaded);
+			m_firstTimeLoading = true;
+			Closed += Main_Closed;
+			Loaded += Main_Loaded;
 
-			classApplicationLogger.Message	+= new classApplicationLogger.DelegateMessageHandler(ApplicationLogger_Message);
-			classApplicationLogger.Error	+= new classApplicationLogger.DelegateErrorHandler(ApplicationLogger_Error);
-
-
+			classApplicationLogger.Message	+= ApplicationLogger_Message;
+			classApplicationLogger.Error	+= ApplicationLogger_Error;
 
 			// Todo: Find a real list of usage types, none of this hard-coded crap.
 			m_dataGrid.EmslUsageTypesSource = 
 				new ObservableCollection<string>
 				(
-					new string[] { "BROKEN", "CAP_DEV", "MAINTENANCE", "USER", "USER_UNKOWN" }
+					new[] { "BROKEN", "CAP_DEV", "MAINTENANCE", "USER", "USER_UNKOWN" }
 				);
 
 			if (!m_dataGrid.CartNameListSource.Contains("unknown"))
@@ -93,16 +82,20 @@ namespace BuzzardWPF
 
 			m_dataGrid.Datasets = DatasetManager.Manager.Datasets;
 
-            m_timer           = new DispatcherTimer();
-            m_timer.Interval  = new TimeSpan(0, 0, 1);
-            m_timer.Tick += new System.EventHandler(m_timer_Tick);
+            m_timer           = new DispatcherTimer
+            {
+                Interval = new TimeSpan(0, 0, 1)
+            };
+		    m_timer.Tick += m_timer_Tick;
 
-			m_dmsCheckTimer				= new DispatcherTimer(DispatcherPriority.Normal, this.Dispatcher);
-			m_dmsCheckTimer.Interval	= new TimeSpan(0, 10, 0);
-			m_dmsCheckTimer.Tick		+= new EventHandler(DMSCheckTimer_Tick);
+			m_dmsCheckTimer				= new DispatcherTimer(DispatcherPriority.Normal, Dispatcher)
+			{
+			    Interval = new TimeSpan(0, 10, 0)
+			};
+		    m_dmsCheckTimer.Tick		+= DMSCheckTimer_Tick;
 			m_dmsCheckTimer.IsEnabled	= true;
 
-            m_searchWindow.SearchStart += new EventHandler<SearchEventArgs>(m_searchWindow_SearchStart);
+            m_searchWindow.SearchStart += m_searchWindow_SearchStart;
             RegisterSearcher(new FileSearchBuzzardier());
 
             LoadImages();
@@ -120,7 +113,8 @@ namespace BuzzardWPF
 		{
 			m_images = new Collection<BitmapImage>();
 
-			Collection<Bitmap> bitmaps = new Collection<Bitmap>() {
+			var bitmaps = new Collection<Bitmap>
+			{
                     Properties.Resources.buzzards,
                     Properties.Resources.buzzards1,
                     Properties.Resources.buzzards2,
@@ -129,12 +123,12 @@ namespace BuzzardWPF
                     Properties.Resources.buzzards5,
                     };
 
-			foreach (Bitmap bitmap in bitmaps)
+			foreach (var bitmap in bitmaps)
 			{
-				MemoryStream ms = new MemoryStream();
+				var ms = new MemoryStream();
 				bitmap.Save(ms, ImageFormat.Png);
 				ms.Position = 0;
-				BitmapImage bi  = new BitmapImage();
+				var bi  = new BitmapImage();
 				bi.BeginInit();
 				bi.StreamSource = ms;
 				bi.EndInit();
@@ -193,7 +187,7 @@ namespace BuzzardWPF
 				LastStatusMessage = args.Message;
 			};
 
-			this.Dispatcher.BeginInvoke(workAction, DispatcherPriority.Normal);
+			Dispatcher.BeginInvoke(workAction, DispatcherPriority.Normal);
 		}
 
 		void ApplicationLogger_Message(int messageLevel, classMessageLoggerArgs args)
@@ -206,7 +200,7 @@ namespace BuzzardWPF
 				LastStatusMessage = args.Message;
 			};
 
-			this.Dispatcher.BeginInvoke(workAction, DispatcherPriority.Normal);
+			Dispatcher.BeginInvoke(workAction, DispatcherPriority.Normal);
 		}
 
         #region Searching 
@@ -225,9 +219,9 @@ namespace BuzzardWPF
             }
 
             m_buzzadier = buzzadier;
-            m_buzzadier.SearchStopped   += new EventHandler(m_buzzadier_SearchStopped);
-            m_buzzadier.SearchComplete  += new EventHandler(m_buzzadier_SearchComplete);
-            m_buzzadier.DatasetFound    += new EventHandler<DatasetFoundEventArgs>(m_buzzadier_DatasetFound);
+            m_buzzadier.SearchStopped   += m_buzzadier_SearchStopped;
+            m_buzzadier.SearchComplete  += m_buzzadier_SearchComplete;
+            m_buzzadier.DatasetFound    += m_buzzadier_DatasetFound;
         }
         /// <summary>
         /// Searches a directory for buzzard datasets
@@ -269,7 +263,7 @@ namespace BuzzardWPF
 
 			// Lets see if the path we were given is already
 			// being used as the source of a dataset
-			bool alreadyPresent = m_dataGrid.Datasets.Any(
+			var alreadyPresent = m_dataGrid.Datasets.Any(
 				ds =>
 				{
 					// This dataset is most likely an empty-dummy dataset,
@@ -310,15 +304,6 @@ namespace BuzzardWPF
 
 
         #region Event Handlers
-		void DMSCheckTimer_Tick(object sender, EventArgs e)
-		{
-			// This isn't really loading the DMS Cache. Based on what I 
-			// saw in the code for this, what really happens is that 
-			// this gets the samples from DMS (not the cache) and builds 
-			// up a new trie tree for resulting DMS. It also updates the 
-			// list of items in found in the trigger folder.
-			DatasetManager.Manager.LoadDMSCache();
-		}
 
 		/// <summary>
 		/// Will set the CurrentImage value with the next image in the buzzard
@@ -345,7 +330,7 @@ namespace BuzzardWPF
 			// Save settings
 			classApplicationLogger.LogMessage(0, "Starting to save settings to config.");
 			m_scanConfigWindow.SaveSettings();
-            Settings.Default.TriggerFileFolder = this.TriggerFileLocation;
+            Settings.Default.TriggerFileFolder = TriggerFileLocation;
 			m_scanWindow.SaveSettings();
 			m_searchWindow.SaveSettings();
 			m_qcConfigWindow.SaveSettings();
@@ -370,7 +355,7 @@ namespace BuzzardWPF
 
 				classApplicationLogger.LogMessage(0, "Loading settings from config.");
                 m_scanConfigWindow.LoadSettings();
-                this.TriggerFileLocation = Settings.Default.TriggerFileFolder;
+                TriggerFileLocation = Settings.Default.TriggerFileFolder;
 				m_scanWindow.LoadSettings();
 				m_searchWindow.LoadSettings();
 				m_qcConfigWindow.LoadSettings();
@@ -418,27 +403,50 @@ namespace BuzzardWPF
 
         private void SelectTriggerFileLocation_Click(object sender, RoutedEventArgs e)
         {
-            Forms.FolderBrowserDialog dlg = new Forms.FolderBrowserDialog();
+            var dlg = new System.Windows.Forms.FolderBrowserDialog();
             if (!string.IsNullOrWhiteSpace(TriggerFileLocation))
                 dlg.SelectedPath = TriggerFileLocation;
 
             dlg.ShowNewFolderButton = true;
-            Forms.DialogResult keepGoing = dlg.ShowDialog();
+            var keepGoing = dlg.ShowDialog();
 
             switch (keepGoing)
             {
-                case Forms.DialogResult.Abort:
-                case Forms.DialogResult.Cancel:
-                case Forms.DialogResult.Ignore:
-                case Forms.DialogResult.No:
-                case Forms.DialogResult.None:
-                    return;
-
-                default:
-                    break;
+                case System.Windows.Forms.DialogResult.Abort:
+                case System.Windows.Forms.DialogResult.Cancel:
+                case System.Windows.Forms.DialogResult.Ignore:
+                case System.Windows.Forms.DialogResult.No:
+                case System.Windows.Forms.DialogResult.None:
+                    return;                
             }
 
             TriggerFileLocation = dlg.SelectedPath;
         }
-    }
+
+
+        void DMSCheckTimer_Tick(object sender, EventArgs e)
+        {
+            lock (m_cacheLoadingSync)
+            {
+                if (DatasetManager.Manager.IsLoading)
+                {
+                    return;
+                }
+                DatasetManager.Manager.LoadDmsCache();
+            }
+        }
+
+        private void ForceDmsReload_Click(object sender, RoutedEventArgs e)
+        {
+
+            lock (m_cacheLoadingSync)
+            {
+                if (DatasetManager.Manager.IsLoading)
+                {
+                    return;
+                }
+                DatasetManager.Manager.LoadDmsCache();
+            }
+        }
+	}
 }

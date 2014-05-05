@@ -1,21 +1,13 @@
 ﻿using System;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-
 using BuzzardWPF.Data;
 using BuzzardWPF.Properties;
-
-using LcmsNetDataClasses.Data;
 using LcmsNetDataClasses.Logging;
-
-using Forms = System.Windows.Forms;
-
 
 namespace BuzzardWPF.Windows
 {
@@ -40,7 +32,7 @@ namespace BuzzardWPF.Windows
 		private bool						m_createTriggerOnDMS_Fail;
 
 
-		private Forms.FolderBrowserDialog	m_folderDialog;
+		private System.Windows.Forms.FolderBrowserDialog	m_folderDialog;
 		private FileSystemWatcher			m_fileSystemWatcher;
 		#endregion
 
@@ -49,16 +41,16 @@ namespace BuzzardWPF.Windows
 		public WatcherControl()
 		{
 			InitializeComponent();
-			this.DataContext = this;
+			DataContext = this;
 			//this.EMSL_DataSelector.BoundContainer = this;
 
-			m_folderDialog = new Forms.FolderBrowserDialog();
+			m_folderDialog = new System.Windows.Forms.FolderBrowserDialog();
 			m_folderDialog.ShowNewFolderButton = true;
 
 			m_fileSystemWatcher = new FileSystemWatcher();
-			m_fileSystemWatcher.Created += new FileSystemEventHandler(SystemWatcher_FileCreated);
-			m_fileSystemWatcher.Renamed += new RenamedEventHandler(SystemWatcher_FileRenamed);
-			m_fileSystemWatcher.Deleted += new FileSystemEventHandler(SystemWatcher_FileDeleted);
+			m_fileSystemWatcher.Created += SystemWatcher_FileCreated;
+			m_fileSystemWatcher.Renamed += SystemWatcher_FileRenamed;
+			m_fileSystemWatcher.Deleted += SystemWatcher_FileDeleted;
 
             MinimumFileSize     = 100;
 			IsWatching			= false;
@@ -187,7 +179,7 @@ namespace BuzzardWPF.Windows
 		#region Event Handlers
 		void SystemWatcher_FileCreated(object sender, FileSystemEventArgs e)
 		{
-			string extension = Path.GetExtension(e.FullPath).ToLower();
+			var extension = Path.GetExtension(e.FullPath).ToLower();
 
 			if (string.IsNullOrWhiteSpace(e.FullPath) || e.FullPath.Contains('$'))
 				return;
@@ -200,7 +192,7 @@ namespace BuzzardWPF.Windows
 
 		void SystemWatcher_FileRenamed(object sender, RenamedEventArgs e)
 		{
-			string extension = Path.GetExtension(e.FullPath).ToLower();
+			var extension = Path.GetExtension(e.FullPath).ToLower();
 
 			if (string.IsNullOrWhiteSpace(e.FullPath) || e.FullPath.Contains('$'))
 				return;
@@ -219,7 +211,7 @@ namespace BuzzardWPF.Windows
 
 		private void AutoFillDirectorySelector_Populating(object sender, PopulatingEventArgs e)
 		{
-			string text = DirectoryToWatch;
+			var text = DirectoryToWatch;
 			string dirname;
 
 			try
@@ -235,13 +227,13 @@ namespace BuzzardWPF.Windows
 			{
 				if (string.IsNullOrWhiteSpace(dirname))
 				{
-					DriveInfo[] drives = DriveInfo.GetDrives();
-					string[] driveNames = drives.Select(drive => { return drive.Name; }).ToArray();
+					var drives = DriveInfo.GetDrives();
+					var driveNames = drives.Select(drive => { return drive.Name; }).ToArray();
 					m_autoFillDirectorySelector.ItemsSource = driveNames;
 				}
 				else if (Directory.Exists(dirname))
 				{
-					string[] subFolders = Directory.GetDirectories(dirname, "*", SearchOption.TopDirectoryOnly);
+					var subFolders = Directory.GetDirectories(dirname, "*", SearchOption.TopDirectoryOnly);
 					m_autoFillDirectorySelector.ItemsSource = subFolders;
 				}
 			}
@@ -256,9 +248,9 @@ namespace BuzzardWPF.Windows
 		{
 			m_folderDialog.SelectedPath = DirectoryToWatch;
 
-			Forms.DialogResult result = m_folderDialog.ShowDialog();
+			var result = m_folderDialog.ShowDialog();
 
-            if (result == Forms.DialogResult.OK)
+            if (result == System.Windows.Forms.DialogResult.OK)
             {
                 DirectoryToWatch = m_folderDialog.SelectedPath;
             }
@@ -295,25 +287,25 @@ namespace BuzzardWPF.Windows
 		#region Methods
 		public void SaveSettings()
 		{
-			Settings.Default.Watcher_FilePattern		= this.Extension;
-			Settings.Default.Watcher_SearchType			= this.WatchDepth;
-			Settings.Default.Watcher_WaitTime			= this.WaitTime;
-			Settings.Default.Watcher_WatchDir			= this.DirectoryToWatch;
-            Settings.Default.Watcher_FileSize           = this.MinimumFileSize;
-			Settings.Default.WatcherConfig_CreateTriggerOnDMS_Fail = this.CreateTriggerOnDMSFail;
+			Settings.Default.Watcher_FilePattern		= Extension;
+			Settings.Default.Watcher_SearchType			= WatchDepth;
+			Settings.Default.Watcher_WaitTime			= WaitTime;
+			Settings.Default.Watcher_WatchDir			= DirectoryToWatch;
+            Settings.Default.Watcher_FileSize           = MinimumFileSize;
+			Settings.Default.WatcherConfig_CreateTriggerOnDMS_Fail = CreateTriggerOnDMSFail;
 
 			
 		}
 
 		public void LoadSettings()
 		{
-			this.Extension				= Settings.Default.Watcher_FilePattern;
-			this.WatchDepth				= Settings.Default.Watcher_SearchType;
-			this.WaitTime				= Settings.Default.Watcher_WaitTime;
-            this.DirectoryToWatch = Settings.Default.Watcher_WatchDir;
-            this.MinimumFileSize = Settings.Default.Watcher_FileSize;
+			Extension				= Settings.Default.Watcher_FilePattern;
+			WatchDepth				= Settings.Default.Watcher_SearchType;
+			WaitTime				= Settings.Default.Watcher_WaitTime;
+            DirectoryToWatch = Settings.Default.Watcher_WatchDir;
+            MinimumFileSize = Settings.Default.Watcher_FileSize;
 
-			this.CreateTriggerOnDMSFail = Settings.Default.WatcherConfig_CreateTriggerOnDMS_Fail;
+			CreateTriggerOnDMSFail = Settings.Default.WatcherConfig_CreateTriggerOnDMS_Fail;
 
 		}
 

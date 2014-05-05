@@ -201,12 +201,17 @@
                                  Margin="5"
 							         Text="{Binding Path=TriggerFileLocation, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
 							         Style="{StaticResource TextBoxStyle}"/>
-                        <Button Grid.Row="0" Grid.Column="2"
+                                <Button Grid.Row="0" Grid.Column="2"
 							        Content="..."
 							        Click="SelectTriggerFileLocation_Click"
 							        HorizontalAlignment="Right"
 							        Style="{StaticResource SimpleButtonStyle}"/>
-                    </Grid>
+                                <Button Grid.Row="1" Grid.Column="2"
+							        Content="Reload DMS Cache"
+							        Click="ForceDmsReload_Click"
+							        HorizontalAlignment="Right"
+							        Style="{StaticResource SimpleButtonStyle}"/>
+                            </Grid>
                         </TabItem>
                     </TabControl>
                 </TabItem>

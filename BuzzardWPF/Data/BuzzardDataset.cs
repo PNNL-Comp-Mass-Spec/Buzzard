@@ -1,29 +1,18 @@
 ﻿using System;
-using System.IO;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-
-using LcmsNetDataClasses;
-
+using System.IO;
 using BuzzardWPF.LcmsNetTemp;
 using LcmsNetDataClasses.Data;
 
-
 namespace BuzzardWPF.Data
 {
-	public enum DatasetSource
-	{
-		Watcher,
-		Searcher
-	}
-
     public class BuzzardDataset
 		: INotifyPropertyChanged
 	{
 		#region Events
 		public event PropertyChangedEventHandler PropertyChanged;
 		#endregion
-
 
 		#region Attributes
 		private string			m_filePath;
@@ -55,7 +44,6 @@ namespace BuzzardWPF.Data
 		private int				m_secondsRemainingTillTriggerCreation;
 		private double			m_waitTimePercentage;
 		#endregion
-
 
 		#region Initialization
 		public BuzzardDataset()
@@ -317,12 +305,10 @@ namespace BuzzardWPF.Data
 			get { return m_status; }
 			set
 			{
-				if (m_status != value)
-				{
-					m_status = value;
+			    if (m_status == value) return;
+			    m_status = value;
 
-					OnPropertyChanged("DatasetStatus");
-				}
+			    OnPropertyChanged("DatasetStatus");
 			}
 		}
         
@@ -401,13 +387,13 @@ namespace BuzzardWPF.Data
         {
             if (File.Exists(path))
             {
-                FileInfo info = new FileInfo(path);
+                var info = new FileInfo(path);
                 return info.Length;
             }
-            else if (Directory.Exists(path))
+            if (Directory.Exists(path))
             {
                 long sum = 0;
-                foreach (string file in Directory.GetFiles(path))
+                foreach (var file in Directory.GetFiles(path))
                 {
                     sum += CalculateDirectorySize(file);
                 }
@@ -424,7 +410,7 @@ namespace BuzzardWPF.Data
 		{
 			if (File.Exists(FilePath))
 			{
-				FileInfo info = new FileInfo(FilePath);
+				var info = new FileInfo(FilePath);
                 
 				FileSize	= info.Length;
 				RunStart	= info.CreationTime;
@@ -432,7 +418,7 @@ namespace BuzzardWPF.Data
 			}
 			else if (Directory.Exists(FilePath))
 			{
-				DirectoryInfo info = new DirectoryInfo(FilePath);
+				var info = new DirectoryInfo(FilePath);
                 
 				FileSize	= CalculateDirectorySize(FilePath);
 				RunStart	= info.CreationTime;
@@ -489,7 +475,7 @@ namespace BuzzardWPF.Data
 		/// <remarks>
 		/// Pulled in to stop compile time errors.
 		/// </remarks>
-		private bool mbool_shouldIgnore;
+		private bool m_mboolShouldIgnore;
 		#endregion
 
 
@@ -504,18 +490,16 @@ namespace BuzzardWPF.Data
 		{
 			get
 			{
-				return mbool_shouldIgnore;
+				return m_mboolShouldIgnore;
 			}
 			set
 			{
-				if (mbool_shouldIgnore != value)
-				{
-					mbool_shouldIgnore = value;
-					if (IgnoreChanged != null)
-					{
-						IgnoreChanged(this, null);
-					}
-				}
+			    if (m_mboolShouldIgnore == value) return;
+			    m_mboolShouldIgnore = value;
+			    if (IgnoreChanged != null)
+			    {
+			        IgnoreChanged(this, null);
+			    }
 			}
 		}
 		
@@ -549,9 +533,9 @@ namespace BuzzardWPF.Data
 				if (value.CompareTo(m_lastWrite) != 0)
 				{
 					m_lastWrite = value;
-					if (this.LastWriteChanged != null)
+					if (LastWriteChanged != null)
 					{
-						this.LastWriteChanged(this, null);
+						LastWriteChanged(this, null);
 					}
 				}
 			}

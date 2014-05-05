@@ -3,22 +3,11 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
-
 using BuzzardWPF.Data;
-
 using LcmsNetDataClasses;
-
 
 namespace BuzzardWPF.Windows
 {
@@ -51,7 +40,7 @@ namespace BuzzardWPF.Windows
 		public ExperimentsViewer()
 		{
 			InitializeComponent();
-			this.DataContext = this;
+			DataContext = this;
 
 			FilterText = string.Empty;
 
@@ -59,7 +48,7 @@ namespace BuzzardWPF.Windows
 			{
 				LoadExperiments();
 			};
-			this.Dispatcher.BeginInvoke(loadExperiments, DispatcherPriority.Render);
+			Dispatcher.BeginInvoke(loadExperiments, DispatcherPriority.Render);
 		}
 
 		private void LoadExperiments()
@@ -75,7 +64,7 @@ namespace BuzzardWPF.Windows
 			// do it here.
 			// -FC
 			m_experimentList = DMS_DataAccessor.Instance.Experiments;
-			StringComparision stringEqualityDeterminer = new StringComparision();
+			var stringEqualityDeterminer = new StringComparision();
 
 			// Building lists that we can use to narrow down the
 			// number of experiments to insert into the UI
@@ -182,7 +171,7 @@ namespace BuzzardWPF.Windows
 		/// </summary>
 		private void FilterBox_Populating(object sender, PopulatingEventArgs e)
 		{
-			FilterOption filterOption = GetSelectedFilter();
+			var filterOption = GetSelectedFilter();
 
 			switch (filterOption)
 			{
@@ -217,7 +206,7 @@ namespace BuzzardWPF.Windows
 		private void Search_Click(object sender, RoutedEventArgs e)
 		{
 			Experiments = null;
-			FilterOption filterOption = GetSelectedFilter();
+			var filterOption = GetSelectedFilter();
 
 			IEnumerable<classExperimentData> x = null;
 
@@ -254,7 +243,7 @@ namespace BuzzardWPF.Windows
 			if (x == null)
 				return;
 
-			ObservableCollection<classExperimentData> tempRef = new ObservableCollection<classExperimentData>(x);
+			var tempRef = new ObservableCollection<classExperimentData>(x);
 			Experiments = tempRef;
 		}
 		#endregion
@@ -266,13 +255,13 @@ namespace BuzzardWPF.Windows
 		/// </summary>
 		private FilterOption GetSelectedFilter()
 		{
-			FilterOption result = FilterOption.None;
+			var result = FilterOption.None;
 
-			ComboBoxItem selectedItem = m_comboBox.SelectedItem as ComboBoxItem;
+			var selectedItem = m_comboBox.SelectedItem as ComboBoxItem;
 			if (selectedItem == null)
 				return result;
 
-			string tag = selectedItem.Tag as string;
+			var tag = selectedItem.Tag as string;
 
 			switch (tag)
 			{

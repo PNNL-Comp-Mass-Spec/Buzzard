@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace BuzzardWPF.Data
+﻿namespace BuzzardWPF.Data
 {
 	/// <summary>
 	/// Status of a dataset
@@ -19,7 +14,7 @@ namespace BuzzardWPF.Data
 		/// <summary>
 		/// The DMS Request could not be resolved.
 		/// </summary>
-		FailedNoDMSRequest,
+		FailedNoDmsRequest,
 		/// <summary>
 		/// Failure is unknown.
 		/// </summary>
@@ -28,10 +23,6 @@ namespace BuzzardWPF.Data
 		/// Pending creation of trigger file.
 		/// </summary>
 		Pending,
-		/// <summary>
-		/// Trigger file was created, but not sent.
-		/// </summary>
-		TriggerCreated,
 		/// <summary>
 		/// Trigger file was sent.
 		/// </summary>

@@ -3,7 +3,6 @@ using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media;
 
-
 namespace BuzzardWPF.Converters
 {
 	public class RedudantRequestBackgroundConverter
@@ -18,7 +17,7 @@ namespace BuzzardWPF.Converters
 
 			try
 			{
-				bool isIt = (bool) value;
+				var isIt = (bool) value;
 
 				if (isIt)
 					result = Brushes.Red;

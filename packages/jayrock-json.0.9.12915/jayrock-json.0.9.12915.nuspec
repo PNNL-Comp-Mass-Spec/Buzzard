@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>jayrock-json</id>
+    <version>0.9.12915</version>
+    <title>Jayrock JSON</title>
+    <authors>Atif Aziz</authors>
+    <owners>Atif Aziz</owners>
+    <licenseUrl>http://www.opensource.org/licenses/lgpl-3.0.html</licenseUrl>
+    <projectUrl>http://jayrock.berlios.de/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Jayrock JSON is a versatile JSON parser, formatter and converter for Microsoft .NET Framework.</description>
+    <summary>Jayrock JSON is a versatile JSON parser, formatter and converter for Microsoft .NET Framework.</summary>
+    <copyright>Copyright (c) 2005, Atif Aziz. All rights reserved.</copyright>
+    <tags>json</tags>
+  </metadata>
+</package>

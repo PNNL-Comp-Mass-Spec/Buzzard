@@ -1,23 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Configuration;
-using System.Diagnostics;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Security.Principal;
-using System.Text;
-using System.Threading;
-using System.Windows;
-using System.Windows.Forms;
-
-using BuzzardWPF;
-using LcmsNetDataClasses.Logging;
-using System.Windows.Media.Imaging;
 using System.Drawing.Imaging;
-
+using System.IO;
+using System.Reflection;
+using System.Windows;
+using System.Windows.Media.Imaging;
+using LcmsNetDataClasses.Logging;
 
 namespace BuzzardWPF.Windows
 {
@@ -42,7 +30,7 @@ namespace BuzzardWPF.Windows
 		public DynamicSplash()
 		{
 			InitializeComponent();
-			this.DataContext = this;
+			DataContext = this;
 
 			///
 			/// I don't know why I need to do this to set the logo image, but
@@ -51,10 +39,10 @@ namespace BuzzardWPF.Windows
 			/// So I had to settle for a binding.
 			/// - FCT
 			/// 
-			MemoryStream ms = new MemoryStream();
+			var ms = new MemoryStream();
 			Properties.Resources.logo.Save(ms, ImageFormat.Png);
 			ms.Position = 0;
-			BitmapImage bi = new BitmapImage();
+			var bi = new BitmapImage();
 			bi.BeginInit();
 			bi.StreamSource = ms;
 			bi.EndInit();
@@ -65,17 +53,17 @@ namespace BuzzardWPF.Windows
 			/// 
 
 			m_backgroundWorker = new BackgroundWorker();
-			m_backgroundWorker.DoWork += new DoWorkEventHandler(BackgroundWorker_DoWork);
-			m_backgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(BackgroundWorker_RunWorkerCompleted);
+			m_backgroundWorker.DoWork += BackgroundWorker_DoWork;
+			m_backgroundWorker.RunWorkerCompleted += BackgroundWorker_RunWorkerCompleted;
 
 			classApplicationLogger.Message	+= ApplicationLogger_ItemLogged;
 			classApplicationLogger.Error	+= ApplicationLogger_ItemLogged;
 
-			Assembly		assem		= Assembly.GetEntryAssembly();
-			AssemblyName	assemName	= assem.GetName();
-			Version			ver			= assemName.Version;
+			var		assem		= Assembly.GetEntryAssembly();
+			var	assemName	= assem.GetName();
+			var			ver			= assemName.Version;
 
-			this.Version = ver.ToString();
+			Version = ver.ToString();
 		}
 
 		~DynamicSplash()
@@ -164,8 +152,8 @@ namespace BuzzardWPF.Windows
 		{
 			if (m_openMainWindow)
 			{                
-				Main mainWindow = new Main();
-                App.Current.MainWindow = mainWindow;
+				var mainWindow = new Main();
+                Application.Current.MainWindow = mainWindow;
                 try
                 {
                     mainWindow.Show();
@@ -176,7 +164,7 @@ namespace BuzzardWPF.Windows
                 }				
 			}
 
-			this.Close();
+			Close();
 		}
 		#endregion
 

@@ -1,14 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
-
-using LcmsNetDataClasses;
-using LcmsNetDataClasses.Logging;
-using LcmsNetDmsTools;
-using LcmsNetDataClasses.Data;
-
 
 namespace BuzzardWPF.Data
 {
@@ -19,7 +11,7 @@ namespace BuzzardWPF.Data
     {
         public static ObservableCollection<BuzzardDataset> LoadDatasetData(string path)
         {
-            ObservableCollection<BuzzardDataset> datasets = new ObservableCollection<BuzzardDataset>();
+            var datasets = new ObservableCollection<BuzzardDataset>();
             switch (path)
             {
                 case "":
@@ -36,11 +28,11 @@ namespace BuzzardWPF.Data
 
         private static ObservableCollection<BuzzardDataset> LoadDummyDatasetData()
         {
-            ObservableCollection<BuzzardDataset> datasets = new ObservableCollection<BuzzardDataset>();
-            for (int i = 0; i < 10; i++)
+            var datasets = new ObservableCollection<BuzzardDataset>();
+            for (var i = 0; i < 10; i++)
             {
-                BuzzardDataset data = new BuzzardDataset();                
-                data.DMSData.RequestName    = "test" + i.ToString();
+                var data = new BuzzardDataset();                
+                data.DMSData.RequestName    = "test" + i;
                 data.DMSData.RequestID      = 0;
                 datasets.Add(data);
             }
@@ -49,7 +41,7 @@ namespace BuzzardWPF.Data
 
 		public static BuzzardDataset LoadDataset(string path)
 		{
-			BuzzardDataset dataset = new BuzzardDataset()
+			var dataset = new BuzzardDataset
 			{
 				FilePath = path
 			};

@@ -1,28 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
 using BuzzardWPF.Data;
 using BuzzardWPF.Properties;
-
-using LcmsNetDataClasses.Logging;
-
-using Forms = System.Windows.Forms;
 using LcmsNetDataClasses.Data;
-using System.Collections.Specialized;
-
+using LcmsNetDataClasses.Logging;
 
 namespace BuzzardWPF.Windows
 {
@@ -54,16 +38,16 @@ namespace BuzzardWPF.Windows
 		public WatcherConfig()
 		{
 			InitializeComponent();
-			this.DataContext = this;
+			DataContext = this;
 
-			DMS_DataAccessor.Instance.PropertyChanged += new PropertyChangedEventHandler(DMSDataManager_PropertyChanged);
+			DMS_DataAccessor.Instance.PropertyChanged += DMSDataManager_PropertyChanged;
 
             EMSLProposalID = null;
             SelectedEMSLProposalUsers = new ObservableCollection<classProposalUser>();
             SelectedEMSLUsageType = null;
 
 
-            this.EMSL_DataSelector.BoundContainer = this;
+            EMSL_DataSelector.BoundContainer = this;
 		}
 
 		void DMSDataManager_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -249,12 +233,12 @@ namespace BuzzardWPF.Windows
 		/// </summary>
 		private void SelectExperiment_Click(object sender, RoutedEventArgs e)
 		{
-			ExperimentsDialog dialog = new ExperimentsDialog();
-			bool stop = dialog.ShowDialog() != true;
+			var dialog = new ExperimentsDialog();
+			var stop = dialog.ShowDialog() != true;
 			if (stop)
 				return;
 
-			this.ExperimentName = dialog.SelectedExperiment.Experiment;
+			ExperimentName = dialog.SelectedExperiment.Experiment;
 		}
 
 		/// <summary>
@@ -272,20 +256,20 @@ namespace BuzzardWPF.Windows
 		#region Methods
 		public void SaveSettings()
 		{
-			Settings.Default.WatcherConfig_SelectedCartName			= this.SelectedCartName;
-			Settings.Default.WatcherConfig_SelectedColumnData		= this.SelectedDatasetType;
-			Settings.Default.WatcherConfig_SelectedInstrument		= this.SelectedInstrument;
-			Settings.Default.WatcherConfig_SelectedOperator			= this.SelectedOperator;
+			Settings.Default.WatcherConfig_SelectedCartName			= SelectedCartName;
+			Settings.Default.WatcherConfig_SelectedColumnData		= SelectedDatasetType;
+			Settings.Default.WatcherConfig_SelectedInstrument		= SelectedInstrument;
+			Settings.Default.WatcherConfig_SelectedOperator			= SelectedOperator;
 			
-			Settings.Default.WatcherConfig_SelectedSeperationType	= this.SelectedSeparationType;
-			Settings.Default.WatcherConfig_ExperimentName			= this.ExperimentName;
-			Settings.Default.WatcherConfig_LCColumn					= this.LCColumn;
-            Settings.Default.Watcher_EMSL_UsageType = this.SelectedEMSLUsageType;
-            Settings.Default.Watcher_EMSL_ProposalID = this.EMSLProposalID;
+			Settings.Default.WatcherConfig_SelectedSeperationType	= SelectedSeparationType;
+			Settings.Default.WatcherConfig_ExperimentName			= ExperimentName;
+			Settings.Default.WatcherConfig_LCColumn					= LCColumn;
+            Settings.Default.Watcher_EMSL_UsageType = SelectedEMSLUsageType;
+            Settings.Default.Watcher_EMSL_ProposalID = EMSLProposalID;
 
 
             var selectedEMSLUsers = new StringCollection();
-            foreach (var user in this.SelectedEMSLProposalUsers)
+            foreach (var user in SelectedEMSLProposalUsers)
                 selectedEMSLUsers.Add(user.UserID.ToString());
 
             Settings.Default.Watcher_EMSL_Users = selectedEMSLUsers;
@@ -293,13 +277,13 @@ namespace BuzzardWPF.Windows
 
 		public void LoadSettings()
 		{
-			this.ExperimentName			= Settings.Default.WatcherConfig_ExperimentName;
+			ExperimentName			= Settings.Default.WatcherConfig_ExperimentName;
 
-            this.SelectedEMSLUsageType = Settings.Default.Watcher_EMSL_UsageType;
-            this.EMSLProposalID = Settings.Default.Watcher_EMSL_ProposalID;
+            SelectedEMSLUsageType = Settings.Default.Watcher_EMSL_UsageType;
+            EMSLProposalID = Settings.Default.Watcher_EMSL_ProposalID;
 
             var selectedUsers = Settings.Default.Watcher_EMSL_Users;
-            this.SelectedEMSLProposalUsers =
+            SelectedEMSLProposalUsers =
                 DMS_DataAccessor.Instance.FindSavedEMSLProposalUsers(EMSLProposalID, selectedUsers);
 
 			/*
@@ -307,34 +291,34 @@ namespace BuzzardWPF.Windows
 			 * due to the fact that they need to be valid options withing the
 			 * collections that act as their sources.
 			 */
-			this.SelectedCartName = CheckSetting(
+			SelectedCartName = CheckSetting(
 				Settings.Default.WatcherConfig_SelectedCartName,
-				this.CartNameListSource,
+				CartNameListSource,
 				"Cart");
 
-			this.SelectedDatasetType = CheckSetting(
+			SelectedDatasetType = CheckSetting(
 				Settings.Default.WatcherConfig_SelectedColumnData,
-				this.DatasetTypesSource,
+				DatasetTypesSource,
 				"Column Type");
 
-			this.SelectedInstrument = CheckSetting(
+			SelectedInstrument = CheckSetting(
 				Settings.Default.WatcherConfig_SelectedInstrument,
-				this.InstrumentsSource,
+				InstrumentsSource,
 				"Instrument");
 
-			this.SelectedOperator = CheckSetting(
+			SelectedOperator = CheckSetting(
 				Settings.Default.WatcherConfig_SelectedOperator,
-				this.OperatorsSource,
+				OperatorsSource,
 				"Operator");
 
-			this.SelectedSeparationType = CheckSetting(
+			SelectedSeparationType = CheckSetting(
 				Settings.Default.WatcherConfig_SelectedSeperationType,
-				this.SeparationTypeSource,
+				SeparationTypeSource,
 				"Separation Type");
 
-			this.LCColumn = CheckSetting(
+			LCColumn = CheckSetting(
 				Settings.Default.WatcherConfig_LCColumn,
-				this.LCColumnSource,
+				LCColumnSource,
 				"LC Column");
 		}
 
@@ -349,7 +333,7 @@ namespace BuzzardWPF.Windows
 		/// </remarks>
 		private string CheckSetting(string setting, ObservableCollection<string> options, string errorIntro)
 		{
-			string s = " was not found when restoring settings for the File Watcher Configuration.";
+			var s = " was not found when restoring settings for the File Watcher Configuration.";
 
 			if (string.IsNullOrWhiteSpace(setting))
 			{
@@ -373,12 +357,8 @@ namespace BuzzardWPF.Windows
 						s,
 						errorIntro));
 			}
-			else
-			{
-				// do nothing, the setting is valid.
-			}
 
-			return setting;
+		    return setting;
 		}
 
 		private void OnPropertyChanged(string propertyName)

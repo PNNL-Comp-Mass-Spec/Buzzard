@@ -2,7 +2,6 @@
 using System.Globalization;
 using System.Windows.Data;
 
-
 namespace BuzzardWPF.Converters
 {
 	/// <summary>
@@ -69,14 +68,13 @@ namespace BuzzardWPF.Converters
 		#region IValueConverter Members
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			bool? input = value as bool?;
+			var input = value as bool?;
 
 			if (input == null || !input.HasValue)
 				return NullContent;
-			else if (input.Value)
-				return TrueContent;
-			else
-				return FalseContent;
+		    if (input.Value)
+		        return TrueContent;
+		    return FalseContent;
 		}
 
 		/// <summary>

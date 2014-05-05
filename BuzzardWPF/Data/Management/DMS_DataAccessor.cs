@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-
+using LcmsNetDataClasses;
 using LcmsNetDataClasses.Data;
 using LcmsNetDataClasses.Logging;
 using LcmsNetDmsTools;
-using LcmsNetDataClasses;
-
 
 namespace BuzzardWPF.Data
 {
@@ -29,14 +25,14 @@ namespace BuzzardWPF.Data
 			LoadProposalUsers();
 
 
-			this.InstrumentData		= new ObservableCollection<string>();
-			this.OperatorData		= new ObservableCollection<string>();
-			this.DatasetTypes		= new ObservableCollection<string>();
-			this.SeparationTypes	= new ObservableCollection<string>();
+			InstrumentData		= new ObservableCollection<string>();
+			OperatorData		= new ObservableCollection<string>();
+			DatasetTypes		= new ObservableCollection<string>();
+			SeparationTypes	= new ObservableCollection<string>();
 
-			this.CartNames			= new ObservableCollection<string>();
-			this.ColumnData			= new ObservableCollection<string>();
-			this.Experiments		= new List<classExperimentData>();
+			CartNames			= new ObservableCollection<string>();
+			ColumnData			= new ObservableCollection<string>();
+			Experiments		= new List<classExperimentData>();
 		}
 
 		static DMS_DataAccessor()
@@ -56,7 +52,7 @@ namespace BuzzardWPF.Data
 				classApplicationLogger.LogError(0, "No instruments found.");
 
 			if (tempInstrumentData != null && tempInstrumentData.Count != 0)
-				this.InstrumentData = new ObservableCollection<string>(tempInstrumentData.Select(instDatum => { return instDatum.DMSName; }));
+				InstrumentData = new ObservableCollection<string>(tempInstrumentData.Select(instDatum => { return instDatum.DMSName; }));
 
 
 			//
@@ -66,7 +62,7 @@ namespace BuzzardWPF.Data
 			if (tempUserList == null)
 				classApplicationLogger.LogError(0, "User retrieval returned null.");
 			else
-				this.OperatorData = new ObservableCollection<string>(tempUserList.Select(userDatum => { return userDatum.UserName; }));
+				OperatorData = new ObservableCollection<string>(tempUserList.Select(userDatum => { return userDatum.UserName; }));
 
 
 			//
@@ -76,7 +72,7 @@ namespace BuzzardWPF.Data
 			if (tempDatasetTypesList == null)
 				classApplicationLogger.LogError(0, "Dataset Types retrieval returned null.");
 			else
-				this.DatasetTypes = new ObservableCollection<string>(tempDatasetTypesList);
+				DatasetTypes = new ObservableCollection<string>(tempDatasetTypesList);
 
 
 			//
@@ -86,7 +82,7 @@ namespace BuzzardWPF.Data
 			if (tempSeparationTypesList == null)
 				classApplicationLogger.LogError(0, "Separation types retrieval returned null.");
 			else
-				this.SeparationTypes = new ObservableCollection<string>(tempSeparationTypesList);
+				SeparationTypes = new ObservableCollection<string>(tempSeparationTypesList);
 
 
 			//
@@ -96,7 +92,7 @@ namespace BuzzardWPF.Data
 			if (tempCartsList == null)
 				classApplicationLogger.LogError(0, "Cart names list retrieval returned null.");
 			else
-				this.CartNames = new ObservableCollection<string>(tempCartsList);
+				CartNames = new ObservableCollection<string>(tempCartsList);
 
 
 			//
@@ -106,7 +102,7 @@ namespace BuzzardWPF.Data
 			if (tempColumnData == null)
 				classApplicationLogger.LogError(0, "Column data list retrieval returned null.");
 			else
-				this.ColumnData = new ObservableCollection<string>(tempColumnData);
+				ColumnData = new ObservableCollection<string>(tempColumnData);
 
 			//
 			// Load Experiments
@@ -115,7 +111,7 @@ namespace BuzzardWPF.Data
 			if (tempExperimentsList == null)
 				classApplicationLogger.LogError(0, "Experiment list retrieval returned null.");
 			else
-				this.Experiments = new List<classExperimentData>(tempExperimentsList);
+				Experiments = new List<classExperimentData>(tempExperimentsList);
 		}
 		#endregion
 
@@ -193,7 +189,7 @@ namespace BuzzardWPF.Data
 				}
 				else if (m_pidIndexedCrossReferenceList.ContainsKey(proposalID))
 				{
-					List<classUserIDPIDCrossReferenceEntry> crossReferenceList = m_pidIndexedCrossReferenceList[proposalID];
+					var crossReferenceList = m_pidIndexedCrossReferenceList[proposalID];
 
 					// This really shouldn't be possible because the PIDs are generated from the
 					// User lists, so if there are no Users list, then there's no PID generated.
@@ -213,9 +209,9 @@ namespace BuzzardWPF.Data
 					{
 						// The dictionary has already grouped the cross references by PID, so we just need
 						// to get the UIDs that are in that group.
-						IEnumerable<int> uIDs = from classUserIDPIDCrossReferenceEntry xRef in crossReferenceList
+						var uIDs = from classUserIDPIDCrossReferenceEntry xRef in crossReferenceList
 												select xRef.UserID;
-						HashSet<int> hashedUIDs = new HashSet<int>(uIDs);
+						var hashedUIDs = new HashSet<int>(uIDs);
 
 						// Get the users based on the given UIDs.
 						var selectedUsers = from classProposalUser user in m_proposalUsers
@@ -271,7 +267,7 @@ namespace BuzzardWPF.Data
 								where keys.Contains(u.UserID.ToString())
 								select u;
 
-			ObservableCollection<classProposalUser> result = 
+			var result = 
 				new ObservableCollection<classProposalUser>(selectedUsers);
 			return result;
 		}

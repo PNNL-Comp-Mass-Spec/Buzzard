@@ -1,25 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
 using BuzzardWPF.Data;
-
 using LcmsNetDataClasses.Data;
 using LcmsNetDataClasses.Logging;
-using Xceed.Wpf.Toolkit;
-
 
 namespace BuzzardWPF.Windows
 {
@@ -38,13 +24,13 @@ namespace BuzzardWPF.Windows
 		// Todo: It might be a good idea to see if we can get this from 
 		//		 the database, or something that isn't hard coded into
 		//		 the application.
-		private static readonly string[] EMSL_USAGE_TYPES = new string[]
+		private static readonly string[] EMSL_USAGE_TYPES =
 		{
-			"BROKEN",
-			"CAP_DEV",
-			"MAINTENANCE",
-			"USER",
-			"USER_UNKNOWN"
+		    "BROKEN",
+		    "CAP_DEV",
+		    "MAINTENANCE",
+		    "USER",
+		    "USER_UNKNOWN"
 		};
 
 		private static readonly ObservableCollection<string> EMSL_USAGE_TYPES_COLLECTION;
@@ -158,8 +144,8 @@ namespace BuzzardWPF.Windows
 			{
 				ProposalUsers = DMS_DataAccessor.Instance.GetProposalUsers(BoundContainer.EMSLProposalID);
 
-				this.PUserSelector.SelectedItems.Clear();
-				this.PUserSelector.Text = string.Empty;
+				PUserSelector.SelectedItems.Clear();
+				PUserSelector.Text = string.Empty;
 			}
 		}
 
@@ -194,7 +180,7 @@ namespace BuzzardWPF.Windows
 		/// </summary>
 		public void UpdateSelectedUsersText()
 		{
-			string userString = string.Empty;
+			var userString = string.Empty;
 			foreach (var user in BoundContainer.SelectedEMSLProposalUsers)
 			{
 				userString += user.UserName + PUserSelector.Delimiter;
@@ -220,7 +206,7 @@ namespace BuzzardWPF.Windows
 			if (value == null)
 				return false;
 
-			string s = value.ToString();
+			var s = value.ToString();
 
 			return s.Equals("USER", StringComparison.OrdinalIgnoreCase);
 		}

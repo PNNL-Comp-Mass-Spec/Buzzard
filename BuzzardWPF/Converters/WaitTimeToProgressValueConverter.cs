@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Data;
-
 using BuzzardWPF.Data;
-
 
 namespace BuzzardWPF.Converters
 {
@@ -20,7 +18,7 @@ namespace BuzzardWPF.Converters
 
 			try
 			{
-				DatasetStatus status = (DatasetStatus) values[1];
+				var status = (DatasetStatus) values[1];
 
 				if (status == DatasetStatus.TriggerFileSent)
 				{
@@ -28,14 +26,14 @@ namespace BuzzardWPF.Converters
 				}
 				else
 				{
-					DatasetSource setSource = (DatasetSource) values[2];
+					var setSource = (DatasetSource) values[2];
 					if (setSource == DatasetSource.Searcher)
 					{
 						returnValue = 0;
 					}
 					else
 					{
-						double value = (double) values[0];
+						var value = (double) values[0];
 						returnValue = value;
 					}
 				}

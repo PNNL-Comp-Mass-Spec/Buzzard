@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Data;
 using System.IO;
+using System.Windows.Data;
 
 namespace BuzzardWPF.Converters
 {
@@ -16,8 +13,8 @@ namespace BuzzardWPF.Converters
 
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            string data = "";
-            SearchOption option = (SearchOption)value;
+            var data = "";
+            var option = (SearchOption)value;
 
             switch (option)
             {
@@ -33,7 +30,7 @@ namespace BuzzardWPF.Converters
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            SearchOption option = SearchOption.AllDirectories;
+            var option = SearchOption.AllDirectories;
 
             if (value.ToString() == TOP_DIRECTORY)
                 option = SearchOption.TopDirectoryOnly;

@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-
 using BuzzardWPF.Windows;
-
 using LcmsNetDataClasses.Logging;
-
 
 namespace BuzzardWPF.Data
 {
@@ -19,16 +13,16 @@ namespace BuzzardWPF.Data
 
 		public void MoveData(ref bool informUser, ref bool skipOnConflict)
 		{
-			bool hasConflict = HasConflict();
+			var hasConflict = HasConflict();
 
 			if (hasConflict)
 			{
 				if (informUser)
 				{
-					DatasetOverwriteDialog dialog = new DatasetOverwriteDialog()
+					var dialog = new DatasetOverwriteDialog
 					{
-						FileToMovePath	= this.SourceDataPath,
-						FileInWayPath	= this.DestinationDataPath
+						FileToMovePath	= SourceDataPath,
+						FileInWayPath	= DestinationDataPath
 					};
 
 					dialog.ShowDialog();
@@ -53,8 +47,8 @@ namespace BuzzardWPF.Data
 							// Grab the create and last write datatimes because
 							// it looked like replace only overwrites the file's
 							// contents instead of actually replacing the file.
-							DateTime creationDate	= Dataset.RunStart;
-							DateTime modDate		= Dataset.RunFinish;
+							var creationDate	= Dataset.RunStart;
+							var modDate		= Dataset.RunFinish;
 
 							File.Replace(SourceDataPath, DestinationDataPath, null);
 							
@@ -166,8 +160,8 @@ namespace BuzzardWPF.Data
 
 		private bool HasConflict()
 		{
-			bool hasFile	= File.Exists(DestinationDataPath);
-			bool hasFolder	= Directory.Exists(DestinationDataPath);
+			var hasFile	= File.Exists(DestinationDataPath);
+			var hasFolder	= Directory.Exists(DestinationDataPath);
 
 			return (hasFile || hasFolder);
 		}

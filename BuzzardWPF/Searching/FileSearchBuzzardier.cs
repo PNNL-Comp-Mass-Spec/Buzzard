@@ -86,7 +86,7 @@ namespace BuzzardWPF.Searching
                 Stop();
             }
 
-            ParameterizedThreadStart start  = new ParameterizedThreadStart(Search);
+            var start  = new ParameterizedThreadStart(Search);
             m_thread                        = new Thread(start);
             m_keepSearching                 = true;
             m_thread.Start(config);
@@ -94,7 +94,7 @@ namespace BuzzardWPF.Searching
 
         private void Search(object objectConfig)
         {
-            SearchConfig config = objectConfig as SearchConfig;
+            var config = objectConfig as SearchConfig;
             if (config == null)
             {
                 m_keepSearching = false;
@@ -106,25 +106,25 @@ namespace BuzzardWPF.Searching
 			// on the next day to make sure the a
 			// file's DateTime is on or before the
 			// date specificed.
-			DateTime endDate = DateTime.MaxValue;
+			var endDate = DateTime.MaxValue;
 			if(config.EndDate != null)
 			{
 				endDate = config.EndDate.Value.AddDays(1).Date;
 			}
 
-            bool    shouldSearchBelow   = (config.Option == SearchOption.AllDirectories);
-            string  searchFilter        = string.Format("*{0}", config.FileExtension);
+            var    shouldSearchBelow   = (config.Option == SearchOption.AllDirectories);
+            var  searchFilter        = string.Format("*{0}", config.FileExtension);
 
             // Breadth first search across directories as to make it fast and responsive to a listening UI
-            Queue<string> m_paths = new Queue<string>();
+            var m_paths = new Queue<string>();
             m_paths.Enqueue(config.DirectoryPath);           
             while (m_paths.Count > 0 && m_keepSearching)
             {
-                string path         = m_paths.Dequeue();
-                string absolutePath = Path.GetFullPath(path);
+                var path         = m_paths.Dequeue();
+                var absolutePath = Path.GetFullPath(path);
 
-                List<string> files = new List<string>();
-				List<string> directories = new List<string>();
+                var files = new List<string>();
+				var directories = new List<string>();
                 try
                 {
                     files		= Directory.GetFiles(absolutePath, searchFilter, SearchOption.TopDirectoryOnly).ToList();
@@ -133,9 +133,9 @@ namespace BuzzardWPF.Searching
                     
 					if (shouldSearchBelow)
                     {
-                        string[] subDirectories = Directory.GetDirectories(absolutePath);
+                        var subDirectories = Directory.GetDirectories(absolutePath);
 
-                        foreach (string directory in subDirectories)
+                        foreach (var directory in subDirectories)
                         {
 							if (!directories.Contains(directory))
 								m_paths.Enqueue(directory);
@@ -150,11 +150,11 @@ namespace BuzzardWPF.Searching
                     continue;
                 }
 
-                foreach (string file in files)
+                foreach (var file in files)
                 {
                     if (DatasetFound != null)
                     {
-                        string fullFilePath = Path.GetFullPath(file);
+                        var fullFilePath = Path.GetFullPath(file);
 
 						// If we're filtering data based on a date range, then
 						// do so.

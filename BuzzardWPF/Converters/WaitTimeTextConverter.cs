@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows.Data;
-
 using BuzzardWPF.Data;
-
 
 namespace BuzzardWPF.Converters
 {
@@ -18,9 +13,9 @@ namespace BuzzardWPF.Converters
 
 			try
 			{
-				int				timeLeft	= (int)				values[0];	// seconds
-				DatasetStatus	status		= (DatasetStatus)	values[1];
-				DatasetSource	source		= (DatasetSource)	values[2];
+				var				timeLeft	= (int)				values[0];	// seconds
+				var	status		= (DatasetStatus)	values[1];
+				var	source		= (DatasetSource)	values[2];
 
 				if (status == DatasetStatus.TriggerFileSent)
 				{
@@ -32,9 +27,9 @@ namespace BuzzardWPF.Converters
 				}
 				else
 				{
-					int minutes = timeLeft / 60;
-					int seconds = timeLeft % 60;
-					int hours = minutes / 60;
+					var minutes = timeLeft / 60;
+					var seconds = timeLeft % 60;
+					var hours = minutes / 60;
 					
 					if (hours > 0)
 						minutes = minutes % 60;

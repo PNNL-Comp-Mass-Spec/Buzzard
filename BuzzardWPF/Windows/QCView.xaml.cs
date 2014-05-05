@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-
 using BuzzardWPF.Data;
 using BuzzardWPF.Properties;
-
 using LcmsNetDataClasses.Data;
-
 
 namespace BuzzardWPF.Windows
 {
@@ -29,11 +24,11 @@ namespace BuzzardWPF.Windows
 		public QCView()
 		{
 			InitializeComponent();
-			this.DataContext = this;
+			DataContext = this;
 
-			this.EMSL_UsageSelectors.BoundContainer = this;
+			EMSL_UsageSelectors.BoundContainer = this;
 
-			SelectedEMSLUsageType		= this.EMSL_UsageSelectors.UsageTypesSource[4];
+			SelectedEMSLUsageType		= EMSL_UsageSelectors.UsageTypesSource[4];
 			EMSLProposalID				= null;
 			ExperimentName				= null;
 			SelectedEMSLProposalUsers	= new ObservableCollection<classProposalUser>();
@@ -116,7 +111,7 @@ namespace BuzzardWPF.Windows
 					m_selectedEMSLProposalUsers = value;
 					OnPropertyChanged("SelectedEMSLProposalUsers");
 
-					this.EMSL_UsageSelectors.UpdateSelectedUsersText();
+					EMSL_UsageSelectors.UpdateSelectedUsersText();
 				}
 
 				DatasetManager.Manager.QC_SelectedProposalUsers = value;
@@ -133,12 +128,12 @@ namespace BuzzardWPF.Windows
 		/// </summary>
 		private void SelectExperiment_Click(object sender, RoutedEventArgs e)
 		{
-			ExperimentsDialog dialog = new ExperimentsDialog();
-			bool stop = dialog.ShowDialog() != true;
+			var dialog = new ExperimentsDialog();
+			var stop = dialog.ShowDialog() != true;
 			if (stop)
 				return;
 
-			this.ExperimentName = dialog.SelectedExperiment.Experiment;
+			ExperimentName = dialog.SelectedExperiment.Experiment;
 		}
 		#endregion
 
@@ -146,13 +141,13 @@ namespace BuzzardWPF.Windows
 		#region Methods
 		public void SaveSettings()
 		{
-			Settings.Default.QC_ExperimentName			= this.ExperimentName;
-			Settings.Default.QC_ProposalID				= this.EMSLProposalID;
-			Settings.Default.QC_SelectedUsageType		= this.SelectedEMSLUsageType;
-			Settings.Default.QC_CreateTriggerOnDMS_Fail = this.CreateOnDMSFail;
+			Settings.Default.QC_ExperimentName			= ExperimentName;
+			Settings.Default.QC_ProposalID				= EMSLProposalID;
+			Settings.Default.QC_SelectedUsageType		= SelectedEMSLUsageType;
+			Settings.Default.QC_CreateTriggerOnDMS_Fail = CreateOnDMSFail;
 
 			var selectedEMSLUsers = new StringCollection();
-			foreach (var user in this.SelectedEMSLProposalUsers)
+			foreach (var user in SelectedEMSLProposalUsers)
 				selectedEMSLUsers.Add(user.UserID.ToString());
 
 			Settings.Default.QC_EMSL_Users = selectedEMSLUsers;
@@ -160,13 +155,13 @@ namespace BuzzardWPF.Windows
 
 		public void LoadSettings()
 		{
-			this.ExperimentName			= Settings.Default.QC_ExperimentName;
-			this.EMSLProposalID			= Settings.Default.QC_ProposalID;
-			this.SelectedEMSLUsageType	= Settings.Default.QC_SelectedUsageType;
-			this.CreateOnDMSFail		= Settings.Default.QC_CreateTriggerOnDMS_Fail;
+			ExperimentName			= Settings.Default.QC_ExperimentName;
+			EMSLProposalID			= Settings.Default.QC_ProposalID;
+			SelectedEMSLUsageType	= Settings.Default.QC_SelectedUsageType;
+			CreateOnDMSFail		= Settings.Default.QC_CreateTriggerOnDMS_Fail;
 
 			var selectedUsers = Settings.Default.QC_EMSL_Users;
-			this.SelectedEMSLProposalUsers = 
+			SelectedEMSLProposalUsers = 
 				DMS_DataAccessor.Instance.FindSavedEMSLProposalUsers(EMSLProposalID, selectedUsers);
 		}
 

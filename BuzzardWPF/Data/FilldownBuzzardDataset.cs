@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-
-namespace BuzzardWPF.Data
+﻿namespace BuzzardWPF.Data
 {
     public class FilldownBuzzardDataset
 		: BuzzardDataset
@@ -28,20 +22,20 @@ namespace BuzzardWPF.Data
 		#region Initialize
 		public FilldownBuzzardDataset()
         {
-            this.ShouldUseCart              = true;
-            this.ShouldUseDatasetType       = true;
-            this.ShouldUseEMSLProposalID    = true;
-            this.ShouldUseEMSLUsageType     = true;
+            ShouldUseCart              = true;
+            ShouldUseDatasetType       = true;
+            ShouldUseEMSLProposalID    = true;
+            ShouldUseEMSLUsageType     = true;
 
-            this.ShouldUseInstrumentType    = true;
-            this.ShouldUseOperator          = true;
-            this.ShouldUseSeparationType    = true;
-			this.ShouldUseExperimentName	= true;
+            ShouldUseInstrumentType    = true;
+            ShouldUseOperator          = true;
+            ShouldUseSeparationType    = true;
+			ShouldUseExperimentName	= true;
 
-			this.ShouldUseLCColumn			= true;
-			this.ShouldUseInterestRating	= true;
-			this.ShouldUseEMSLProposalUsers = true;
-            this.ShouldUseComment           = true;
+			ShouldUseLCColumn			= true;
+			ShouldUseInterestRating	= true;
+			ShouldUseEMSLProposalUsers = true;
+            ShouldUseComment           = true;
         }
 		#endregion
 

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
+﻿using System.Collections.Generic;
 using LcmsNetDataClasses;
 
 namespace BuzzardWPF.Data
@@ -34,7 +30,7 @@ namespace BuzzardWPF.Data
         }
         private void RemoveNodes(classTrieNode node)
         {
-            foreach (classTrieNode edge in node.Edges.Values)
+            foreach (var edge in node.Edges.Values)
             {
                 RemoveNodes(edge);
             }
@@ -54,8 +50,8 @@ namespace BuzzardWPF.Data
             }
             else
             {
-                char key     = datasetName[0];
-                bool hasEdge = node.Edges.ContainsKey(key);
+                var key     = datasetName[0];
+                var hasEdge = node.Edges.ContainsKey(key);
 
                 if (hasEdge)
                 {
@@ -65,7 +61,7 @@ namespace BuzzardWPF.Data
                 }
                 else
                 {
-                    classTrieNode newNode = new classTrieNode();
+                    var newNode = new classTrieNode();
                     node.Edges.Add(key, newNode);
                     AddData(newNode, datasetName.Substring(1), data);
                 }
@@ -106,40 +102,28 @@ namespace BuzzardWPF.Data
                 {
                     return node.DmsData;
                 }
-                else
-                {
-                    throw new KeyNotFoundException("Could not resolve the dataset name.  The dataset is just not available in this trie.");
-                }                                
+                throw new KeyNotFoundException("Could not resolve the dataset name.  The dataset is just not available in this trie.");
             }
-            else
-            {
-                // This means we still have a string to search with...
+            // This means we still have a string to search with...
 
-                char key = datasetName[0];
-                if (node.Edges.Count < 1)
-                {
-                    // but now we are out of datasets to search now...this has to be the guy...                    
-                    // although it could still not be him...
-                    //TODO: Speak with Gary about this.                    
-                    return node.DmsData;
-                }
-                else
-                {
-                    // more datasets exist past this point...
-                    bool hasKey = node.Edges.ContainsKey(key);
-                    if (hasKey)
-                    {
-                        // This means that we have the edge we need
-                        // we need to keep following.
-                        return FindData(node.Edges[key], datasetName.Substring(1));
-                    }
-                    else
-                    {
-                        // this means that we have nodes...but we don't have the key...
-                        throw new KeyNotFoundException("Could not resolve the dataset name.  The dataset is just not available in this trie.");
-                    }
-                }
-            }            
+            var key = datasetName[0];
+            if (node.Edges.Count < 1)
+            {
+                // but now we are out of datasets to search now...this has to be the guy...                    
+                // although it could still not be him...
+                //TODO: Speak with Gary about this.                    
+                return node.DmsData;
+            }
+            // more datasets exist past this point...
+            var hasKey = node.Edges.ContainsKey(key);
+            if (hasKey)
+            {
+                // This means that we have the edge we need
+                // we need to keep following.
+                return FindData(node.Edges[key], datasetName.Substring(1));
+            }
+            // this means that we have nodes...but we don't have the key...
+            throw new KeyNotFoundException("Could not resolve the dataset name.  The dataset is just not available in this trie.");
         }
     }
 

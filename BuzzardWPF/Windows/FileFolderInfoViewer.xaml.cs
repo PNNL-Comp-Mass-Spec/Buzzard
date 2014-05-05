@@ -1,18 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace BuzzardWPF.Windows
 {
@@ -43,7 +32,7 @@ namespace BuzzardWPF.Windows
 		public FileFolderInfoViewer()
 		{
 			InitializeComponent();
-			this.DataContext = this;
+			DataContext = this;
 		}
 		#endregion
 
@@ -212,7 +201,7 @@ namespace BuzzardWPF.Windows
 
 			if (IsFile)
 			{
-				FileInfo info = new FileInfo(PathName);
+				var info = new FileInfo(PathName);
 
 				CreationDate		= info.CreationTime;
 				LastModifiedDate	= info.LastWriteTime;
@@ -222,7 +211,7 @@ namespace BuzzardWPF.Windows
 			}
 			else
 			{
-				DirectoryInfo info = new DirectoryInfo(PathName);
+				var info = new DirectoryInfo(PathName);
 				
 				CreationDate		= info.CreationTime;
 				LastModifiedDate	= info.LastWriteTime;

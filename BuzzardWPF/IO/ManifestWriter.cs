@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 
 namespace BuzzardWPF.IO
 {
@@ -24,8 +21,8 @@ namespace BuzzardWPF.IO
 				File.AppendAllText(manifestPath, Header);
 			}
 
-			string formatString = "{0}{1}{2}{1}{3}{1}{4}";
-			string newLine = string.Format(formatString, datasetName, "\t", DateTime.Now, startingPath, endingPath);
+			var formatString = "{0}{1}{2}{1}{3}{1}{4}";
+			var newLine = string.Format(formatString, datasetName, "\t", DateTime.Now, startingPath, endingPath);
 			File.AppendAllText(manifestPath, newLine);
 		}
 	}

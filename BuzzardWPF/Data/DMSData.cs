@@ -1,15 +1,6 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-
 using LcmsNetDataClasses;
-
 
 namespace BuzzardWPF.Data
 {
@@ -76,26 +67,26 @@ namespace BuzzardWPF.Data
 		public DMSData(classDMSData other)
 			: this()
 		{
-			this.Batch			= other.Batch;
-			this.Block			= other.Block;
-			this.CartName		= other.CartName;
-			this.Comment		= other.Comment;
+			Batch			= other.Batch;
+			Block			= other.Block;
+			CartName		= other.CartName;
+			Comment		= other.Comment;
 
-			this.DatasetName	= other.DatasetName;
-			this.DatasetType	= other.DatasetType;
-			this.Experiment		= other.Experiment;
-			this.MRMFileID		= other.MRMFileID;
+			DatasetName	= other.DatasetName;
+			DatasetType	= other.DatasetType;
+			Experiment		= other.Experiment;
+			MRMFileID		= other.MRMFileID;
 
-			this.EMSLProposalID = other.ProposalID;
-			this.RequestID		= other.RequestID;
-			this.RequestName	= other.RequestName;
-			this.RunOrder		= other.RunOrder;
+			EMSLProposalID = other.ProposalID;
+			RequestID		= other.RequestID;
+			RequestName	= other.RequestName;
+			RunOrder		= other.RunOrder;
 
-			this.SelectedToRun	= other.SelectedToRun;
-			this.EMSLUsageType	= other.UsageType;
-			this.UserList		= other.UserList;
+			SelectedToRun	= other.SelectedToRun;
+			EMSLUsageType	= other.UsageType;
+			UserList		= other.UserList;
 
-			this.LockData		= true;
+			LockData		= true;
 		}
 
 		public DMSData(classDMSData other, string filePath)
@@ -104,12 +95,12 @@ namespace BuzzardWPF.Data
 			if (string.IsNullOrWhiteSpace(filePath))
 				return;
 
-			string fileName = Path.GetFileNameWithoutExtension(filePath);
+			var fileName = Path.GetFileNameWithoutExtension(filePath);
 			if (!string.IsNullOrWhiteSpace(fileName))
 			{
-				this.LockData	= false;
+				LockData	= false;
 				DatasetName		= fileName;
-				this.LockData	= true;
+				LockData	= true;
 			}
 		}
 		#endregion

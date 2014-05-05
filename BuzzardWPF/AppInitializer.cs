@@ -1,23 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Diagnostics;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Security.Principal;
-using System.Text;
-using System.Threading;
 using System.Windows.Forms;
-
 using BuzzardWPF.Data;
-
 using LcmsNetDataClasses;
-using LcmsNetDataClasses.Configuration;
 using LcmsNetDataClasses.Logging;
 using LcmsNetDmsTools;
-
 
 namespace BuzzardWPF
 {
@@ -45,22 +33,21 @@ namespace BuzzardWPF
         /// <returns>An object that holds the application settings.</returns>
         static void LoadSettings()
         {
-            SettingsPropertyCollection propColl = Properties.Settings.Default.Properties;
+            var propColl = Properties.Settings.Default.Properties;
             foreach (SettingsProperty currProperty in propColl)
             {
-                string propertyName = currProperty.Name;
-				string propertyValue = string.Empty;
+                var propertyName = currProperty.Name;
+				var propertyValue = string.Empty;
 				if(Properties.Settings.Default[propertyName] != null)
 					propertyValue = Properties.Settings.Default[propertyName].ToString();
                 classLCMSSettings.SetParameter(propertyName, propertyValue);
             }
 
             // Add path to executable as a saved setting
-            FileInfo fi = new FileInfo(Application.ExecutablePath);
+            var fi = new FileInfo(Application.ExecutablePath);
             classLCMSSettings.SetParameter("ApplicationPath", fi.DirectoryName);
             
      //       mform_splashScreen.SetEmulatedLabelVisibility(classLCMSSettings.GetParameter("InstName"), false);            
-            return;
         }
         #endregion
 
@@ -70,7 +57,7 @@ namespace BuzzardWPF
         /// </summary>
         public static void LogVersionNumbers()
         {
-            string information = SystemInformationReporter.BuildApplicationInformation();
+            var information = SystemInformationReporter.BuildApplicationInformation();
             classApplicationLogger.LogMessage(0, information);
         }
         /// <summary>
@@ -78,7 +65,7 @@ namespace BuzzardWPF
         /// </summary>
         public static void LogMachineInformation()
         {
-            string systemInformation = SystemInformationReporter.BuildSystemInformation();
+            var systemInformation = SystemInformationReporter.BuildSystemInformation();
             classApplicationLogger.LogMessage(0, systemInformation);
         }
         /// <summary>
@@ -88,9 +75,9 @@ namespace BuzzardWPF
         static void CreatePath(string localPath)
         {
 
-            string appPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData);
+            var appPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData);
 
-            string path    = Path.Combine(appPath, "lcms", localPath);
+            var path    = Path.Combine(appPath, "lcms", localPath);
             /// 
             /// See if the logging directory exists
             /// 
@@ -105,7 +92,7 @@ namespace BuzzardWPF
                     /// 
                     /// Not much we can do here...
                     /// 
-                    string errorMessage = string.Format("Buzzard could not create missing folder {0} required for operation.  Please run application with higher priveleges.  {1}",
+                    var errorMessage = string.Format("Buzzard could not create missing folder {0} required for operation.  Please run application with higher priveleges.  {1}",
                                                                   localPath, ex.Message);
                     MessageBox.Show(errorMessage);
                     Application.Exit();
@@ -119,7 +106,7 @@ namespace BuzzardWPF
         /// </summary>
         public static bool InitializeApplication()
         {
-			bool openMainWindow = false;
+			var openMainWindow = false;
 
             CreatePath("BuzzardLog");
 
@@ -127,8 +114,8 @@ namespace BuzzardWPF
             //Application.SetCompatibleTextRenderingDefault(false);
 
             // Before we do anything, let's initialize the file logging capability.
-            classApplicationLogger.Error   += new classApplicationLogger.DelegateErrorHandler(classFileLogging.LogError);
-            classApplicationLogger.Message += new classApplicationLogger.DelegateMessageHandler(classFileLogging.LogMessage);
+            classApplicationLogger.Error   += classFileLogging.LogError;
+            classApplicationLogger.Message += classFileLogging.LogMessage;
 			
             LogVersionNumbers();
             LogMachineInformation();
@@ -140,8 +127,8 @@ namespace BuzzardWPF
 
             LoadSettings();
 
-			string instName = classLCMSSettings.GetParameter("InstName");
-			(App.Current as App).DynamicSplashScreen.InstrumentName = instName;
+			var instName = classLCMSSettings.GetParameter("InstName");
+			(System.Windows.Application.Current as App).DynamicSplashScreen.InstrumentName = instName;
 
             // Set the logging levels
             if (classLCMSSettings.GetParameter("LoggingErrorLevel") != null)
@@ -176,7 +163,7 @@ namespace BuzzardWPF
 
             try
             {
-				DatasetManager.Manager.LoadDMSCache();
+				DatasetManager.Manager.LoadDmsCache();
 
 				// This is where we used to open the main window, but this process is 
 				// now running in a background thread where creating a DependencyObject

@@ -8,17 +8,11 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Media;
 using System.Windows.Threading;
-
 using BuzzardWPF.Data;
-
-using LcmsNetDataClasses;
+using BuzzardWPF.IO;
 using LcmsNetDataClasses.Data;
 using LcmsNetDataClasses.Logging;
-
-using Forms = System.Windows.Forms;
-
 
 namespace BuzzardWPF.Windows
 {
@@ -70,7 +64,7 @@ namespace BuzzardWPF.Windows
 			m_moveDestinationDir	= null;
 
             
-			DMS_DataAccessor.Instance.PropertyChanged += new PropertyChangedEventHandler(DMSDataManager_PropertyChanged);
+			DMS_DataAccessor.Instance.PropertyChanged += DMSDataManager_PropertyChanged;
         }
 
         public void SaveSettings()
@@ -232,7 +226,7 @@ namespace BuzzardWPF.Windows
 						//
 						// Check for redundent request names.
 						//
-						bool isRedundantRequest = false;
+						var isRedundantRequest = false;
 
 						// Loop through every Dataset we've already got, and if its request name
 						// matches the new Dataset's request name, then mark it as a redundant
@@ -299,9 +293,9 @@ namespace BuzzardWPF.Windows
 			if (Datasets == null)
 				return;
 
-			List<BuzzardDataset> selectedDatasets = GetSelectedDatasets();
+			var selectedDatasets = GetSelectedDatasets();
 
-			foreach (BuzzardDataset dataset in selectedDatasets)
+			foreach (var dataset in selectedDatasets)
 			{
 				Datasets.Remove(dataset);
 			}
@@ -316,7 +310,7 @@ namespace BuzzardWPF.Windows
 			//
 			// Get location in which to move them.
 			//
-			Forms.FolderBrowserDialog dialogWindow = new Forms.FolderBrowserDialog()
+			var dialogWindow = new System.Windows.Forms.FolderBrowserDialog
 			{
 				ShowNewFolderButton = true,
 				Description = "Move data to:",
@@ -326,17 +320,17 @@ namespace BuzzardWPF.Windows
 			if (!string.IsNullOrWhiteSpace(m_moveDestinationDir))
 				dialogWindow.SelectedPath = m_moveDestinationDir;
 
-			Forms.DialogResult dialogResult = dialogWindow.ShowDialog();
+			var dialogResult = dialogWindow.ShowDialog();
 
 			// Check if the User does not want to continue.
 			switch (dialogResult)
 			{
-			case Forms.DialogResult.Abort:
-			case Forms.DialogResult.Cancel:
-			case Forms.DialogResult.Ignore:
-			case Forms.DialogResult.No:
-			case Forms.DialogResult.None:
-			case Forms.DialogResult.Retry:
+			case System.Windows.Forms.DialogResult.Abort:
+			case System.Windows.Forms.DialogResult.Cancel:
+			case System.Windows.Forms.DialogResult.Ignore:
+			case System.Windows.Forms.DialogResult.No:
+			case System.Windows.Forms.DialogResult.None:
+			case System.Windows.Forms.DialogResult.Retry:
 				return;
 
 			default:
@@ -374,7 +368,7 @@ namespace BuzzardWPF.Windows
 			//
 			// Get list of selected datasets
 			//
-			List<BuzzardDataset> selectedDatasets = GetSelectedDatasets();
+			var selectedDatasets = GetSelectedDatasets();
 
 			// If there's nothing to move, then
 			// don't bother with the rest.
@@ -390,7 +384,7 @@ namespace BuzzardWPF.Windows
 			//
 			// Remove datasets that are already at that location
 			//
-			for (int i = selectedDatasets.Count - 1; i >= 0; i--)
+			for (var i = selectedDatasets.Count - 1; i >= 0; i--)
 			{
 				// Check that the dataset has a path to get data from.
 				if (string.IsNullOrWhiteSpace(selectedDatasets[i].FilePath))
@@ -403,7 +397,7 @@ namespace BuzzardWPF.Windows
 					continue;
 				}
 
-				string datasetDir = Path.GetDirectoryName(selectedDatasets[i].FilePath);
+				var datasetDir = Path.GetDirectoryName(selectedDatasets[i].FilePath);
 
 				// If the location we're moving the files over to is the same location they 
 				// are currently in, then we don't need to move them.
@@ -433,10 +427,10 @@ namespace BuzzardWPF.Windows
 			//
 			// Create list of move requests.
 			//
-			List<MoveDataRequest> moveRequests = new List<MoveDataRequest>(selectedDatasets.Count);
+			var moveRequests = new List<MoveDataRequest>(selectedDatasets.Count);
 			foreach (var dataset in selectedDatasets)
 			{
-				MoveDataRequest moveRequest = new MoveDataRequest();
+				var moveRequest = new MoveDataRequest();
 				moveRequest.Dataset = dataset;
 				moveRequest.SourceDataPath = dataset.FilePath;
 				moveRequest.DestinationDataPath = Path.Combine(m_moveDestinationDir, Path.GetFileName(dataset.FilePath));
@@ -473,7 +467,7 @@ namespace BuzzardWPF.Windows
 			//
 			// Move data
 			//
-			MoveDataRequest moveRequest = moveRequests[startingIndex];
+			var moveRequest = moveRequests[startingIndex];
 			moveRequest.MoveData(ref informUserOnConflict, ref skipOnConflicts);
 
 
@@ -520,7 +514,7 @@ namespace BuzzardWPF.Windows
 			/// Get the data sets we will be applying the changes
 			/// to.
 			/// 
-			List<BuzzardDataset> selectedItems = GetSelectedDatasets();
+			var selectedItems = GetSelectedDatasets();
 
 			// If nothing was selected, inform the user and get out
 			if (selectedItems == null || selectedItems.Count == 0)
@@ -535,8 +529,8 @@ namespace BuzzardWPF.Windows
 			/// data source for what we'll be applying the
 			/// the selected datasets.
 			/// 
-			ExperimentsDialog dialog = new ExperimentsDialog();
-			bool keepGoing = dialog.ShowDialog() == true;
+			var dialog = new ExperimentsDialog();
+			var keepGoing = dialog.ShowDialog() == true;
 
 			// If the user say's they want out, then get out
 			if (!keepGoing)
@@ -544,7 +538,7 @@ namespace BuzzardWPF.Windows
 				return;
 			}
 
-			classExperimentData experiment = dialog.SelectedExperiment;
+			var experiment = dialog.SelectedExperiment;
 
 			// Make sure the user did selected a data source
 			if (experiment == null)
@@ -556,7 +550,7 @@ namespace BuzzardWPF.Windows
 			///
 			/// Apply the experiment data to the datasets
 			/// 
-			foreach (BuzzardDataset dataset in selectedItems)
+			foreach (var dataset in selectedItems)
 			{
 				dataset.ExperimentName = experiment.Experiment;
 			}
@@ -573,7 +567,7 @@ namespace BuzzardWPF.Windows
 			///
 			/// Get a list of which which Datasets are currently selected
 			/// 
-			List<BuzzardDataset> selectedDatasets = GetSelectedDatasets();
+			var selectedDatasets = GetSelectedDatasets();
 
 
 			///
@@ -583,20 +577,20 @@ namespace BuzzardWPF.Windows
 			
 			m_filldownWindow.Dataset				= m_fillDownDataset;
 
-			m_filldownWindow.OperatorsSource		= this.OperatorsSource;
-			m_filldownWindow.InstrumentSource		= this.InstrumentsSource;
-			m_filldownWindow.DatasetTypesSource		= this.DatasetTypesSource;
-			m_filldownWindow.SeparationTypeSource	= this.SeparationTypeSource;
-			m_filldownWindow.CartNameListSource		= this.CartNameListSource;
-			m_filldownWindow.EmslUsageTypeSource	= this.EmslUsageTypesSource;
-			m_filldownWindow.LCColumnSource			= this.LCColumnSource;
+			m_filldownWindow.OperatorsSource		= OperatorsSource;
+			m_filldownWindow.InstrumentSource		= InstrumentsSource;
+			m_filldownWindow.DatasetTypesSource		= DatasetTypesSource;
+			m_filldownWindow.SeparationTypeSource	= SeparationTypeSource;
+			m_filldownWindow.CartNameListSource		= CartNameListSource;
+			m_filldownWindow.EmslUsageTypeSource	= EmslUsageTypesSource;
+			m_filldownWindow.LCColumnSource			= LCColumnSource;
 
 
 	
 			///
 			/// Get user input from the Filldown Window
 			/// 
-            bool stopDoingThis = m_filldownWindow.ShowDialog() != true;
+            var stopDoingThis = m_filldownWindow.ShowDialog() != true;
 
 			if (stopDoingThis)
 				return;
@@ -606,9 +600,9 @@ namespace BuzzardWPF.Windows
 			/// Any changes that were selected in the Filldown
 			/// Window are passed on to the selected Datasets.
 			/// 
-			FilldownBuzzardDataset filldownData = m_filldownWindow.Dataset;
+			var filldownData = m_filldownWindow.Dataset;
 
-			foreach (BuzzardDataset dataset in selectedDatasets)
+			foreach (var dataset in selectedDatasets)
 			{
 				if (filldownData.ShouldUseCart)
 					dataset.DMSData.CartName = filldownData.DMSData.CartName;
@@ -663,26 +657,25 @@ namespace BuzzardWPF.Windows
 		/// </summary>
 		private void CreateTriggers_Click(object sender, RoutedEventArgs e)
 		{
-			///
-			/// Find Datasets that the user has selected for
-			/// Trigger file creation.
-			/// 
-			List<BuzzardDataset> selectedItems = GetSelectedDatasets();
+			//
+			// Find Datasets that the user has selected for
+			// Trigger file creation.
+			// 
+			var selectedItems = GetSelectedDatasets();
 
-			///
-			/// From the list of selected Datasets, find
-			/// the Datasets that didn't get their DMSData
-			/// from DMS. Then try to resolve it.
-			/// 
-			var needsDMSResolved = from BuzzardDataset dataset in selectedItems
+			//
+			// From the list of selected Datasets, find
+			// the Datasets that didn't get their DMSData
+			// from DMS. Then try to resolve it.
+			// 
+			var needsDmsResolved = from BuzzardDataset dataset in selectedItems
 								   where !dataset.DMSData.LockData
 								   select dataset;
 
-			DatasetManager.Manager.ResolveDMS(needsDMSResolved);
-
-			foreach (BuzzardDataset dataset in selectedItems)
+			DatasetManager.Manager.ResolveDms(needsDmsResolved);
+			foreach (var dataset in selectedItems)
 			{
-				DatasetManager.CreateTriggerFile(dataset, DatasetManager.Manager.TriggerFileLocation);
+				DatasetManager.CreateTriggerFileBuzzard(dataset, true);
 			}
 
 			classApplicationLogger.LogMessage(
@@ -693,9 +686,9 @@ namespace BuzzardWPF.Windows
 
 		private List<BuzzardDataset> GetSelectedDatasets()
 		{
-			List<BuzzardDataset> selectedDatasets = new List<BuzzardDataset>(m_dataGrid.SelectedItems.Count);
+			var selectedDatasets = new List<BuzzardDataset>(m_dataGrid.SelectedItems.Count);
 
-			foreach (object item in m_dataGrid.SelectedItems)
+			foreach (var item in m_dataGrid.SelectedItems)
 				if (item is BuzzardDataset)
 					selectedDatasets.Add(item as BuzzardDataset);
 

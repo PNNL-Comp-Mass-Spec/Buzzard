@@ -1,24 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-
 using BuzzardWPF.Data;
-
 using LcmsNetDataClasses.Data;
 using LcmsNetDataClasses.Logging;
-using BuzzardWPF.LcmsNetTemp;
-
 
 namespace BuzzardWPF.Windows
 {
@@ -263,8 +249,8 @@ namespace BuzzardWPF.Windows
 			{
 				EMSLProposalUsersSource = DMS_DataAccessor.Instance.GetProposalUsers(DatasetDMS.EMSLProposalID);
 
-				this.PUserSelector.Text = string.Empty;
-				this.PUserSelector.SelectedItems.Clear();
+				PUserSelector.Text = string.Empty;
+				PUserSelector.SelectedItems.Clear();
 			}
 		}
 
@@ -285,14 +271,14 @@ namespace BuzzardWPF.Windows
 
 		private void PickExperiment_Click(object sender, RoutedEventArgs e)
 		{
-			ExperimentsDialog dialog = new ExperimentsDialog();
+			var dialog = new ExperimentsDialog();
 
-			bool stop = dialog.ShowDialog() != true;
+			var stop = dialog.ShowDialog() != true;
 			if (stop)
 				return;
 
 			var selectedExperiment = dialog.SelectedExperiment;
-			this.Dataset.ExperimentName = selectedExperiment.Experiment;
+			Dataset.ExperimentName = selectedExperiment.Experiment;
 		}
 		
 		private void ProposalIDSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -314,7 +300,7 @@ namespace BuzzardWPF.Windows
 
 			EMSLProposalUsersSource = DMS_DataAccessor.Instance.GetProposalUsers(DatasetDMS.EMSLProposalID);
 
-			string selectedText = string.Empty;
+			var selectedText = string.Empty;
 			foreach (var user in Dataset.EMSLProposalUsers)
 				selectedText += user.UserName + "; ";
 			PUserSelector.Text = selectedText;
