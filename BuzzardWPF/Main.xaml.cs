@@ -11,7 +11,9 @@ using System.Windows.Threading;
 using BuzzardWPF.Data;
 using BuzzardWPF.Properties;
 using BuzzardWPF.Searching;
+using BuzzardWPF.Windows;
 using LcmsNetDataClasses.Logging;
+using LcmsNetDmsTools;
 
 namespace BuzzardWPF
 {
@@ -29,14 +31,20 @@ namespace BuzzardWPF
         #region Attributes
 
         private object                  m_cacheLoadingSync;
-		private DispatcherTimer         m_timer;
+        /// <summary>
+        /// This helps alert the user the system is in monitoring mode.
+        /// </summary>
+        private DispatcherTimer         m_animationTimer;
         private int                     m_counter;
         private Collection<BitmapImage> m_images;
+        private Collection<BitmapImage> m_imagesEaster;
+        private Collection<BitmapImage> m_animationImages;
         private IBuzzadier              m_buzzadier;
 		private string					m_lastStatusMessage;
 
 		private bool					m_firstTimeLoading;
 		private DispatcherTimer			m_dmsCheckTimer;
+        
 		#endregion
 
 
@@ -44,11 +52,16 @@ namespace BuzzardWPF
 		public Main()
         {
             InitializeComponent();
+
+
 			DataContext         = this;
             m_cacheLoadingSync  = new object();
             var assembly        = System.Reflection.Assembly.GetExecutingAssembly();
             var version         = assembly.GetName().Version.ToString();
             Title               = "Buzzard - v." + version;
+
+            StateSingleton.WatchingStateChanged += StateSingleton_WatchingStateChanged;
+            StateSingleton.StateChanged += StateSingleton_StateChanged;
 
 			// This gives the dataset manager a way to talk to the main window 
 			// in case it needs to. One example is adding items to the dataset 
@@ -60,6 +73,7 @@ namespace BuzzardWPF
 			// parts of the main window if they are ever needed in the future.
 			// -FCT
 			DatasetManager.Manager.MainWindow = this;
+            DatasetManager.Manager.DatasetsLoaded += Manager_DatasetsLoaded;            
 
 			m_firstTimeLoading = true;
 			Closed += Main_Closed;
@@ -82,11 +96,11 @@ namespace BuzzardWPF
 
 			m_dataGrid.Datasets = DatasetManager.Manager.Datasets;
 
-            m_timer           = new DispatcherTimer
+            m_animationTimer = new DispatcherTimer
             {
                 Interval = new TimeSpan(0, 0, 1)
             };
-		    m_timer.Tick += m_timer_Tick;
+            m_animationTimer.Tick += m_timer_Tick;
 
 			m_dmsCheckTimer				= new DispatcherTimer(DispatcherPriority.Normal, Dispatcher)
 			{
@@ -95,15 +109,46 @@ namespace BuzzardWPF
 		    m_dmsCheckTimer.Tick		+= DMSCheckTimer_Tick;
 			m_dmsCheckTimer.IsEnabled	= true;
 
+
             m_searchWindow.SearchStart += m_searchWindow_SearchStart;
             RegisterSearcher(new FileSearchBuzzardier());
 
             LoadImages();
-
-
-
-
+            LastUpdated = DatasetManager.Manager.LastUpdated;
 			classApplicationLogger.LogMessage(0, "Ready");
+        }
+
+        void Manager_DatasetsLoaded(object sender, EventArgs e)
+        {
+            LastUpdated = DatasetManager.Manager.LastUpdated;
+        }
+
+        void StateSingleton_StateChanged(object sender, EventArgs e)
+        {
+            m_animationImages = m_imagesEaster;
+        }
+
+        public string LastUpdated
+        {
+            get
+            {
+                return m_lastUpdated;
+            }
+            set
+            {
+                m_lastUpdated = value;
+                OnPropertyChanged("LastUpdated");
+            }
+        }
+
+        void StateSingleton_WatchingStateChanged(object sender, EventArgs e)
+        {
+            m_animationTimer.IsEnabled = StateSingleton.IsMonitoring;
+            if (!StateSingleton.IsMonitoring)
+            {
+                CurrentImage = m_animationImages[0];                
+            }
+            OnPropertyChanged("IsNotMonitoring");
         }
 
 		/// <summary>
@@ -112,6 +157,7 @@ namespace BuzzardWPF
 		private void LoadImages()
 		{
 			m_images = new Collection<BitmapImage>();
+            m_imagesEaster = new Collection<BitmapImage>();
 
 			var bitmaps = new Collection<Bitmap>
 			{
@@ -121,6 +167,17 @@ namespace BuzzardWPF
                     Properties.Resources.buzzards3,
                     Properties.Resources.buzzards4,
                     Properties.Resources.buzzards5,
+                    };
+
+
+            var bitmapsEaster = new Collection<Bitmap>
+			{
+                    Properties.Resources.buzzardsz,
+                    Properties.Resources.buzzardsz1,
+                    Properties.Resources.buzzardsz2,
+                    Properties.Resources.buzzardsz3,
+                    Properties.Resources.buzzardsz4,
+                    Properties.Resources.buzzardsz5                    
                     };
 
 			foreach (var bitmap in bitmaps)
@@ -135,7 +192,20 @@ namespace BuzzardWPF
 				m_images.Add(bi);
 			}
 
-			CurrentImage = m_images[0];
+            foreach (var bitmap in bitmapsEaster)
+            {
+                var ms = new MemoryStream();
+                bitmap.Save(ms, ImageFormat.Png);
+                ms.Position = 0;
+                var bi = new BitmapImage();
+                bi.BeginInit();
+                bi.StreamSource = ms;
+                bi.EndInit();
+                m_imagesEaster.Add(bi);
+            }
+
+		    m_animationImages = m_images;
+            CurrentImage = m_animationImages[0];
 		}
 		#endregion
 
@@ -313,9 +383,17 @@ namespace BuzzardWPF
         {
 			// Increment the counter and wrap it around if neccessary
             m_counter++;
-			m_counter %= m_images.Count;
+            var n = m_animationImages.Count;
 
-			CurrentImage = m_images[m_counter];
+            // Dont display the turd if the user has that setting turned off.
+		    if (!Properties.Settings.Default.TurdAlert)
+		    {
+		        n--;
+		    }
+
+		    m_counter %= n;
+
+            CurrentImage = m_animationImages[m_counter];
         }
 
 		/// <summary>
@@ -372,7 +450,7 @@ namespace BuzzardWPF
 		/// <param name="e"></param>
 		public void TurnAnimationOnOrOff_Click(object sender, RoutedEventArgs e)
 		{
-			m_timer.IsEnabled = !m_timer.IsEnabled;
+            m_animationTimer.IsEnabled = !m_animationTimer.IsEnabled;
 		}
         #endregion        
 
@@ -384,6 +462,7 @@ namespace BuzzardWPF
 
 
         private string m_triggerFileLocation;
+        private string m_lastUpdated;
         public string TriggerFileLocation
         {
             get { return m_triggerFileLocation; }
@@ -447,6 +526,14 @@ namespace BuzzardWPF
                 }
                 DatasetManager.Manager.LoadDmsCache();
             }
+        }
+
+        /// <summary>
+        /// Gets or sets whether the system is monitoring or not.
+        /// </summary>
+        public bool IsNotMonitoring
+        {
+            get { return !StateSingleton.IsMonitoring; }            
         }
 	}
 }

@@ -133,7 +133,7 @@ namespace BuzzardWPF.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool TurdAlert {
             get {
                 return ((bool)(this["TurdAlert"]));
@@ -653,6 +653,18 @@ namespace BuzzardWPF.Properties {
             }
             set {
                 this["Watcher_FileSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string WatcherConfig_UserComment {
+            get {
+                return ((string)(this["WatcherConfig_UserComment"]));
+            }
+            set {
+                this["WatcherConfig_UserComment"] = value;
             }
         }
     }

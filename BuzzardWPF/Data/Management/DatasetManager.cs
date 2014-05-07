@@ -180,12 +180,18 @@ namespace BuzzardWPF.Data
 
             // Use an interlocked atomic operation for this flag.
             m_datasetsReady = true;
-            
 
+            LastUpdated = string.Format("Cache Last Updated: {0}", DateTime.Now);
             if (DatasetsLoaded != null)
             {
                 DatasetsLoaded(this, null);
             }
+        }
+
+        public string LastUpdated
+        {
+            get; 
+            set;
         }
         #endregion
 
@@ -739,6 +745,7 @@ namespace BuzzardWPF.Data
 			else
 			{
 				dataset = DatasetFactory.LoadDataset(path);
+			    dataset.Comment = Manager.UserComments;
 			}
 
 
@@ -852,5 +859,7 @@ namespace BuzzardWPF.Data
         {
             get { return m_datasetsReady == false; }
         }
+
+        public string UserComments { get; set; }
     }
 }

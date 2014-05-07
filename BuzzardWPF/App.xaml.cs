@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using BuzzardWPF.Windows;
 using LcmsNetDataClasses.Logging;
+using LcmsNetDmsTools;
 
 namespace BuzzardWPF
 {
@@ -12,7 +13,9 @@ namespace BuzzardWPF
 		public DynamicSplash DynamicSplashScreen { get; set; }
 
 		private void Application_Startup(object sender, StartupEventArgs e)
-		{                        
+		{
+
+
                 DynamicSplashScreen         = new DynamicSplash();
                 DynamicSplashScreen.Title   = "Buzzard";
                 DynamicSplashScreen.ShowInTaskbar = false;

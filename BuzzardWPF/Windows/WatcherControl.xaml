@@ -61,6 +61,7 @@
 		
 		<Label Grid.Row="0" Grid.Column="0"
 				   Margin="1,1,2,2"
+                  IsEnabled="{Binding Path=IsNotMonitoring}"
                    HorizontalAlignment="Left" 
 			       VerticalAlignment="Center" 
 			       VerticalContentAlignment="Center"
@@ -74,6 +75,7 @@
 								 Text="{Binding Path=DirectoryToWatch, Mode=TwoWay,
                                             RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, UpdateSourceTrigger=PropertyChanged}"
 								 Grid.Row="0" 
+                                 IsEnabled="{Binding Path=IsNotMonitoring}"
                                  Grid.Column="1"
 								 Grid.ColumnSpan="4"
 								 Margin="5"
@@ -81,17 +83,18 @@
                                  VerticalContentAlignment="Center"
 							     VerticalAlignment="Center"							     
 							     MinHeight="32"							
-								 IsEnabled="{Binding Path=IsWatching, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvertBoolConverter}}"
 								 Populating="AutoFillDirectorySelector_Populating"/>
         <Button Grid.Row="0" 
                 Grid.Column="5"
 				x:Name="m_dialogButton"
 				Content="..."                            
                 Height="32"
+                  IsEnabled="{Binding Path=IsNotMonitoring}"
 		        Style="{StaticResource SimpleButtonStyle}"
 				Click="SelectDirectory_Click" />
         <Label Content="...that end with"                 
-			   Name="m_extensionLabel"             
+			   Name="m_extensionLabel"        
+                  IsEnabled="{Binding Path=IsNotMonitoring}"     
 			   Grid.Row="2"
 			   Grid.RowSpan="1"
 			   Grid.Column="0"
@@ -101,7 +104,8 @@
 			   FontSize="16" />
         <Label 
             Name="m_searchOptionLabel" 
-            Content="...and check..."             
+            Content="...and check..."         
+                  IsEnabled="{Binding Path=IsNotMonitoring}"    
             Grid.Row="1"
             Grid.Column="0"            
             FontSize="16" 
@@ -112,6 +116,7 @@
 				 Grid.RowSpan="1"
 				 Grid.ColumnSpan="2" 
                 Margin="5"
+                  IsEnabled="{Binding Path=IsNotMonitoring}"    
 				 VerticalAlignment="Center"
 				 VerticalContentAlignment="Center"
 				 MinHeight="32"
@@ -120,6 +125,7 @@
                                             RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, UpdateSourceTrigger=PropertyChanged}"/>
         <ComboBox Grid.Row="1" Grid.Column="1"
 				  Grid.ColumnSpan="2"
+                  IsEnabled="{Binding Path=IsNotMonitoring}"
 				  x:Name="m_dropDown"
 				  SelectedItem="{Binding Path=WatchDepth, Mode=TwoWay,
                                             RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, UpdateSourceTrigger=PropertyChanged}"
@@ -149,8 +155,11 @@
         </Button>
 
 
-        <TextBlock Grid.Row="3" Grid.Column="0"
-				                Text="Minimum File Size (Kb)"/>
+        <Label Grid.Row="3" Grid.Column="0"
+               FontSize="16"
+               VerticalAlignment="Center"
+                  IsEnabled="{Binding Path=IsNotMonitoring}"
+				                Content="Minimum File Size (Kb)"/>
 
         <xctk:IntegerUpDown Grid.Row="3" 
                             Grid.Column="1"
@@ -160,6 +169,7 @@
 							        MinHeight="32"
                                     MaxHeight="32"
 							        Margin="5"
+                  IsEnabled="{Binding Path=IsNotMonitoring}"
                                     HorizontalContentAlignment="Center"
 							        Increment="1"
 							        Minimum="0"
@@ -172,12 +182,15 @@
 							        MinHeight="32"
 							        Margin="5"
 							        Increment="1"
+                  IsEnabled="{Binding Path=IsNotMonitoring}"
                                     HorizontalContentAlignment="Center"
 							        Minimum="0"
 							        Maximum="59"
 							        FormatString="N0"/>
 
-        <TextBlock Grid.Row="4" Grid.Column="0"   Text="Minutes To Wait: "/>
+        <Label Grid.Row="4" Grid.Column="0"                      
+                    IsEnabled="{Binding Path=IsNotMonitoring}"
+                    Content="Minutes To Wait: "/>
         
         <CheckBox Grid.Row="6" 
                   Grid.Column="0"
@@ -185,6 +198,7 @@
 				  VerticalAlignment="Center"
 				  Content="Create trigger file when DMS request not found"
 				  FontSize="15" 
+                  IsEnabled="{Binding Path=IsNotMonitoring}"
                   Grid.ColumnSpan="3"
 				  ToolTip="Do you want the watcher to auto-create the trigger file for datasets it finds when their DMS is unresolved?"
 				  IsChecked="{Binding Path=CreateTriggerOnDMSFail, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>

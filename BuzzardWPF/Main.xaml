@@ -17,7 +17,7 @@
 		UseLayoutRounding="True"
 		SnapsToDevicePixels="True"
 		WindowStartupLocation="CenterScreen">
-    
+
     <!-- Resources -->
     <Window.Resources>
         <Style x:Key="TextBoxStyle" TargetType="TextBox">
@@ -35,58 +35,102 @@
             <Setter Property="Margin" Value="20 10"/>
         </Style>
         <BitmapImage x:Key="BuzzardSource" UriSource="Resources\Buzzards.png" />
-        
+
         <converters:BoolToObjectConverter x:Key="MontitorButtonContentConverter"
 										  FalseContent="Monitor"
 										  TrueContent="Stop"/>
-            <converters:InvertBoolConverter x:Key="InvertBoolConverter"/>
+        <converters:InvertBoolConverter x:Key="InvertBoolConverter"/>
 
-            <Style TargetType="TextBlock">
-                <Setter Property="FontSize"		Value="15"/>
-                <Setter Property="Margin"		Value="1,2,2,2"/>
-                <Setter Property="VerticalAlignment" Value="Center"/>
-            </Style>
-            <Style TargetType="Button">
-                <Setter Property="MinHeight"	Value="32"/>
-                <Setter Property="MinWidth"		Value="95"/>
-                <Setter Property="FontSize"		Value="16"/>
-            </Style>
-            <Style TargetType="TabItem">
-			<Setter Property="MinWidth" Value="75"/>
-			<Setter Property="MinHeight" Value="25"/>
-		</Style>
+        <Style TargetType="TextBlock">
+            <Setter Property="FontSize"		Value="15"/>
+            <Setter Property="Margin"		Value="1,2,2,2"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="MinHeight"	Value="32"/>
+            <Setter Property="MinWidth"		Value="95"/>
+            <Setter Property="FontSize"		Value="16"/>
+        </Style>
+        <Style TargetType="TabItem">
+            <Setter Property="MinWidth" Value="75"/>
+            <Setter Property="MinHeight" Value="25"/>
+        </Style>
     </Window.Resources>
 
     <!-- UI Elements -->
-    <DockPanel VerticalAlignment="Stretch">
-        <StatusBar Name="m_statusBar" 
-                   Height="50" 
-                   DockPanel.Dock="Bottom">
-			<Button Click="TurnAnimationOnOrOff_Click"
+    <Grid VerticalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="48"/>
+            <RowDefinition Height="*"/>            
+            <RowDefinition Height="32"/>
+        </Grid.RowDefinitions>
+        <Grid            
+            Grid.Row="0"
+            >
+            <Label 
 					Margin="2"
-					Background="Transparent"
 					BorderBrush="Transparent"
 					BorderThickness="0"
-					Focusable="False">
-				<Image Source="{Binding Path=CurrentImage, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-					   Stretch="Uniform"/>
-			</Button>
-			<Label Content="{Binding Path=LastStatusMessage, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
-        </StatusBar>
-		
-        <Grid VerticalAlignment="Stretch">           
+                    Height="64"
+                    HorizontalContentAlignment="Center"
+                    FontSize="32"
+                    Foreground="LightGray"                    
+					Focusable="False" >                
+                <Label.Background>
+                    <VisualBrush TileMode="Tile" Viewport="0,0,310,64" ViewportUnits="Absolute">
+                        <VisualBrush.Visual>
+                            <Image Source="{Binding Path=CurrentImage, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" OpacityMask="Black"/>
+                        </VisualBrush.Visual>
+                    </VisualBrush>
+                </Label.Background>
+            </Label>
+            <Label 
+					Margin="2"
+					BorderBrush="Transparent"
+					BorderThickness="0"
+                    Height="64"
+                    HorizontalContentAlignment="Center"
+                    FontSize="32"
+                
+                    Foreground="LightGray"
+                    
+					Focusable="False" FontFamily="Showcard Gothic" RenderTransformOrigin="0.5,0.5" FontWeight="Bold">
+                <Label.OpacityMask>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="Black" Offset="0.24"/>
+                        <GradientStop Color="#FFB4B4B4" Offset="0.798"/>
+                        <GradientStop Color="#FFB4B4B4" Offset="1"/>
+                    </LinearGradientBrush>
+                </Label.OpacityMask>
+                <Label.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="-4.764"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Label.RenderTransform>
+                <Label.Content>
+                    Buzzard
+                </Label.Content>
+            </Label>
+        </Grid>
+
+        <Grid VerticalAlignment="Stretch"                         
+            Grid.Row="1">              
             <Grid.RowDefinitions>
-                <RowDefinition Height="auto" MinHeight="400"/>
+                <RowDefinition Height="auto" MinHeight="250"/>
+                <RowDefinition Height="3" />
                 <RowDefinition Height="6*" />
             </Grid.RowDefinitions>
-			
-			<TabControl 
+
+            <TabControl 
                         FontSize="24"
                         Grid.Row="0"
 						Margin="5,5,5,5"
 						TabStripPlacement="Left">
-                <TabControl.Background>                    
-                        <ImageBrush 
+                <TabControl.Background>
+                    <ImageBrush 
                                     Stretch="None"
                                     AlignmentX="Left"
                                     AlignmentY="Bottom"
@@ -94,9 +138,9 @@
 				                                            Mode=OneWay, 
 									                        UpdateSourceTrigger=PropertyChanged, 
 									                        FallbackValue={StaticResource Buzzard}}"/>
-                    
+
                 </TabControl.Background>
-				<TabItem 
+                <TabItem 
                     Height="64"
                     Style="{DynamicResource ResourceKey=SimpleTabItem}" >
                     <TabItem.Header>
@@ -121,7 +165,7 @@
                         </TabItem>
                     </TabControl>
                 </TabItem>
-				<TabItem              
+                <TabItem              
                     Height="64"
                     Style="{DynamicResource ResourceKey=SimpleTabItem}">
                     <TabItem.Header>
@@ -148,16 +192,18 @@
                         </TabItem>
                         <TabItem 
                             Padding="5"
+                            IsEnabled="{Binding Path=IsNotMonitoring}"    
                             Header="Instrument Metadata">
                             <windows:WatcherConfig x:Name="m_scanConfigWindow"/>
                         </TabItem>
                         <TabItem  
+                            IsEnabled="{Binding Path=IsNotMonitoring}"    
                             Padding="5"
                             Header="QC Samples">
                             <windows:QCView x:Name="m_qcConfigWindow"/>
-                        </TabItem>                        
+                        </TabItem>
                     </TabControl>
-				</TabItem>
+                </TabItem>
                 <TabItem 
                     Height="64"
                     Style="{DynamicResource ResourceKey=SimpleTabItem}">
@@ -180,23 +226,23 @@
                         <TabItem Header="Trigger Files" 
                             Padding="5">
                             <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
 
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="auto"/>
-                            <RowDefinition Height="auto"/>
-                            <RowDefinition Height="auto"/>
-                            <RowDefinition Height="197*" />
-                        </Grid.RowDefinitions>
-                        <TextBlock Text="Remote Folder Location"
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="197*" />
+                                </Grid.RowDefinitions>
+                                <TextBlock Text="Remote Folder Location"
 							           Grid.Row="0" Grid.Column="0"
 							           Style="{StaticResource TextBlockStyle}"/>
-                        <TextBox Grid.Row="0" 
+                                <TextBox Grid.Row="0" 
                                  Grid.Column="1"
                                  Margin="5"
 							         Text="{Binding Path=TriggerFileLocation, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
@@ -211,14 +257,27 @@
 							        Click="ForceDmsReload_Click"
 							        HorizontalAlignment="Right"
 							        Style="{StaticResource SimpleButtonStyle}"/>
+                                <Label
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    Foreground="Gray"
+                                    HorizontalContentAlignment="Right"
+                                    Content="{Binding LastUpdated}"
+                                    />
                             </Grid>
                         </TabItem>
                     </TabControl>
                 </TabItem>
             </TabControl>
-                       
+            <GridSplitter HorizontalAlignment="Stretch" Grid.Row="1" Background="Gray" Height="3"/>
             <windows:BuzzardGrid x:Name="m_dataGrid"
-								 Grid.Row="1"/>
+								 Grid.Row="2"/>
         </Grid>
-    </DockPanel>
+
+        <StatusBar Name="m_statusBar" 
+                   Height="32" 
+                   Grid.Row="2">
+            <Label Content="{Binding Path=LastStatusMessage, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+        </StatusBar>
+    </Grid>
 </Window>

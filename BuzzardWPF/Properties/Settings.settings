@@ -30,7 +30,7 @@
       <Value Profile="(Default)">\\proto-5\BionetXfer\Run_Complete_Trigger</Value>
     </Setting>
     <Setting Name="TurdAlert" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="WatchDirectory" Type="System.String" Scope="User">
       <Value Profile="(Default)">m:\data</Value>
@@ -160,6 +160,9 @@
     </Setting>
     <Setting Name="Watcher_FileSize" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">100</Value>
+    </Setting>
+    <Setting Name="WatcherConfig_UserComment" Type="System.String" Scope="User">
+      <Value Profile="(Default)"></Value>
     </Setting>
   </Settings>
 </SettingsFile>

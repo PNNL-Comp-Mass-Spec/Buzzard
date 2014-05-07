@@ -77,7 +77,7 @@ namespace BuzzardWPF
 
             var appPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData);
 
-            var path    = Path.Combine(appPath, "lcms", localPath);
+            var path = Path.Combine(appPath, "Buzzard", localPath);
             /// 
             /// See if the logging directory exists
             /// 
@@ -108,7 +108,13 @@ namespace BuzzardWPF
         {
 			var openMainWindow = false;
 
-            CreatePath("BuzzardLog");
+            CreatePath("Log");
+
+            const string name = "Buzzard";
+            classFileLogging.AppFolder          = name;
+            classSQLiteTools.AppDataFolderName  = name;
+            classSQLiteTools.CacheName          = "BuzzardCache.que";
+            classSQLiteTools.BuildConnectionString(false);
 
             //Application.EnableVisualStyles();
             //Application.SetCompatibleTextRenderingDefault(false);

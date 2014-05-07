@@ -2,11 +2,11 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		Background="{x:Null}"
-		ResizeMode="NoResize"
+		ResizeMode="CanMinimize"
 		ShowInTaskbar="True"
 		SnapsToDevicePixels="True"
-		Topmost="True"
-		UseLayoutRounding="True"
+		Topmost="False"
+		UseLayoutRounding="True"        
 		WindowStartupLocation="CenterScreen"
 		WindowStyle="None"
         Title="DynamicSplash" 
@@ -57,7 +57,7 @@
 					   MaxWidth="350" 
 					   TextWrapping="WrapWithOverflow"
 					   FontSize="12">
-				Brian LaMarche, Danny Orton, Tom Metz, Gary Kiebel, Ron Moore, Gordon Anderson, Richard Smith, Francisco T. Chavez
+				Brian LaMarche, Danny Orton, Tom Metz, Gary Kiebel, Ron Moore,  Francisco Chavez, Gordon Anderson, Richard Smith
 			</TextBlock>
 			
 			<TextBlock Grid.Row="4"

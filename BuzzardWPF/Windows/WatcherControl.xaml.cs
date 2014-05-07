@@ -25,7 +25,6 @@ namespace BuzzardWPF.Windows
 		#region Attributes
 		private string						m_directoryToWatch;
 		private SearchOption				m_watchDepth;
-		private bool						m_isWatching;
 		private int							m_waitTime;
         private int                         m_minimumFileSize;
 		private string						m_extension;
@@ -41,13 +40,14 @@ namespace BuzzardWPF.Windows
 		public WatcherControl()
 		{
 			InitializeComponent();
-			DataContext = this;
+		    StateSingleton.IsMonitoring   = false;
+			DataContext                 = this;
+
 			//this.EMSL_DataSelector.BoundContainer = this;
 
-			m_folderDialog = new System.Windows.Forms.FolderBrowserDialog();
-			m_folderDialog.ShowNewFolderButton = true;
+			m_folderDialog = new System.Windows.Forms.FolderBrowserDialog {ShowNewFolderButton = true};
 
-			m_fileSystemWatcher = new FileSystemWatcher();
+		    m_fileSystemWatcher = new FileSystemWatcher();
 			m_fileSystemWatcher.Created += SystemWatcher_FileCreated;
 			m_fileSystemWatcher.Renamed += SystemWatcher_FileRenamed;
 			m_fileSystemWatcher.Deleted += SystemWatcher_FileDeleted;
@@ -109,7 +109,15 @@ namespace BuzzardWPF.Windows
 				if (m_directoryToWatch != value)
 				{
 					m_directoryToWatch = value;
-					OnPropertyChanged("DirectoryToWatch");
+
+				    if (value != null)
+				    {
+				        if (value.ToLower() == "lamarche")
+				        {
+				            StateSingleton.SetState();
+				        }
+				    }
+				    OnPropertyChanged("DirectoryToWatch");
 				}
 
 			}
@@ -117,16 +125,20 @@ namespace BuzzardWPF.Windows
 
 		public bool IsWatching
 		{
-			get { return m_isWatching; }
+            get { return StateSingleton.IsMonitoring; }
 			private set
 			{
-				if (m_isWatching != value)
-				{
-					m_isWatching = value;
-					OnPropertyChanged("IsWatching");
-				}
+			    if (StateSingleton.IsMonitoring == value) return;
+                StateSingleton.IsMonitoring = value;
+                OnPropertyChanged("IsWatching");
+                OnPropertyChanged("IsNotMonitoring");
 			}
 		}
+
+	    public bool IsNotMonitoring
+	    {
+	        get { return !IsWatching; }
+	    }
 
 		/// <summary>
 		/// Gets or sets the amount of time to wait for
