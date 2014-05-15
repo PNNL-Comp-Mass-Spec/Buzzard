@@ -658,7 +658,7 @@ namespace BuzzardWPF.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("HailWhiteshoes")]
         public string WatcherConfig_UserComment {
             get {
                 return ((string)(this["WatcherConfig_UserComment"]));

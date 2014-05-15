@@ -162,7 +162,7 @@
       <Value Profile="(Default)">100</Value>
     </Setting>
     <Setting Name="WatcherConfig_UserComment" Type="System.String" Scope="User">
-      <Value Profile="(Default)"></Value>
+      <Value Profile="(Default)">HailWhiteshoes</Value>
     </Setting>
   </Settings>
 </SettingsFile>

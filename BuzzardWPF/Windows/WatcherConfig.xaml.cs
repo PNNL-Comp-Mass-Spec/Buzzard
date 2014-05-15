@@ -260,7 +260,7 @@ namespace BuzzardWPF.Windows
 			Settings.Default.WatcherConfig_SelectedColumnData		= SelectedDatasetType;
 			Settings.Default.WatcherConfig_SelectedInstrument		= SelectedInstrument;
 			Settings.Default.WatcherConfig_SelectedOperator			= SelectedOperator;
-			
+			Settings.Default.WatcherConfig_UserComment              = UserComments;
 			Settings.Default.WatcherConfig_SelectedSeperationType	= SelectedSeparationType;
 			Settings.Default.WatcherConfig_ExperimentName			= ExperimentName;
 			Settings.Default.WatcherConfig_LCColumn					= LCColumn;
@@ -268,11 +268,11 @@ namespace BuzzardWPF.Windows
             Settings.Default.Watcher_EMSL_ProposalID = EMSLProposalID;
 
 
-            var selectedEMSLUsers = new StringCollection();
+            var selectedEmslUsers = new StringCollection();
             foreach (var user in SelectedEMSLProposalUsers)
-                selectedEMSLUsers.Add(user.UserID.ToString());
+                selectedEmslUsers.Add(user.UserID.ToString());
 
-            Settings.Default.Watcher_EMSL_Users = selectedEMSLUsers;
+            Settings.Default.Watcher_EMSL_Users = selectedEmslUsers;
 		}
 
 		public void LoadSettings()
@@ -286,6 +286,7 @@ namespace BuzzardWPF.Windows
             SelectedEMSLProposalUsers =
                 DMS_DataAccessor.Instance.FindSavedEMSLProposalUsers(EMSLProposalID, selectedUsers);
 
+		    UserComments = Settings.Default.WatcherConfig_UserComment;
 			/*
 			 * The following settings need to be checked before being applied
 			 * due to the fact that they need to be valid options withing the
@@ -369,6 +370,19 @@ namespace BuzzardWPF.Windows
 		#endregion
 
         #region IEmslUsvUser Members
+
+	    public string UserComments
+	    {
+	        get
+	        {
+                return DatasetManager.Manager.UserComments;
+	        }
+	        set
+	        {
+	            DatasetManager.Manager.UserComments = value;
+                OnPropertyChanged("UserComments");
+	        }
+	    }
 
 
         public string SelectedEMSLUsageType

@@ -389,10 +389,10 @@ namespace BuzzardWPF.Data
 			        continue;
 			    }
 
+                dataset.UpdateFileProperties();
 			    if ((dataset.FileSize / CONST_KB) < MinimumFileSize)
 			    {
 			        dataset.DatasetStatus = DatasetStatus.PendingFileSize;
-			        dataset.UpdateFileProperties();
 			        continue;
 			    }
                 

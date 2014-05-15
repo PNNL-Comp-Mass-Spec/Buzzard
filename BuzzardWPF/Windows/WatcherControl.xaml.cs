@@ -51,11 +51,13 @@ namespace BuzzardWPF.Windows
 			m_fileSystemWatcher.Created += SystemWatcher_FileCreated;
 			m_fileSystemWatcher.Renamed += SystemWatcher_FileRenamed;
 			m_fileSystemWatcher.Deleted += SystemWatcher_FileDeleted;
+            m_fileSystemWatcher.Changed += m_fileSystemWatcher_Changed;
 
             MinimumFileSize     = 100;
 			IsWatching			= false;
 
 		}
+
 		#endregion
 
 
@@ -189,6 +191,12 @@ namespace BuzzardWPF.Windows
 
 
 		#region Event Handlers
+
+        void m_fileSystemWatcher_Changed(object sender, FileSystemEventArgs e)
+        {
+         //   throw new NotImplementedException();
+        }
+
 		void SystemWatcher_FileCreated(object sender, FileSystemEventArgs e)
 		{
 			var extension = Path.GetExtension(e.FullPath).ToLower();
