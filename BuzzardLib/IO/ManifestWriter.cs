@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace BuzzardWPF.IO
+namespace BuzzardLib.IO
 {
 	public static class ManifestWriter
 	{

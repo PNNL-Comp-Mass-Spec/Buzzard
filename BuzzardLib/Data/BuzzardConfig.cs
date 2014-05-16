@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
-using BuzzardWPF.Searching;
+using BuzzardLib.Searching;
 
-namespace BuzzardWPF.Data
+namespace BuzzardLib.Data
 {
     public class BuzzardConfig
     {

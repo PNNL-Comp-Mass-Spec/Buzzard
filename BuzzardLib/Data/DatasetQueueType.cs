@@ -1,4 +1,4 @@
-﻿namespace BuzzardWPF.Data
+﻿namespace BuzzardLib.Data
 {
 	/// <summary>
 	/// Tells what queue a dataset came from and to.

@@ -1,4 +1,4 @@
-﻿namespace BuzzardWPF.LcmsNetTemp
+﻿namespace BuzzardLib.LcmsNetTemp
 {
 	public enum TriggerFileStatus
 	{

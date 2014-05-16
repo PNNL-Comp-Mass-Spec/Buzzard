@@ -2,7 +2,7 @@
 using System.IO;
 using LcmsNetDataClasses;
 
-namespace BuzzardWPF.Data
+namespace BuzzardLib.Data
 {
 	/// <summary>
 	/// 

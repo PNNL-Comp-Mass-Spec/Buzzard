@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Drawing;
 using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace BuzzardWPF.Converters
+namespace BuzzardLib.Converters
 {
 	public class RedudantRequestBackgroundConverter
 		: IValueConverter

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BuzzardWPF.Data
+namespace BuzzardLib.Data
 {
 	/// <summary>
 	/// Event arguments when the status of a dataset changes.

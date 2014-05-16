@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Data;
 
-namespace BuzzardWPF.Converters
+namespace BuzzardLib.Converters
 {
 	public class EmptyRequestNameConverter
 		: IValueConverter

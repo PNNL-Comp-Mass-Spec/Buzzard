@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace BuzzardWPF.Converters
+namespace BuzzardLib.Converters
 {
 	/// <summary>
 	/// This Value Converter takes in a boolean value and converts

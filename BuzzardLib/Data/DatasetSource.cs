@@ -1,4 +1,4 @@
-﻿namespace BuzzardWPF.Data
+﻿namespace BuzzardLib.Data
 {
     public enum DatasetSource
     {

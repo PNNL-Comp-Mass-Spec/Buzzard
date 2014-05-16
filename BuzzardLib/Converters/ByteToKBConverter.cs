@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Data;
 
-namespace BuzzardWPF.Converters
+namespace BuzzardLib.Converters
 {
 	/// <summary>
 	/// Converts an int64 containing a size in bytes, into a double containing the 

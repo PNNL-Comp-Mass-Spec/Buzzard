@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading;
 using LcmsNetDataClasses.Logging;
 
-namespace BuzzardWPF.Searching
+namespace BuzzardLib.Searching
 {
     /// <summary>
     /// Class that searches for a set of files.

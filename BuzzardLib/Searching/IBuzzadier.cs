@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BuzzardWPF.Searching
+namespace BuzzardLib.Searching
 {
     /// <summary>
     /// Interface for monitoring searching a directory.

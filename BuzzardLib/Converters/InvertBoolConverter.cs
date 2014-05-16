@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace BuzzardWPF.Converters
+namespace BuzzardLib.Converters
 {
 	/// <summary>
 	/// This converter is ment to be used for WPF binding between two boolean 

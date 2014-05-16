@@ -2,7 +2,7 @@
 using System.IO;
 using System.Windows.Data;
 
-namespace BuzzardWPF.Converters
+namespace BuzzardLib.Converters
 {
     public class SearchOptionValueConverter: IValueConverter
     {

@@ -2,11 +2,11 @@
 using System.IO;
 using System.Windows;
 using System.Xml;
-using BuzzardWPF.Data;
+using BuzzardLib.Data;
 using LcmsNetDataClasses;
 using LcmsNetDataClasses.Logging;
 
-namespace BuzzardWPF.IO
+namespace BuzzardLib.IO
 {
 	/// <summary>
 	/// This class is a variation of LCMSNetDataClasses.classTriggerFileTools, that has been

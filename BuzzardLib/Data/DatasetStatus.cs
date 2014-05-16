@@ -1,4 +1,4 @@
-﻿namespace BuzzardWPF.Data
+﻿namespace BuzzardLib.Data
 {
 	/// <summary>
 	/// Status of a dataset

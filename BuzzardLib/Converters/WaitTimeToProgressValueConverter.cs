@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Data;
-using BuzzardWPF.Data;
+using BuzzardLib.Data;
 
-namespace BuzzardWPF.Converters
+namespace BuzzardLib.Converters
 {
 	/// <summary>
 	/// This converter picks what value a progress bar should get (ranging 0 to 100)

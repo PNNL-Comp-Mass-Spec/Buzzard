@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Data;
-using BuzzardWPF.Data;
+using BuzzardLib.Data;
 
-namespace BuzzardWPF.Converters
+namespace BuzzardLib.Converters
 {
 	public class TabLockSwitchConverter
 		: IValueConverter

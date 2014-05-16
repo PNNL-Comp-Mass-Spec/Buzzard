@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BuzzardWPF.Searching
+namespace BuzzardLib.Searching
 {
     /// <summary>
     /// Arguments when a dataset is found.

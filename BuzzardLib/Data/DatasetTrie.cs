@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using LcmsNetDataClasses;
 
-namespace BuzzardWPF.Data
+namespace BuzzardLib.Data
 {
     public class DatasetTrie
 	{

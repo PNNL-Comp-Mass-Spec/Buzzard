@@ -2,10 +2,10 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
-using BuzzardWPF.LcmsNetTemp;
+using BuzzardLib.LcmsNetTemp;
 using LcmsNetDataClasses.Data;
 
-namespace BuzzardWPF.Data
+namespace BuzzardLib.Data
 {
     public class BuzzardDataset
 		: INotifyPropertyChanged

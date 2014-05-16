@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BuzzardWPF.Searching
+namespace BuzzardLib.Searching
 {
     /// <summary>
     /// Event arguments when a file search action is to be performed.

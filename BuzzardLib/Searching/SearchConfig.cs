@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.IO;
 
-namespace BuzzardWPF.Searching
+namespace BuzzardLib.Searching
 {
     /// <summary>
     /// Class that holds the information from the user interface about how to find data files.
