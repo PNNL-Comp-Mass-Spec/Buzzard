@@ -1,4 +1,4 @@
-﻿namespace BuzzardWPF.Data
+﻿namespace BuzzardWPF.Management
 {
     public class DMSConfig
     {

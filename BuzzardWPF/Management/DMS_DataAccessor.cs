@@ -8,7 +8,7 @@ using LcmsNetDataClasses.Data;
 using LcmsNetDataClasses.Logging;
 using LcmsNetDmsTools;
 
-namespace BuzzardWPF.Data
+namespace BuzzardWPF.Management
 {
 	public class DMS_DataAccessor
 		: INotifyPropertyChanged

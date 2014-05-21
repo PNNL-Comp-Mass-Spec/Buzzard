@@ -2,7 +2,8 @@
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using BuzzardWPF.Data;
+using BuzzardLib.Data;
+using BuzzardWPF.Management;
 using LcmsNetDataClasses.Data;
 using LcmsNetDataClasses.Logging;
 

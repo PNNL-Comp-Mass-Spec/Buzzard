@@ -1,9 +1,10 @@
 ﻿using System;
 using System.IO;
+using BuzzardLib.Data;
 using BuzzardWPF.Windows;
 using LcmsNetDataClasses.Logging;
 
-namespace BuzzardWPF.Data
+namespace BuzzardWPF.Management
 {
 	public class MoveDataRequest
 	{

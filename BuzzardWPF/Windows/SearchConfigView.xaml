@@ -4,7 +4,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:my="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Input.Toolkit"
-             xmlns:data="clr-namespace:BuzzardWPF.Data"
              xmlns:sys="clr-namespace:System.IO;assembly=mscorlib"
 			 xmlns:windows="clr-namespace:BuzzardWPF.Windows"
              mc:Ignorable="d" 

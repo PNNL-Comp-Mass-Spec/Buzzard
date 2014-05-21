@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Controls;
 using System.Windows.Data;
-using BuzzardWPF.Data;
+using BuzzardWPF.Management;
 using LcmsNetDataClasses.Data;
 using LcmsNetDataClasses.Logging;
 

@@ -2,7 +2,7 @@
 using System.Configuration;
 using System.IO;
 using System.Windows.Forms;
-using BuzzardWPF.Data;
+using BuzzardWPF.Management;
 using LcmsNetDataClasses;
 using LcmsNetDataClasses.Logging;
 using LcmsNetDmsTools;

@@ -5,13 +5,14 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Threading;
-using BuzzardWPF.IO;
+using BuzzardLib.Data;
+using BuzzardLib.IO;
 using LcmsNetDataClasses;
 using LcmsNetDataClasses.Data;
 using LcmsNetDataClasses.Logging;
 using LcmsNetDmsTools;
 
-namespace BuzzardWPF.Data
+namespace BuzzardWPF.Management
 {    
     /// <summary>
     /// Manages a list of datasets

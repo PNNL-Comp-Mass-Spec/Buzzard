@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using BuzzardLib.Data;
 
-namespace BuzzardWPF.Data
+namespace BuzzardWPF.Management
 {
     /// <summary>
     /// Loads data 

@@ -8,9 +8,9 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using BuzzardWPF.Data;
+using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
-using BuzzardWPF.Searching;
+using BuzzardLib.Searching;
 using BuzzardWPF.Windows;
 using LcmsNetDataClasses.Logging;
 using LcmsNetDmsTools;
@@ -20,81 +20,86 @@ namespace BuzzardWPF
     /// <summary>
     /// Interaction logic for Window1.xaml
     /// </summary>
-    public partial class Main 
-		: Window, INotifyPropertyChanged
-	{
-		#region Events
-		public event PropertyChangedEventHandler PropertyChanged;
-		#endregion
+    public partial class Main
+        : Window, INotifyPropertyChanged
+    {
+        #region Events
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        #endregion
 
 
         #region Attributes
 
-        private object                  m_cacheLoadingSync;
+        private object m_cacheLoadingSync;
+
         /// <summary>
         /// This helps alert the user the system is in monitoring mode.
         /// </summary>
-        private DispatcherTimer         m_animationTimer;
-        private int                     m_counter;
+        private DispatcherTimer m_animationTimer;
+
+        private int m_counter;
         private Collection<BitmapImage> m_images;
         private Collection<BitmapImage> m_imagesEaster;
         private Collection<BitmapImage> m_animationImages;
-        private IBuzzadier              m_buzzadier;
-		private string					m_lastStatusMessage;
+        private IBuzzadier m_buzzadier;
+        private string m_lastStatusMessage;
 
-		private bool					m_firstTimeLoading;
-		private DispatcherTimer			m_dmsCheckTimer;
-        
-		#endregion
+        private bool m_firstTimeLoading;
+        private DispatcherTimer m_dmsCheckTimer;
+
+        #endregion
 
 
-		#region Initialize
-		public Main()
+        #region Initialize
+
+        public Main()
         {
             InitializeComponent();
 
 
-			DataContext         = this;
-            m_cacheLoadingSync  = new object();
-            var assembly        = System.Reflection.Assembly.GetExecutingAssembly();
-            var version         = assembly.GetName().Version.ToString();
-            Title               = "Buzzard - v." + version;
+            DataContext = this;
+            m_cacheLoadingSync = new object();
+            var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            var version = assembly.GetName().Version.ToString();
+            Title = "Buzzard - v." + version;
 
             StateSingleton.WatchingStateChanged += StateSingleton_WatchingStateChanged;
             StateSingleton.StateChanged += StateSingleton_StateChanged;
 
-			// This gives the dataset manager a way to talk to the main window 
-			// in case it needs to. One example is adding items to the dataset 
-			// collection. We need to make sure we only change that collection 
-			// from the UI thread, or anything bound to it will throw a fit and 
-			// crash the progam. So, we'll just use the main window's Dispatcher
-			// to make sure changes are done in the correct thread. We could 
-			// just pass the dispatcher along, but this way we can access other 
-			// parts of the main window if they are ever needed in the future.
-			// -FCT
-			DatasetManager.Manager.MainWindow = this;
-            DatasetManager.Manager.DatasetsLoaded += Manager_DatasetsLoaded;            
+            // This gives the dataset manager a way to talk to the main window 
+            // in case it needs to. One example is adding items to the dataset 
+            // collection. We need to make sure we only change that collection 
+            // from the UI thread, or anything bound to it will throw a fit and 
+            // crash the progam. So, we'll just use the main window's Dispatcher
+            // to make sure changes are done in the correct thread. We could 
+            // just pass the dispatcher along, but this way we can access other 
+            // parts of the main window if they are ever needed in the future.
+            // -FCT
+            DatasetManager.Manager.MainWindow = this;
+            DatasetManager.Manager.DatasetsLoaded += Manager_DatasetsLoaded;
 
-			m_firstTimeLoading = true;
-			Closed += Main_Closed;
-			Loaded += Main_Loaded;
+            m_firstTimeLoading = true;
+            Closed += Main_Closed;
+            Loaded += Main_Loaded;
 
-			classApplicationLogger.Message	+= ApplicationLogger_Message;
-			classApplicationLogger.Error	+= ApplicationLogger_Error;
+            classApplicationLogger.Message += ApplicationLogger_Message;
+            classApplicationLogger.Error += ApplicationLogger_Error;
 
-			// Todo: Find a real list of usage types, none of this hard-coded crap.
-			m_dataGrid.EmslUsageTypesSource = 
-				new ObservableCollection<string>
-				(
-					new[] { "BROKEN", "CAP_DEV", "MAINTENANCE", "USER", "USER_UNKOWN" }
-				);
+            // Todo: Find a real list of usage types, none of this hard-coded crap.
+            m_dataGrid.EmslUsageTypesSource =
+                new ObservableCollection<string>
+                    (
+                    new[] {"BROKEN", "CAP_DEV", "MAINTENANCE", "USER", "USER_UNKOWN"}
+                    );
 
-			if (!m_dataGrid.CartNameListSource.Contains("unknown"))
-			{
-				m_dataGrid.CartNameListSource.Add("unknown");
-			}
+            if (!m_dataGrid.CartNameListSource.Contains("unknown"))
+            {
+                m_dataGrid.CartNameListSource.Add("unknown");
+            }
 
-			m_dataGrid.Datasets = DatasetManager.Manager.Datasets;
+            m_dataGrid.Datasets = DatasetManager.Manager.Datasets;
 
             m_animationTimer = new DispatcherTimer
             {
@@ -102,12 +107,12 @@ namespace BuzzardWPF
             };
             m_animationTimer.Tick += m_timer_Tick;
 
-			m_dmsCheckTimer				= new DispatcherTimer(DispatcherPriority.Normal, Dispatcher)
-			{
-			    Interval = new TimeSpan(0, 10, 0)
-			};
-		    m_dmsCheckTimer.Tick		+= DMSCheckTimer_Tick;
-			m_dmsCheckTimer.IsEnabled	= true;
+            m_dmsCheckTimer = new DispatcherTimer(DispatcherPriority.Normal, Dispatcher)
+            {
+                Interval = new TimeSpan(0, 10, 0)
+            };
+            m_dmsCheckTimer.Tick += DMSCheckTimer_Tick;
+            m_dmsCheckTimer.IsEnabled = true;
 
 
             m_searchWindow.SearchStart += m_searchWindow_SearchStart;
@@ -115,25 +120,22 @@ namespace BuzzardWPF
 
             LoadImages();
             LastUpdated = DatasetManager.Manager.LastUpdated;
-			classApplicationLogger.LogMessage(0, "Ready");
+            classApplicationLogger.LogMessage(0, "Ready");
         }
 
-        void Manager_DatasetsLoaded(object sender, EventArgs e)
+        private void Manager_DatasetsLoaded(object sender, EventArgs e)
         {
             LastUpdated = DatasetManager.Manager.LastUpdated;
         }
 
-        void StateSingleton_StateChanged(object sender, EventArgs e)
+        private void StateSingleton_StateChanged(object sender, EventArgs e)
         {
             m_animationImages = m_imagesEaster;
         }
 
         public string LastUpdated
         {
-            get
-            {
-                return m_lastUpdated;
-            }
+            get { return m_lastUpdated; }
             set
             {
                 m_lastUpdated = value;
@@ -141,56 +143,56 @@ namespace BuzzardWPF
             }
         }
 
-        void StateSingleton_WatchingStateChanged(object sender, EventArgs e)
+        private void StateSingleton_WatchingStateChanged(object sender, EventArgs e)
         {
             m_animationTimer.IsEnabled = StateSingleton.IsMonitoring;
             if (!StateSingleton.IsMonitoring)
             {
-                CurrentImage = m_animationImages[0];                
+                CurrentImage = m_animationImages[0];
             }
             OnPropertyChanged("IsNotMonitoring");
         }
 
-		/// <summary>
-		/// Loads the images from resource cache.
-		/// </summary>
-		private void LoadImages()
-		{
-			m_images = new Collection<BitmapImage>();
+        /// <summary>
+        /// Loads the images from resource cache.
+        /// </summary>
+        private void LoadImages()
+        {
+            m_images = new Collection<BitmapImage>();
             m_imagesEaster = new Collection<BitmapImage>();
 
-			var bitmaps = new Collection<Bitmap>
-			{
-                    Properties.Resources.buzzards,
-                    Properties.Resources.buzzards1,
-                    Properties.Resources.buzzards2,
-                    Properties.Resources.buzzards3,
-                    Properties.Resources.buzzards4,
-                    Properties.Resources.buzzards5,
-                    };
+            var bitmaps = new Collection<Bitmap>
+            {
+                Properties.Resources.buzzards,
+                Properties.Resources.buzzards1,
+                Properties.Resources.buzzards2,
+                Properties.Resources.buzzards3,
+                Properties.Resources.buzzards4,
+                Properties.Resources.buzzards5,
+            };
 
 
             var bitmapsEaster = new Collection<Bitmap>
-			{
-                    Properties.Resources.buzzardsz,
-                    Properties.Resources.buzzardsz1,
-                    Properties.Resources.buzzardsz2,
-                    Properties.Resources.buzzardsz3,
-                    Properties.Resources.buzzardsz4,
-                    Properties.Resources.buzzardsz5                    
-                    };
+            {
+                Properties.Resources.buzzardsz,
+                Properties.Resources.buzzardsz1,
+                Properties.Resources.buzzardsz2,
+                Properties.Resources.buzzardsz3,
+                Properties.Resources.buzzardsz4,
+                Properties.Resources.buzzardsz5
+            };
 
-			foreach (var bitmap in bitmaps)
-			{
-				var ms = new MemoryStream();
-				bitmap.Save(ms, ImageFormat.Png);
-				ms.Position = 0;
-				var bi  = new BitmapImage();
-				bi.BeginInit();
-				bi.StreamSource = ms;
-				bi.EndInit();
-				m_images.Add(bi);
-			}
+            foreach (var bitmap in bitmaps)
+            {
+                var ms = new MemoryStream();
+                bitmap.Save(ms, ImageFormat.Png);
+                ms.Position = 0;
+                var bi = new BitmapImage();
+                bi.BeginInit();
+                bi.StreamSource = ms;
+                bi.EndInit();
+                m_images.Add(bi);
+            }
 
             foreach (var bitmap in bitmapsEaster)
             {
@@ -204,76 +206,81 @@ namespace BuzzardWPF
                 m_imagesEaster.Add(bi);
             }
 
-		    m_animationImages = m_images;
+            m_animationImages = m_images;
             CurrentImage = m_animationImages[0];
-		}
-		#endregion
+        }
+
+        #endregion
 
 
-		#region Properties
-		/// <summary>
-		/// Gets and sets a sting conting the last message or error
-		/// to get logged in the application.
-		/// </summary>
-		public string LastStatusMessage
-		{
-			get { return m_lastStatusMessage; }
-			set
-			{
-				if (m_lastStatusMessage != value)
-				{
-					m_lastStatusMessage = value;
-					OnPropertyChanged("LastStatusMessage");
-				}
-			}
-		}
+        #region Properties
 
-		/// <summary>
-		/// Gets or sets the image source containing the current image (not Image)
-		/// of the buzzard animation.
-		/// </summary>
-		public BitmapImage CurrentImage
-		{
-			get { return m_CurrentImage; }
-			set
-			{
-				if (m_CurrentImage != value)
-				{
-					m_CurrentImage = value;
-					OnPropertyChanged("CurrentImage");
-				}
-			}
-		}
-		private BitmapImage m_CurrentImage;
-		#endregion
+        /// <summary>
+        /// Gets and sets a sting conting the last message or error
+        /// to get logged in the application.
+        /// </summary>
+        public string LastStatusMessage
+        {
+            get { return m_lastStatusMessage; }
+            set
+            {
+                if (m_lastStatusMessage != value)
+                {
+                    m_lastStatusMessage = value;
+                    OnPropertyChanged("LastStatusMessage");
+                }
+            }
+        }
 
-		void ApplicationLogger_Error(int errorLevel, classErrorLoggerArgs args)
-		{
-			// Create an action to place the message string into the property that
-			// holds the last message. Then place action into a call for the UI
-			// thread's dipatcher.
-			Action workAction = delegate
-			{
-				LastStatusMessage = args.Message;
-			};
+        /// <summary>
+        /// Gets or sets the image source containing the current image (not Image)
+        /// of the buzzard animation.
+        /// </summary>
+        public BitmapImage CurrentImage
+        {
+            get { return m_CurrentImage; }
+            set
+            {
+                if (m_CurrentImage != value)
+                {
+                    m_CurrentImage = value;
+                    OnPropertyChanged("CurrentImage");
+                }
+            }
+        }
 
-			Dispatcher.BeginInvoke(workAction, DispatcherPriority.Normal);
-		}
+        private BitmapImage m_CurrentImage;
 
-		void ApplicationLogger_Message(int messageLevel, classMessageLoggerArgs args)
-		{
-			// Create an action to place the message string into the property that
-			// holds the last message. Then place action into a call for the UI
-			// thread's dipatcher.
-			Action workAction = delegate
-			{
-				LastStatusMessage = args.Message;
-			};
+        #endregion
 
-			Dispatcher.BeginInvoke(workAction, DispatcherPriority.Normal);
-		}
+        private void ApplicationLogger_Error(int errorLevel, classErrorLoggerArgs args)
+        {
+            // Create an action to place the message string into the property that
+            // holds the last message. Then place action into a call for the UI
+            // thread's dipatcher.
+            Action workAction = delegate
+            {
+                LastStatusMessage = args.Message;
+            };
+
+            Dispatcher.BeginInvoke(workAction, DispatcherPriority.Normal);
+        }
+
+        private void ApplicationLogger_Message(int messageLevel, classMessageLoggerArgs args)
+        {
+            // Create an action to place the message string into the property that
+            // holds the last message. Then place action into a call for the UI
+            // thread's dipatcher.
+            Action workAction = delegate
+            {
+                LastStatusMessage = args.Message;
+            };
+
+            Dispatcher.BeginInvoke(workAction, DispatcherPriority.Normal);
+        }
 
         #region Searching 
+
         /// <summary>
         /// Registers the searcher for new files.
         /// </summary>
@@ -283,186 +290,192 @@ namespace BuzzardWPF
             if (m_buzzadier != null)
             {
                 m_buzzadier.Stop();
-                m_buzzadier.DatasetFound    -= m_buzzadier_DatasetFound;
-                m_buzzadier.SearchComplete  -= m_buzzadier_SearchComplete;
-                m_buzzadier.SearchStopped   -= m_buzzadier_SearchStopped;
+                m_buzzadier.DatasetFound -= m_buzzadier_DatasetFound;
+                m_buzzadier.SearchComplete -= m_buzzadier_SearchComplete;
+                m_buzzadier.SearchStopped -= m_buzzadier_SearchStopped;
             }
 
             m_buzzadier = buzzadier;
-            m_buzzadier.SearchStopped   += m_buzzadier_SearchStopped;
-            m_buzzadier.SearchComplete  += m_buzzadier_SearchComplete;
-            m_buzzadier.DatasetFound    += m_buzzadier_DatasetFound;
+            m_buzzadier.SearchStopped += m_buzzadier_SearchStopped;
+            m_buzzadier.SearchComplete += m_buzzadier_SearchComplete;
+            m_buzzadier.DatasetFound += m_buzzadier_DatasetFound;
         }
+
         /// <summary>
         /// Searches a directory for buzzard datasets
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void m_searchWindow_SearchStart(object sender, SearchEventArgs e)
+        private void m_searchWindow_SearchStart(object sender, SearchEventArgs e)
         {
             m_buzzadier.Search(e.Config);
         }
 
-        delegate void DelegateUpdatePath(string path);
-        void m_buzzadier_DatasetFound(object sender, DatasetFoundEventArgs e)
-        {      
+        private delegate void DelegateUpdatePath(string path);
+
+        private void m_buzzadier_DatasetFound(object sender, DatasetFoundEventArgs e)
+        {
             Action workAction = delegate
             {
                 AddDataset(e.Path);
             };
 
             m_dataGrid.Dispatcher.BeginInvoke(workAction, DispatcherPriority.Normal);
-            
+
         }
-        
-		private void AddDataset(string path)
+
+        private void AddDataset(string path)
         {
-			//
-			// Run checks to make sure we don't re-insert the
-			// same data
-			//
+            //
+            // Run checks to make sure we don't re-insert the
+            // same data
+            //
 
-			// There's nothing ot create a dataset from
-			if (string.IsNullOrWhiteSpace(path))
-			{
-				classApplicationLogger.LogError(
-					0,
-					"No path was given for found datasource. Can not create Dataset.");
-				return;
-			}
+            // There's nothing ot create a dataset from
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                classApplicationLogger.LogError(
+                    0,
+                    "No path was given for found datasource. Can not create Dataset.");
+                return;
+            }
 
-			// Lets see if the path we were given is already
-			// being used as the source of a dataset
-			var alreadyPresent = m_dataGrid.Datasets.Any(
-				ds =>
-				{
-					// This dataset is most likely an empty-dummy dataset,
-					// and the new one is being made from a file
-					if (string.IsNullOrWhiteSpace(ds.FilePath))
-						return false;
+            // Lets see if the path we were given is already
+            // being used as the source of a dataset
+            var alreadyPresent = m_dataGrid.Datasets.Any(
+                ds =>
+                {
+                    // This dataset is most likely an empty-dummy dataset,
+                    // and the new one is being made from a file
+                    if (string.IsNullOrWhiteSpace(ds.FilePath))
+                        return false;
 
-					return ds.FilePath.Equals(path, StringComparison.OrdinalIgnoreCase);
-				});
+                    return ds.FilePath.Equals(path, StringComparison.OrdinalIgnoreCase);
+                });
 
-			// The dataset is already there, just log it, and
-			// get out of here.
-			if (alreadyPresent)
-			{
-				classApplicationLogger.LogMessage(
-					0,
-					string.Format("Data source: '{0}' is already present.", path));
-				return;
-			}
+            // The dataset is already there, just log it, and
+            // get out of here.
+            if (alreadyPresent)
+            {
+                classApplicationLogger.LogMessage(
+                    0,
+                    string.Format("Data source: '{0}' is already present.", path));
+                return;
+            }
 
 
-			//
-			// Create a dataset from the given path,
-			// and load it into the UI.
-			//
-			DatasetManager.Manager.CreatePendingDataset(path);
+            //
+            // Create a dataset from the given path,
+            // and load it into the UI.
+            //
+            DatasetManager.Manager.CreatePendingDataset(path);
         }
-        
-		void m_buzzadier_SearchComplete(object sender, EventArgs e)
+
+        private void m_buzzadier_SearchComplete(object sender, EventArgs e)
         {
-            
+
         }
-        void m_buzzadier_SearchStopped(object sender, EventArgs e)
+
+        private void m_buzzadier_SearchStopped(object sender, EventArgs e)
         {
-            
+
         }
+
         #endregion
 
 
         #region Event Handlers
 
-		/// <summary>
-		/// Will set the CurrentImage value with the next image in the buzzard
-		/// animation.
-		/// </summary>
-        void m_timer_Tick(object sender, System.EventArgs e)
+        /// <summary>
+        /// Will set the CurrentImage value with the next image in the buzzard
+        /// animation.
+        /// </summary>
+        private void m_timer_Tick(object sender, System.EventArgs e)
         {
-			// Increment the counter and wrap it around if neccessary
+            // Increment the counter and wrap it around if neccessary
             m_counter++;
             var n = m_animationImages.Count;
 
             // Dont display the turd if the user has that setting turned off.
-		    if (!Properties.Settings.Default.TurdAlert)
-		    {
-		        n--;
-		    }
+            if (!Properties.Settings.Default.TurdAlert)
+            {
+                n--;
+            }
 
-		    m_counter %= n;
+            m_counter %= n;
 
             CurrentImage = m_animationImages[m_counter];
         }
 
-		/// <summary>
-		/// Will tell the various configuration containing controls
-		/// to place their values into the settings object before
-		/// saving the setting object for application shutdown.
-		/// </summary>
-		void Main_Closed(object sender, EventArgs e)
-		{
-			classApplicationLogger.LogMessage(0, "Main Window closed.");
+        /// <summary>
+        /// Will tell the various configuration containing controls
+        /// to place their values into the settings object before
+        /// saving the setting object for application shutdown.
+        /// </summary>
+        private void Main_Closed(object sender, EventArgs e)
+        {
+            classApplicationLogger.LogMessage(0, "Main Window closed.");
 
-			// Save settings
-			classApplicationLogger.LogMessage(0, "Starting to save settings to config.");
-			m_scanConfigWindow.SaveSettings();
+            // Save settings
+            classApplicationLogger.LogMessage(0, "Starting to save settings to config.");
+            m_scanConfigWindow.SaveSettings();
             Settings.Default.TriggerFileFolder = TriggerFileLocation;
-			m_scanWindow.SaveSettings();
-			m_searchWindow.SaveSettings();
-			m_qcConfigWindow.SaveSettings();
-			Settings.Default.Save();
-			classApplicationLogger.LogMessage(0, "Settings saved to config.");
-		}
+            m_scanWindow.SaveSettings();
+            m_searchWindow.SaveSettings();
+            m_qcConfigWindow.SaveSettings();
+            Settings.Default.Save();
+            classApplicationLogger.LogMessage(0, "Settings saved to config.");
+        }
 
-		/// <summary>
-		/// Will load the saved configuration settings on application startup.
-		/// </summary>
-		void Main_Loaded(object sender, RoutedEventArgs e)
-		{
-			if (m_firstTimeLoading)
-			{
-				//// This next piece of code will reset the settings
-				//// to their defalut values before loading them into
-				//// the application.
-				//// This is kept here, in case I need to check that
-				//// the effects of the default settings.
-				//// -FCT
-				//BuzzardWPF.Properties.Settings.Default.Reset();
+        /// <summary>
+        /// Will load the saved configuration settings on application startup.
+        /// </summary>
+        private void Main_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (m_firstTimeLoading)
+            {
+                //// This next piece of code will reset the settings
+                //// to their defalut values before loading them into
+                //// the application.
+                //// This is kept here, in case I need to check that
+                //// the effects of the default settings.
+                //// -FCT
+                //BuzzardWPF.Properties.Settings.Default.Reset();
 
-				classApplicationLogger.LogMessage(0, "Loading settings from config.");
+                classApplicationLogger.LogMessage(0, "Loading settings from config.");
                 m_scanConfigWindow.LoadSettings();
                 TriggerFileLocation = Settings.Default.TriggerFileFolder;
-				m_scanWindow.LoadSettings();
-				m_searchWindow.LoadSettings();
-				m_qcConfigWindow.LoadSettings();
-				classApplicationLogger.LogMessage(0, "Finished loading settings from config.");
+                m_scanWindow.LoadSettings();
+                m_searchWindow.LoadSettings();
+                m_qcConfigWindow.LoadSettings();
+                classApplicationLogger.LogMessage(0, "Finished loading settings from config.");
 
-				m_firstTimeLoading = false;
-			}
-		}
+                m_firstTimeLoading = false;
+            }
+        }
 
-		/// <summary>
-		/// Will turn the buzzard image animation on and off.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		public void TurnAnimationOnOrOff_Click(object sender, RoutedEventArgs e)
-		{
+        /// <summary>
+        /// Will turn the buzzard image animation on and off.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void TurnAnimationOnOrOff_Click(object sender, RoutedEventArgs e)
+        {
             m_animationTimer.IsEnabled = !m_animationTimer.IsEnabled;
-		}
-        #endregion        
+        }
 
-		private void OnPropertyChanged(string propertyName)
-		{
-			if (PropertyChanged != null)
-				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-		}
+        #endregion
+
+        private void OnPropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
 
 
         private string m_triggerFileLocation;
         private string m_lastUpdated;
+
         public string TriggerFileLocation
         {
             get { return m_triggerFileLocation; }
@@ -478,10 +491,16 @@ namespace BuzzardWPF
             }
         }
 
-
-
         private void SelectTriggerFileLocation_Click(object sender, RoutedEventArgs e)
         {
+            var eResult =
+                MessageBox.Show(
+                    "This path should nearly always be \\\\proto-5\\BionetXfer\\Run_Complete_Trigger; only change this if you are debugging the software.  Continue?",
+                    "Warning", MessageBoxButton.YesNoCancel, MessageBoxImage.Exclamation, MessageBoxResult.Cancel);
+
+            if (eResult != MessageBoxResult.Yes)
+                return;
+
             var dlg = new System.Windows.Forms.FolderBrowserDialog();
             if (!string.IsNullOrWhiteSpace(TriggerFileLocation))
                 dlg.SelectedPath = TriggerFileLocation;
@@ -496,14 +515,18 @@ namespace BuzzardWPF
                 case System.Windows.Forms.DialogResult.Ignore:
                 case System.Windows.Forms.DialogResult.No:
                 case System.Windows.Forms.DialogResult.None:
-                    return;                
+                    return;
             }
 
             TriggerFileLocation = dlg.SelectedPath;
         }
 
+        private void UseDefaultTriggerFileLocation_Click(object sender, RoutedEventArgs e)
+        {
+            TriggerFileLocation = @"\\proto-5\BionetXfer\Run_Complete_Trigger";
+        }
 
-        void DMSCheckTimer_Tick(object sender, EventArgs e)
+        private void DMSCheckTimer_Tick(object sender, EventArgs e)
         {
             lock (m_cacheLoadingSync)
             {
@@ -533,7 +556,9 @@ namespace BuzzardWPF
         /// </summary>
         public bool IsNotMonitoring
         {
-            get { return !StateSingleton.IsMonitoring; }            
+            get { return !StateSingleton.IsMonitoring; }
         }
-	}
+
+    }
 }
+    

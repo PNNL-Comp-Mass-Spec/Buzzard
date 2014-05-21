@@ -6,9 +6,9 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using BuzzardWPF.Data;
+using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
-using BuzzardWPF.Searching;
+using BuzzardLib.Searching;
 using LcmsNetDataClasses.Logging;
 
 namespace BuzzardWPF.Windows

@@ -3,7 +3,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using BuzzardWPF.Data;
+using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
 using LcmsNetDataClasses.Data;
 

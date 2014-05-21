@@ -60,7 +60,12 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Controls.Input.Toolkit, Version=3.5.40128.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
+    <Reference Include="System.Windows.Controls.Input.Toolkit">
+      <HintPath>..\packages\WPFToolkit.3.5.50211.1\lib\System.Windows.Controls.Input.Toolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Controls.Layout.Toolkit">
+      <HintPath>..\packages\WPFToolkit.3.5.50211.1\lib\System.Windows.Controls.Layout.Toolkit.dll</HintPath>
+    </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Presentation">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -79,7 +84,9 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="WPFToolkit, Version=3.5.40128.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
+    <Reference Include="WPFToolkit, Version=3.5.40128.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <HintPath>..\packages\WPFToolkit.3.5.50211.1\lib\WPFToolkit.dll</HintPath>
+    </Reference>
     <Reference Include="WPFToolkit.Extended">
       <HintPath>packages\Extended.Wpf.Toolkit.2.0.0\lib\net40\WPFToolkit.Extended.dll</HintPath>
     </Reference>
@@ -91,40 +98,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Converters\BooleanToDataGridVisibilityModeConverter.cs" />
-    <Compile Include="Converters\BoolToObjectConverter.cs" />
-    <Compile Include="Converters\ByteToKBConverter.cs" />
-    <Compile Include="Converters\EmptyRequestNameConverter.cs" />
-    <Compile Include="Converters\InvertBoolConverter.cs" />
-    <Compile Include="Converters\RedudantRequestBackgroundConverter.cs" />
-    <Compile Include="Converters\TabLockSwitchConverter.cs" />
-    <Compile Include="Converters\WaitTimeTextConverter.cs" />
-    <Compile Include="Converters\WaitTimeToProgressValueConverter.cs" />
-    <Compile Include="Data\BuzzardConfig.cs" />
-    <Compile Include="Data\DatasetSource.cs" />
-    <Compile Include="Data\Management\DatasetManager.cs" />
-    <Compile Include="Data\DatasetQueueEventArgs.cs" />
-    <Compile Include="Data\DatasetQueueType.cs" />
-    <Compile Include="Data\DatasetStatus.cs" />
-    <Compile Include="Data\DatasetTrie.cs" />
-    <Compile Include="Data\Management\DMS_DataAccessor.cs" />
-    <Compile Include="Data\FilldownBuzzardDataset.cs" />
-    <Compile Include="Data\MoveDataRequest.cs" />
-    <Compile Include="IO\ManifestWriter.cs" />
-    <Compile Include="Data\DMSData.cs" />
-    <Compile Include="Data\Enums.cs" />
-    <Compile Include="IO\TriggerFileTools.cs" />
-    <Compile Include="Searching\DatasetFoundEventArgs.cs" />
-    <Compile Include="Searching\FileSearchBuzzardier.cs" />
-    <Compile Include="Searching\IBuzzadier.cs" />
-    <Compile Include="Searching\SearchEventArgs.cs" />
-    <Compile Include="Converters\SearchOptionValueConverter.cs" />
+    <Compile Include="Management\DatasetFactory.cs" />
+    <Compile Include="Management\DatasetManager.cs" />
+    <Compile Include="Management\DMSConfig.cs" />
+    <Compile Include="Management\DMS_DataAccessor.cs" />
+    <Compile Include="Management\MoveDataRequest.cs" />
     <Compile Include="Windows\BuzzardDatasetDetail.xaml.cs">
       <DependentUpon>BuzzardDatasetDetail.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Data\Management\DatasetFactory.cs" />
-    <Compile Include="Data\Management\DMSConfig.cs" />
-    <Compile Include="Searching\SearchConfig.cs" />
     <Compile Include="AppInitializer.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Windows\BuzzardGrid.xaml.cs">
@@ -185,14 +166,13 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Data\BuzzardDataset.cs" />
     <Compile Include="Main.xaml.cs">
       <DependentUpon>Main.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Windows\BuzzardGrid.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Windows\Dialogs\DatasetOverwriteDialog.xaml">
       <SubType>Designer</SubType>
@@ -352,6 +332,10 @@
     <ProjectReference Include="..\..\LCMSnet\LcmsNetDmsTools\LcmsNetDmsTools.csproj">
       <Project>{F3EB0B04-7562-4B7D-871C-579C2C8A2045}</Project>
       <Name>LcmsNetDmsTools</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BuzzardLib\BuzzardLib.csproj">
+      <Project>{935ad00d-05ae-4f28-b9b9-871f00fda3e4}</Project>
+      <Name>BuzzardLib</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
-using BuzzardWPF.Data;
+using BuzzardWPF.Management;
 using LcmsNetDataClasses;
 
 namespace BuzzardWPF.Windows
