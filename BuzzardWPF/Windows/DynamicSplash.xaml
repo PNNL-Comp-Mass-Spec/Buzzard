@@ -40,7 +40,7 @@
 									FallbackValue={StaticResource LogoImageSource}}" Margin="0,0,-0.2,0"/>
             <TextBlock Grid.Row="1" 
 					   Style="{StaticResource TextBlockStyle}"
-					   FontSize="22" Margin="353,18,352.8,18.2" Height="27" Width="83">
+					   FontSize="22" Margin="203,18,154.8,18.2" Height="27" Width="431" TextAlignment="Center">
 				<Run Text="Version: "/>
 				<Run Text="{Binding Path=Version, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
             </TextBlock>
@@ -48,7 +48,7 @@
             <TextBlock Grid.Row="2" 
 					   Style="{StaticResource TextBlockStyle}"
 					   FontSize="22"
-					   Foreground="#006600" Margin="337,17.8,335.8,18.4" Height="27" Width="116">
+					   Foreground="#006600" Margin="203,17.8,154.8,18.4" Height="27" Width="431" TextAlignment="Center">
 				<Run Text="Instrument: "/>
 				<Run Text="{Binding Path=InstrumentName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
             </TextBlock>

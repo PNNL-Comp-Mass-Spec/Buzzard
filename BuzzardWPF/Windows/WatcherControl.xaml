@@ -185,7 +185,7 @@
                   IsEnabled="{Binding Path=IsNotMonitoring}"
                                     HorizontalContentAlignment="Center"
 							        Minimum="0"
-							        Maximum="59"
+							        Maximum="600"
 							        FormatString="N0"/>
 
         <Label Grid.Row="4" Grid.Column="0"                      

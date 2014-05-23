@@ -5,15 +5,24 @@ namespace BuzzardLib.Data
 {
     public class DatasetTrie
 	{
+        private const bool DEFAULT_IGNORE_CASE = true;
+
 		#region Attributes
-		private classTrieNode					m_root;
-		private Dictionary<int, classDMSData>	m_requestIDToDMS;
+		private readonly classTrieNode					m_root;
+		private readonly Dictionary<int, classDMSData>	m_requestIDToDMS;
+        private readonly bool m_IgnoreCase;
 		#endregion
 
-		public DatasetTrie()
+        public DatasetTrie()
+            : this(DEFAULT_IGNORE_CASE)
+        {
+        }
+
+        public DatasetTrie(bool ignoreCase)
         {
             m_root = new classTrieNode();
-			m_requestIDToDMS = new Dictionary<int, classDMSData>();
+            m_requestIDToDMS = new Dictionary<int, classDMSData>();
+            m_IgnoreCase = ignoreCase;
         }
         /// <summary>
         /// Adds data to the trie.
@@ -21,7 +30,15 @@ namespace BuzzardLib.Data
         /// <param name="data"></param>
         public void AddData(classDMSData data)
         {
-            AddData(m_root, data.RequestName, data);
+            if (m_IgnoreCase)
+            {
+                // Store all text as lower case
+                AddData(m_root, data.RequestName.ToLower(), data);
+            }
+            else
+            {
+                AddData(m_root, data.RequestName, data);
+            }
         }
         public void Clear()
         {
@@ -43,7 +60,8 @@ namespace BuzzardLib.Data
         /// <param name="datasetName">Dataset name to add</param>
         /// <param name="data">Data to add at leaf</param>
         private void AddData(classTrieNode node, string datasetName, classDMSData data)
-        {            
+        {
+          
             if (string.IsNullOrWhiteSpace(datasetName))
             {
                 node.DmsData = data;
@@ -91,7 +109,15 @@ namespace BuzzardLib.Data
         /// <returns>DMS Data if it exists.  Exceptions are thrown if the dataset does not.</returns>
         public classDMSData FindData(string datasetName)
         {
-            return FindData(m_root, datasetName);
+            if (m_IgnoreCase)
+            {
+                // Dataset names were stored lowercase; must convert to lowercase when calling FindData
+                return FindData(m_root, datasetName.ToLower());
+            }
+            else
+            {
+                return FindData(m_root, datasetName);
+            }
         }
         private classDMSData FindData(classTrieNode node, string datasetName)
         {

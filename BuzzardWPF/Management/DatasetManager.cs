@@ -303,11 +303,11 @@ namespace BuzzardWPF.Management
 				
 				dataset.DMSData = new DMSData(data, dataset.FilePath);
             }
-            catch (KeyNotFoundException ex)
+            catch (KeyNotFoundException)
             {
 				dataset.DatasetStatus = DatasetStatus.FailedNoDmsRequest;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 				dataset.DatasetStatus = DatasetStatus.FailedUnknown;
             }
