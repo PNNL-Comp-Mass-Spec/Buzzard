@@ -6,7 +6,7 @@
 			 xmlns:window="clr-namespace:BuzzardWPF.Windows"
 			 xmlns:xctk="clr-namespace:Xceed.Wpf.Toolkit;assembly=WPFToolkit.Extended"
 			 xmlns:lcmsData="clr-namespace:LcmsNetDataClasses.Data;assembly=LcmsNetSDK"
-             mc:Ignorable="d" 
+			 mc:Ignorable="d" 
              d:DesignHeight="200" 
              d:DesignWidth="600">
 	
