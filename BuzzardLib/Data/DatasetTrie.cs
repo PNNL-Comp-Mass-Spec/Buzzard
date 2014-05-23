@@ -44,7 +44,7 @@ namespace BuzzardLib.Data
         /// <param name="data">Data to add at leaf</param>
         private void AddData(classTrieNode node, string datasetName, classDMSData data)
         {            
-            if (string.IsNullOrEmpty(datasetName))
+            if (string.IsNullOrWhiteSpace(datasetName))
             {
                 node.DmsData = data;
             }
@@ -95,7 +95,7 @@ namespace BuzzardLib.Data
         }
         private classDMSData FindData(classTrieNode node, string datasetName)
         {
-            if (string.IsNullOrEmpty(datasetName))
+            if (string.IsNullOrWhiteSpace(datasetName))
             {
                 // This means that we are out of our search string.
                 if (node.DmsData != null)
@@ -111,7 +111,7 @@ namespace BuzzardLib.Data
             {
                 // but now we are out of datasets to search now...this has to be the guy...                    
                 // although it could still not be him...
-                //TODO: Speak with Gary about this.                    
+                //TODO: Speak with Gary or Matt about this.                    
                 return node.DmsData;
             }
             // more datasets exist past this point...

@@ -210,41 +210,50 @@ namespace BuzzardWPF.Windows
 
 			IEnumerable<classExperimentData> x = null;
 
-			switch (filterOption)
-			{
-			case FilterOption.Researcher:
-				x = from classExperimentData exp in m_experimentList
-					where exp.Researcher.StartsWith(FilterText, StringComparison.OrdinalIgnoreCase)
-					select exp;
-				break;
+		    try
+		    {
+                switch (filterOption)
+                {
+                    case FilterOption.Researcher:
+                        x = from classExperimentData exp in m_experimentList
+                            where exp.Researcher.StartsWith(FilterText, StringComparison.OrdinalIgnoreCase)
+                            select exp;
+                        break;
 
-			case FilterOption.Experiment:
-				x = from classExperimentData exp in m_experimentList
-					where exp.Experiment.StartsWith(FilterText, StringComparison.OrdinalIgnoreCase)
-					select exp;
-				break;
+                    case FilterOption.Experiment:
+                        x = from classExperimentData exp in m_experimentList
+                            where exp.Experiment.StartsWith(FilterText, StringComparison.OrdinalIgnoreCase)
+                            select exp;
+                        break;
 
-			case FilterOption.Organism:
-				x = from classExperimentData exp in m_experimentList
-					where exp.Organism.StartsWith(FilterText, StringComparison.OrdinalIgnoreCase)
-					select exp;
-				break;
+                    case FilterOption.Organism:
+                        x = from classExperimentData exp in m_experimentList
+                            where exp.Organism.StartsWith(FilterText, StringComparison.OrdinalIgnoreCase)
+                            select exp;
+                        break;
 
-			case FilterOption.Reason:
-				x = from classExperimentData exp in m_experimentList
-					where exp.Reason.StartsWith(FilterText, StringComparison.OrdinalIgnoreCase)
-					select exp;
-				break;
+                    case FilterOption.Reason:
+                        x = from classExperimentData exp in m_experimentList
+                            where exp.Reason != null && exp.Reason.StartsWith(FilterText, StringComparison.OrdinalIgnoreCase)
+                            select exp;
+                        break;
 
-			default:
-				break;
-			}
+                    default:
+                        break;
+                }
 
-			if (x == null)
-				return;
+                if (x == null)
+                    return;
 
-			var tempRef = new ObservableCollection<classExperimentData>(x);
-			Experiments = tempRef;
+                var tempRef = new ObservableCollection<classExperimentData>(x);
+                Experiments = tempRef;
+		    }
+		    catch (Exception ex)
+		    {
+                // Search error; do not update Experiments              
+		        Console.WriteLine("Error ignored in ExperimentsViewser.Search_Click: " + ex.Message);
+		    }
+		   
 		}
 		#endregion
 

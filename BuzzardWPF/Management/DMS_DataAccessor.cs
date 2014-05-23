@@ -46,14 +46,19 @@ namespace BuzzardWPF.Management
 			// Load Instrument Data
 			//
 			var tempInstrumentData = classSQLiteTools.GetInstrumentList(false);
-			if(tempInstrumentData == null)
-				classApplicationLogger.LogError(0, "Instrument list retrieval returned null.");
-			if(tempInstrumentData.Count == 0)
-				classApplicationLogger.LogError(0, "No instruments found.");
+		    if (tempInstrumentData == null)
+		    {
+		        classApplicationLogger.LogError(0, "Instrument list retrieval returned null.");
+		        InstrumentData = new ObservableCollection<string>();
+		    }
+		    else
+		    {
+		        if (tempInstrumentData.Count == 0)
+		            classApplicationLogger.LogError(0, "No instruments found.");
+		    }
 
-			if (tempInstrumentData != null && tempInstrumentData.Count != 0)
-				InstrumentData = new ObservableCollection<string>(tempInstrumentData.Select(instDatum => { return instDatum.DMSName; }));
-
+		    if (tempInstrumentData != null && tempInstrumentData.Count != 0)
+				InstrumentData = new ObservableCollection<string>(tempInstrumentData.Select(instDatum => instDatum.DMSName));
 
 			//
 			// Load Operator Data
@@ -62,7 +67,7 @@ namespace BuzzardWPF.Management
 			if (tempUserList == null)
 				classApplicationLogger.LogError(0, "User retrieval returned null.");
 			else
-				OperatorData = new ObservableCollection<string>(tempUserList.Select(userDatum => { return userDatum.UserName; }));
+				OperatorData = new ObservableCollection<string>(tempUserList.Select(userDatum => userDatum.UserName));
 
 
 			//

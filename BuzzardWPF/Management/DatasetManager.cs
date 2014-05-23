@@ -51,9 +51,6 @@ namespace BuzzardWPF.Management
 
 		private DispatcherTimer m_scannedDatasetTimer;
 
-
-		private FileSystemWatcher m_fileSystemWatcher;
-
 		#region Static
 		private static readonly string[] INTEREST_RATING_ARRAY = { "Unreviewed", "Not Released", "Released", "Rerun (Good Data)", "Rerun (Superseded)" };
 		public static readonly ObservableCollection<string>	INTEREST_RATINGS_COLLECTION;
@@ -79,7 +76,6 @@ namespace BuzzardWPF.Management
 			TriggerFileCreationWaitTime			= 5;
             MinimumFileSize                     = 100;
 
-			m_fileSystemWatcher = null;
         }
 
 		static DatasetManager()
@@ -159,15 +155,19 @@ namespace BuzzardWPF.Management
 			// We can use this to get an idea is any datasets already have
 			// trigger files that were sent.
 			var triggerFileDestination = classLCMSSettings.GetParameter("TriggerFileFolder");
-			if (Directory.Exists(triggerFileDestination))
+			if (!string.IsNullOrWhiteSpace(triggerFileDestination) && Directory.Exists(triggerFileDestination))
 			{
 				try
 				{
-				    m_triggerFolderContents =
-				        Directory.GetFiles(triggerFileDestination, "*.xml", SearchOption.AllDirectories).ToList();
+				    m_triggerFolderContents = Directory.GetFiles(triggerFileDestination, "*.xml", SearchOption.TopDirectoryOnly).ToList();
 					
 					if (m_triggerFolderContents == null)
 						m_triggerFolderContents = new List<string>();
+
+				    var successFolderPath = Path.Combine(triggerFileDestination, "success");
+                    if (Directory.Exists(successFolderPath))
+                        m_triggerFolderContents.AddRange(Directory.GetFiles(successFolderPath, "*.xml", SearchOption.TopDirectoryOnly).ToList());
+
 				}
 				catch
 				{
@@ -224,6 +224,12 @@ namespace BuzzardWPF.Management
             {
                 if (dataset.DatasetStatus == DatasetStatus.TriggerFileSent && !forceSend) return null;
 
+                if (dataset.Name == null)
+                    dataset.Name = string.Copy(dataset.DMSData.DatasetName);
+
+                if (dataset.Name == null)
+                    dataset.Name = "Undefined";
+
                 classApplicationLogger.LogMessage(0, string.Format("Creating Trigger File: {0} for {1}", DateTime.Now, dataset.Name));
                 var name = TriggerFileTools.GenerateTriggerFileBuzzard(sample, dataset, dataset.DMSData, DatasetManager.Manager.TriggerFileLocation);
                 classApplicationLogger.LogMessage(0, string.Format("Saved Trigger File: {0} for {1}", DateTime.Now, dataset.Name));
@@ -273,7 +279,7 @@ namespace BuzzardWPF.Management
 			if (dataset == null)
 				return;
 
-            // Here we dont want to resolve the dataset in DMS. if it was told to be ignored...or if we already sent it...
+            // Here we don't want to resolve the dataset in DMS. if it was told to be ignored...or if we already sent it...
             if (dataset.DatasetStatus == DatasetStatus.Ignored)
                 return;
 
@@ -673,8 +679,8 @@ namespace BuzzardWPF.Management
 		/// </remarks>
 		public void CreatePendingDataset(string path, DatasetSource howWasItFound = DatasetSource.Searcher)
 		{
-			/// If we're on the wrong thread, then put in 
-			/// a call to this in the correct thread and exit.
+			// If we're on the wrong thread, then put in 
+			// a call to this in the correct thread and exit.
 			if (!MainWindow.Dispatcher.CheckAccess())
 			{
 				Action action = delegate
@@ -694,9 +700,9 @@ namespace BuzzardWPF.Management
 			}
 
 
-			///
-			/// Files that have been archived renamed to start with a "x_"
-			/// 
+			//
+			// Files that have been archived renamed to start with a "x_"
+			// 
 			var fileName = Path.GetFileName(path);
 			var isArchived = fileName.StartsWith("x_", StringComparison.OrdinalIgnoreCase);
 			var originalPath = path;
@@ -705,9 +711,9 @@ namespace BuzzardWPF.Management
 				originalPath = Path.Combine(Path.GetDirectoryName(path), fileName.Substring(2));
 
 
-			///
-			/// Find if we need to create a new dataset.
-			/// 
+			//
+			// Find if we need to create a new dataset.
+			// 
 			var isItAlreadyThere = Datasets.Any(
 				datum => 
 				{
@@ -737,10 +743,12 @@ namespace BuzzardWPF.Management
 					dataset.UpdateFileProperties();
 			}
 			else if (
-				howWasItFound == DatasetSource.Searcher  // searcher, and the user set the search config
-				&& isArchived								// not to include archived items, then we don't
-				&& !IncludedArchivedItems)					// create a new dataset.
+				howWasItFound == DatasetSource.Searcher
+				&& isArchived							
+				&& !IncludedArchivedItems)				
 			{
+                // Found via the searcher, and the user set the search config not to include archived items
+                // Don't create a new dataset
 				return;
 			}
 			else

@@ -19,11 +19,9 @@ namespace BuzzardWPF
         /// <summary>
         /// Default message level.
         /// </summary>
-        private const int CONST_DEFAULT_MESSAGE_LOG_LEVEL   = 5;        
-        /// <summary>
-        /// Reference to splash screen window.
-        /// </summary>
-       // private static formSplashScreen mform_splashScreen;
+        private const int CONST_DEFAULT_MESSAGE_LOG_LEVEL   = 5;
+
+        public const string PROGRAM_DATE = "May 22, 2014";
         #endregion
 
         #region Configuration Loading
@@ -78,9 +76,9 @@ namespace BuzzardWPF
             var appPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData);
 
             var path = Path.Combine(appPath, "Buzzard", localPath);
-            /// 
-            /// See if the logging directory exists
-            /// 
+            // 
+            // See if the logging directory exists
+            // 
             if (Directory.Exists(path) == false)
             {
                 try
@@ -89,9 +87,9 @@ namespace BuzzardWPF
                 }
                 catch (UnauthorizedAccessException ex)
                 {
-                    /// 
-                    /// Not much we can do here...
-                    /// 
+                    // 
+                    // Not much we can do here...
+                    // 
                     var errorMessage = string.Format("Buzzard could not create missing folder {0} required for operation.  Please run application with higher priveleges.  {1}",
                                                                   localPath, ex.Message);
                     MessageBox.Show(errorMessage);
@@ -118,6 +116,9 @@ namespace BuzzardWPF
 
             //Application.EnableVisualStyles();
             //Application.SetCompatibleTextRenderingDefault(false);
+
+            // Todo: Wire this up
+            //xyz += classFileLogging.LogFilePathDefined;
 
             // Before we do anything, let's initialize the file logging capability.
             classApplicationLogger.Error   += classFileLogging.LogError;
@@ -152,9 +153,9 @@ namespace BuzzardWPF
 
             classApplicationLogger.LogMessage(-1, "Checking For Local Trigger Files");
 
-            ///
-            /// Check to see if any trigger files need to be copied to the transfer server, and copy if necessary
-            /// 
+            //
+            // Check to see if any trigger files need to be copied to the transfer server, and copy if necessary
+            // 
             if (bool.Parse(classLCMSSettings.GetParameter("CopyTriggerFiles")))
             {
                 if (LcmsNetDataClasses.Data.classTriggerFileTools.CheckLocalTriggerFiles())

@@ -87,7 +87,8 @@ namespace BuzzardWPF
             classApplicationLogger.Message += ApplicationLogger_Message;
             classApplicationLogger.Error += ApplicationLogger_Error;
 
-            // Todo: Find a real list of usage types, none of this hard-coded crap.
+            // These values come from table T_EUS_UsageType
+            // It is rarely updated, so we're not querying the database every time
             m_dataGrid.EmslUsageTypesSource =
                 new ObservableCollection<string>
                     (
