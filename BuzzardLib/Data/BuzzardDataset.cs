@@ -53,6 +53,8 @@ namespace BuzzardLib.Data
         public BuzzardDataset()
         {
             DMSData = new DMSData();
+            DMSDataLastUpdate = DateTime.UtcNow;
+
             NotOnlyDatasource = false;
             DatasetSource = Data.DatasetSource.Searcher;
             DatasetStatus = DatasetStatus.Pending;
@@ -169,7 +171,13 @@ namespace BuzzardLib.Data
 
         public DMSStatus DMSStatus
         {
-            get { return (DMSData.LockData ? DMSStatus.DMSResolved : DMSStatus.NoDMSRequest); }
+            get
+            {
+                if (DMSData.LockData)
+                    return DMSStatus.DMSResolved;
+                
+                return DMSStatus.NoDMSRequest;                
+            }
         }
 
         public DatasetSource DatasetSource
@@ -293,8 +301,15 @@ namespace BuzzardLib.Data
                     m_dmsData = value;
                     OnPropertyChanged("DMSData");
                     OnPropertyChanged("DMSStatus");
+                    DMSDataLastUpdate = DateTime.UtcNow;
                 }
             }
+        }
+
+        public DateTime DMSDataLastUpdate
+        {
+            get;
+            set;
         }
 
         public string InterestRating

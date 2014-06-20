@@ -279,14 +279,14 @@ namespace BuzzardWPF.Management
 
             foreach (var dataset in datasets)
             {
-                ResolveDms(dataset);
+                ResolveDms(dataset, false);
             }
         }
 
         /// <summary>
         /// Resolves the entries in DMS for a list of given datasets.
         /// </summary>
-        public void ResolveDms(BuzzardDataset dataset)
+        public void ResolveDms(BuzzardDataset dataset, bool forceUpdate)
         {
             if (dataset == null)
                 return;
@@ -304,8 +304,15 @@ namespace BuzzardWPF.Management
                 return;
             }
 
+            if (dataset.DMSData != null && !forceUpdate)
+            {
+                // Update the DMS info every 2 minutes
+                if (DateTime.UtcNow.Subtract(dataset.DMSDataLastUpdate).TotalMinutes < 2)
+                    return;
+            }
+
             var fiDataset = new FileInfo(dataset.FilePath);
-            
+
 
             try
             {
@@ -331,7 +338,7 @@ namespace BuzzardWPF.Management
                 else
                 {
                     if (!CreateTriggerOnDMSFail)
-                        dataset.DatasetStatus = DatasetStatus.FailedNoDmsRequest;                    
+                        dataset.DatasetStatus = DatasetStatus.FailedNoDmsRequest;
                 }
             }
             catch (Exception)
@@ -377,14 +384,14 @@ namespace BuzzardWPF.Management
                 return;
 
             m_scannedDatasetTimer = new DispatcherTimer(DispatcherPriority.Normal, MainWindow.Dispatcher);
-            m_scannedDatasetTimer.Interval = new TimeSpan(0, 0, 0, 0, 333); // 0.333 seconds (about 1/3 of a second)
+            m_scannedDatasetTimer.Interval = new TimeSpan(0, 0, 0, 0, 500);     // Update every 500 msec
             m_scannedDatasetTimer.Tick += ScannedDatasetTimer_Tick;
             m_scannedDatasetTimer.Start();
         }
 
 
         /// <summary>
-        /// This will keep the UI components of the Datasets that are found by the scanner upto date.
+        /// This will keep the UI components of the Datasets that are found by the scanner up to date.
         /// </summary>
         void ScannedDatasetTimer_Tick(object sender, EventArgs e)
         {
@@ -443,7 +450,7 @@ namespace BuzzardWPF.Management
                 {
                     if (!dataset.DMSData.LockData)
                     {
-                        ResolveDms(dataset);
+                        ResolveDms(dataset, true);
                     }
 
                     if (dataset.IsQC)
@@ -655,7 +662,7 @@ namespace BuzzardWPF.Management
         //}
 
         /// <summary>
-        /// This method is used to find a dataset that a file corrisponds to.
+        /// This method is used to find a dataset that a file corresponds to.
         /// If a dataset is a directory type that contains this file, then that
         /// dataset will be returned. If a dataset is file type that is that
         /// file, then the dataset will be returned. If no dataset is found, then
@@ -709,12 +716,13 @@ namespace BuzzardWPF.Management
         /// </summary>
         /// <param name="path"></param>
         /// <param name="howWasItFound"></param>
+        /// <param name="oldFullPath">Use this parameter when a file is renamed</param>
         /// <remarks>
         /// This is not a thread safe method. In fact, if someone were to mess
         /// with the contents of the Datasets property while this method is
         /// executing, they could crash the program.
         /// </remarks>
-        public void CreatePendingDataset(string path, DatasetSource howWasItFound = DatasetSource.Searcher)
+        public void CreatePendingDataset(string path, DatasetSource howWasItFound = DatasetSource.Searcher, string oldFullPath = "")
         {
             // If we're on the wrong thread, then put in 
             // a call to this in the correct thread and exit.
@@ -722,7 +730,7 @@ namespace BuzzardWPF.Management
             {
                 Action action = delegate
                 {
-                    CreatePendingDataset(path, howWasItFound);
+                    CreatePendingDataset(path, howWasItFound, oldFullPath);
                 };
 
                 MainWindow.Dispatcher.BeginInvoke(action, DispatcherPriority.Normal);
@@ -738,7 +746,7 @@ namespace BuzzardWPF.Management
 
 
             //
-            // Files that have been archived renamed to start with a "x_"
+            // Files that have been archived are renamed to start with a "x_"
             // 
             var fileName = Path.GetFileName(path);
             var isArchived = fileName.StartsWith("x_", StringComparison.OrdinalIgnoreCase);
@@ -748,43 +756,66 @@ namespace BuzzardWPF.Management
                 originalPath = Path.Combine(Path.GetDirectoryName(path), fileName.Substring(2));
 
 
-            //
-            // Find if we need to create a new dataset.
-            // 
-            var isItAlreadyThere = Datasets.Any(
-                datum =>
-                {
-                    var datasetFound = datum.FilePath.Equals(path, StringComparison.OrdinalIgnoreCase)
-                        || datum.FilePath.Equals(originalPath, StringComparison.OrdinalIgnoreCase);
-
-                    return datasetFound;
-                });
-
-
             BuzzardDataset dataset = null;
+            bool newDatasetFound = false;
 
-            if (isItAlreadyThere)
+            //
+            // Look for an existing dataset that matches the old name
+            //            
+            if (!string.IsNullOrEmpty(oldFullPath))
             {
-                dataset = Datasets.First(
-                    datum =>
+                var fileNameOld = Path.GetFileName(oldFullPath);
+                if (!fileNameOld.StartsWith("x_", StringComparison.OrdinalIgnoreCase))
+                {
+                    foreach (var datasetEntry in Datasets)
                     {
-                        var datasetFound = datum.FilePath.Equals(path, StringComparison.OrdinalIgnoreCase)
-                            || datum.FilePath.Equals(originalPath, StringComparison.OrdinalIgnoreCase);
+                        if (datasetEntry.FilePath.Equals(oldFullPath, StringComparison.OrdinalIgnoreCase))
+                        {
+                            // Update the existing entry to use the new path
 
-                        return datasetFound;
-                    });
+                            dataset = datasetEntry;
 
+                            dataset.FilePath = path;
+                            dataset.UpdateFileProperties();
+                            break;
+                        }
+                    }
+
+                }
+            }
+
+            if (dataset == null)
+            {
+                //
+                // Find if we need to create a new dataset.
+                // 
+                foreach (var datasetEntry in Datasets)
+                {
+                    if (datasetEntry.FilePath.Equals(path, StringComparison.OrdinalIgnoreCase) ||
+                        datasetEntry.FilePath.Equals(originalPath, StringComparison.OrdinalIgnoreCase))
+                    {
+                        // Match found
+                        dataset = datasetEntry;
+                        break;
+                    }
+                }
+
+            }
+
+            if (dataset != null)
+            {
                 if (isArchived)
                     dataset.FilePath = path;
                 else
                     dataset.UpdateFileProperties();
+
             }
             else if (
                 howWasItFound == DatasetSource.Searcher
                 && isArchived
                 && !IncludedArchivedItems)
             {
-                // Found via the searcher, and the user set the search config not to include archived items
+                // Found via the searcher, and the user set the search config to not include archived items
                 // Don't create a new dataset
                 return;
             }
@@ -792,6 +823,7 @@ namespace BuzzardWPF.Management
             {
                 dataset = DatasetFactory.LoadDataset(path);
                 dataset.Comment = Manager.UserComments;
+                newDatasetFound = true;
             }
 
 
@@ -875,11 +907,11 @@ namespace BuzzardWPF.Management
             // that means that this dataset is brand
             // new.
             // 
-            if (!isItAlreadyThere)
+            if (newDatasetFound)
             {
                 if (howWasItFound == DatasetSource.Searcher)
                 {
-                    ResolveDms(dataset);
+                    ResolveDms(dataset, true);
 
                     var hasTriggerFileSent =
                         Manager.TriggerDirectoryContents.Any
@@ -898,7 +930,7 @@ namespace BuzzardWPF.Management
             }
 
 
-            Manager.ResolveDms(dataset);
+            Manager.ResolveDms(dataset, newDatasetFound);
         }
 
         public bool IsLoading
