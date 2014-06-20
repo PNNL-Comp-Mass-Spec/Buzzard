@@ -8,59 +8,59 @@
 			 xmlns:data="clr-namespace:BuzzardLib.Data;assembly=BuzzardLib"
 			 xmlns:dmsData="clr-namespace:LcmsNetDataClasses.Data;assembly=LcmsNetSdk"
              mc:Ignorable="d" 
-             d:DesignHeight="298" d:DesignWidth="736"
+             d:DesignHeight="267" d:DesignWidth="749.4"
 			 Background="{x:Null}">
-    <UserControl.Resources>        
+    <UserControl.Resources>
         <converters:BooleanToDataGridVisibilityModeConverter x:Key="boolConverter"/>
-		<converters:ByteToKBConverter			x:Key="FileSizeConverter"/>
-		<converters:TabLockSwitchConverter		x:Key="LockSwitchConverter"/>
-		<converters:WaitTimeToProgressValueConverter x:Key="ProgressBarConverter"/>
-		<converters:WaitTimeTextConverter		x:Key="WaitTimeTextConverter"/>
-		<converters:EmptyRequestNameConverter	x:Key="RequestNameConverter"/>
-		<windows:ShowRowDetailConverter			x:Key="ShowRowDetailsConverter"/>
-		<converters:BoolToObjectConverter		x:Key="ShowDetailButtonContentConverter"
+        <converters:ByteToKBConverter			x:Key="FileSizeConverter"/>
+        <converters:TabLockSwitchConverter		x:Key="LockSwitchConverter"/>
+        <converters:WaitTimeToProgressValueConverter x:Key="ProgressBarConverter"/>
+        <converters:WaitTimeTextConverter		x:Key="WaitTimeTextConverter"/>
+        <converters:EmptyRequestNameConverter	x:Key="RequestNameConverter"/>
+        <windows:ShowRowDetailConverter			x:Key="ShowRowDetailsConverter"/>
+        <converters:BoolToObjectConverter		x:Key="ShowDetailButtonContentConverter"
 												TrueContent="Hide Details"
 												FalseContent="Show Row Details"
 												NullContent="Not Possible"/>
 
-		<!-- 
-		  * This template lets us leverage the ability to display a specefic 
+        <!-- 
+		  * This template lets us leverage the ability to display a specific 
 		  * tab and switch between tabs as we want, while hiding the tab 
 		  * selection abilities from the user.
 		-->
-		<ControlTemplate x:Key="TabControlTemplate" TargetType="TabControl">
-			<ContentPresenter ContentSource="SelectedContent"
+        <ControlTemplate x:Key="TabControlTemplate" TargetType="TabControl">
+            <ContentPresenter ContentSource="SelectedContent"
 							  Name="PART_SelectedContentHost"/>
-		</ControlTemplate>
+        </ControlTemplate>
 
-		<Style x:Key="ButtonStyle" TargetType="Button">
-			<Setter Property="MinWidth" Value="95"/>
-			<Setter Property="MinHeight" Value="32"/>
-		</Style>
+        <Style x:Key="ButtonStyle" TargetType="Button">
+            <Setter Property="MinWidth" Value="95"/>
+            <Setter Property="MinHeight" Value="32"/>
+        </Style>
 
-		<Style x:Key="DataGridCellStyle" TargetType="DataGridCell">
-			<Style.Triggers>
-				<Trigger Property="IsSelected" Value="True">
-					<Setter Property="Background" Value="#FFE0E8FF" />
-					<Setter Property="Foreground" Value="Black"/>
-				</Trigger>
-			</Style.Triggers>
-			
-			<Setter Property="VerticalContentAlignment" Value="Center"/>
-		</Style>
+        <Style x:Key="DataGridCellStyle" TargetType="DataGridCell">
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="#FFE0E8FF" />
+                    <Setter Property="Foreground" Value="Black"/>
+                </Trigger>
+            </Style.Triggers>
 
-		<Style x:Key="DataGridRowStyle" TargetType="DataGridRow">
-			<Style.Triggers>
-				<Trigger Property="IsSelected" Value="True">
-					<Setter Property="BorderBrush" Value="LightSteelBlue" />
-					<Setter Property="BorderThickness" Value="1" />
-				</Trigger>
-			</Style.Triggers>
-			
-			<Setter Property="VerticalContentAlignment" Value="Center"/>
-		</Style>
-		
-		<DropShadowEffect x:Key="ShadowEffect" 
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+
+        <Style x:Key="DataGridRowStyle" TargetType="DataGridRow">
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="BorderBrush" Value="LightSteelBlue" />
+                    <Setter Property="BorderThickness" Value="1" />
+                </Trigger>
+            </Style.Triggers>
+
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+
+        <DropShadowEffect x:Key="ShadowEffect" 
 						  BlurRadius="3" 
 						  Color="DarkGray" 
 						  Opacity="0.8"
@@ -68,80 +68,80 @@
 						  RenderingBias="Performance" 
 						  ShadowDepth="5"/>
 
-		<converters:RedudantRequestBackgroundConverter x:Key="RedundantBackgroundConverter"/>
+        <converters:RedudantRequestBackgroundConverter x:Key="RedundantBackgroundConverter"/>
 
-		
-		<DataTemplate x:Key="EMSLUserTemplate" DataType="dmsData:classProposalUser">
-			<TextBlock Text="{Binding Path=UserName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+
+        <DataTemplate x:Key="EMSLUserTemplate" DataType="dmsData:classProposalUser">
+            <TextBlock Text="{Binding Path=UserName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
 					   Margin="2,2,6,2"/>
-		</DataTemplate>
+        </DataTemplate>
 
-		<DataTemplate x:Key="RowDetailsTemplate" DataType="data:BuzzardDataset">
-			<Grid Margin="0 0 0 14">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="auto"/>
-					<ColumnDefinition Width="*"/>
-				</Grid.ColumnDefinitions>
-				
-				<GroupBox Header="EMSL"
+        <DataTemplate x:Key="RowDetailsTemplate" DataType="data:BuzzardDataset">
+            <Grid Margin="0 0 0 14">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <GroupBox Header="EMSL"
 						  Margin="2"
 						  Padding="1 2 1 1">
-					<Grid>
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="auto"/>
-							<ColumnDefinition Width="auto" MinWidth="65"/>
-							<ColumnDefinition Width="auto"/>
-							<ColumnDefinition Width="auto" MinWidth="65"/>
-							<ColumnDefinition Width="auto"/>
-							<ColumnDefinition Width="*" MinWidth="200" MaxWidth="350"/>
-						</Grid.ColumnDefinitions>
-						
-						<Label Grid.Column="0" VerticalAlignment="Center" Margin="2">Usage: </Label>
-						<Label Grid.Column="2" VerticalAlignment="Center" Margin="2">Proposal ID: </Label>
-						<Label Grid.Column="4" VerticalAlignment="Center" Margin="2">Proposal Users: </Label>
-						
-						<TextBlock Grid.Column="1"
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="auto" MinWidth="65"/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="auto" MinWidth="65"/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="*" MinWidth="200" MaxWidth="350"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Column="0" VerticalAlignment="Center" Margin="2">Usage:</Label>
+                        <Label Grid.Column="2" VerticalAlignment="Center" Margin="2">Proposal ID:</Label>
+                        <Label Grid.Column="4" VerticalAlignment="Center" Margin="2">Proposal Users:</Label>
+
+                        <TextBlock Grid.Column="1"
 								   Margin="2 2 8 2"
 								   VerticalAlignment="Center"
 								   Text="{Binding Path=DMSData.EMSLUsageType}"/>
-						
-						<TextBlock Grid.Column="3"
+
+                        <TextBlock Grid.Column="3"
 								   Margin="2 2 8 2"
 								   VerticalAlignment="Center"
 								   Text="{Binding Path=DMSData.EMSLProposalID}"/>
 
-						<ScrollViewer Grid.Column="5" 
+                        <ScrollViewer Grid.Column="5" 
 									  HorizontalScrollBarVisibility="Auto"
 									  VerticalScrollBarVisibility="Disabled">
-							<ListBox ItemsSource="{Binding Path=EMSLProposalUsers, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                            <ListBox ItemsSource="{Binding Path=EMSLProposalUsers, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
 									 ItemTemplate="{StaticResource EMSLUserTemplate}">
-								<ListBox.ItemsPanel>
-									<ItemsPanelTemplate>
-										<StackPanel Orientation="Horizontal"/>
-									</ItemsPanelTemplate>
-								</ListBox.ItemsPanel>
-							</ListBox>
-						</ScrollViewer>
-					</Grid>
-				</GroupBox>
-			</Grid>
-		</DataTemplate>
-	</UserControl.Resources>
+                                <ListBox.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal"/>
+                                    </ItemsPanelTemplate>
+                                </ListBox.ItemsPanel>
+                            </ListBox>
+                        </ScrollViewer>
+                    </Grid>
+                </GroupBox>
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
-			<RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="*" />
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-			<ColumnDefinition Width="auto"/>
-			<ColumnDefinition Width="auto"/>
-			<ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="auto"/>
         </Grid.ColumnDefinitions>
-        
-		<DataGrid Name="m_dataGrid" 
+
+        <DataGrid Name="m_dataGrid" 
 				  Grid.Row="1" Grid.Column="0"
 				  Grid.ColumnSpan="5"
 				  Margin="6,4,6,1"
@@ -156,229 +156,213 @@
 				  RowStyle="{StaticResource DataGridRowStyle}"
 				  RowDetailsTemplate="{StaticResource RowDetailsTemplate}"
 				  RowDetailsVisibilityMode="{Binding Path=ShowGridItemDetail, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ShowRowDetailsConverter}}">
-            
+
             <DataGrid.Columns>
                 <!--Dataset Information-->
                 <DataGridTextColumn Header="Request ID" Binding="{Binding Path=DMSData.RequestID}" IsReadOnly="True"/>
-				<DataGridTextColumn Header="Request Name"		
+                <DataGridTextColumn Header="Request Name"		
 									Binding="{Binding Path=DMSData.RequestName, 
 													  Mode=OneWay, 
 													  UpdateSourceTrigger=PropertyChanged, 
 													  Converter={StaticResource RequestNameConverter}}"	
 									IsReadOnly="True"/>
-				<DataGridTemplateColumn Header="Dataset Name"
+                <DataGridTemplateColumn Header="Dataset Name"
 										SortDirection="Ascending"
 										CanUserSort="True"
 										SortMemberPath="DMSData.DatasetName">
-					<DataGridTemplateColumn.CellTemplate>
-						<DataTemplate>
-							<TextBlock Text="{Binding Path=DMSData.DatasetName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Path=DMSData.DatasetName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
 									   Foreground="{Binding Path=NotOnlyDatasource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource RedundantBackgroundConverter}}"
-									   VerticalAlignment="Center"/>
-						</DataTemplate>
-					</DataGridTemplateColumn.CellTemplate>
-				</DataGridTemplateColumn>
-				
-				<DataGridTextColumn Visibility="Collapsed" Header="DMS Status" Binding="{Binding DMSStatus}" IsReadOnly="True" Width="100"/>
-				<DataGridTextColumn Visibility="Collapsed" Header="Trigger File Status" Binding="{Binding TriggerFileStatus}" IsReadOnly="True"/>
-				
-				<DataGridTextColumn Header="Status" Binding="{Binding DatasetStatus}" IsReadOnly="True"/>
+									   VerticalAlignment="Top"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
 
-				
-				<DataGridTemplateColumn Header="Trigger File Creation" 
+                <DataGridTextColumn Visibility="Collapsed" Header="DMS Status" Binding="{Binding DMSStatus}" IsReadOnly="True" Width="100"/>
+                <DataGridTextColumn Visibility="Collapsed" Header="Trigger File Status" Binding="{Binding TriggerFileStatus}" IsReadOnly="True"/>
+
+                <DataGridTextColumn Header="Status" Binding="{Binding DatasetStatus}" IsReadOnly="True"/>
+                <DataGridTextColumn	Header="Warning" Binding="{Binding TriggerCreationWarning}" IsReadOnly="True"/>
+
+                <DataGridTemplateColumn Header="Trigger File Creation" 
 										CanUserSort="True" 
 										SortDirection="Ascending" 
 										SortMemberPath="SecondsTillTriggerCreation" 
 										MinWidth="130">
-					<DataGridTemplateColumn.CellTemplate>
-						<DataTemplate>
-							<Grid>
-								<ProgressBar Maximum="100" 
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <ProgressBar Maximum="100" 
 											 Minimum="0" 
 											 Margin="2"
 											 Panel.ZIndex="0" 
 											 Foreground="#FF01D428">
-									<ProgressBar.Value>
-										<MultiBinding Converter="{StaticResource ProgressBarConverter}">
+                                    <ProgressBar.Value>
+                                        <MultiBinding Converter="{StaticResource ProgressBarConverter}">
                                             <Binding Path="WaitTimePercentage"			Mode="OneWay" NotifyOnSourceUpdated="True" UpdateSourceTrigger="PropertyChanged"/>
-											<Binding Path="DatasetStatus"				Mode="OneWay" NotifyOnSourceUpdated="True" UpdateSourceTrigger="PropertyChanged"/>
+                                            <Binding Path="DatasetStatus"				Mode="OneWay" NotifyOnSourceUpdated="True" UpdateSourceTrigger="PropertyChanged"/>
                                             <Binding Path="DatasetSource"				Mode="OneWay" NotifyOnSourceUpdated="True" UpdateSourceTrigger="PropertyChanged"/>
-										</MultiBinding>
-									</ProgressBar.Value>
-								</ProgressBar>
-								
-								<TextBlock Margin="3" 
-										   VerticalAlignment="Center" 
+                                        </MultiBinding>
+                                    </ProgressBar.Value>
+                                </ProgressBar>
+
+                                <TextBlock Margin="2" 
+										   VerticalAlignment="Top" 
 										   HorizontalAlignment="Center"
 										   Background="Transparent"
 										   Effect="{StaticResource ShadowEffect}"
 										   FontWeight="Bold"
 										   FontSize="13"
 										   Panel.ZIndex="1">
-									<TextBlock.Text>
-										<MultiBinding Converter="{StaticResource WaitTimeTextConverter}">
-												<Binding Path="SecondsTillTriggerCreation"	Mode="OneWay" UpdateSourceTrigger="PropertyChanged"/>
-												<Binding Path="DatasetStatus"				Mode="OneWay" UpdateSourceTrigger="PropertyChanged"/>
-												<Binding Path="DatasetSource"				Mode="OneWay" UpdateSourceTrigger="PropertyChanged"/>
-										</MultiBinding>
-									</TextBlock.Text>
-									<TextBlock.Foreground>
-										<SolidColorBrush x:Name="ForegroundBrush" Color="Black"/>
-									</TextBlock.Foreground>
-								</TextBlock>
-							</Grid>
-							<DataTemplate.Triggers>
-								<DataTrigger Binding="{Binding PluseText}" Value="True">
-									<DataTrigger.EnterActions>
-										<BeginStoryboard>
-											<Storyboard>
-												<!-- 
+                                    <TextBlock.Text>
+                                        <MultiBinding Converter="{StaticResource WaitTimeTextConverter}">
+                                            <Binding Path="SecondsTillTriggerCreation"	Mode="OneWay" UpdateSourceTrigger="PropertyChanged"/>
+                                            <Binding Path="DatasetStatus"				Mode="OneWay" UpdateSourceTrigger="PropertyChanged"/>
+                                            <Binding Path="DatasetSource"				Mode="OneWay" UpdateSourceTrigger="PropertyChanged"/>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                    <TextBlock.Foreground>
+                                        <SolidColorBrush x:Name="ForegroundBrush" Color="Black"/>
+                                    </TextBlock.Foreground>
+                                </TextBlock>
+                            </Grid>
+                            <DataTemplate.Triggers>
+                                <DataTrigger Binding="{Binding PluseText}" Value="True">
+                                    <DataTrigger.EnterActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <!-- 
 													* On RepeatBehavior, leaving the x out of it caused
 													* it to repeat forever on the prototype.
 													* -FCT
 												-->
-												<ColorAnimation Storyboard.TargetName="ForegroundBrush"
+                                                <ColorAnimation Storyboard.TargetName="ForegroundBrush"
 																Storyboard.TargetProperty="Color"
 																From="#FF1100AF" To="#FFAF0011"
 																AutoReverse="True"
 																RepeatBehavior="2x"
 																FillBehavior="Stop"
 																Duration="0:0:0.67"/>
-											</Storyboard>
-										</BeginStoryboard>
-									</DataTrigger.EnterActions>
-								</DataTrigger>
-							</DataTemplate.Triggers>
-						</DataTemplate>
-					</DataGridTemplateColumn.CellTemplate>
-				</DataGridTemplateColumn>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </DataTrigger.EnterActions>
+                                </DataTrigger>
+                            </DataTemplate.Triggers>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
 
-				<DataGridTextColumn Header="Experiment Name" 
+                <DataGridTextColumn Header="Experiment Name" 
 									Binding="{Binding ExperimentName}" 
 									IsReadOnly="True" 
 									Width="115"/>
 
-				<DataGridTemplateColumn Header="Operator"
+                <DataGridTemplateColumn Header="Operator"
 										SortDirection="Ascending"
 										CanUserSort="True"
 										SortMemberPath="Operator"
 										MinWidth="125">
-					<DataGridTemplateColumn.CellTemplate>
-						<DataTemplate>
-							<ComboBox ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=windows:BuzzardGrid}, Path=OperatorsSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ComboBox ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=windows:BuzzardGrid}, Path=OperatorsSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
 									  SelectedItem="{Binding Path=Operator, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-						</DataTemplate>
-					</DataGridTemplateColumn.CellTemplate>
-				</DataGridTemplateColumn>
-				<DataGridTemplateColumn Header="Dataset Type"
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Dataset Type"
 										SortDirection="Ascending"
 										CanUserSort="True"
 										SortMemberPath="DMSData.DatasetType"
 										MinWidth="100">
-					<DataGridTemplateColumn.CellTemplate>
-						<DataTemplate>
-							<TabControl Template="{StaticResource TabControlTemplate}"
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TabControl Template="{StaticResource TabControlTemplate}"
 										SelectedIndex="{Binding Path=., Converter={StaticResource LockSwitchConverter}}">
-								<TabItem>
-									<ComboBox ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=windows:BuzzardGrid},
+                                <TabItem>
+                                    <ComboBox ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=windows:BuzzardGrid},
 																	Path=DatasetTypesSource, 
 																	Mode=OneWay, 
 																	UpdateSourceTrigger=PropertyChanged}"
 											  SelectedItem="{Binding Path=DMSData.DatasetType, 
 																	 Mode=TwoWay, 
 																	 UpdateSourceTrigger=PropertyChanged}"/>
-								</TabItem>
-								<TabItem>
-									<TextBlock Text="{Binding Path=DMSData.DatasetType, 
+                                </TabItem>
+                                <TabItem>
+                                    <TextBlock Text="{Binding Path=DMSData.DatasetType, 
 															  Mode=OneWay, 
 															  UpdateSourceTrigger=PropertyChanged}"
-											   VerticalAlignment="Center"/>
-								</TabItem>
-							</TabControl>
-						</DataTemplate>
-					</DataGridTemplateColumn.CellTemplate>
-				</DataGridTemplateColumn>
-				<DataGridTemplateColumn Header="LC Column"
+											   VerticalAlignment="Top"/>
+                                </TabItem>
+                            </TabControl>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="LC Column"
 										SortDirection="Ascending"
 										CanUserSort="True"
 										SortMemberPath="LCColumn"
 										MinWidth="100">
-					<DataGridTemplateColumn.CellTemplate>
-						<DataTemplate>
-							<ComboBox ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=windows:BuzzardGrid}, 
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ComboBox ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=windows:BuzzardGrid}, 
 															Path=LCColumnSource, 
 															Mode=OneWay, 
 															UpdateSourceTrigger=PropertyChanged}"
 									  SelectedItem="{Binding Path=LCColumn, 
 															 Mode=TwoWay, 
 															 UpdateSourceTrigger=PropertyChanged}"/>
-						</DataTemplate>
-					</DataGridTemplateColumn.CellTemplate>
-				</DataGridTemplateColumn>
-				<DataGridTemplateColumn Header="Instrument Name"
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Instrument Name"
 										SortDirection="Ascending"
 										CanUserSort="True"
 										SortMemberPath="Instrument"
 										MinWidth="125">
-					<DataGridTemplateColumn.CellTemplate>
-						<DataTemplate>
-							<ComboBox ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=windows:BuzzardGrid}, 
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ComboBox ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=windows:BuzzardGrid}, 
 															Path=InstrumentsSource, 
 															Mode=OneWay, 
 															UpdateSourceTrigger=PropertyChanged}"
 									  SelectedItem="{Binding Path=Instrument, 
 															 Mode=TwoWay, 
 															 UpdateSourceTrigger=PropertyChanged}"/>
-						</DataTemplate>
-					</DataGridTemplateColumn.CellTemplate>
-				</DataGridTemplateColumn>
-				<DataGridTemplateColumn Header="Separation Type"
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Separation Type"
 										SortDirection="Ascending"
 										CanUserSort="True"
 										SortMemberPath="SeparationType"
 										MinWidth="200">
-					<DataGridTemplateColumn.CellTemplate>
-						<DataTemplate>
-							<ComboBox ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=windows:BuzzardGrid}, Path=SeparationTypeSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ComboBox ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=windows:BuzzardGrid}, Path=SeparationTypeSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
 									  SelectedItem="{Binding Path=SeparationType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-						</DataTemplate>
-					</DataGridTemplateColumn.CellTemplate>
-				</DataGridTemplateColumn>
-				<DataGridTemplateColumn Header="Cart"
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Cart"
 										SortDirection="Ascending"
 										CanUserSort="True"
-										SortMemberPath="DMSData.CartName"
+										SortMemberPath="CartName"
 										MinWidth="100">
-					<DataGridTemplateColumn.CellTemplate>
-						<DataTemplate>
-							<TabControl Template="{StaticResource TabControlTemplate}"
-										SelectedIndex="{Binding Path=., Converter={StaticResource LockSwitchConverter}}">
-								<TabItem>
-									<ComboBox ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=windows:BuzzardGrid},
-																	Path=CartNameListSource, 
-																	Mode=OneWay, 
-																	UpdateSourceTrigger=PropertyChanged}"
-											  SelectedItem="{Binding Path=DMSData.CartName, 
-																	 Mode=TwoWay, 
-																	 UpdateSourceTrigger=PropertyChanged}"/>
-								</TabItem>
-								<TabItem>
-									<TextBlock Text="{Binding Path=DMSData.CartName, 
-															  Mode=OneWay, 
-															  UpdateSourceTrigger=PropertyChanged}"
-											   VerticalAlignment="Center"/>
-								</TabItem>
-							</TabControl>
-						</DataTemplate>
-					</DataGridTemplateColumn.CellTemplate>
-				</DataGridTemplateColumn>
-				<DataGridTextColumn Header="Interest Rating"
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ComboBox ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=windows:BuzzardGrid}, Path=CartNameListSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+								      SelectedItem="{Binding Path=CartName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Interest Rating"
 									Binding="{Binding InterestRating}"
 									IsReadOnly="True"
 									MinWidth="100"/>
 
                 <!-- File Information -->
-				<DataGridTextColumn		Header="File Size"
+                <DataGridTextColumn		Header="File Size"
 										Binding="{Binding Path=FileSize, 
 														  Mode=OneWay, 
 														  UpdateSourceTrigger=PropertyChanged, 
@@ -386,116 +370,115 @@
 										IsReadOnly="True"/>
                 <DataGridTextColumn		Header="Extension"			Binding="{Binding Extension}"       IsReadOnly="True"/>
                 <DataGridTextColumn		Header="Created"			Binding="{Binding RunStart}"        IsReadOnly="True"/>
-				<DataGridTextColumn		Header="Last Modified"		Binding="{Binding RunFinish}"		IsReadOnly="True"/>
-				<DataGridTextColumn		Header="Source Data Path"	Binding="{Binding FilePath}"		IsReadOnly="True"/>
-			</DataGrid.Columns>           
+                <DataGridTextColumn		Header="Last Modified"		Binding="{Binding RunFinish}"		IsReadOnly="True"/>
+                <DataGridTextColumn		Header="Source Data Path"	Binding="{Binding FilePath}"		IsReadOnly="True"/>
+            </DataGrid.Columns>
         </DataGrid>
-		
-		<StackPanel Grid.Column="0" 
+
+        <StackPanel Grid.Column="0" 
                     Grid.Row="0"
 					Grid.ColumnSpan="5"
 					Orientation="Horizontal"
 					Margin="5">
-			
-			<Button Content="Clear All" 
+
+            <Button Content="Clear All" 
 					Style="{StaticResource SimpleButtonStyle}"
-					Click="ClearAllDatasets_Click"/>
+					Click="ClearAllDatasets_Click" FontFamily="Arial" FontSize="14"/>
             <Button Content="Clear Selected"
 					Style="{StaticResource SimpleButtonStyle}"
-					Click="ClearSelectedDatasets_Click"/>
+					Click="ClearSelectedDatasets_Click" FontFamily="Arial" FontSize="14"/>
             <Button Content="Select None" 
 					Style="{StaticResource SimpleButtonStyle}"
-					Click="SelectNoDatasets_Click"/>
+					Click="SelectNoDatasets_Click" FontFamily="Arial" FontSize="14"/>
             <Button Content=" Select All" 
 					Style="{StaticResource SimpleButtonStyle}"
-					Click="SelectAllDatasets_Click"/>
-			<Button Content="{Binding Path=ShowGridItemDetail, 
+					Click="SelectAllDatasets_Click" FontFamily="Arial" FontSize="14"/>
+            <Button Content="{Binding Path=ShowGridItemDetail, 
 									  Mode=OneWay, 
 									  UpdateSourceTrigger=PropertyChanged, 
 									  Converter={StaticResource ShowDetailButtonContentConverter}}"
 					
 					Style="{StaticResource SimpleButtonStyle}"
-					Click="InvertShowDetails_Click"/>
-		</StackPanel>
-		
-		<Button 
-				Grid.Column="1" 
-                Grid.Row="3"
+					Click="InvertShowDetails_Click" FontFamily="Arial" Margin="5,5,5,0" Width="153"/>
+        </StackPanel>
+
+        <StackPanel Grid.Column="0" 
+                    Grid.Row="3"
+					Grid.ColumnSpan="5"
+					Orientation="Horizontal"
+					Margin="5">
+            <Button 
                 Height="48"
                 Width="164"
 		        Style="{StaticResource SimpleButtonStyle}"
 				Click="BringUpExperiments_Click">
-            <DockPanel>
-                <Image 
+                <DockPanel>
+                    <Image 
                                 Margin="5" DockPanel.Dock="Left" Stretch="None" 
                                 Source="{Binding Path=Monitor, 
 									        Mode=OneWay,                         
 									        UpdateSourceTrigger=PropertyChanged, 
 									        FallbackValue={StaticResource Experiments}}"/>
-                <Label VerticalContentAlignment="Center">
-                    Experiments
-                </Label>
-            </DockPanel>
-        </Button>
+                    <Label VerticalContentAlignment="Center" FontFamily="Arial" FontSize="14">
+                        Experiments
+                    </Label>
+                </DockPanel>
+            </Button>
 
-        <Button 
-				Grid.Row="2" Grid.Column="3"
+            <Button 
                 Height="48"
             
                 Width="164"
 		        Style="{StaticResource SimpleButtonStyle}"
 				Click="OpenFilldown_Click">
 
-            <DockPanel>
-                <Image 
+                <DockPanel>
+                    <Image 
                                 Margin="5" DockPanel.Dock="Left" Stretch="None" 
                                 Source="{Binding Path=Monitor, 
 									        Mode=OneWay,                         
 									        UpdateSourceTrigger=PropertyChanged, 
 									        FallbackValue={StaticResource Filldown}}"/>
-                <Label VerticalContentAlignment="Center">
-                    Filldown
-                </Label>
-            </DockPanel>
-        </Button>
+                    <Label VerticalContentAlignment="Center" FontFamily="Arial" FontSize="14">
+                        Filldown
+                    </Label>
+                </DockPanel>
+            </Button>
             <Button 
-				Grid.Row="2" 
-                Grid.Column="4"
 				IsEnabled="True"
                 Height="48"
                 Width="164"
 		        Style="{StaticResource SimpleButtonStyle}"
 				Click="CreateTriggers_Click">
-            <DockPanel>
-                <Image 
+                <DockPanel>
+                    <Image 
                                 Margin="5" DockPanel.Dock="Left" Stretch="None" 
                                 Source="{Binding Path=Monitor, 
 									        Mode=OneWay,                         
 									        UpdateSourceTrigger=PropertyChanged, 
 									        FallbackValue={StaticResource Trigger}}"/>
-                <Label VerticalContentAlignment="Center">
-                    Create Trigger
-                </Label>
-            </DockPanel>
-        </Button>
-        <Button 
-				Grid.Row="2" Grid.Column="2"
+                    <Label VerticalContentAlignment="Center" FontFamily="Arial" FontSize="14">
+                        Create Trigger
+                    </Label>
+                </DockPanel>
+            </Button>
+            <Button 
                 Height="48"
                 Width="164"
 		        Style="{StaticResource SimpleButtonStyle}"
 				Click="MoveDataset_Click">
-            <DockPanel>
-                <Image 
+                <DockPanel>
+                    <Image 
                                 Margin="5" DockPanel.Dock="Left" Stretch="None" 
                                 Source="{Binding Path=Monitor, 
 									        Mode=OneWay,                         
 									        UpdateSourceTrigger=PropertyChanged, 
 									        FallbackValue={StaticResource MoveDataset}}"/>
-                <Label VerticalContentAlignment="Center">
-                    Move Dataset
-                </Label>
-            </DockPanel>
-        </Button>
-
+                    <Label VerticalContentAlignment="Center" FontFamily="Arial" FontSize="14">
+                        Move Dataset
+                    </Label>
+                </DockPanel>
+            </Button>
+        </StackPanel>
     </Grid>
 </UserControl>

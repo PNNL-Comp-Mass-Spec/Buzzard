@@ -56,7 +56,7 @@ namespace BuzzardWPF.Windows
             m_fillDownDataset.SeparationType            = Properties.Settings.Default.FilldownSeparationType;
             m_fillDownDataset.LCColumn                  = Properties.Settings.Default.FilldownColumn;
             m_fillDownDataset.Instrument                = Properties.Settings.Default.FilldownInstrument;
-            m_fillDownDataset.DMSData.CartName          = Properties.Settings.Default.FilldownCart;
+            m_fillDownDataset.CartName                  = Properties.Settings.Default.FilldownCart;
             m_fillDownDataset.InterestRating            = Properties.Settings.Default.FilldownInterest;
             m_fillDownDataset.DMSData.EMSLUsageType     = Properties.Settings.Default.FilldownEMSLUsage;
             m_fillDownDataset.DMSData.EMSLProposalID    = Properties.Settings.Default.FilldownEMSLProposal;
@@ -75,7 +75,7 @@ namespace BuzzardWPF.Windows
             Properties.Settings.Default.FilldownSeparationType            =  m_fillDownDataset.SeparationType            ; 
             Properties.Settings.Default.FilldownColumn                    =  m_fillDownDataset.LCColumn                  ; 
             Properties.Settings.Default.FilldownInstrument                =  m_fillDownDataset.Instrument                ; 
-            Properties.Settings.Default.FilldownCart                      =  m_fillDownDataset.DMSData.CartName          ; 
+            Properties.Settings.Default.FilldownCart                      =  m_fillDownDataset.CartName                  ; 
             Properties.Settings.Default.FilldownInterest                  =  m_fillDownDataset.InterestRating            ; 
             Properties.Settings.Default.FilldownEMSLUsage                 =  m_fillDownDataset.DMSData.EMSLUsageType     ; 
             Properties.Settings.Default.FilldownEMSLProposal              =  m_fillDownDataset.DMSData.EMSLProposalID    ; 
@@ -510,10 +510,10 @@ namespace BuzzardWPF.Windows
 
 		private void BringUpExperiments_Click(object sender, RoutedEventArgs e)
 		{
-			///
-			/// Get the data sets we will be applying the changes
-			/// to.
-			/// 
+			//
+			// Get the data sets we will be applying the changes
+			// to.
+			// 
 			var selectedItems = GetSelectedDatasets();
 
 			// If nothing was selected, inform the user and get out
@@ -524,11 +524,11 @@ namespace BuzzardWPF.Windows
 			}
 
 
-			///
-			/// Launch a viewer of the experimetns to get a
-			/// data source for what we'll be applying the
-			/// the selected datasets.
-			/// 
+			//
+			// Launch a viewer of the experimetns to get a
+			// data source for what we'll be applying the
+			// the selected datasets.
+			// 
 			var dialog = new ExperimentsDialog();
 			var keepGoing = dialog.ShowDialog() == true;
 
@@ -547,32 +547,32 @@ namespace BuzzardWPF.Windows
 				return;
 			}
 
-			///
-			/// Apply the experiment data to the datasets
-			/// 
+			//
+			// Apply the experiment data to the datasets
+			// 
 			foreach (var dataset in selectedItems)
 			{
 				dataset.ExperimentName = experiment.Experiment;
 			}
 
 
-			///
-			/// Let the user know we are done.
-			/// 
+			//
+			// Let the user know we are done.
+			// 
 			classApplicationLogger.LogMessage(0, "Finished applying experiment data to datasets.");
 		}
 
 		private void OpenFilldown_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-			///
-			/// Get a list of which which Datasets are currently selected
-			/// 
+			//
+			// Get a list of which which Datasets are currently selected
+			// 
 			var selectedDatasets = GetSelectedDatasets();
 
 
-			///
-			/// Prep the Filldown Window for use.
-			/// 
+			//
+			// Prep the Filldown Window for use.
+			// 
 			m_filldownWindow = new FilldownWindow();
 			
 			m_filldownWindow.Dataset				= m_fillDownDataset;
@@ -587,25 +587,25 @@ namespace BuzzardWPF.Windows
 
 
 	
-			///
-			/// Get user input from the Filldown Window
-			/// 
+			//
+			// Get user input from the Filldown Window
+			// 
             var stopDoingThis = m_filldownWindow.ShowDialog() != true;
 
 			if (stopDoingThis)
 				return;
 
             SaveSettings();
-			///
-			/// Any changes that were selected in the Filldown
-			/// Window are passed on to the selected Datasets.
-			/// 
+			//
+			// Any changes that were selected in the Filldown
+			// Window are passed on to the selected Datasets.
+			// 
 			var filldownData = m_filldownWindow.Dataset;
 
 			foreach (var dataset in selectedDatasets)
 			{
 				if (filldownData.ShouldUseCart)
-					dataset.DMSData.CartName = filldownData.DMSData.CartName;
+					dataset.CartName = filldownData.CartName;
 
 				if (filldownData.ShouldUseDatasetType)
 					dataset.DMSData.DatasetType = filldownData.DMSData.DatasetType;

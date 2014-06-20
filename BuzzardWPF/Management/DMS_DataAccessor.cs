@@ -374,7 +374,7 @@ namespace BuzzardWPF.Management
 		/// A list experiments from dms.
 		/// </summary>
 		/// <remarks>
-		/// This isn't ment to be bound to directly, which is why it's a 
+		/// This isn't meant to be bound to directly, which is why it's a 
 		/// list and not an ObservableCollection. Due to the large number
 		/// of items this tends to hold, I would advise people to try to
 		/// filter it down a bit first before inserting it into an

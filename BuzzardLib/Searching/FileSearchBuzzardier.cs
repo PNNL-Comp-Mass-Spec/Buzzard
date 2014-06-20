@@ -10,9 +10,10 @@ namespace BuzzardLib.Searching
     /// <summary>
     /// Class that searches for a set of files.
     /// </summary>
-    public class FileSearchBuzzardier: IBuzzadier
+    public class FileSearchBuzzardier : IBuzzadier
     {
         #region Events
+
         /// <summary>
         /// Fired when a dataset is found.
         /// </summary>
@@ -25,6 +26,7 @@ namespace BuzzardLib.Searching
         /// Fired when a search was stopped.
         /// </summary>
         public event EventHandler SearchStopped;
+
         #endregion
 
         #region Members
@@ -37,7 +39,7 @@ namespace BuzzardLib.Searching
         /// </summary>
         private volatile bool m_keepSearching;
         #endregion
-        
+
         #region Searching and Threading Methods
         /// <summary>
         /// Stops searching
@@ -71,11 +73,11 @@ namespace BuzzardLib.Searching
             finally
             {
                 m_keepSearching = false;
-                m_thread        = null;
-            }            
+                m_thread = null;
+            }
         }
-        
-		/// <summary>
+
+        /// <summary>
         /// Searches 
         /// </summary>
         /// <param name="config"></param>
@@ -86,129 +88,152 @@ namespace BuzzardLib.Searching
                 Stop();
             }
 
-            var start  = new ParameterizedThreadStart(Search);
-            m_thread                        = new Thread(start);
-            m_keepSearching                 = true;
+            var start = new ParameterizedThreadStart(Search);
+            m_thread = new Thread(start);
+            m_keepSearching = true;
             m_thread.Start(config);
         }
 
         private void Search(object objectConfig)
         {
-            var config = objectConfig as SearchConfig;
-            if (config == null)
+            try
             {
-                m_keepSearching = false;
-                throw new InvalidCastException("The search configuration was invalid.");
-            }
-
-			// If we have a an ending date, then
-			// we can use the less than opperator
-			// on the next day to make sure the a
-			// file's DateTime is on or before the
-			// date specificed.
-			var endDate = DateTime.MaxValue;
-			if(config.EndDate != null)
-			{
-				endDate = config.EndDate.Value.AddDays(1).Date;
-			}
-
-            var    shouldSearchBelow   = (config.Option == SearchOption.AllDirectories);
-            var  searchFilter        = string.Format("*{0}", config.FileExtension);
-
-            // Breadth first search across directories as to make it fast and responsive to a listening UI
-            var m_paths = new Queue<string>();
-            m_paths.Enqueue(config.DirectoryPath);           
-            while (m_paths.Count > 0 && m_keepSearching)
-            {
-                var path         = m_paths.Dequeue();
-                var absolutePath = Path.GetFullPath(path);
-
-                var files = new List<string>();
-				var directories = new List<string>();
-                try
+                var config = objectConfig as SearchConfig;
+                if (config == null)
                 {
-                    files		= Directory.GetFiles(absolutePath, searchFilter, SearchOption.TopDirectoryOnly).ToList();
-					directories = Directory.GetDirectories(absolutePath, searchFilter, SearchOption.TopDirectoryOnly).ToList();
-					files.AddRange(directories);
-                    
-					if (shouldSearchBelow)
-                    {
-                        var subDirectories = Directory.GetDirectories(absolutePath);
+                    m_keepSearching = false;
+                    ReportError("The search configuration defined in FileSearchBuzzardier is invalid; disabling search");
+                    return;
+                }
 
-                        foreach (var directory in subDirectories)
+                // If we have a an ending date, then
+                // we can use the less than opperator
+                // on the next day to make sure the a
+                // file's DateTime is on or before the
+                // date specificed.
+                var endDate = DateTime.MaxValue;
+                if (config.EndDate != null)
+                {
+                    endDate = config.EndDate.Value.AddDays(1).Date;
+                }
+
+                var shouldSearchBelow = (config.Option == SearchOption.AllDirectories);
+                var searchFilter = string.Format("*{0}", config.FileExtension);
+
+                if (String.IsNullOrWhiteSpace(config.DirectoryPath))
+                {
+                    ReportError("The search directory is empty");
+                    return;
+                }
+
+                // Breadth first search across directories as to make it fast and responsive to a listening UI
+                var m_paths = new Queue<string>();
+                m_paths.Enqueue(config.DirectoryPath);
+                while (m_paths.Count > 0 && m_keepSearching)
+                {
+                    var path = m_paths.Dequeue();
+                    var absolutePath = Path.GetFullPath(path);
+
+                    var files = new List<string>();
+                    var directories = new List<string>();
+                    try
+                    {
+                        files = Directory.GetFiles(absolutePath, searchFilter, SearchOption.TopDirectoryOnly).ToList();
+                        directories = Directory.GetDirectories(absolutePath, searchFilter, SearchOption.TopDirectoryOnly).ToList();
+                        files.AddRange(directories);
+
+                        if (shouldSearchBelow)
                         {
-							if (!directories.Contains(directory))
-								m_paths.Enqueue(directory);
+                            var subDirectories = Directory.GetDirectories(absolutePath);
+
+                            foreach (var directory in subDirectories)
+                            {
+                                if (!directories.Contains(directory))
+                                    m_paths.Enqueue(directory);
+                            }
+                        }
+                    }
+                    catch (UnauthorizedAccessException ex)
+                    {
+                        ReportError(string.Format("Could not access the path {0}", absolutePath), ex);
+                        continue;
+                    }
+
+                    foreach (var file in files)
+                    {
+                        if (DatasetFound != null)
+                        {
+                            var fullFilePath = Path.GetFullPath(file);
+
+                            // If we're filtering data based on a date range, then
+                            // do so.
+                            if (config.StartDate != null || config.EndDate != null)
+                            {
+                                DateTime creationDate;
+                                DateTime lastWriteDate;
+                                try
+                                {
+                                    if (File.Exists(fullFilePath))
+                                    {
+                                        creationDate = File.GetCreationTime(fullFilePath);
+                                        lastWriteDate = File.GetLastWriteTime(fullFilePath);
+                                    }
+                                    else
+                                    {
+                                        creationDate = Directory.GetCreationTime(fullFilePath);
+                                        lastWriteDate = Directory.GetLastWriteTime(fullFilePath);
+                                    }
+                                }
+                                catch
+                                {
+                                    // If we can't access something as simple as when the file
+                                    // was created or writen too, then I'm not so sure we'll
+                                    // be able to use it to create a Dataset.
+                                    // - FCT
+                                    continue;
+                                }
+
+                                // If the file predates the date-range we want, skip it.
+                                if (config.StartDate != null)
+                                {
+                                    if (config.StartDate > creationDate && config.StartDate > lastWriteDate)
+                                        continue;
+                                }
+
+                                // If the file postdates the date-range we want, skip it.
+                                if (config.EndDate != null)
+                                {
+                                    if (endDate < creationDate || endDate < lastWriteDate)
+                                        continue;
+                                }
+                            }
+
+                            DatasetFound(this, new DatasetFoundEventArgs(fullFilePath));
                         }
                     }
                 }
-                catch(UnauthorizedAccessException ex)
+
+                if (SearchComplete != null)
                 {
-                    classApplicationLogger.LogError(0, 
-                                                string.Format("Could not access the path {0}.", 
-                                                    absolutePath), ex);
-                    continue;
+                    SearchComplete(this, null);
                 }
 
-                foreach (var file in files)
-                {
-                    if (DatasetFound != null)
-                    {
-                        var fullFilePath = Path.GetFullPath(file);
-
-						// If we're filtering data based on a date range, then
-						// do so.
-						if (config.StartDate != null || config.EndDate != null)
-						{
-							DateTime creationDate;
-							DateTime lastWriteDate;
-							try
-							{
-								if (File.Exists(fullFilePath))
-								{
-									creationDate	= File.GetCreationTime(fullFilePath);
-									lastWriteDate	= File.GetLastWriteTime(fullFilePath);
-								}
-								else
-								{
-									creationDate	= Directory.GetCreationTime(fullFilePath);
-									lastWriteDate	= Directory.GetLastWriteTime(fullFilePath);
-								}
-							}
-							catch
-							{
-								// If we can't access something as simple as when the file
-								// was created or writen too, then I'm not so sure we'll
-								// be able to use it to create a Dataset.
-								// - FCT
-								continue;
-							}
-
-							// If the file predates the date-range we want, skip it.
-							if (config.StartDate != null)
-							{
-								if (config.StartDate > creationDate && config.StartDate > lastWriteDate)
-									continue;
-							}
-
-							// If the file postdates the date-range we want, skip it.
-							if (config.EndDate != null)
-							{
-								if (endDate < creationDate || endDate < lastWriteDate)
-									continue;
-							}
-						}
-
-                        DatasetFound(this, new DatasetFoundEventArgs(fullFilePath));
-                    }
-                }
             }
-
-            if (SearchComplete != null)
+            catch (Exception ex)
             {
-                SearchComplete(this, null);
+                ReportError("Exception in Buzzardier.Search", ex);
             }
+
         }
+
+        private void ReportError(string errorMessage, Exception ex = null)
+        {
+            if (ex == null)
+                classApplicationLogger.LogError(0, errorMessage);
+            else
+                classApplicationLogger.LogError(0, errorMessage, ex);
+        }
+
         #endregion
-    }    
+    }
 }

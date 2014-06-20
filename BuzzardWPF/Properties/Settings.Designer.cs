@@ -289,7 +289,7 @@ namespace BuzzardWPF.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("10")]
+        [global::System.Configuration.DefaultSettingValueAttribute("15")]
         public int Watcher_WaitTime {
             get {
                 return ((int)(this["Watcher_WaitTime"]));
@@ -623,7 +623,7 @@ namespace BuzzardWPF.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2016-12-31")]
+        [global::System.Configuration.DefaultSettingValueAttribute("2020-01-01")]
         public global::System.DateTime SearchDateTo {
             get {
                 return ((global::System.DateTime)(this["SearchDateTo"]));
@@ -658,7 +658,7 @@ namespace BuzzardWPF.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("HailWhiteshoes")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string WatcherConfig_UserComment {
             get {
                 return ((string)(this["WatcherConfig_UserComment"]));

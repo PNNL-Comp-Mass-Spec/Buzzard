@@ -72,7 +72,7 @@
 				MinHeight="32"                       
 		        Style="{StaticResource SimpleButtonStyle}"
 				Content="Search" 
-				Click="Search_Click" />
+				Click="Search_Click" FontFamily="Arial" />
 		
 		<DataGrid Grid.Row="2" Grid.Column="0" 
 				  Grid.ColumnSpan="5"

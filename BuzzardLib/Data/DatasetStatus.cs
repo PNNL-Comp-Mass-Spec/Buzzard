@@ -30,6 +30,18 @@
 		/// <summary>
 		/// The trigger file was not made because it was told to be ignored.
 		/// </summary>
-		Ignored
+		Ignored,
+        /// <summary>
+        /// The trigger file was not made because required fields are not defined
+        /// </summary>
+        MissingRequiredInfo,
+        /// <summary>
+        /// The dataset file (or folder) was deleted or renamed
+        /// </summary>
+        FileNotFound,
+        /// <summary>
+        /// The dataset starts with x_ and is thus assumed to have been captured
+        /// </summary>
+        DatasetMarkedCaptured
 	}
 }

@@ -13,7 +13,6 @@ using BuzzardWPF.Properties;
 using BuzzardLib.Searching;
 using BuzzardWPF.Windows;
 using LcmsNetDataClasses.Logging;
-using LcmsNetDmsTools;
 
 namespace BuzzardWPF
 {
@@ -32,12 +31,12 @@ namespace BuzzardWPF
 
         #region Attributes
 
-        private object m_cacheLoadingSync;
+        private readonly object m_cacheLoadingSync;
 
         /// <summary>
         /// This helps alert the user the system is in monitoring mode.
         /// </summary>
-        private DispatcherTimer m_animationTimer;
+        private readonly DispatcherTimer m_animationTimer;
 
         private int m_counter;
         private Collection<BitmapImage> m_images;
@@ -47,7 +46,8 @@ namespace BuzzardWPF
         private string m_lastStatusMessage;
 
         private bool m_firstTimeLoading;
-        private DispatcherTimer m_dmsCheckTimer;
+        // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
+        private readonly DispatcherTimer m_dmsCheckTimer;
 
         #endregion
 
@@ -92,7 +92,7 @@ namespace BuzzardWPF
             m_dataGrid.EmslUsageTypesSource =
                 new ObservableCollection<string>
                     (
-                    new[] {"BROKEN", "CAP_DEV", "MAINTENANCE", "USER", "USER_UNKOWN"}
+                    new[] { "BROKEN", "CAP_DEV", "MAINTENANCE", "USER", "USER_UNKOWN" }
                     );
 
             if (!m_dataGrid.CartNameListSource.Contains("unknown"))
@@ -122,6 +122,12 @@ namespace BuzzardWPF
             LoadImages();
             LastUpdated = DatasetManager.Manager.LastUpdated;
             classApplicationLogger.LogMessage(0, "Ready");
+
+            if (Environment.MachineName.ToLower() == "monroe3")
+                CmdUseTestFolder.Visibility = Visibility.Visible;
+            else
+                CmdUseTestFolder.Visibility = Visibility.Hidden;
+
         }
 
         private void Manager_DatasetsLoaded(object sender, EventArgs e)
@@ -217,7 +223,7 @@ namespace BuzzardWPF
         #region Properties
 
         /// <summary>
-        /// Gets and sets a sting conting the last message or error
+        /// Gets and sets a string containing the last message or error
         /// to get logged in the application.
         /// </summary>
         public string LastStatusMessage
@@ -280,7 +286,7 @@ namespace BuzzardWPF
             Dispatcher.BeginInvoke(workAction, DispatcherPriority.Normal);
         }
 
-        #region Searching 
+        #region Searching
 
         /// <summary>
         /// Registers the searcher for new files.
@@ -372,6 +378,17 @@ namespace BuzzardWPF
             DatasetManager.Manager.CreatePendingDataset(path);
         }
 
+        private void SetTriggerFolderToTestPath()
+        {
+            UpdateTriggerFolderPath(@"E:\Run_Complete_Trigger");
+            TxtRemoteFolderLocation.IsEnabled = true;
+        }
+
+        private void UpdateTriggerFolderPath(string folderPath)
+        {
+            TriggerFileLocation = folderPath;
+        }
+
         private void m_buzzadier_SearchComplete(object sender, EventArgs e)
         {
 
@@ -445,7 +462,7 @@ namespace BuzzardWPF
 
                 classApplicationLogger.LogMessage(0, "Loading settings from config.");
                 m_scanConfigWindow.LoadSettings();
-                TriggerFileLocation = Settings.Default.TriggerFileFolder;
+                UpdateTriggerFolderPath(Settings.Default.TriggerFileFolder);
                 m_scanWindow.LoadSettings();
                 m_searchWindow.LoadSettings();
                 m_qcConfigWindow.LoadSettings();
@@ -519,12 +536,14 @@ namespace BuzzardWPF
                     return;
             }
 
-            TriggerFileLocation = dlg.SelectedPath;
+            UpdateTriggerFolderPath(dlg.SelectedPath);
+            TxtRemoteFolderLocation.IsEnabled = true;
         }
 
         private void UseDefaultTriggerFileLocation_Click(object sender, RoutedEventArgs e)
         {
-            TriggerFileLocation = @"\\proto-5\BionetXfer\Run_Complete_Trigger";
+            UpdateTriggerFolderPath(@"\\proto-5\BionetXfer\Run_Complete_Trigger");
+            TxtRemoteFolderLocation.IsEnabled = false;
         }
 
         private void DMSCheckTimer_Tick(object sender, EventArgs e)
@@ -552,6 +571,11 @@ namespace BuzzardWPF
             }
         }
 
+        private void UseTestFolder_Click(object sender, RoutedEventArgs e)
+        {
+            SetTriggerFolderToTestPath();
+        }
+
         /// <summary>
         /// Gets or sets whether the system is monitoring or not.
         /// </summary>
@@ -562,4 +586,3 @@ namespace BuzzardWPF
 
     }
 }
-    

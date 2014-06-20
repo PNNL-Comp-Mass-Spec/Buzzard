@@ -13,7 +13,7 @@ using LcmsNetDataClasses.Logging;
 using LcmsNetDmsTools;
 
 namespace BuzzardWPF.Management
-{    
+{
     /// <summary>
     /// Manages a list of datasets
     /// </summary>
@@ -25,8 +25,6 @@ namespace BuzzardWPF.Management
         /// </summary>
         public event EventHandler DatasetsLoaded;
         #endregion
-
-        private const int CONST_KB = 1024;
 
         #region Attributes
         /// <summary>
@@ -46,43 +44,43 @@ namespace BuzzardWPF.Management
         /// </summary>
         private object m_synchObject;
 
-		private List<string> m_triggerFolderContents;
+        private List<string> m_triggerFolderContents;
 
 
-		private DispatcherTimer m_scannedDatasetTimer;
+        private DispatcherTimer m_scannedDatasetTimer;
 
-		#region Static
-		private static readonly string[] INTEREST_RATING_ARRAY = { "Unreviewed", "Not Released", "Released", "Rerun (Good Data)", "Rerun (Superseded)" };
-		public static readonly ObservableCollection<string>	INTEREST_RATINGS_COLLECTION;
-		#endregion
-		#endregion
+        #region Static
+        private static readonly string[] INTEREST_RATING_ARRAY = { "Unreviewed", "Not Released", "Released", "Rerun (Good Data)", "Rerun (Superseded)" };
+        public static readonly ObservableCollection<string> INTEREST_RATINGS_COLLECTION;
+        #endregion
+        #endregion
 
 
-		/// <summary>
+        /// <summary>
         /// Constructor.
         /// </summary>
         private DatasetManager()
         {
-            m_datasetTrie	= new DatasetTrie();
-            m_synchObject   = new object();
+            m_datasetTrie = new DatasetTrie();
+            m_synchObject = new object();
             m_datasetsReady = false;
-			Datasets		= new ObservableCollection<BuzzardDataset>();
-			
-			WatcherConfigSelectedCartName		= null;
-			WatcherConfigSelectedColumnType		= null;
-			WatcherConfigSelectedInstrument		= null;
-			WatcherConfigSelectedOperator		= null;
-			WatcherConfigSelectedSeparationType = null;
-			TriggerFileCreationWaitTime			= 5;
-            MinimumFileSize                     = 100;
+            Datasets = new ObservableCollection<BuzzardDataset>();
+
+            WatcherConfigSelectedCartName = null;
+            WatcherConfigSelectedColumnType = null;
+            WatcherConfigSelectedInstrument = null;
+            WatcherConfigSelectedOperator = null;
+            WatcherConfigSelectedSeparationType = null;
+            TriggerFileCreationWaitTime = 5;
+            MinimumFileSize = 100;
 
         }
 
-		static DatasetManager()
-		{
-			Manager = new DatasetManager();
-			INTEREST_RATINGS_COLLECTION = new ObservableCollection<string>(INTEREST_RATING_ARRAY);
-		}
+        static DatasetManager()
+        {
+            Manager = new DatasetManager();
+            INTEREST_RATINGS_COLLECTION = new ObservableCollection<string>(INTEREST_RATING_ARRAY);
+        }
 
 
         #region Loading Data
@@ -122,62 +120,62 @@ namespace BuzzardWPF.Management
             }
 
             // Create a new threaded load.
-            var start  = new ThreadStart(LoadThread);
+            var start = new ThreadStart(LoadThread);
             m_dmsLoadThread = new Thread(start);
             m_dmsLoadThread.Start();
-            m_datasetsReady = false;            
+            m_datasetsReady = false;
         }
 
         private void LoadThread()
         {
-            var query  = new classSampleQueryData();
-            query.UnassignedOnly        = true;
-            query.RequestName           = "";
-            query.Cart                  = "";
-            query.BatchID               = "";
-            query.Block                 = "";
-            query.MaxRequestNum         = "1000000";
-            query.MinRequestNum         = "0";
-            query.Wellplate             = "";            
+            var query = new classSampleQueryData();
+            query.UnassignedOnly = true;
+            query.RequestName = "";
+            query.Cart = "";
+            query.BatchID = "";
+            query.Block = "";
+            query.MaxRequestNum = "1000000";
+            query.MinRequestNum = "0";
+            query.Wellplate = "";
             query.BuildSqlString();
-            var samples                 = classDBTools.GetSamplesFromDMS(query);
-            
-			lock (m_datasetTrie)
-			{
-				m_datasetTrie.Clear();
+            var samples = classDBTools.GetSamplesFromDMS(query);
 
-				foreach (var sample in samples)
-				{
-					m_datasetTrie.AddData(sample.DmsData);
-				}
-			}
+            lock (m_datasetTrie)
+            {
+                m_datasetTrie.Clear();
 
-			// We can use this to get an idea is any datasets already have
-			// trigger files that were sent.
-			var triggerFileDestination = classLCMSSettings.GetParameter("TriggerFileFolder");
-			if (!string.IsNullOrWhiteSpace(triggerFileDestination) && Directory.Exists(triggerFileDestination))
-			{
-				try
-				{
-				    m_triggerFolderContents = Directory.GetFiles(triggerFileDestination, "*.xml", SearchOption.TopDirectoryOnly).ToList();
-					
-					if (m_triggerFolderContents == null)
-						m_triggerFolderContents = new List<string>();
+                foreach (var sample in samples)
+                {
+                    m_datasetTrie.AddData(sample.DmsData);
+                }
+            }
 
-				    var successFolderPath = Path.Combine(triggerFileDestination, "success");
+            // We can use this to get an idea if any datasets already have
+            // trigger files that were sent.
+            var triggerFileDestination = classLCMSSettings.GetParameter("TriggerFileFolder");
+            if (!string.IsNullOrWhiteSpace(triggerFileDestination) && Directory.Exists(triggerFileDestination))
+            {
+                try
+                {
+                    m_triggerFolderContents = Directory.GetFiles(triggerFileDestination, "*.xml", SearchOption.TopDirectoryOnly).ToList();
+
+                    if (m_triggerFolderContents == null)
+                        m_triggerFolderContents = new List<string>();
+
+                    var successFolderPath = Path.Combine(triggerFileDestination, "success");
                     if (Directory.Exists(successFolderPath))
                         m_triggerFolderContents.AddRange(Directory.GetFiles(successFolderPath, "*.xml", SearchOption.TopDirectoryOnly).ToList());
 
-				}
-				catch
-				{
+                }
+                catch
+                {
                     m_triggerFolderContents = new List<string>();
-				}
-			}
-			else
-			{
+                }
+            }
+            else
+            {
                 m_triggerFolderContents = new List<string>();
-			}
+            }
 
             // Use an interlocked atomic operation for this flag.
             m_datasetsReady = true;
@@ -191,7 +189,7 @@ namespace BuzzardWPF.Management
 
         public string LastUpdated
         {
-            get; 
+            get;
             set;
         }
         #endregion
@@ -203,26 +201,32 @@ namespace BuzzardWPF.Management
         /// </summary>
         /// <param name="dataset">Dataset information to send.</param>
         /// <param name="forceSend">If true, this forces the trigger file to send again even if it's already been sent.</param>
+        /// <returns>File path if submitted, otherwise null</returns>
+        /// <remarks>In the dataset object, DatasetStatus will be set to MissingRequiredInfo if field validation fails</remarks>
         public static string CreateTriggerFileBuzzard(BuzzardDataset dataset, bool forceSend)
         {
             if (dataset.ShouldIgnore)
             {
                 dataset.DatasetStatus = DatasetStatus.Ignored;
+                dataset.TriggerCreationWarning = "Skipped since DatasetStatus set to Ignored";
                 return null;
             }
 
-            var sample      = new classSampleData();
-            sample.LCMethod             = new LcmsNetDataClasses.Method.classLCMethod();
+            var sample = new classSampleData
+            {
+                LCMethod = new LcmsNetDataClasses.Method.classLCMethod()
+            };
 
-            var info               = new FileInfo(dataset.FilePath);
-            sample.LCMethod.ActualStart = info.CreationTime;
-            sample.LCMethod.SetStartTime(info.CreationTime);
-            sample.LCMethod.ActualEnd   = info.LastWriteTime;
-            sample.DmsData.DatasetName  = dataset.DMSData.DatasetName;
+            var fiDatasetFile = new FileInfo(dataset.FilePath);
+            sample.LCMethod.ActualStart = fiDatasetFile.CreationTime;
+            sample.LCMethod.SetStartTime(fiDatasetFile.CreationTime);
+            sample.LCMethod.ActualEnd = fiDatasetFile.LastWriteTime;
+            sample.DmsData.DatasetName = dataset.DMSData.DatasetName;
 
             try
             {
-                if (dataset.DatasetStatus == DatasetStatus.TriggerFileSent && !forceSend) return null;
+                if (dataset.DatasetStatus == DatasetStatus.TriggerFileSent && !forceSend)
+                    return null;
 
                 if (dataset.Name == null)
                     dataset.Name = string.Copy(dataset.DMSData.DatasetName);
@@ -231,27 +235,35 @@ namespace BuzzardWPF.Management
                     dataset.Name = "Undefined";
 
                 classApplicationLogger.LogMessage(0, string.Format("Creating Trigger File: {0} for {1}", DateTime.Now, dataset.Name));
-                var name = TriggerFileTools.GenerateTriggerFileBuzzard(sample, dataset, dataset.DMSData, DatasetManager.Manager.TriggerFileLocation);
+                var triggerFilePath = TriggerFileTools.GenerateTriggerFileBuzzard(sample, dataset, dataset.DMSData, DatasetManager.Manager.TriggerFileLocation);
+
+                if (string.IsNullOrEmpty(triggerFilePath))
+                    return null;
+
                 classApplicationLogger.LogMessage(0, string.Format("Saved Trigger File: {0} for {1}", DateTime.Now, dataset.Name));
                 dataset.DatasetStatus = DatasetStatus.TriggerFileSent;
-                return name;
+                dataset.TriggerCreationWarning = string.Empty;
+
+                return triggerFilePath;
             }
-            catch (DirectoryNotFoundException)
+            catch (DirectoryNotFoundException ex)
             {
-                dataset.DatasetStatus = DatasetStatus.FailedFileError;                
+                dataset.DatasetStatus = DatasetStatus.FailedFileError;
+                dataset.TriggerCreationWarning = "Folder not found: " + ex.Message;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                dataset.DatasetStatus = DatasetStatus.FailedUnknown;                
+                dataset.DatasetStatus = DatasetStatus.FailedUnknown;
+                dataset.TriggerCreationWarning = "Exception: " + ex.Message;
             }
             return null;
         }
 
-		public List<string> TriggerDirectoryContents
-		{
-			get { return m_triggerFolderContents; }
-		}
-        
+        public List<string> TriggerDirectoryContents
+        {
+            get { return m_triggerFolderContents; }
+        }
+
         #endregion
 
 
@@ -262,8 +274,8 @@ namespace BuzzardWPF.Management
         /// <param name="datasets"></param>
         public void ResolveDms(IEnumerable<BuzzardDataset> datasets)
         {
-			if (datasets == null)
-				return;
+            if (datasets == null)
+                return;
 
             foreach (var dataset in datasets)
             {
@@ -276,8 +288,8 @@ namespace BuzzardWPF.Management
         /// </summary>
         public void ResolveDms(BuzzardDataset dataset)
         {
-			if (dataset == null)
-				return;
+            if (dataset == null)
+                return;
 
             // Here we don't want to resolve the dataset in DMS. if it was told to be ignored...or if we already sent it...
             if (dataset.DatasetStatus == DatasetStatus.Ignored)
@@ -286,103 +298,118 @@ namespace BuzzardWPF.Management
             if (dataset.DatasetStatus == DatasetStatus.TriggerFileSent)
                 return;
 
+            if (string.IsNullOrWhiteSpace(dataset.FilePath))
+            {
+                dataset.DatasetStatus = DatasetStatus.FailedFileError;
+                return;
+            }
+
+            var fiDataset = new FileInfo(dataset.FilePath);
+            
+
             try
             {
-                var path       = Path.GetFileNameWithoutExtension(dataset.FilePath);
+                var fileName = Path.GetFileNameWithoutExtension(fiDataset.Name);
                 classDMSData data = null;
                 try
                 {
-                    data = m_datasetTrie.FindData(path);
+                    data = m_datasetTrie.FindData(fileName);
                 }
                 catch (KeyNotFoundException)
                 {
                     // Now get the path name of the directory, then use that as the "search string for dms"
-                    path = Path.GetFileName(Path.GetDirectoryName(dataset.FilePath));
-                    data = m_datasetTrie.FindData(path);
+                    fileName = Path.GetFileName(fiDataset.Directory.Name);
+                    data = m_datasetTrie.FindData(fileName);
                 }
-				
-				dataset.DMSData = new DMSData(data, dataset.FilePath);
+
+                dataset.DMSData = new DMSData(data, dataset.FilePath);
             }
             catch (KeyNotFoundException)
             {
-				dataset.DatasetStatus = DatasetStatus.FailedNoDmsRequest;
+                if (Path.GetFileNameWithoutExtension(fiDataset.Name).StartsWith("x_"))
+                    dataset.DatasetStatus = DatasetStatus.DatasetMarkedCaptured;
+                else
+                {
+                    if (!CreateTriggerOnDMSFail)
+                        dataset.DatasetStatus = DatasetStatus.FailedNoDmsRequest;                    
+                }
             }
             catch (Exception)
             {
-				dataset.DatasetStatus = DatasetStatus.FailedUnknown;
+                dataset.DatasetStatus = DatasetStatus.FailedUnknown;
             }
         }
         #endregion
 
 
         #region Properties
-		public string FileWatchRoot
-		{
-			get { return m_fileWatchRoot; }
-			set
-			{
-				
-
-				m_fileWatchRoot = value;
-
-                
-			}
-		}
-		private string m_fileWatchRoot;
-
-		private Main m_mainWindow;
-		public Main MainWindow
-		{
-			get { return m_mainWindow; }
-			set
-			{
-				if (m_mainWindow != value)
-				{
-					m_mainWindow = value;
-					SetupTimers();
-				}
-			}
-		}
-
-		private void SetupTimers()
-		{
-			if (MainWindow == null)
-				return;
-
-			m_scannedDatasetTimer = new DispatcherTimer(DispatcherPriority.Normal, MainWindow.Dispatcher);
-			m_scannedDatasetTimer.Interval = new TimeSpan(0, 0, 0, 0, 333); // 0.333 seconds (about 1/3 of a second)
-			m_scannedDatasetTimer.Tick += ScannedDatasetTimer_Tick;
-			m_scannedDatasetTimer.Start();
-		}
+        public string FileWatchRoot
+        {
+            get { return m_fileWatchRoot; }
+            set
+            {
 
 
-		/// <summary>
-		/// This will keep the UI components of the Datasets that are found by the scanner upto date.
-		/// </summary>
-		void ScannedDatasetTimer_Tick(object sender, EventArgs e)
-		{
-			// Find the datasets that have source data found by the
-			// file watcher.
-			var x = from BuzzardDataset ds in Datasets
-					where ds.DatasetSource == DatasetSource.Watcher
-					select ds;
+                m_fileWatchRoot = value;
 
-			var datasets = new List<BuzzardDataset>(x);
 
-			// If there aren't any, then we're done.
-			if (datasets.Count == 0)
-				return;
+            }
+        }
+        private string m_fileWatchRoot;
 
-			var now = DateTime.Now;
-			var timeToWait = new TimeSpan(0, TriggerFileCreationWaitTime, 0);
+        private Main m_mainWindow;
+        public Main MainWindow
+        {
+            get { return m_mainWindow; }
+            set
+            {
+                if (m_mainWindow != value)
+                {
+                    m_mainWindow = value;
+                    SetupTimers();
+                }
+            }
+        }
 
-			var totalSecondsToWait = TriggerFileCreationWaitTime * 60;
+        private void SetupTimers()
+        {
+            if (MainWindow == null)
+                return;
 
-			foreach (var dataset in datasets.Where(dataset => dataset.DatasetStatus != DatasetStatus.TriggerFileSent))
-			{
+            m_scannedDatasetTimer = new DispatcherTimer(DispatcherPriority.Normal, MainWindow.Dispatcher);
+            m_scannedDatasetTimer.Interval = new TimeSpan(0, 0, 0, 0, 333); // 0.333 seconds (about 1/3 of a second)
+            m_scannedDatasetTimer.Tick += ScannedDatasetTimer_Tick;
+            m_scannedDatasetTimer.Start();
+        }
+
+
+        /// <summary>
+        /// This will keep the UI components of the Datasets that are found by the scanner upto date.
+        /// </summary>
+        void ScannedDatasetTimer_Tick(object sender, EventArgs e)
+        {
+            // Find the datasets that have source data found by the
+            // file watcher.
+            var x = from BuzzardDataset ds in Datasets
+                    where ds.DatasetSource == DatasetSource.Watcher
+                    select ds;
+
+            var datasets = new List<BuzzardDataset>(x);
+
+            // If there aren't any, then we're done.
+            if (datasets.Count == 0)
+                return;
+
+            var now = DateTime.Now;
+            var timeToWait = new TimeSpan(0, TriggerFileCreationWaitTime, 0);
+
+            var totalSecondsToWait = TriggerFileCreationWaitTime * 60;
+
+            foreach (var dataset in datasets.Where(dataset => dataset.DatasetStatus != DatasetStatus.TriggerFileSent))
+            {
                 // Make sure that the status is not set to ignore (x_ or some other rule elsewhere)
-			    if (dataset.DatasetStatus == DatasetStatus.Ignored)
-			        continue;
+                if (dataset.DatasetStatus == DatasetStatus.Ignored)
+                    continue;
 
                 // Also make sure that the trigger file does not exist on the server...
                 var hasTriggerFileSent =
@@ -390,213 +417,223 @@ namespace BuzzardWPF.Management
                         (
                             trig => trig.Contains(dataset.DMSData.DatasetName));
 
-			    if (hasTriggerFileSent)
-			    {
-			        dataset.DatasetStatus = DatasetStatus.TriggerFileSent;
-			        continue;
-			    }
+                if (hasTriggerFileSent)
+                {
+                    dataset.DatasetStatus = DatasetStatus.TriggerFileSent;
+                    continue;
+                }
 
-                dataset.UpdateFileProperties();
-			    if ((dataset.FileSize / CONST_KB) < MinimumFileSize)
-			    {
-			        dataset.DatasetStatus = DatasetStatus.PendingFileSize;
-			        continue;
-			    }
-                
-			    var timeWaited = now - dataset.RunFinish;
-			    if (timeWaited >= timeToWait)
-			    {
-			        if (!dataset.DMSData.LockData)
-			        {
-			            ResolveDms(dataset);
-			        }
+                if (!dataset.UpdateFileProperties())
+                {
+                    dataset.DatasetStatus = DatasetStatus.FileNotFound;
+                    continue;
+                }
 
-			        if (dataset.IsQC)
-			        {
-			            if (!QC_CreateTriggerOnDMSFail)
-			                continue;
-			        }
-			        else
-			        {
-			            if (!dataset.DMSData.LockData && !CreateTriggerOnDMSFail)
-			                continue;
-			        }
+                if (dataset.DatasetStatus == DatasetStatus.FileNotFound)
+                    dataset.DatasetStatus = DatasetStatus.Pending;
 
-			        var name = CreateTriggerFileBuzzard(dataset, false);
-			        if (name == null) continue;
-			        if (m_triggerFolderContents == null)
-			        {
-			            m_triggerFolderContents = new List<string>();
-			        }
-			        m_triggerFolderContents.Add(name);
-			    }
-			    else
-			    {
-			        // If it's not time to create the trigger file, then update
-			        // the display telling the user when it will be created.
-			        var secondsLeft = totalSecondsToWait - timeWaited.TotalSeconds;
-			        var percentWaited = 100 * timeWaited.TotalSeconds / totalSecondsToWait;
-			        var secondsLeftInt = Convert.ToInt32(secondsLeft);
-					
-			        var pluseIt = secondsLeftInt > dataset.SecondsTillTriggerCreation;
-					
-			        dataset.SecondsTillTriggerCreation = Convert.ToInt32(secondsLeft);
-			        dataset.WaitTimePercentage = percentWaited;
-			        if (pluseIt)
-			        {
-			            dataset.PluseText = true;
-			            dataset.PluseText = false;
-			        }
-			    }
-			}
-		}
+                if ((dataset.FileSize / 1024d) < MinimumFileSize)
+                {
+                    dataset.DatasetStatus = DatasetStatus.PendingFileSize;
+                    continue;
+                }
 
+                var timeWaited = now - dataset.RunFinish;
+                if (timeWaited >= timeToWait)
+                {
+                    if (!dataset.DMSData.LockData)
+                    {
+                        ResolveDms(dataset);
+                    }
 
-		#region Searcher Config
-		/// <summary>
-		/// This value tells the DatasetManager whether or not
-		/// to create a dataset for an archived datasource that
-		/// is found by the searcher.
-		/// </summary>
-		/// <remarks>
-		/// the SearchConvfigView is responsible for setting this.
-		/// </remarks>
-		public bool IncludedArchivedItems { get; set; }
-		#endregion
+                    if (dataset.IsQC)
+                    {
+                        if (!QC_CreateTriggerOnDMSFail)
+                            continue;
+                    }
+                    else
+                    {
+                        if (!dataset.DMSData.LockData && !CreateTriggerOnDMSFail)
+                            continue;
+                    }
+
+                    string name = CreateTriggerFileBuzzard(dataset, false);
+                    if (string.IsNullOrWhiteSpace(name))
+                        continue;
+
+                    if (m_triggerFolderContents == null)
+                    {
+                        m_triggerFolderContents = new List<string>();
+                    }
+                    m_triggerFolderContents.Add(name);
+                }
+                else
+                {
+                    // If it's not time to create the trigger file, then update
+                    // the display telling the user when it will be created.
+                    var secondsLeft = totalSecondsToWait - timeWaited.TotalSeconds;
+                    var percentWaited = 100 * timeWaited.TotalSeconds / totalSecondsToWait;
+                    var secondsLeftInt = Convert.ToInt32(secondsLeft);
+
+                    var pulseIt = secondsLeftInt > dataset.SecondsTillTriggerCreation;
+
+                    dataset.SecondsTillTriggerCreation = Convert.ToInt32(secondsLeft);
+                    dataset.WaitTimePercentage = percentWaited;
+                    if (pulseIt)
+                    {
+                        dataset.PluseText = true;
+                        dataset.PluseText = false;
+                    }
+                }
+            }
+        }
 
 
-		#region Watcher Config
-		/// <summary>
-		/// This value tells the DatasetManager which LC Column to 
-		/// use for datasets that were found by the File Watcher.
-		/// </summary>
-		/// <remarks>
-		/// The Watcher Config control is responsible for setting this.
-		/// </remarks>
-		public string LCColumn { get; set; }
+        #region Searcher Config
+        /// <summary>
+        /// This value tells the DatasetManager whether or not
+        /// to create a dataset for an archived datasource that
+        /// is found by the searcher.
+        /// </summary>
+        /// <remarks>
+        /// the SearchConvfigView is responsible for setting this.
+        /// </remarks>
+        public bool IncludedArchivedItems { get; set; }
+        #endregion
 
-		/// <summary>
-		/// This values tells the DatasetManager what name to use
-		/// for datasets that were found by the File Watcher.
-		/// </summary>
-		/// <remarks>
-		/// The Watcher Config control is responsible for setting this.
-		/// </remarks>
-		public string ExperimentName { get; set; }
 
-		/// <summary>
-		/// This values tells the DatasetManager if it can create
-		/// a trigger file for datasets that fail to resulve their
-		/// DMS data. This only applies when the reason for the
-		/// trigger file creation is due to the count down running
-		/// out. If a user wants to create the trigger file without 
-		/// DMS data, we won't stop them.
-		/// </summary>
-		/// <remarks>
-		/// The Watcher Config control is responsible for setting this.
-		/// </remarks>
-		public bool CreateTriggerOnDMSFail { get; set; }
+        #region Watcher Config
+        /// <summary>
+        /// This value tells the DatasetManager which LC Column to 
+        /// use for datasets that were found by the File Watcher.
+        /// </summary>
+        /// <remarks>
+        /// The Watcher Config control is responsible for setting this.
+        /// </remarks>
+        public string LCColumn { get; set; }
 
-		/// <summary>
-		/// This is the amount of time that we should wait before
-		/// creating a tigger file for a dataset that was scanned
-		/// in.
-		/// </summary>
-		/// <remarks>
-		/// This is measured in minutes.
-		/// </remarks>
-		/// <remarks>
-		/// The Watcher control is responsible for setting this.
-		/// </remarks>
-		public int TriggerFileCreationWaitTime { get; set; }
+        /// <summary>
+        /// This values tells the DatasetManager what name to use
+        /// for datasets that were found by the File Watcher.
+        /// </summary>
+        /// <remarks>
+        /// The Watcher Config control is responsible for setting this.
+        /// </remarks>
+        public string ExperimentName { get; set; }
+
+        /// <summary>
+        /// This values tells the DatasetManager if it can create
+        /// a trigger file for datasets that fail to resulve their
+        /// DMS data. This only applies when the reason for the
+        /// trigger file creation is due to the count down running
+        /// out. If a user wants to create the trigger file without 
+        /// DMS data, we won't stop them.
+        /// </summary>
+        /// <remarks>
+        /// The Watcher Config control is responsible for setting this.
+        /// </remarks>
+        public bool CreateTriggerOnDMSFail { get; set; }
+
+        /// <summary>
+        /// This is the amount of time that we should wait before
+        /// creating a tigger file for a dataset that was scanned
+        /// in.
+        /// </summary>
+        /// <remarks>
+        /// This is measured in minutes.
+        /// </remarks>
+        /// <remarks>
+        /// The Watcher control is responsible for setting this.
+        /// </remarks>
+        public int TriggerFileCreationWaitTime { get; set; }
         /// <summary>
         /// Gets or sets the minimum file size before starting the time.
         /// </summary>
         public int MinimumFileSize { get; set; }
-		/// <summary>
-		/// This item contains a copy of the SelectedInstrument value of
-		/// the WatcherConfig tool.
-		/// </summary>
-		/// <remarks>
-		/// WatcherConfig is responsible for setting this value.
-		/// </remarks>
-		public string WatcherConfigSelectedInstrument { get; set; }
+        /// <summary>
+        /// This item contains a copy of the SelectedInstrument value of
+        /// the WatcherConfig tool.
+        /// </summary>
+        /// <remarks>
+        /// WatcherConfig is responsible for setting this value.
+        /// </remarks>
+        public string WatcherConfigSelectedInstrument { get; set; }
 
-		/// <summary>
-		/// This item contains a copy of the SelectedCartName value of
-		/// the WatcherConfig tool.
-		/// </summary>
-		/// <remarks>
-		/// WatcherConfig is responsible for setting this value.
-		/// </remarks>
-		public string WatcherConfigSelectedCartName { get; set; }
+        /// <summary>
+        /// This item contains a copy of the SelectedCartName value of
+        /// the WatcherConfig tool.
+        /// </summary>
+        /// <remarks>
+        /// WatcherConfig is responsible for setting this value.
+        /// </remarks>
+        public string WatcherConfigSelectedCartName { get; set; }
 
-		/// <summary>
-		/// This item contains a copy of the SelectedSeperationType value of
-		/// the WatcherConfig tool.
-		/// </summary>
-		/// <remarks>
-		/// WatcherConfig is responsible for setting this value.
-		/// </remarks>
-		public string WatcherConfigSelectedSeparationType { get; set; }
+        /// <summary>
+        /// This item contains a copy of the SelectedSeperationType value of
+        /// the WatcherConfig tool.
+        /// </summary>
+        /// <remarks>
+        /// WatcherConfig is responsible for setting this value.
+        /// </remarks>
+        public string WatcherConfigSelectedSeparationType { get; set; }
 
-		/// <summary>
-		/// This item contains a copy of the SelectedColumnType value of
-		/// the WatcherConfig tool.
-		/// </summary>
-		/// <remarks>
-		/// WatcherConfig is responsible for setting this value.
-		/// </remarks>
-		public string WatcherConfigSelectedColumnType { get; set; }
+        /// <summary>
+        /// This item contains a copy of the SelectedColumnType value of
+        /// the WatcherConfig tool.
+        /// </summary>
+        /// <remarks>
+        /// WatcherConfig is responsible for setting this value.
+        /// </remarks>
+        public string WatcherConfigSelectedColumnType { get; set; }
 
-		/// <summary>
-		/// This item contains a copy of the SelectedOperator value of
-		/// the WatcherConfig tool.
-		/// </summary>
-		/// <remarks>
-		/// WatcherConfig is responsible for setting this value.
-		/// </remarks>
-		public string WatcherConfigSelectedOperator { get; set; }
+        /// <summary>
+        /// This item contains a copy of the SelectedOperator value of
+        /// the WatcherConfig tool.
+        /// </summary>
+        /// <remarks>
+        /// WatcherConfig is responsible for setting this value.
+        /// </remarks>
+        public string WatcherConfigSelectedOperator { get; set; }
 
-		public string TriggerFileLocation { get; set; }
+        public string TriggerFileLocation { get; set; }
 
-		public string Watcher_EMSL_Usage { get; set; }
-		public string Watcher_EMSL_ProposalID { get; set; }
-		public IEnumerable<classProposalUser> Watcher_SelectedProposalUsers { get; set; }
-		#endregion
-
-
-		#region Quality Control (QC)
-		public string EMSL_Usage { get; set; }
-		public string EMSL_ProposalID { get; set; }
-		public string QC_ExperimentName { get; set; }
-		public bool QC_CreateTriggerOnDMSFail { get; set; }
-
-		public IEnumerable<classProposalUser> QC_SelectedProposalUsers { get; set; }
-		#endregion
-
-		public static DatasetManager Manager
-		{
-			get;
-			private set;
-		}
-
-		public ObservableCollection<BuzzardDataset> Datasets
-		{
-			get;
-			private set;
-		}
+        public string Watcher_EMSL_Usage { get; set; }
+        public string Watcher_EMSL_ProposalID { get; set; }
+        public IEnumerable<classProposalUser> Watcher_SelectedProposalUsers { get; set; }
         #endregion
 
-        
 
-		#region Dataset RunTime Updates
+        #region Quality Control (QC)
+        public string EMSL_Usage { get; set; }
+        public string EMSL_ProposalID { get; set; }
+        public string QC_ExperimentName { get; set; }
+        public bool QC_CreateTriggerOnDMSFail { get; set; }
+
+        public IEnumerable<classProposalUser> QC_SelectedProposalUsers { get; set; }
+        #endregion
+
+        public static DatasetManager Manager
+        {
+            get;
+            private set;
+        }
+
+        public ObservableCollection<BuzzardDataset> Datasets
+        {
+            get;
+            private set;
+        }
+        #endregion
+
+
+
+        #region Dataset RunTime Updates
         //private void m_fileSystemWatcher_Deleted(object sender, FileSystemEventArgs e)
         //{
         //    // It's ok to update if a temp file is deleted, but if a file is deleted
         //    // because we're moving a dataset, then we don't update
         //    //BuzzardDataset datasetToUpdate = FindDataset(e.FullPath);
-			
+
         //    //if (datasetToUpdate != null)
         //    //    datasetToUpdate.RunFinish = DateTime.Now;
         //}
@@ -617,254 +654,254 @@ namespace BuzzardWPF.Management
         //        datasetToUpdate.RunFinish = DateTime.Now;
         //}
 
-		/// <summary>
-		/// This method is used to find a dataset that a file corrisponds to.
-		/// If a dataset is a directory type that contains this file, then that
-		/// dataset will be returned. If a dataset is file type that is that
-		/// file, then the dataset will be returned. If no dataset is found, then
-		/// a null value will be returned.
-		/// </summary>
-		private BuzzardDataset FindDataset(string fullPath)
-		{
-			if (string.IsNullOrWhiteSpace(fullPath))
-				return null;
+        /// <summary>
+        /// This method is used to find a dataset that a file corrisponds to.
+        /// If a dataset is a directory type that contains this file, then that
+        /// dataset will be returned. If a dataset is file type that is that
+        /// file, then the dataset will be returned. If no dataset is found, then
+        /// a null value will be returned.
+        /// </summary>
+        private BuzzardDataset FindDataset(string fullPath)
+        {
+            if (string.IsNullOrWhiteSpace(fullPath))
+                return null;
 
-			// If there's no file or directory, then we won't really find anything
-			if (!Directory.Exists(fullPath) && !File.Exists(fullPath))
-				return null;
+            // If there's no file or directory, then we won't really find anything
+            if (!Directory.Exists(fullPath) && !File.Exists(fullPath))
+                return null;
 
-			fullPath = Path.GetFullPath(fullPath);
-			BuzzardDataset result = null;
-			var pathSep = Path.DirectorySeparatorChar.ToString();
+            fullPath = Path.GetFullPath(fullPath);
+            BuzzardDataset result = null;
+            var pathSep = Path.DirectorySeparatorChar.ToString();
 
-			foreach (var dataset in Datasets)
-			{
-				if (dataset.DatasetSource == DatasetSource.Searcher)
-					continue;
+            foreach (var dataset in Datasets)
+            {
+                if (dataset.DatasetSource == DatasetSource.Searcher)
+                    continue;
 
-				var datasetPath = Path.GetFullPath(dataset.FilePath);
+                var datasetPath = Path.GetFullPath(dataset.FilePath);
 
-				if (fullPath.Equals(datasetPath, StringComparison.OrdinalIgnoreCase))
-				{
-					result = dataset;
-					break;
-				}
-			    if (Directory.Exists(datasetPath))
-			    {
-			        if (!datasetPath.EndsWith(pathSep))
-			            datasetPath += pathSep;
+                if (fullPath.Equals(datasetPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    result = dataset;
+                    break;
+                }
+                if (Directory.Exists(datasetPath))
+                {
+                    if (!datasetPath.EndsWith(pathSep))
+                        datasetPath += pathSep;
 
-			        if (fullPath.StartsWith(datasetPath, StringComparison.OrdinalIgnoreCase))
-			        {
-			            result = dataset;
-			            break;
-			        }
-			    }
-			}
+                    if (fullPath.StartsWith(datasetPath, StringComparison.OrdinalIgnoreCase))
+                    {
+                        result = dataset;
+                        break;
+                    }
+                }
+            }
 
-			return result;
-		}
-		#endregion
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="path"></param>
-		/// <param name="howWasItFound"></param>
-		/// <remarks>
-		/// This is not a thread safe method. In fact, if someone were to mess
-		/// with the contents of the Datasets property while this method is
-		/// executing, they could crash the program.
-		/// </remarks>
-		public void CreatePendingDataset(string path, DatasetSource howWasItFound = DatasetSource.Searcher)
-		{
-			// If we're on the wrong thread, then put in 
-			// a call to this in the correct thread and exit.
-			if (!MainWindow.Dispatcher.CheckAccess())
-			{
-				Action action = delegate
-				{
-					CreatePendingDataset(path, howWasItFound);
-				};
-
-				MainWindow.Dispatcher.BeginInvoke(action, DispatcherPriority.Normal);
-				return;
-			}
+            return result;
+        }
+        #endregion
 
 
-			if (string.IsNullOrWhiteSpace(path))
-			{
-				classApplicationLogger.LogError(0, "No data path was given for the create new Dataset request.");
-				return;
-			}
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="howWasItFound"></param>
+        /// <remarks>
+        /// This is not a thread safe method. In fact, if someone were to mess
+        /// with the contents of the Datasets property while this method is
+        /// executing, they could crash the program.
+        /// </remarks>
+        public void CreatePendingDataset(string path, DatasetSource howWasItFound = DatasetSource.Searcher)
+        {
+            // If we're on the wrong thread, then put in 
+            // a call to this in the correct thread and exit.
+            if (!MainWindow.Dispatcher.CheckAccess())
+            {
+                Action action = delegate
+                {
+                    CreatePendingDataset(path, howWasItFound);
+                };
+
+                MainWindow.Dispatcher.BeginInvoke(action, DispatcherPriority.Normal);
+                return;
+            }
 
 
-			//
-			// Files that have been archived renamed to start with a "x_"
-			// 
-			var fileName = Path.GetFileName(path);
-			var isArchived = fileName.StartsWith("x_", StringComparison.OrdinalIgnoreCase);
-			var originalPath = path;
-			
-			if(isArchived)
-				originalPath = Path.Combine(Path.GetDirectoryName(path), fileName.Substring(2));
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                classApplicationLogger.LogError(0, "No data path was given for the create new Dataset request.");
+                return;
+            }
 
 
-			//
-			// Find if we need to create a new dataset.
-			// 
-			var isItAlreadyThere = Datasets.Any(
-				datum => 
-				{
-					var datasetFound = datum.FilePath.Equals(path, StringComparison.OrdinalIgnoreCase)
-						|| datum.FilePath.Equals(originalPath, StringComparison.OrdinalIgnoreCase);
+            //
+            // Files that have been archived renamed to start with a "x_"
+            // 
+            var fileName = Path.GetFileName(path);
+            var isArchived = fileName.StartsWith("x_", StringComparison.OrdinalIgnoreCase);
+            var originalPath = path;
 
-					return datasetFound;
-				});
+            if (isArchived)
+                originalPath = Path.Combine(Path.GetDirectoryName(path), fileName.Substring(2));
 
 
-			BuzzardDataset dataset = null;
+            //
+            // Find if we need to create a new dataset.
+            // 
+            var isItAlreadyThere = Datasets.Any(
+                datum =>
+                {
+                    var datasetFound = datum.FilePath.Equals(path, StringComparison.OrdinalIgnoreCase)
+                        || datum.FilePath.Equals(originalPath, StringComparison.OrdinalIgnoreCase);
 
-			if (isItAlreadyThere)
-			{
-				dataset = Datasets.First(
-					datum => 
-					{
-						var datasetFound = datum.FilePath.Equals(path, StringComparison.OrdinalIgnoreCase)
-							|| datum.FilePath.Equals(originalPath, StringComparison.OrdinalIgnoreCase);
-						
-						return datasetFound; 
-					});
+                    return datasetFound;
+                });
 
-				if (isArchived)
-					dataset.FilePath = path;
-				else
-					dataset.UpdateFileProperties();
-			}
-			else if (
-				howWasItFound == DatasetSource.Searcher
-				&& isArchived							
-				&& !IncludedArchivedItems)				
-			{
+
+            BuzzardDataset dataset = null;
+
+            if (isItAlreadyThere)
+            {
+                dataset = Datasets.First(
+                    datum =>
+                    {
+                        var datasetFound = datum.FilePath.Equals(path, StringComparison.OrdinalIgnoreCase)
+                            || datum.FilePath.Equals(originalPath, StringComparison.OrdinalIgnoreCase);
+
+                        return datasetFound;
+                    });
+
+                if (isArchived)
+                    dataset.FilePath = path;
+                else
+                    dataset.UpdateFileProperties();
+            }
+            else if (
+                howWasItFound == DatasetSource.Searcher
+                && isArchived
+                && !IncludedArchivedItems)
+            {
                 // Found via the searcher, and the user set the search config not to include archived items
                 // Don't create a new dataset
-				return;
-			}
-			else
-			{
-				dataset = DatasetFactory.LoadDataset(path);
-			    dataset.Comment = Manager.UserComments;
-			}
+                return;
+            }
+            else
+            {
+                dataset = DatasetFactory.LoadDataset(path);
+                dataset.Comment = Manager.UserComments;
+            }
 
 
-			//
-			// We don't really care if a dataset was found
-			// while doing a search, but we do care if it
-			// was picked up by the watcher. If the watcher
-			// pickes it up, then we might have to do a bit
-			// of a delay before creating the trigger file
-			// 
-			if (howWasItFound == DatasetSource.Watcher)
-			{
-				dataset.DatasetSource = howWasItFound;
+            //
+            // We don't really care if a dataset was found
+            // while doing a search, but we do care if it
+            // was picked up by the watcher. If the watcher
+            // pickes it up, then we might have to do a bit
+            // of a delay before creating the trigger file
+            // 
+            if (howWasItFound == DatasetSource.Watcher)
+            {
+                dataset.DatasetSource = howWasItFound;
 
 
-				// Since this dataset was picked up by the file scanner,
-				// we want to fill this in with inforamtion that was set
-				// in the watcher config tool. Yet, we don't want to 
-				// overwrite something that was set by the user.
-				if (string.IsNullOrWhiteSpace(dataset.Instrument))
-					dataset.Instrument = WatcherConfigSelectedInstrument;
+                // Since this dataset was picked up by the file scanner,
+                // we want to fill this in with inforamtion that was set
+                // in the watcher config tool. Yet, we don't want to 
+                // overwrite something that was set by the user.
+                if (string.IsNullOrWhiteSpace(dataset.Instrument))
+                    dataset.Instrument = WatcherConfigSelectedInstrument;
 
-				if (string.IsNullOrWhiteSpace(dataset.DMSData.CartName))
-					dataset.DMSData.CartName = WatcherConfigSelectedCartName;
+                if (string.IsNullOrWhiteSpace(dataset.CartName))
+                    dataset.CartName = WatcherConfigSelectedCartName;
 
-				if (string.IsNullOrWhiteSpace(dataset.SeparationType))
-					dataset.SeparationType = WatcherConfigSelectedSeparationType;
+                if (string.IsNullOrWhiteSpace(dataset.SeparationType))
+                    dataset.SeparationType = WatcherConfigSelectedSeparationType;
 
-				if (string.IsNullOrWhiteSpace(dataset.DMSData.DatasetType))
-					dataset.DMSData.DatasetType = WatcherConfigSelectedColumnType;
+                if (string.IsNullOrWhiteSpace(dataset.DMSData.DatasetType))
+                    dataset.DMSData.DatasetType = WatcherConfigSelectedColumnType;
 
-				if (string.IsNullOrWhiteSpace(dataset.Operator))
-					dataset.Operator = WatcherConfigSelectedOperator;
+                if (string.IsNullOrWhiteSpace(dataset.Operator))
+                    dataset.Operator = WatcherConfigSelectedOperator;
 
-				if (string.IsNullOrWhiteSpace(dataset.ExperimentName))
-					dataset.ExperimentName = ExperimentName;
+                if (string.IsNullOrWhiteSpace(dataset.ExperimentName))
+                    dataset.ExperimentName = ExperimentName;
 
-				if (string.IsNullOrWhiteSpace(dataset.LCColumn))
-					dataset.LCColumn = LCColumn;
-
-
-				string							emslUsageType;
-				string							emslProposalId;
-				IEnumerable<classProposalUser>	emslProposalUsers;
-
-				// QC data from the QC panel will override
-				// any previous data for given properties
-				if (dataset.IsQC)
-				{
-					dataset.ExperimentName = QC_ExperimentName;
-					dataset.DMSData.Experiment = QC_ExperimentName;
-
-					emslUsageType		= EMSL_Usage;
-					emslProposalId		= EMSL_ProposalID;
-					emslProposalUsers	= QC_SelectedProposalUsers;
-				}
-				else
-				{
-					emslUsageType		= Watcher_EMSL_Usage;
-					emslProposalId		= Watcher_EMSL_ProposalID;
-					emslProposalUsers	= Watcher_SelectedProposalUsers;
-				}
-
-				dataset.DMSData.EMSLUsageType = emslUsageType;
-				if (!string.IsNullOrWhiteSpace(dataset.DMSData.EMSLUsageType) &&
-					dataset.DMSData.EMSLUsageType.Equals("USER", StringComparison.OrdinalIgnoreCase))
-				{
-					dataset.DMSData.EMSLProposalID = emslProposalId;
-					dataset.EMSLProposalUsers = new ObservableCollection<classProposalUser>(emslProposalUsers);
-				}
-				else
-				{
-					dataset.DMSData.EMSLProposalID = null;
-					dataset.EMSLProposalUsers = new ObservableCollection<classProposalUser>();
-				}
-			}
+                if (string.IsNullOrWhiteSpace(dataset.LCColumn))
+                    dataset.LCColumn = LCColumn;
 
 
-			//
-			// If it wasn't already in the set, then
-			// that means that this dataset is brand
-			// new.
-			// 
-			if (!isItAlreadyThere)
-			{
-				if (howWasItFound == DatasetSource.Searcher)
-				{
-					ResolveDms(dataset);
+                string emslUsageType;
+                string emslProposalId;
+                IEnumerable<classProposalUser> emslProposalUsers;
 
-					var hasTriggerFileSent =
-						Manager.TriggerDirectoryContents.Any
-						(
-							trig => trig.Contains(dataset.DMSData.DatasetName));
+                // QC data from the QC panel will override
+                // any previous data for given properties
+                if (dataset.IsQC)
+                {
+                    dataset.ExperimentName = QC_ExperimentName;
+                    dataset.DMSData.Experiment = QC_ExperimentName;
 
-					if (hasTriggerFileSent)
-						dataset.DatasetStatus = DatasetStatus.TriggerFileSent;
-				}
+                    emslUsageType = EMSL_Usage;
+                    emslProposalId = EMSL_ProposalID;
+                    emslProposalUsers = QC_SelectedProposalUsers;
+                }
+                else
+                {
+                    emslUsageType = Watcher_EMSL_Usage;
+                    emslProposalId = Watcher_EMSL_ProposalID;
+                    emslProposalUsers = Watcher_SelectedProposalUsers;
+                }
 
-				Datasets.Add(dataset);
+                dataset.DMSData.EMSLUsageType = emslUsageType;
+                if (!string.IsNullOrWhiteSpace(dataset.DMSData.EMSLUsageType) &&
+                    dataset.DMSData.EMSLUsageType.Equals("USER", StringComparison.OrdinalIgnoreCase))
+                {
+                    dataset.DMSData.EMSLProposalID = emslProposalId;
+                    dataset.EMSLProposalUsers = new ObservableCollection<classProposalUser>(emslProposalUsers);
+                }
+                else
+                {
+                    dataset.DMSData.EMSLProposalID = null;
+                    dataset.EMSLProposalUsers = new ObservableCollection<classProposalUser>();
+                }
+            }
 
-				classApplicationLogger.LogMessage(
-					0,
-					string.Format("Data source: '{0}' found.", path));
-			}
+
+            //
+            // If it wasn't already in the set, then
+            // that means that this dataset is brand
+            // new.
+            // 
+            if (!isItAlreadyThere)
+            {
+                if (howWasItFound == DatasetSource.Searcher)
+                {
+                    ResolveDms(dataset);
+
+                    var hasTriggerFileSent =
+                        Manager.TriggerDirectoryContents.Any
+                        (
+                            trig => trig.Contains(dataset.DMSData.DatasetName));
+
+                    if (hasTriggerFileSent)
+                        dataset.DatasetStatus = DatasetStatus.TriggerFileSent;
+                }
+
+                Datasets.Add(dataset);
+
+                classApplicationLogger.LogMessage(
+                    0,
+                    string.Format("Data source: '{0}' found.", path));
+            }
 
 
             Manager.ResolveDms(dataset);
-		}
-        
-        public bool IsLoading 
+        }
+
+        public bool IsLoading
         {
             get { return m_datasetsReady == false; }
         }

@@ -7,98 +7,106 @@
 			 xmlns:xctk="clr-namespace:Xceed.Wpf.Toolkit;assembly=WPFToolkit.Extended"
 			 xmlns:lcmsData="clr-namespace:LcmsNetDataClasses.Data;assembly=LcmsNetSDK"
 			 mc:Ignorable="d" 
-             d:DesignHeight="200" 
+             d:DesignHeight="152.8" 
              d:DesignWidth="600">
-	
-	<UserControl.Resources>
-		<Style TargetType="GroupBox">
-			<Setter Property="FontSize"		Value="16"/>
-			<Setter Property="Margin"		Value="1,2"/>
-		</Style>
 
-		<Style x:Key="TextBlockStyle" TargetType="TextBlock">
-			<Setter Property="FontSize"					Value="16"/>
-			<Setter Property="Margin"					Value="6,4,4,4"/>
-			<Setter Property="VerticalAlignment"		Value="Center"/>
-		</Style>
+    <UserControl.Resources>
+        <Style TargetType="GroupBox">
+            <Setter Property="FontSize"		Value="16"/>
+            <Setter Property="Margin"		Value="1,2"/>
+        </Style>
 
-		<Style x:Key="ComboBoxStyle" TargetType="ComboBox">
-			<Setter Property="MinHeight"				Value="32"/>
-			<Setter Property="Margin"					Value="2"/>
-			<Setter Property="MinWidth"					Value="300"/>
-			<Setter Property="FontSize"					Value="15"/>
-			<Setter Property="VerticalContentAlignment" Value="Center"/>
-		</Style>
+        <Style x:Key="TextBlockStyle" TargetType="TextBlock">
+            <Setter Property="FontSize"					Value="16"/>
+            <Setter Property="Margin"					Value="6,4,4,4"/>
+            <Setter Property="VerticalAlignment"		Value="Center"/>
+        </Style>
 
-		<Style x:Key="TextBoxStyle" TargetType="TextBox">
-			<Setter Property="MinHeight"				Value="32"/>
-			<Setter Property="Margin"					Value="2"/>
-			<Setter Property="MinWidth"					Value="300"/>
-			<Setter Property="FontSize"					Value="15"/>
-			<Setter Property="VerticalAlignment"		Value="Center"/>
-			<Setter Property="VerticalContentAlignment" Value="Center"/>
-		</Style>
+        <Style x:Key="ComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="MinHeight"				Value="32"/>
+            <Setter Property="Margin"					Value="2"/>
+            <Setter Property="MinWidth"					Value="300"/>
+            <Setter Property="FontSize"					Value="15"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
 
-		<window:EnableProposalIDConverter x:Key="EnableProposalIDConverter"/>
-	</UserControl.Resources>
-	<StackPanel>
-		<GroupBox Header="EMSL">
-			<Grid>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="auto"/>
-					<ColumnDefinition Width="*"/>
-				</Grid.ColumnDefinitions>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="auto"/>
-					<RowDefinition Height="auto"/>
-					<RowDefinition Height="auto"/>
-				</Grid.RowDefinitions>
+        <Style x:Key="TextBoxStyle" TargetType="TextBox">
+            <Setter Property="MinHeight"				Value="32"/>
+            <Setter Property="Margin"					Value="2"/>
+            <Setter Property="MinWidth"					Value="300"/>
+            <Setter Property="FontSize"					Value="15"/>
+            <Setter Property="VerticalAlignment"		Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
 
-				<TextBlock Text="Usage:"
+        <window:EnableProposalIDConverter x:Key="EnableProposalIDConverter"/>
+    </UserControl.Resources>
+    <StackPanel>
+        <GroupBox Header="EMSL" Height="147">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="Usage:"
 						   Grid.Column="0"
                            Grid.Row="0"
 						   Style="{StaticResource TextBlockStyle}"/>
-				<ComboBox Grid.Column="1" 
+                <ComboBox Grid.Column="1" 
                           Grid.Row="0"
 						  Name="UsageTypeSelector"
 						  Style="{StaticResource ComboBoxStyle}"
 						  ItemsSource="{Binding Path=UsageTypesSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
 						  SelectedItem="{Binding Path=BoundContainer.SelectedEMSLUsageType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-				<TextBlock Text="Proposal ID:"
+                <TextBlock Text="Proposal ID:"
 						   Grid.Column="0"
                            Grid.Row="1"
 						   Style="{StaticResource TextBlockStyle}"/>
 
-				<Grid Grid.Column="1" Grid.Row="1">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="*"/>
-						<ColumnDefinition Width="auto"/>
-					</Grid.ColumnDefinitions>
-					<TextBox Text="{Binding Path=BoundContainer.EMSLProposalID, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                <Grid Grid.Column="1" Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="74*"/>
+                        <ColumnDefinition Width="5*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox Text="{Binding Path=BoundContainer.EMSLProposalID, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
 							 Style="{StaticResource TextBoxStyle}"
 							 IsEnabled="{Binding Path=BoundContainer.SelectedEMSLUsageType, 
 												 Mode=TwoWay, 
 												 UpdateSourceTrigger=PropertyChanged, 
 												 Converter={StaticResource EnableProposalIDConverter}}"
 							 Grid.Column="0" 
-                             Grid.Row="0"/>
-					<ComboBox x:Name="PID_Selector" 
-							  Grid.Column="1"
+                             Grid.Row="0" RenderTransformOrigin="0.5,0.5" Height="32" Margin="2,2,5,2">
+                        <TextBox.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform/>
+                                <SkewTransform/>
+                                <RotateTransform Angle="-0.243"/>
+                                <TranslateTransform/>
+                            </TransformGroup>
+                        </TextBox.RenderTransform>
+                    </TextBox>
+                    <ComboBox x:Name="PID_Selector"
                               Grid.Row="0"
-							  Margin="3"
+							  Margin="0,3,3.4,3"
 							  ItemsSource="{Binding Path=AvailablePIDs, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
 							  IsEnabled="{Binding Path=BoundContainer.SelectedEMSLUsageType, 
 									  	 		  Mode=TwoWay, 
 									  	 		  UpdateSourceTrigger=PropertyChanged, 
 									  	 		  Converter={StaticResource EnableProposalIDConverter}}"
-							  SelectionChanged="PropodalIDSelector_SelectionChanged"/>
-				</Grid>
-				<TextBlock Text="Proposal User:"
+							  SelectionChanged="PropodalIDSelector_SelectionChanged" Grid.Column="1"/>
+                </Grid>
+                <TextBlock Text="Proposal User:"
 						   Grid.Column="0"
                            Grid.Row="2"
 						   Style="{StaticResource TextBlockStyle}"/>
-				<xctk:CheckComboBox Grid.Column="1"
+                <xctk:CheckComboBox Grid.Column="1"
                                     Grid.Row="2"
 									Name="PUserSelector"
 									Margin="3"
@@ -110,7 +118,7 @@
 														Mode=OneWay, 
 														UpdateSourceTrigger=PropertyChanged, 
 														Converter={StaticResource EnableProposalIDConverter}}"/>
-			</Grid>
-		</GroupBox>        
+            </Grid>
+        </GroupBox>
     </StackPanel>
 </UserControl>

@@ -4,68 +4,92 @@ using BuzzardLib.Data;
 
 namespace BuzzardLib.Converters
 {
-	public class WaitTimeTextConverter
-		: IMultiValueConverter
-	{
-		public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-		{
-			string returnValue;
+    public class WaitTimeTextConverter
+        : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            string returnValue = string.Empty;
 
-			try
-			{
-				var				timeLeft	= (int)				values[0];	// seconds
-				var	status		= (DatasetStatus)	values[1];
-				var	source		= (DatasetSource)	values[2];
+            try
+            {
+                var timeLeft = (int)values[0];	// seconds
+                var status = (DatasetStatus)values[1];
+                var source = (DatasetSource)values[2];
 
-				if (status == DatasetStatus.TriggerFileSent)
-				{
-					returnValue = "---";
-				}
-				else if (source == DatasetSource.Searcher)
-				{
-					returnValue = "Waiting on User";
-				}
-				else
-				{
-					var minutes = timeLeft / 60;
-					var seconds = timeLeft % 60;
-					var hours = minutes / 60;
-					
-					if (hours > 0)
-						minutes = minutes % 60;
+                switch (status)
+                {
+                    case DatasetStatus.TriggerFileSent:
+                    case DatasetStatus.DatasetMarkedCaptured:
+                        returnValue = "---";
+                        break;
 
-					if (hours > 0)
-					{
-						returnValue = string.Format(" {0} hr  {1} min  {2} s ", hours, minutes, seconds);
-					}
-					else if (minutes > 0)
-					{
-						returnValue = string.Format(
-							" {0} minute{1}{2} seconds ",
-							minutes,
-							(minutes == 1 ? "   " : "s  "),
-							seconds);
-					}
-					else
-					{
-						returnValue = string.Format(" {0} seconds ", timeLeft);
-					}
+                    case DatasetStatus.FailedFileError:
+                    case DatasetStatus.FailedNoDmsRequest:
+                    case DatasetStatus.FailedUnknown:
+                        returnValue = "Error";
+                        break;
 
-					if (seconds < 0)
-						returnValue = "---";
-				}
-			}
-			catch
-			{
-				returnValue = "Error";
-			}
+                    case DatasetStatus.MissingRequiredInfo:
+                        returnValue = "Warning";
+                        break;
 
-			return returnValue;
-		}
+                    case DatasetStatus.FileNotFound:
+                        returnValue = "File Missing";
+                        break;
+                }
 
-		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
-		{
-			throw new NotImplementedException();
-		}
-	}
+
+                if (!string.IsNullOrWhiteSpace(returnValue))
+                {
+                    return returnValue;
+                }
+                                
+                if (source == DatasetSource.Searcher)
+                {
+                    returnValue = "Waiting on User";
+                }
+                else
+                {
+                    var minutes = timeLeft / 60;
+                    var seconds = timeLeft % 60;
+                    var hours = minutes / 60;
+
+                    if (hours > 0)
+                        minutes = minutes % 60;
+
+                    if (hours > 0)
+                    {
+                        returnValue = string.Format(" {0} hr  {1} min  {2} s ", hours, minutes, seconds);
+                    }
+                    else if (minutes > 0)
+                    {
+                        returnValue = string.Format(
+                            " {0} minute{1}{2} seconds ",
+                            minutes,
+                            (minutes == 1 ? "   " : "s  "),
+                            seconds);
+                    }
+                    else
+                    {
+                        returnValue = string.Format(" {0} seconds ", timeLeft);
+                    }
+
+                    if (seconds < 0)
+                        returnValue = "---";
+                }
+            }
+            catch
+            {
+                returnValue = "WaitTimeText Error";
+            }
+
+            return returnValue;
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

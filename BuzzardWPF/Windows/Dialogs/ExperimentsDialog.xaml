@@ -39,11 +39,11 @@
 				
 							     MinHeight="32"                       
 		                         Style="{StaticResource SimpleButtonStyle}"
-				Click="Button_Click"/>
+				Click="Button_Click" FontFamily="Arial"/>
 		<Button Grid.Row="1" Grid.Column="2"
 				Content="Cancel"
 				IsCancel="True"       
 							     MinHeight="32"                       
-		                         Style="{StaticResource SimpleButtonStyle}"/>
+		                         Style="{StaticResource SimpleButtonStyle}" FontFamily="Arial"/>
     </Grid>
 </Window>

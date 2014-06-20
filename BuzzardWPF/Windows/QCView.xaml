@@ -6,89 +6,89 @@
 			 xmlns:window="clr-namespace:BuzzardWPF.Windows"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="600">
-	<UserControl.Resources>
-		<Style TargetType="GroupBox">
-			<Setter Property="FontSize"		Value="16"/>
-			<Setter Property="Margin"		Value="1,2"/>
-		</Style>
+    <UserControl.Resources>
+        <Style TargetType="GroupBox">
+            <Setter Property="FontSize"		Value="16"/>
+            <Setter Property="Margin"		Value="1,2"/>
+        </Style>
 
-		<Style x:Key="TextBlockStyle" TargetType="TextBlock">
-			<Setter Property="FontSize"					Value="16"/>
-			<Setter Property="Margin"					Value="6,4,4,4"/>
-			<Setter Property="VerticalAlignment"		Value="Center"/>
-		</Style>
+        <Style x:Key="TextBlockStyle" TargetType="TextBlock">
+            <Setter Property="FontSize"					Value="16"/>
+            <Setter Property="Margin"					Value="6,4,4,4"/>
+            <Setter Property="VerticalAlignment"		Value="Center"/>
+        </Style>
 
-		<Style x:Key="ComboBoxStyle" TargetType="ComboBox">
-			<Setter Property="MinHeight"				Value="32"/>
-			<Setter Property="Margin"					Value="2"/>
-			<Setter Property="MinWidth"					Value="300"/>
-			<Setter Property="FontSize"					Value="15"/>
-			<Setter Property="VerticalContentAlignment" Value="Center"/>
-		</Style>
+        <Style x:Key="ComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="MinHeight"				Value="32"/>
+            <Setter Property="Margin"					Value="2"/>
+            <Setter Property="MinWidth"					Value="300"/>
+            <Setter Property="FontSize"					Value="15"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
 
-		<Style x:Key="TextBoxStyle" TargetType="TextBox">
-			<Setter Property="MinHeight"				Value="32"/>
-			<Setter Property="Margin"					Value="2"/>
-			<Setter Property="MinWidth"					Value="300"/>
-			<Setter Property="FontSize"					Value="15"/>
-			<Setter Property="VerticalAlignment"		Value="Center"/>
-			<Setter Property="VerticalContentAlignment" Value="Center"/>
-		</Style>
-		
-	</UserControl.Resources>
-	
-	<Grid Margin="0" Grid.IsSharedSizeScope="True">
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="auto"/>
-			<ColumnDefinition Width="auto"/>
-			<ColumnDefinition Width="*"/>
-		</Grid.ColumnDefinitions>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="*"/>
-			<RowDefinition Height="auto"/>
-		</Grid.RowDefinitions>
-		
-		<StackPanel Grid.Column="0" Grid.Row="0"
+        <Style x:Key="TextBoxStyle" TargetType="TextBox">
+            <Setter Property="MinHeight"				Value="32"/>
+            <Setter Property="Margin"					Value="2"/>
+            <Setter Property="MinWidth"					Value="300"/>
+            <Setter Property="FontSize"					Value="15"/>
+            <Setter Property="VerticalAlignment"		Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+
+    </UserControl.Resources>
+
+    <Grid Margin="0" Grid.IsSharedSizeScope="True">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Column="0" Grid.Row="0"
 					Margin="1,1,4,1">
-			<window:EMSL_UsageSelectionView x:Name="EMSL_UsageSelectors"/>
+            <window:EMSL_UsageSelectionView x:Name="EMSL_UsageSelectors"/>
 
-			<GroupBox Header="Experiments">
-				<Grid>
-					<Grid.RowDefinitions>
-						<RowDefinition Height="auto"/>
-						<RowDefinition Height="auto"/>
-					</Grid.RowDefinitions>
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="auto" SharedSizeGroup="A"/>
-						<ColumnDefinition Width="auto" SharedSizeGroup="B"/>
-						<ColumnDefinition Width="*"/>
-					</Grid.ColumnDefinitions>
+            <GroupBox Header="Experiments">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" SharedSizeGroup="A"/>
+                        <ColumnDefinition Width="auto" SharedSizeGroup="B"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
 
-					<TextBlock Text="Experiment Name:"
+                    <TextBlock Text="Experiment Name:"
 							   Grid.Row="0" Grid.Column="0"
 							   Style="{StaticResource TextBlockStyle}"/>
 
-					<TextBox Grid.Row="0" Grid.Column="1"
+                    <TextBox Grid.Row="0" Grid.Column="1"
 							 Text="{Binding Path=ExperimentName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 							 Style="{StaticResource TextBoxStyle}" />
 
-					<Button Content="Select Experiment..."
+                    <Button Content="Select Experiment..."
 							Grid.Row="1"
                             Grid.Column="1"
 							Click="SelectExperiment_Click"
 							HorizontalAlignment="Right"							
 							MinHeight="32"                       
-		                    Style="{StaticResource SimpleButtonStyle}"/>														
-				</Grid>
-			</GroupBox>
-		</StackPanel>
-		
-		<CheckBox Grid.Row="1" Grid.Column="0"
+		                    Style="{StaticResource SimpleButtonStyle}" Margin="0,5,5.2,-0.2" Width="191" FontFamily="Arial"/>
+                </Grid>
+            </GroupBox>
+        </StackPanel>
+
+        <CheckBox Grid.Row="1" Grid.Column="0"
 				  Grid.ColumnSpan="2"
 				  VerticalAlignment="Center"
 				  Content="Create Trigger For QC's ?"
 				  FontSize="15" 
 				  ToolTip="Do you want the watcher to auto-create the trigger file for datasets it finds when their DMS is unresolved?"
 				  IsChecked="{Binding Path=CreateOnDMSFail, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-	</Grid>
+    </Grid>
 </UserControl>
