@@ -55,14 +55,15 @@ Source: "{#MySource}\bin\x86\Release\WPFToolkit.Extended.dll";                De
 Source: "{#MySource}\bin\x86\Release\ZedGraph.DLL";                           DestDir: "{app}";             Flags: ignoreversion  
 Source: "{#MySource}\bin\x86\Release\x86\Sqlite.Interop.DLL";                 DestDir: "{app}\x86";         Flags: ignoreversion  
 Source: "{#MySource}\bin\x86\Release\x64\Sqlite.Interop.DLL";                 DestDir: "{app}\x64";         Flags: ignoreversion  
-
+Source: "{#MySource}\bin\x86\Release\ZedGraph.DLL";                           DestDir: "{app}";             Flags: ignoreversion  
+Source: "{#MySource}\Resources\IconImage.ico";                                DestDir: "{app}";             Flags: ignoreversion  
 
 ;-----------------------------------------------------------------------------------------------------------------------------------------------
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; WorkingDir: "{app}"
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
-Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\Resources\IconImage.ico"; WorkingDir: "{app}"; Tasks: desktopicon
+Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\IconImage.ico"; WorkingDir: "{app}"; Tasks: desktopicon
 
 [Run]
 ;Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#MyAppName}}"; Flags: nowait postinstall skipifsilent
