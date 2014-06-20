@@ -53,7 +53,7 @@ namespace BuzzardLib.Data
         public BuzzardDataset()
         {
             DMSData = new DMSData();
-            DMSDataLastUpdate = DateTime.UtcNow;
+            DMSDataLastUpdate = DateTime.UtcNow.Subtract(new TimeSpan(1, 0, 0));
 
             NotOnlyDatasource = false;
             DatasetSource = Data.DatasetSource.Searcher;
@@ -300,8 +300,7 @@ namespace BuzzardLib.Data
                 {
                     m_dmsData = value;
                     OnPropertyChanged("DMSData");
-                    OnPropertyChanged("DMSStatus");
-                    DMSDataLastUpdate = DateTime.UtcNow;
+                    OnPropertyChanged("DMSStatus");                     
                 }
             }
         }

@@ -49,19 +49,25 @@ namespace BuzzardWPF.Windows
 
 			ShowGridItemDetail		= false;
 
-            m_fillDownDataset = new FilldownBuzzardDataset();
-            m_fillDownDataset.Comment                   = Properties.Settings.Default.FilldownComment;
-            m_fillDownDataset.Operator                  = Properties.Settings.Default.FilldownOperator;
-            m_fillDownDataset.DMSData.DatasetType       = Properties.Settings.Default.FilldownDatasetType;
-            m_fillDownDataset.SeparationType            = Properties.Settings.Default.FilldownSeparationType;
-            m_fillDownDataset.LCColumn                  = Properties.Settings.Default.FilldownColumn;
-            m_fillDownDataset.Instrument                = Properties.Settings.Default.FilldownInstrument;
-            m_fillDownDataset.CartName                  = Properties.Settings.Default.FilldownCart;
-            m_fillDownDataset.InterestRating            = Properties.Settings.Default.FilldownInterest;
-            m_fillDownDataset.DMSData.EMSLUsageType     = Properties.Settings.Default.FilldownEMSLUsage;
-            m_fillDownDataset.DMSData.EMSLProposalID    = Properties.Settings.Default.FilldownEMSLProposal;
-            m_fillDownDataset.ExperimentName            = Properties.Settings.Default.FilldownExperimentName;
-			m_moveDestinationDir	= null;
+            m_fillDownDataset = new FilldownBuzzardDataset
+            {
+                Comment = Properties.Settings.Default.FilldownComment,
+                Operator = Properties.Settings.Default.FilldownOperator,
+                SeparationType = Properties.Settings.Default.FilldownSeparationType,
+                LCColumn = Properties.Settings.Default.FilldownColumn,
+                Instrument = Properties.Settings.Default.FilldownInstrument,
+                CartName = Properties.Settings.Default.FilldownCart,
+                InterestRating = Properties.Settings.Default.FilldownInterest,
+                ExperimentName = Properties.Settings.Default.FilldownExperimentName,
+                DMSData =
+                {
+                    EMSLUsageType = Properties.Settings.Default.FilldownEMSLUsage,
+                    EMSLProposalID = Properties.Settings.Default.FilldownEMSLProposal,
+                    DatasetType = Properties.Settings.Default.FilldownDatasetType
+                }
+            };
+
+		    m_moveDestinationDir = null;
 
             
 			DMS_DataAccessor.Instance.PropertyChanged += DMSDataManager_PropertyChanged;

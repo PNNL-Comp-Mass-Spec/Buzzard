@@ -453,7 +453,7 @@ namespace BuzzardWPF
             if (m_firstTimeLoading)
             {
                 //// This next piece of code will reset the settings
-                //// to their defalut values before loading them into
+                //// to their default values before loading them into
                 //// the application.
                 //// This is kept here, in case I need to check that
                 //// the effects of the default settings.

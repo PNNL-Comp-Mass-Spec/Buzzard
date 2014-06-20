@@ -313,7 +313,6 @@ namespace BuzzardWPF.Management
 
             var fiDataset = new FileInfo(dataset.FilePath);
 
-
             try
             {
                 var fileName = Path.GetFileNameWithoutExtension(fiDataset.Name);
@@ -330,6 +329,7 @@ namespace BuzzardWPF.Management
                 }
 
                 dataset.DMSData = new DMSData(data, dataset.FilePath);
+                dataset.DMSDataLastUpdate = DateTime.UtcNow;
             }
             catch (KeyNotFoundException)
             {

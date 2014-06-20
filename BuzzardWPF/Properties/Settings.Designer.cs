@@ -667,5 +667,17 @@ namespace BuzzardWPF.Properties {
                 this["WatcherConfig_UserComment"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool UpgradeSettings {
+            get {
+                return ((bool)(this["UpgradeSettings"]));
+            }
+            set {
+                this["UpgradeSettings"] = value;
+            }
+        }
     }
 }

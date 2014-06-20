@@ -31,13 +31,29 @@ namespace BuzzardWPF
         /// <returns>An object that holds the application settings.</returns>
         static void LoadSettings()
         {
+            // Possibly upgrade the settings from a previous version
+            if (Properties.Settings.Default.UpgradeSettings)
+            {
+                // User settings for this version was not found
+                // Try to upgrade from the previous version
+                Properties.Settings.Default.Upgrade();
+                Properties.Settings.Default.Reload();
+                Properties.Settings.Default.UpgradeSettings = false;
+            }
+
+            var comment = Properties.Settings.Default.FilldownComment;
+            if (comment != null && comment.StartsWith("HailWhiteshoes"))
+                Properties.Settings.Default.FilldownComment = string.Empty;
+
             var propColl = Properties.Settings.Default.Properties;
+
             foreach (SettingsProperty currProperty in propColl)
             {
                 var propertyName = currProperty.Name;
 				var propertyValue = string.Empty;
 				if(Properties.Settings.Default[propertyName] != null)
 					propertyValue = Properties.Settings.Default[propertyName].ToString();
+
                 classLCMSSettings.SetParameter(propertyName, propertyValue);
             }
 
@@ -117,8 +133,6 @@ namespace BuzzardWPF
             //Application.EnableVisualStyles();
             //Application.SetCompatibleTextRenderingDefault(false);
 
-            // Todo: Wire this up
-            //xyz += classFileLogging.LogFilePathDefined;
 
             // Before we do anything, let's initialize the file logging capability.
             classApplicationLogger.Error   += classFileLogging.LogError;
