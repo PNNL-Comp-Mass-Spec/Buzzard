@@ -41,10 +41,6 @@ namespace BuzzardWPF
                 Properties.Settings.Default.UpgradeSettings = false;
             }
 
-            var comment = Properties.Settings.Default.FilldownComment;
-            if (comment != null && comment.StartsWith("HailWhiteshoes"))
-                Properties.Settings.Default.FilldownComment = string.Empty;
-
             var propColl = Properties.Settings.Default.Properties;
 
             foreach (SettingsProperty currProperty in propColl)

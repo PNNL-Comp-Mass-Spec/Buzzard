@@ -70,6 +70,10 @@ namespace BuzzardLib.IO
             else
                 experimentName = dataset.ExperimentName;
 
+            string comment = dmsData.Comment;
+            if (!string.IsNullOrWhiteSpace(dataset.Comment))
+                comment += " Buzzard: " + dataset.Comment;
+
             var lstFieldsToVerify = new Dictionary<string, string>
             {
                 {"Dataset", dmsData.DatasetName},
@@ -112,7 +116,8 @@ namespace BuzzardLib.IO
             AddParam(rootElement, "Well Number", sample.PAL.Well.ToString(CultureInfo.InvariantCulture));
             AddParam(rootElement, "Dataset Type", dmsData.DatasetType);
             AddParam(rootElement, "Operator (PRN)", dataset.Operator);
-            AddParam(rootElement, "Comment", dmsData.Comment + " Buzzard: " + dataset.Comment);
+
+            AddParam(rootElement, "Comment", comment);
             AddParam(rootElement, "Interest Rating", dataset.InterestRating);
 
             // 
