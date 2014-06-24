@@ -87,19 +87,22 @@
 
 					<TextBox Grid.Row="0" Grid.Column="1"
 							 Text="{Binding Path=ExperimentName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-							 Style="{StaticResource TextBoxStyle}" />
+							 Style="{StaticResource TextBoxStyle}" 
+                             IsEnabled="{Binding Path=IsNotMonitoring}"/>
 
 					<Button Content="Select Experiment..."
 							Grid.Row="1" Grid.Column="1"
 							Click="SelectExperiment_Click"
 							HorizontalAlignment="Right"													
-		                    Style="{StaticResource SimpleButtonStyle}" Margin="0,5.2,116,0" Width="186" FontFamily="Arial"/>
+		                    Style="{StaticResource SimpleButtonStyle}" Margin="0,5.2,116,0" Width="186" FontFamily="Arial"
+                            IsEnabled="{Binding Path=IsNotMonitoring}"/>
 				</Grid>
 			</GroupBox>
 
             <windows:EMSL_UsageSelectionView                 
                     Grid.Row="1"
-					x:Name="EMSL_DataSelector"/>
+					x:Name="EMSL_DataSelector"
+                    IsEnabled="{Binding Path=IsNotMonitoring}" />
             
         </Grid>
         <StackPanel Grid.Column="0"
@@ -120,7 +123,8 @@
                     <ComboBox Grid.Row="0" Grid.Column="1" FontWeight="Regular"
 							  Style="{StaticResource ComboBoxStyle}"
 							  ItemsSource="{Binding Path=InstrumentsSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-							  SelectedItem="{Binding Path=SelectedInstrument, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+							  SelectedItem="{Binding Path=SelectedInstrument, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              IsEnabled="{Binding Path=IsNotMonitoring}" />
                 </Grid>
             </GroupBox>
 
@@ -159,24 +163,28 @@
                     <ComboBox Grid.Row="0" Grid.Column="1" FontWeight="Regular"
 							  Style="{StaticResource ComboBoxStyle}"
 							  ItemsSource="{Binding Path=CartNameListSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-							  SelectedItem="{Binding Path=SelectedCartName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+							  SelectedItem="{Binding Path=SelectedCartName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              IsEnabled="{Binding Path=IsNotMonitoring}" />
                     <ComboBox Grid.Row="1" Grid.Column="1" FontWeight="Regular"
 							  Style="{StaticResource ComboBoxStyle}"
 							  ItemsSource="{Binding Path=SeparationTypeSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-							  SelectedItem="{Binding Path=SelectedSeparationType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+							  SelectedItem="{Binding Path=SelectedSeparationType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              IsEnabled="{Binding Path=IsNotMonitoring}" />
                     <ComboBox Grid.Row="2" Grid.Column="1" FontWeight="Regular"
 							  Style="{StaticResource ComboBoxStyle}"
 							  ItemsSource="{Binding Path=DatasetTypesSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-							  SelectedItem="{Binding Path=SelectedDatasetType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+							  SelectedItem="{Binding Path=SelectedDatasetType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              IsEnabled="{Binding Path=IsNotMonitoring}"/>
                     <ComboBox Grid.Row="3" Grid.Column="1" FontWeight="Regular"
 							  Style="{StaticResource ComboBoxStyle}"
 							  ItemsSource="{Binding Path=LCColumnSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-							  SelectedItem="{Binding Path=LCColumn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-
+							  SelectedItem="{Binding Path=LCColumn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              IsEnabled="{Binding Path=IsNotMonitoring}"/>
                     <ComboBox Grid.Row="4" Grid.Column="1" FontWeight="Regular"
 							  Style="{StaticResource ComboBoxStyle}"
 							  ItemsSource="{Binding Path=OperatorsSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-							  SelectedItem="{Binding Path=SelectedOperator, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+							  SelectedItem="{Binding Path=SelectedOperator, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              IsEnabled="{Binding Path=IsNotMonitoring}"/>
                 </Grid>
             </GroupBox>
 

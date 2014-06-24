@@ -119,6 +119,14 @@ namespace BuzzardWPF
             m_searchWindow.SearchStart += m_searchWindow_SearchStart;
             RegisterSearcher(new FileSearchBuzzardier());
 
+            // Wire up event handler on the embedded controls
+            var scanWindow = (WatcherControl)m_scanWindow.DataContext;
+            var scanConfig = (WatcherConfig)m_scanConfigWindow.DataContext;
+            var qcView = (QCView)m_qcConfigWindow.DataContext;
+
+            scanWindow.MonitoringToggled += scanConfig.MonitoringToggleHandler;
+            scanWindow.MonitoringToggled += qcView.MonitoringToggleHandler;
+
             LoadImages();
             LastUpdated = DatasetManager.Manager.LastUpdated;
             classApplicationLogger.LogMessage(0, "Ready");

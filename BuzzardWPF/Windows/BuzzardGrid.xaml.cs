@@ -52,6 +52,7 @@ namespace BuzzardWPF.Windows
             m_fillDownDataset = new FilldownBuzzardDataset
             {
                 Comment = Properties.Settings.Default.FilldownComment,
+
                 Operator = Properties.Settings.Default.FilldownOperator,
                 SeparationType = Properties.Settings.Default.FilldownSeparationType,
                 LCColumn = Properties.Settings.Default.FilldownColumn,
@@ -66,7 +67,7 @@ namespace BuzzardWPF.Windows
                     DatasetType = Properties.Settings.Default.FilldownDatasetType
                 }
             };
-
+		 
 		    m_moveDestinationDir = null;
 
             
@@ -636,7 +637,7 @@ namespace BuzzardWPF.Windows
 
                 if (filldownData.ShouldUseComment)
                 {
-                    dataset.Comment = filldownData.Comment;
+                    dataset.Comment = filldownData.Comment;                   
                 }
 
 				// We might have to add a few extra checks on these guys since they're

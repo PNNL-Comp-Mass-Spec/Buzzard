@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
                                     
 ; MyAppVerName will appear in the Uninstall Programs list
-#define MyAppVerName "Buzzard_1.7.10.2"
+#define MyAppVerName "Buzzard_1.7.10.3"
 #define MySource "F:\My Documents\Projects\BrianLaMarche\LCMS\Applications\Buzzard\BuzzardWPF"
 #define MyLib    "F:\My Documents\Projects\BrianLaMarche\LCMS\lib"
 #define MyAppName "Buzzard"
@@ -51,7 +51,7 @@ Source: "{#MySource}\bin\x86\Release\System.Data.SQLite.xml";                 De
 Source: "{#MySource}\bin\x86\Release\System.Windows.Controls.Input.Toolkit.dll";    DestDir: "{app}";       Flags: ignoreversion 
 Source: "{#MySource}\bin\x86\Release\System.Windows.Controls.Layout.Toolkit.dll";   DestDir: "{app}";       Flags: ignoreversion 
 Source: "{#MySource}\bin\x86\Release\WPFToolkit.dll";                         DestDir: "{app}";             Flags: ignoreversion   
-Source: "{#MySource}\bin\x86\Release\WPFToolkit.Extended.dll";                DestDir: "{app}";             Flags: ignoreversion
+Source: "{#MySource}\bin\x86\Release\Xceed.Wpf.Toolkit.dll";                  DestDir: "{app}";             Flags: ignoreversion
 Source: "{#MySource}\bin\x86\Release\ZedGraph.DLL";                           DestDir: "{app}";             Flags: ignoreversion  
 Source: "{#MySource}\bin\x86\Release\x86\Sqlite.Interop.DLL";                 DestDir: "{app}\x86";         Flags: ignoreversion  
 Source: "{#MySource}\bin\x86\Release\x64\Sqlite.Interop.DLL";                 DestDir: "{app}\x64";         Flags: ignoreversion  

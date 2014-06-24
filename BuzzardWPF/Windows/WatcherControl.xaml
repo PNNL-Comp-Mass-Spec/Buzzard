@@ -64,8 +64,7 @@
                VerticalAlignment="Center"
                VerticalContentAlignment="Center"
                Content="Watch for files in..."
-               FontSize="16"
-               IsEnabled="{Binding Path=IsNotMonitoring}" />
+               FontSize="16" />
 
         <toolKit:AutoCompleteBox x:Name="m_autoFillDirectorySelector"
                                  Grid.Row="0"
@@ -100,8 +99,7 @@
                HorizontalAlignment="Left"
                VerticalAlignment="Center"
                Content="...and check..."
-               FontSize="16"
-               IsEnabled="{Binding Path=IsNotMonitoring}" />
+               FontSize="16" />
 
         <ComboBox x:Name="m_dropDown"
                   Grid.Row="1"
@@ -122,8 +120,7 @@
                HorizontalAlignment="Left"
                VerticalAlignment="Center"
                Content="...that end with"
-               FontSize="16"
-               IsEnabled="{Binding Path=IsNotMonitoring}" />
+               FontSize="16" />
 
 
         <TextBox Grid.Row="2"
@@ -148,8 +145,7 @@
                HorizontalAlignment="Left"
                VerticalAlignment="Center"
                Content="Minimum File Size (Kb)"
-               FontSize="16"
-               IsEnabled="{Binding Path=IsNotMonitoring}" />
+               FontSize="16" />
 
         <xctk:IntegerUpDown Grid.Row="3"
                             Grid.Column="1"
@@ -202,8 +198,7 @@
                HorizontalAlignment="Left"
                VerticalAlignment="Center"
                Content="Minutes To Wait: "
-               FontSize="16"
-               IsEnabled="{Binding Path=IsNotMonitoring}" />
+               FontSize="16" />
 
         <xctk:IntegerUpDown Grid.Row="4"
                             Grid.Column="1"

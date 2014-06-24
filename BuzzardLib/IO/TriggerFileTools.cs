@@ -71,6 +71,10 @@ namespace BuzzardLib.IO
                 experimentName = dataset.ExperimentName;
 
             string comment = dmsData.Comment;
+
+            if (String.Compare(dataset.Comment, "HailWhiteshoes", StringComparison.CurrentCultureIgnoreCase) == 0)
+                dataset.Comment = string.Empty;
+
             if (!string.IsNullOrWhiteSpace(dataset.Comment))
                 comment += " Buzzard: " + dataset.Comment;
 

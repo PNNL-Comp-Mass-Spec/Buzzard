@@ -90,6 +90,24 @@ namespace BuzzardWPF.Windows
 			}
 		}
 		private bool m_includedArchivedItems;
+
+        public bool IsWatching
+        {
+            get { return StateSingleton.IsMonitoring; }
+            private set
+            {
+                if (StateSingleton.IsMonitoring == value) return;
+                StateSingleton.IsMonitoring = value;
+                OnPropertyChanged("IsWatching");
+                OnPropertyChanged("IsNotMonitoring");
+            }
+        }
+
+        public bool IsNotMonitoring
+        {
+            get { return !IsWatching; }
+        }
+
 		#endregion
 
 

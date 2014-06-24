@@ -3,6 +3,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using BuzzardLib.Searching;
 using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
 using LcmsNetDataClasses.Data;
@@ -32,6 +33,8 @@ namespace BuzzardWPF.Windows
 			EMSLProposalID				= null;
 			ExperimentName				= null;
 			SelectedEMSLProposalUsers	= new ObservableCollection<classProposalUser>();
+
+            m_IsNotMonitoring = true;
 		}
 		#endregion
 
@@ -118,6 +121,18 @@ namespace BuzzardWPF.Windows
 			}
 		}
 		private ObservableCollection<classProposalUser> m_selectedEMSLProposalUsers;
+
+        public bool IsNotMonitoring
+        {
+            get { return m_IsNotMonitoring; }
+            private set
+            {
+                m_IsNotMonitoring = value;
+                OnPropertyChanged("IsNotMonitoring");
+            }
+        }
+        private bool m_IsNotMonitoring;
+
 		#endregion
 
 
@@ -135,6 +150,16 @@ namespace BuzzardWPF.Windows
 
 			ExperimentName = dialog.SelectedExperiment.Experiment;
 		}
+
+        /// <summary>
+        /// Enables / disables the controls based on e.Monitoring
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void MonitoringToggleHandler(object sender, StartStopEventArgs e)
+        {
+            IsNotMonitoring = !e.Monitoring;
+        }	
 		#endregion
 
 

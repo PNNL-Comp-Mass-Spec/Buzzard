@@ -16,12 +16,13 @@ namespace BuzzardWPF
         /// Default error level
         /// </summary>
         private const int CONST_DEFAULT_ERROR_LOG_LEVEL     = 5;
+        
         /// <summary>
         /// Default message level.
         /// </summary>
         private const int CONST_DEFAULT_MESSAGE_LOG_LEVEL   = 5;
 
-        public const string PROGRAM_DATE = "June 20, 2014";
+        public const string PROGRAM_DATE = "June 24, 2014";
         #endregion
 
         #region Configuration Loading
@@ -38,7 +39,7 @@ namespace BuzzardWPF
                 // Try to upgrade from the previous version
                 Properties.Settings.Default.Upgrade();
                 Properties.Settings.Default.Reload();
-                Properties.Settings.Default.UpgradeSettings = false;
+                Properties.Settings.Default.UpgradeSettings = false;               
             }
 
             var propColl = Properties.Settings.Default.Properties;

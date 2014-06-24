@@ -177,13 +177,11 @@
                         </TabItem>
                         <TabItem FontFamily="Calibri"
                                  Header="Instrument Metadata"
-                                 IsEnabled="{Binding Path=IsNotMonitoring}"
                                  Padding="5">
                             <windows:WatcherConfig x:Name="m_scanConfigWindow" />
                         </TabItem>
                         <TabItem FontFamily="Calibri"
                                  Header="QC Samples"
-                                 IsEnabled="{Binding Path=IsNotMonitoring}"
                                  Padding="5">
                             <windows:QCView x:Name="m_qcConfigWindow" />
                         </TabItem>

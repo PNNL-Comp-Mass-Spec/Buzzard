@@ -50,7 +50,8 @@
 
         <StackPanel Grid.Column="0" Grid.Row="0"
 					Margin="1,1,4,1">
-            <window:EMSL_UsageSelectionView x:Name="EMSL_UsageSelectors"/>
+            <window:EMSL_UsageSelectionView x:Name="EMSL_UsageSelectors"
+                                            IsEnabled="{Binding Path=IsNotMonitoring}"/>
 
             <GroupBox Header="Experiments">
                 <Grid>
@@ -70,7 +71,8 @@
 
                     <TextBox Grid.Row="0" Grid.Column="1"
 							 Text="{Binding Path=ExperimentName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-							 Style="{StaticResource TextBoxStyle}" />
+							 Style="{StaticResource TextBoxStyle}" 
+                             IsEnabled="{Binding Path=IsNotMonitoring}"/>
 
                     <Button Content="Select Experiment..."
 							Grid.Row="1"
@@ -78,7 +80,8 @@
 							Click="SelectExperiment_Click"
 							HorizontalAlignment="Right"							
 							MinHeight="32"                       
-		                    Style="{StaticResource SimpleButtonStyle}" Margin="0,5,5.2,-0.2" Width="191" FontFamily="Arial"/>
+		                    Style="{StaticResource SimpleButtonStyle}" Margin="0,5,5.2,-0.2" Width="191" FontFamily="Arial"
+                            IsEnabled="{Binding Path=IsNotMonitoring}"/>
                 </Grid>
             </GroupBox>
         </StackPanel>
@@ -89,6 +92,7 @@
 				  Content="Create Trigger For QC's ?"
 				  FontSize="15" 
 				  ToolTip="Do you want the watcher to auto-create the trigger file for datasets it finds when their DMS is unresolved?"
-				  IsChecked="{Binding Path=CreateOnDMSFail, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+				  IsChecked="{Binding Path=CreateOnDMSFail, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                  IsEnabled="{Binding Path=IsNotMonitoring}"/>
     </Grid>
 </UserControl>

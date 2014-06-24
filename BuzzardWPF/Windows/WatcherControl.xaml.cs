@@ -7,6 +7,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using BuzzardLib.Data;
+using BuzzardLib.Searching;
 using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
 using LcmsNetDataClasses.Logging;
@@ -21,6 +22,7 @@ namespace BuzzardWPF.Windows
     {
         #region Events
         public event PropertyChangedEventHandler PropertyChanged;
+        public EventHandler<StartStopEventArgs> MonitoringToggled;
         #endregion
 
         #region Attributes
@@ -384,6 +386,8 @@ namespace BuzzardWPF.Windows
             m_dialogButton.IsEnabled = true;
             m_dropDown.IsEnabled = true;
 
+            MonitoringToggled(this, new StartStopEventArgs(false));
+
             classApplicationLogger.LogMessage(0, "Watcher stopped.");
             classApplicationLogger.LogMessage(0, "Ready.");
         }
@@ -410,6 +414,8 @@ namespace BuzzardWPF.Windows
                 m_dialogButton.IsEnabled = false;
                 m_dropDown.IsEnabled = false;
 
+                MonitoringToggled(this, new StartStopEventArgs(true));
+
                 classApplicationLogger.LogMessage(0, "Watcher is monitoring.");
             }
             else
@@ -427,4 +433,5 @@ namespace BuzzardWPF.Windows
         }
         #endregion
     }
+  
 }

@@ -1,8 +1,10 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using BuzzardLib.Searching;
 using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
 using LcmsNetDataClasses.Data;
@@ -31,6 +33,7 @@ namespace BuzzardWPF.Windows
 		private string							m_lcColumn;
 
 		private string							m_experimentName;
+
 		#endregion
 
 
@@ -46,6 +49,7 @@ namespace BuzzardWPF.Windows
             SelectedEMSLProposalUsers = new ObservableCollection<classProposalUser>();
             SelectedEMSLUsageType = null;
 
+            m_IsNotMonitoring = true;
 
             EMSL_DataSelector.BoundContainer = this;
 		}
@@ -223,6 +227,18 @@ namespace BuzzardWPF.Windows
 		{
 			get { return DMS_DataAccessor.Instance.CartNames; }
 		}
+
+        public bool IsNotMonitoring
+        {
+            get { return m_IsNotMonitoring; }
+            private set
+            {
+                m_IsNotMonitoring = value;
+                OnPropertyChanged("IsNotMonitoring");
+            }
+        }
+	    private bool m_IsNotMonitoring;
+
 		#endregion
 
 
@@ -241,15 +257,15 @@ namespace BuzzardWPF.Windows
 			ExperimentName = dialog.SelectedExperiment.Experiment;
 		}
 
-		/// <summary>
-		/// This event handler opens a dialog window that will let the User
-		/// navigate to the folder they wish to use as the destination for
-		/// their trigger files.
-		/// </summary>
-		private void SelectTriggerFileLocation_Click(object sender, RoutedEventArgs e)
-		{
-			
-		}
+        /// <summary>
+        /// Enables / disables the controls based on e.Monitoring
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void MonitoringToggleHandler(object sender, StartStopEventArgs e)
+        {
+            IsNotMonitoring = !e.Monitoring;
+        }	
 		#endregion
 
 
@@ -367,6 +383,7 @@ namespace BuzzardWPF.Windows
 			if (PropertyChanged != null)
 				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 		}
+
 		#endregion
 
         #region IEmslUsvUser Members
@@ -435,5 +452,6 @@ namespace BuzzardWPF.Windows
         private ObservableCollection<classProposalUser> m_selectedEMSLProposalUsers;
 
         #endregion
-    }
+       
+	}
 }

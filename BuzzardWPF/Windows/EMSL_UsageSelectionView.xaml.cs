@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Controls;
 using System.Windows.Data;
+using BuzzardLib.Searching;
 using BuzzardWPF.Management;
 using LcmsNetDataClasses.Data;
 using LcmsNetDataClasses.Logging;
@@ -45,6 +46,7 @@ namespace BuzzardWPF.Windows
 
 			UsageTypesSource	= EMSL_UsageSelectionView.EMSL_USAGE_TYPES_COLLECTION;
 			AvailablePIDs		= DMS_DataAccessor.Instance.ProposalIDs;
+
 		}
 
 		static EMSL_UsageSelectionView()
@@ -134,6 +136,7 @@ namespace BuzzardWPF.Windows
 			}
 		}
 		private ObservableCollection<classProposalUser> m_ProposalUsers;
+
 		#endregion
 
 
@@ -167,6 +170,7 @@ namespace BuzzardWPF.Windows
 				PID_Selector.SelectedIndex = -1;
 			}
 		}
+
 		#endregion
 
 
