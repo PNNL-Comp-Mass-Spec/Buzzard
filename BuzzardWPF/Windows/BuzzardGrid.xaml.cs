@@ -29,7 +29,7 @@ namespace BuzzardWPF.Windows
 
 		#region Attributes
 		private FilldownWindow					m_filldownWindow;
-        private FilldownBuzzardDataset			m_fillDownDataset;
+        private readonly FilldownBuzzardDataset m_fillDownDataset;
    
         private ObservableCollection<BuzzardDataset>	m_datasets;
 		private ObservableCollection<string>			m_emslUseageTypesSource;
@@ -210,14 +210,14 @@ namespace BuzzardWPF.Windows
 		/// <summary>
 		/// Clears out all the datasets from the datagrid.
 		/// </summary>
-		private void ClearAllDatasets_Click(object sender, System.Windows.RoutedEventArgs e)
+		private void ClearAllDatasets_Click(object sender, RoutedEventArgs e)
         {
 			if (Datasets != null)
 				Datasets.Clear();
         }
 
 		/// <summary>
-		/// When the dataset collection is changed, this will 
+		/// When the dataset collection is changed, this will be called
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
@@ -437,12 +437,14 @@ namespace BuzzardWPF.Windows
 			var moveRequests = new List<MoveDataRequest>(selectedDatasets.Count);
 			foreach (var dataset in selectedDatasets)
 			{
-				var moveRequest = new MoveDataRequest();
-				moveRequest.Dataset = dataset;
-				moveRequest.SourceDataPath = dataset.FilePath;
-				moveRequest.DestinationDataPath = Path.Combine(m_moveDestinationDir, Path.GetFileName(dataset.FilePath));
+				var moveRequest = new MoveDataRequest
+				{
+				    Dataset = dataset,
+				    SourceDataPath = dataset.FilePath,
+				    DestinationDataPath = Path.Combine(m_moveDestinationDir, Path.GetFileName(dataset.FilePath))
+				};
 
-				moveRequests.Add(moveRequest);
+			    moveRequests.Add(moveRequest);
 			}
 
 			//
@@ -460,14 +462,11 @@ namespace BuzzardWPF.Windows
 		/// <summary>
 		/// Moves the data for the selected datasets to a new location.
 		/// </summary>
-		/// <param name="selectedDatasets">List of datasets to move.</param>
-		/// <param name="destinationLocation">The directory in which to move the datasets</param>
-		/// <param name="destinationContents">Contents that are already present in destination directory</param>
-		/// <param name="startingIndex">The index location of the dataset that will be moved on this call of MoveDatasets</param>
-		/// <param name="conflictsFound">Tells of if we've done a scan for conflicts yet.</param>
-		/// <param name="conflictsLeft">If we have done a scan on conflicts, this tells us the number remaining</param>
-		/// <param name="skipOnConflicts">Tells us if we should overwrite or skip a dataset on a conflict</param>
-		/// <param name="informUserOfConflicts">Tells us if we should inform the user when we hit a conflict, or do what skipOnConflicts says.</param>
+        /// <param name="moveRequests">List of requests to move.</param>
+        /// <param name="startingIndex">The index location of the dataset that will be moved on this call of MoveDatasets</param>		
+        /// <param name="informUserOnConflict">Tells us if we should inform the user when we hit a conflict, or do what skipOnConflicts says.</param>
+        /// <param name="skipOnConflicts">Tells us if we should overwrite or skip a dataset on a conflict</param>
+        /// <param name="destinationLocation">The directory in which to move the datasets</param>
 		private void MoveDatasets(List<MoveDataRequest> moveRequests, int startingIndex, bool informUserOnConflict,
 			bool skipOnConflicts, string destinationLocation)
 		{
@@ -569,7 +568,7 @@ namespace BuzzardWPF.Windows
 			classApplicationLogger.LogMessage(0, "Finished applying experiment data to datasets.");
 		}
 
-		private void OpenFilldown_Click(object sender, System.Windows.RoutedEventArgs e)
+		private void OpenFilldown_Click(object sender, RoutedEventArgs e)
         {
 			//
 			// Get a list of which which Datasets are currently selected
@@ -580,21 +579,20 @@ namespace BuzzardWPF.Windows
 			//
 			// Prep the Filldown Window for use.
 			// 
-			m_filldownWindow = new FilldownWindow();
-			
-			m_filldownWindow.Dataset				= m_fillDownDataset;
+			m_filldownWindow = new FilldownWindow
+			{
+			    Dataset = m_fillDownDataset,
+			    OperatorsSource = OperatorsSource,
+			    InstrumentSource = InstrumentsSource,
+			    DatasetTypesSource = DatasetTypesSource,
+			    SeparationTypeSource = SeparationTypeSource,
+			    CartNameListSource = CartNameListSource,
+			    EmslUsageTypeSource = EmslUsageTypesSource,
+			    LCColumnSource = LCColumnSource
+			};
 
-			m_filldownWindow.OperatorsSource		= OperatorsSource;
-			m_filldownWindow.InstrumentSource		= InstrumentsSource;
-			m_filldownWindow.DatasetTypesSource		= DatasetTypesSource;
-			m_filldownWindow.SeparationTypeSource	= SeparationTypeSource;
-			m_filldownWindow.CartNameListSource		= CartNameListSource;
-			m_filldownWindow.EmslUsageTypeSource	= EmslUsageTypesSource;
-			m_filldownWindow.LCColumnSource			= LCColumnSource;
 
-
-	
-			//
+		    //
 			// Get user input from the Filldown Window
 			// 
             var stopDoingThis = m_filldownWindow.ShowDialog() != true;

@@ -70,7 +70,7 @@ namespace BuzzardWPF.Windows
             m_fileSystemWatcher.Deleted += SystemWatcher_FileDeleted;
             m_fileSystemWatcher.Changed += SystemWatcher_Changed;
 
-            MinimumFileSize = 100;
+            MinimumFileSize = 99;
             IsWatching = false;
 
         }
@@ -338,7 +338,7 @@ namespace BuzzardWPF.Windows
             MinimumFileSize = Settings.Default.Watcher_FileSize;
 
             CreateTriggerOnDMSFail = Settings.Default.WatcherConfig_CreateTriggerOnDMS_Fail;
-
+            
         }
 
         private void ProcessFilePathQueue()
@@ -386,7 +386,7 @@ namespace BuzzardWPF.Windows
             m_dialogButton.IsEnabled = true;
             m_dropDown.IsEnabled = true;
 
-            MonitoringToggled(this, new StartStopEventArgs(false));
+            OnMonitoringToggled(false);            
 
             classApplicationLogger.LogMessage(0, "Watcher stopped.");
             classApplicationLogger.LogMessage(0, "Ready.");
@@ -414,7 +414,7 @@ namespace BuzzardWPF.Windows
                 m_dialogButton.IsEnabled = false;
                 m_dropDown.IsEnabled = false;
 
-                MonitoringToggled(this, new StartStopEventArgs(true));
+                OnMonitoringToggled(true);
 
                 classApplicationLogger.LogMessage(0, "Watcher is monitoring.");
             }
@@ -424,6 +424,12 @@ namespace BuzzardWPF.Windows
                     0,
                     "Could not start the monitor. The supplied path does not exits.");
             }
+        }
+
+        private void OnMonitoringToggled(bool monitoring)
+        {
+            if (MonitoringToggled != null)
+                MonitoringToggled(this, new StartStopEventArgs(monitoring));
         }
 
         private void OnPropertyChanged(string propertyName)

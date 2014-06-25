@@ -81,7 +81,7 @@
                                                 Mode=TwoWay,
                                                 RelativeSource={RelativeSource AncestorType={x:Type UserControl}},
                                                 UpdateSourceTrigger=PropertyChanged}" />
-        
+
         <Button x:Name="m_dialogButton"
                 Grid.Row="0"
                 Grid.Column="5"
@@ -147,7 +147,8 @@
                Content="Minimum File Size (Kb)"
                FontSize="16" />
 
-        <xctk:IntegerUpDown Grid.Row="3"
+        <xctk:IntegerUpDown Name="m_MinimumFileSize"
+                            Grid.Row="3"
                             Grid.Column="1"
                             MinHeight="32"
                             MaxHeight="32"
@@ -177,10 +178,14 @@
                 Click="MonitorStartStop_Click"
                 Style="{StaticResource SimpleButtonStyle}">
             <DockPanel Width="128" Height="32">
-                <Label x:Name="MonitorButtonText" Width="80"
+                <Label x:Name="MonitorButtonText"
+                       Width="80"
                        Margin="0,0,5,0"
-                       VerticalContentAlignment="Center"                       
-                       Content="{Binding Path=IsWatching, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource MonitorButtonContentConverter}}"
+                       VerticalContentAlignment="Center"
+                       Content="{Binding Path=IsWatching,
+                                         Mode=OneWay,
+                                         UpdateSourceTrigger=PropertyChanged,
+                                         Converter={StaticResource MonitorButtonContentConverter}}"
                        DockPanel.Dock="Right"
                        FontFamily="Arial" />
                 <Image Width="41"
