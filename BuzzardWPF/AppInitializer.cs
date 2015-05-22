@@ -6,6 +6,7 @@ using BuzzardWPF.Management;
 using LcmsNetDataClasses;
 using LcmsNetDataClasses.Logging;
 using LcmsNetDmsTools;
+using LcmsNetSQLiteTools;
 
 namespace BuzzardWPF
 {
@@ -22,7 +23,7 @@ namespace BuzzardWPF
         /// </summary>
         private const int CONST_DEFAULT_MESSAGE_LOG_LEVEL   = 5;
 
-        public const string PROGRAM_DATE = "June 26, 2014";
+        public const string PROGRAM_DATE = "May 22, 2015";
         #endregion
 
         #region Configuration Loading
@@ -158,9 +159,12 @@ namespace BuzzardWPF
                 classApplicationLogger.ErrorLevel = CONST_DEFAULT_ERROR_LOG_LEVEL;
             }
 
-            classApplicationLogger.LogMessage(-1, "Loading DMS data");
-            classDBTools.LoadCacheFromDMS();
+            classApplicationLogger.MessageLevel = CONST_DEFAULT_MESSAGE_LOG_LEVEL;
 
+            classApplicationLogger.LogMessage(-1, "Loading DMS data");
+
+            var dbTools = new classDBTools();
+            dbTools.LoadCacheFromDMS();
 
             classApplicationLogger.LogMessage(-1, "Checking For Local Trigger Files");
 

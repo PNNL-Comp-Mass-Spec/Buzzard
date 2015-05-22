@@ -7,6 +7,7 @@ using LcmsNetDataClasses;
 using LcmsNetDataClasses.Data;
 using LcmsNetDataClasses.Logging;
 using LcmsNetDmsTools;
+using LcmsNetSQLiteTools;
 
 namespace BuzzardWPF.Management
 {

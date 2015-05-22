@@ -92,11 +92,11 @@
     <Compile Include="Searching\SearchEventArgs.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\LCMSnet\LcmsNetDataClasses\LcmsNetSDK.csproj">
+    <ProjectReference Include="..\..\LCMSNet\LcmsNet\SDK\LcmsNetSDK\LcmsNetSDK.csproj">
       <Project>{ddccb3f9-7b2b-43f2-b98f-40644bea2a85}</Project>
       <Name>LcmsNetSDK</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\LCMSnet\LcmsNetDmsTools\LcmsNetDmsTools.csproj">
+    <ProjectReference Include="..\..\LCMSnet\LcmsNetDmsTools\LcmsNetDmsTools\LcmsNetDmsTools.csproj">
       <Project>{f3eb0b04-7562-4b7d-871c-579c2c8a2045}</Project>
       <Name>LcmsNetDmsTools</Name>
     </ProjectReference>

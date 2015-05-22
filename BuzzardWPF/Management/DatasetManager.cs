@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -128,17 +129,21 @@ namespace BuzzardWPF.Management
 
         private void LoadThread()
         {
-            var query = new classSampleQueryData();
-            query.UnassignedOnly = true;
-            query.RequestName = "";
-            query.Cart = "";
-            query.BatchID = "";
-            query.Block = "";
-            query.MaxRequestNum = "1000000";
-            query.MinRequestNum = "0";
-            query.Wellplate = "";
+            var query = new classSampleQueryData
+            {
+                UnassignedOnly = true,
+                RequestName = "",
+                Cart = "",
+                BatchID = "",
+                Block = "",
+                MaxRequestNum = "1000000",
+                MinRequestNum = "0",
+                Wellplate = ""
+            };
             query.BuildSqlString();
-            var samples = classDBTools.GetSamplesFromDMS(query);
+
+            var dbTools = new classDBTools();
+            var samples = dbTools.GetSamplesFromDMS(query);
 
             lock (m_datasetTrie)
             {
