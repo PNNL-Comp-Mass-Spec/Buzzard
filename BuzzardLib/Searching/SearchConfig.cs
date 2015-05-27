@@ -9,78 +9,90 @@ namespace BuzzardLib.Searching
     /// </summary>
     public class SearchConfig
 		: INotifyPropertyChanged
-	{
-		#region Events
-		public event PropertyChangedEventHandler PropertyChanged;
+    {
+        #region "Constants"
+
+        public const int DEFAULT_MINIMUM_FILE_SIZE_KB = 100;
+        public const string DEFAULT_FILE_EXTENSION = ".raw";
+        public const SearchOption DEFAULT_SEARCH_DEPTH = SearchOption.TopDirectoryOnly;
+        public const bool DEFAULT_MATCH_FOLDERS = false;
+
+        #endregion
+
+        #region Events
+        public event PropertyChangedEventHandler PropertyChanged;
 		#endregion
 
 		#region Attributes
+
 		/// <summary>
         /// Path to the directory where the files are to be searched.
         /// </summary>
-        private string m_directoryPath;
+        private string mDirectoryPath;
+        private string mFileExtension;
+        private SearchOption mSearchDepth;
+        private bool mMatchFolders;
+        private int mMinimumSizeKB;
 
-		private DateTime? m_startDate;
-		private DateTime? m_endDate;
+		private DateTime? mStartDate;
+		private DateTime? mEndDate;
+
 		#endregion
 
 		/// <summary>
         /// Default constructor.
         /// </summary>
         public SearchConfig()
-        {
-            DirectoryPath   = @"c:\";
-            FileExtension   = ".raw";
-            Option          = SearchOption.TopDirectoryOnly;
-			StartDate		= null;
-            EndDate         = null;
-        }
+		{
+		    ResetToDefaults(true);
+		}
+
+        #region "Properties"
 
         /// <summary>
         /// Gets or sets the path to search in.
         /// </summary>
         public string DirectoryPath
         {
-            get { return m_directoryPath; }
+            get { return mDirectoryPath; }
             set
             {
-                if (m_directoryPath != value)
+                if (mDirectoryPath != value)
                 {
-                    m_directoryPath = value;
+                    mDirectoryPath = value;
 					OnPropertyChanged("DirectoryPath");
                 }
             }
         }
-        private string m_fileExtension = "";
+        
         /// <summary>
         /// Gets or sets the file extension to look for.
         /// </summary>
         public string FileExtension
         {
-            get { return m_fileExtension; }
+            get { return mFileExtension; }
             set
             {
-                if (m_fileExtension != value)
+                if (mFileExtension != value)
                 {
-                    m_fileExtension = value;
+                    mFileExtension = value;
 					OnPropertyChanged("FileExtension");
                 }
             }
         }
-
-        private SearchOption m_option;
+       
         /// <summary>
         /// Gets or sets the way to search for files in a directory
         /// </summary>
-        public SearchOption Option
+        public SearchOption SearchDepth
         {
-            get { return m_option; }
+            get { return mSearchDepth; }
             set
             {
-                if (m_option != value)
+                if (mSearchDepth != value)
                 {
-                    m_option = value;
-                    OnPropertyChanged("Option");
+                    mSearchDepth = value;
+                    OnPropertyChanged("SearchDepth");
                 }
             }
         }                
@@ -90,12 +102,12 @@ namespace BuzzardLib.Searching
         /// </summary>
         public DateTime? StartDate
         {
-			get { return m_startDate; }
+			get { return mStartDate; }
 			set
 			{
-				if (m_startDate != value)
+				if (mStartDate != value)
 				{
-					m_startDate = value;
+					mStartDate = value;
 					OnPropertyChanged("StartDate");
 				}
 			}
@@ -106,21 +118,71 @@ namespace BuzzardLib.Searching
         /// </summary>
         public DateTime? EndDate
         {
-			get { return m_endDate; }
+			get { return mEndDate; }
 			set
 			{
-				if (m_endDate != value)
+				if (mEndDate != value)
 				{
-					m_endDate = value;
+					mEndDate = value;
 					OnPropertyChanged("EndDate");
 				}
 			}
         }
+        
+        public bool MatchFolders
+        {
+            get { return mMatchFolders; }
+            set
+            {
+                if (mMatchFolders != value)
+                {
+                    mMatchFolders = value;
+                    OnPropertyChanged("MatchFolders");
+                }
+            }
+        }
+        
+        public int MinimumSizeKB
+        {
+            get { return mMinimumSizeKB; }
+            set
+            {
+                if (mMinimumSizeKB != value)
+                {
+                    mMinimumSizeKB = value;
+                    OnPropertyChanged("MinimumSizeKB");
+                }
+            }
+        }
+        #endregion
 
-		private void OnPropertyChanged(string propertyName)
+        #region "Public Methods"
+
+        public void ResetDateRange()
+        {
+            StartDate = DateTime.Now.Date.AddYears(-3);
+            EndDate = DateTime.Now.Date.AddDays(1).AddYears(1);
+        }
+
+        public void ResetToDefaults(bool resetDirectoryPath)
+        {
+            if (resetDirectoryPath)
+                DirectoryPath = @"c:\";
+
+            FileExtension = DEFAULT_FILE_EXTENSION;
+            SearchDepth = DEFAULT_SEARCH_DEPTH;
+            MatchFolders = DEFAULT_MATCH_FOLDERS;
+            MinimumSizeKB = DEFAULT_MINIMUM_FILE_SIZE_KB;
+            ResetDateRange();
+        }
+
+        #endregion
+
+        private void OnPropertyChanged(string propertyName)
 		{
 			if (PropertyChanged != null)
 				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 		}
-    }
+
+	}
 }

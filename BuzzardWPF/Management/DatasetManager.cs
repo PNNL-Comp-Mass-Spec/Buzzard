@@ -511,6 +511,12 @@ namespace BuzzardWPF.Management
         /// the SearchConvfigView is responsible for setting this.
         /// </remarks>
         public bool IncludedArchivedItems { get; set; }
+
+        /// <summary>
+        /// Set to True to allow folders to be selected as Datasets
+        /// </summary>
+        public bool MatchFolders { get; set; }
+
         #endregion
 
 
@@ -750,10 +756,29 @@ namespace BuzzardWPF.Management
             }
 
 
+            if (!File.Exists(path))
+            {
+                // Not looking for a file; must be looking for a folder
+
+                if (!Directory.Exists(path))
+                {
+                    // File or folder not found; skip it
+                    return;
+                }
+
+                if (!MatchFolders)
+                {
+                    // Do not add folders to DMS as new datasets
+                    return;
+                }
+            }
+            
+
             //
             // Files that have been archived are renamed to start with a "x_"
             // 
             var fileName = Path.GetFileName(path);
+
             var isArchived = fileName.StartsWith("x_", StringComparison.OrdinalIgnoreCase);
             var originalPath = path;
 

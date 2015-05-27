@@ -78,6 +78,9 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Ookii.Dialogs.Wpf">
+      <HintPath>..\packages\Ookii.Dialogs.1.0\lib\net35\Ookii.Dialogs.Wpf.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core">
@@ -149,6 +152,7 @@
     <Compile Include="Management\DMSConfig.cs" />
     <Compile Include="Management\DMS_DataAccessor.cs" />
     <Compile Include="Management\MoveDataRequest.cs" />
+    <Compile Include="RangeValidationRule.cs" />
     <Compile Include="Windows\BuzzardDatasetDetail.xaml.cs">
       <DependentUpon>BuzzardDatasetDetail.xaml</DependentUpon>
     </Compile>
@@ -394,6 +398,10 @@
     <ProjectReference Include="..\BuzzardLib\BuzzardLib.csproj">
       <Project>{935ad00d-05ae-4f28-b9b9-871f00fda3e4}</Project>
       <Name>BuzzardLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Finch\Finch.csproj">
+      <Project>{ea5f9049-0b00-4246-b123-90656b7ff2c0}</Project>
+      <Name>Finch</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

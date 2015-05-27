@@ -70,9 +70,6 @@
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="RESTEasyHTTP">
-      <HintPath>lib\RESTEasyHTTP.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xaml" />
@@ -112,6 +109,7 @@
     <Compile Include="FinchXmlWriter.cs" />
     <Compile Include="IFinchWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RESTEasyHTTP.cs" />
     <Compile Include="RestHttpClass.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Policy;
 using System.Threading;
+using LcmsNet.Method;
 using LcmsNetDataClasses.Logging;
 
 namespace BuzzardLib.Searching
@@ -26,6 +28,16 @@ namespace BuzzardLib.Searching
         /// Fired when a search was stopped.
         /// </summary>
         public event EventHandler SearchStopped;
+
+        #endregion
+
+        #region "Enums"
+
+        private enum DatasetType
+        {
+            File = 0,
+            Folder = 1
+        }
 
         #endregion
 
@@ -96,6 +108,7 @@ namespace BuzzardLib.Searching
 
         private void Search(object objectConfig)
         {
+
             try
             {
                 var config = objectConfig as SearchConfig;
@@ -108,7 +121,7 @@ namespace BuzzardLib.Searching
 
                 // If we have a an ending date, then
                 // we can use the less than opperator
-                // on the next day to make sure the a
+                // on the next day to make sure the
                 // file's DateTime is on or before the
                 // date specificed.
                 var endDate = DateTime.MaxValue;
@@ -117,7 +130,7 @@ namespace BuzzardLib.Searching
                     endDate = config.EndDate.Value.AddDays(1).Date;
                 }
 
-                var shouldSearchBelow = (config.Option == SearchOption.AllDirectories);
+                var shouldSearchBelow = (config.SearchDepth == SearchOption.AllDirectories);
                 var searchFilter = string.Format("*{0}", config.FileExtension);
 
                 if (String.IsNullOrWhiteSpace(config.DirectoryPath))
@@ -129,86 +142,92 @@ namespace BuzzardLib.Searching
                 // Breadth first search across directories as to make it fast and responsive to a listening UI
                 var m_paths = new Queue<string>();
                 m_paths.Enqueue(config.DirectoryPath);
+
                 while (m_paths.Count > 0 && m_keepSearching)
                 {
                     var path = m_paths.Dequeue();
-                    var absolutePath = Path.GetFullPath(path);
+                    var currentDirectory = new DirectoryInfo(path);
 
-                    var files = new List<string>();
-                    var directories = new List<string>();
+                    var fileAndFolderPaths = new List<KeyValuePair<DatasetType, FileSystemInfo>>();
+
                     try
                     {
-                        files = Directory.GetFiles(absolutePath, searchFilter, SearchOption.TopDirectoryOnly).ToList();
-                        directories = Directory.GetDirectories(absolutePath, searchFilter, SearchOption.TopDirectoryOnly).ToList();
-                        files.AddRange(directories);
-
-                        if (shouldSearchBelow)
+                        foreach (var file in currentDirectory.GetFiles(searchFilter, SearchOption.TopDirectoryOnly))
                         {
-                            var subDirectories = Directory.GetDirectories(absolutePath);
+                            fileAndFolderPaths.Add(new KeyValuePair<DatasetType, FileSystemInfo>(DatasetType.File, file));
+                        }
 
-                            foreach (var directory in subDirectories)
+                        foreach (var subDirectory in currentDirectory.GetDirectories())
+                        {
+                            if (config.MatchFolders)
+                                fileAndFolderPaths.Add(new KeyValuePair<DatasetType, FileSystemInfo>(DatasetType.Folder, subDirectory));
+
+                            if (shouldSearchBelow)
                             {
-                                if (!directories.Contains(directory))
-                                    m_paths.Enqueue(directory);
+                                m_paths.Enqueue(subDirectory.FullName);
                             }
                         }
+
                     }
                     catch (UnauthorizedAccessException ex)
                     {
-                        ReportError(string.Format("Could not access the path {0}", absolutePath), ex);
+                        ReportError(string.Format("Could not access the path {0}", path), ex);
                         continue;
                     }
 
-                    foreach (var file in files)
+                    foreach (var datasetEntry in fileAndFolderPaths)
                     {
-                        if (DatasetFound != null)
+
+                        try
                         {
-                            var fullFilePath = Path.GetFullPath(file);
+                            DateTime creationDate;
+                            DateTime lastWriteDate;
+                            double datasetSizeKB = 0;
 
-                            // If we're filtering data based on a date range, then
-                            // do so.
-                            if (config.StartDate != null || config.EndDate != null)
+                            if (datasetEntry.Key == DatasetType.File)
                             {
-                                DateTime creationDate;
-                                DateTime lastWriteDate;
-                                try
-                                {
-                                    if (File.Exists(fullFilePath))
-                                    {
-                                        creationDate = File.GetCreationTime(fullFilePath);
-                                        lastWriteDate = File.GetLastWriteTime(fullFilePath);
-                                    }
-                                    else
-                                    {
-                                        creationDate = Directory.GetCreationTime(fullFilePath);
-                                        lastWriteDate = Directory.GetLastWriteTime(fullFilePath);
-                                    }
-                                }
-                                catch
-                                {
-                                    // If we can't access something as simple as when the file
-                                    // was created or writen too, then I'm not so sure we'll
-                                    // be able to use it to create a Dataset.
-                                    // - FCT
-                                    continue;
-                                }
-
-                                // If the file predates the date-range we want, skip it.
-                                if (config.StartDate != null)
-                                {
-                                    if (config.StartDate > creationDate && config.StartDate > lastWriteDate)
-                                        continue;
-                                }
-
-                                // If the file postdates the date-range we want, skip it.
-                                if (config.EndDate != null)
-                                {
-                                    if (endDate < creationDate || endDate < lastWriteDate)
-                                        continue;
-                                }
+                                var datasetFile = (FileInfo)datasetEntry.Value;
+                                datasetSizeKB = (datasetFile.Length / 1024.0);
+                                creationDate = datasetFile.CreationTime;
+                                lastWriteDate = datasetFile.LastAccessTime;
+                            }
+                            else
+                            {
+                                var datasetFolder = (DirectoryInfo)datasetEntry.Value;
+                                datasetSizeKB += datasetFolder.GetFiles("*", SearchOption.AllDirectories).Sum(file => file.Length / 1024.0);
+                                creationDate = datasetFolder.CreationTime;
+                                lastWriteDate = datasetFolder.LastAccessTime;
                             }
 
-                            DatasetFound(this, new DatasetFoundEventArgs(fullFilePath));
+                            if (datasetSizeKB < config.MinimumSizeKB)
+                            {
+                                // Dataset too small
+                                continue;
+                            }
+
+                            // If the file predates the date-range we want, skip it.
+                            if (config.StartDate != null)
+                            {
+                                if (config.StartDate > creationDate && config.StartDate > lastWriteDate)
+                                    continue;
+                            }
+
+                            // If the file postdates the date-range we want, skip it.
+                            if (config.EndDate != null)
+                            {
+                                if (endDate < creationDate || endDate < lastWriteDate)
+                                    continue;
+                            }
+
+                            if (DatasetFound != null)
+                            {
+                                DatasetFound(this, new DatasetFoundEventArgs(datasetEntry.Value.FullName));
+                            }
+
+                        }
+                        catch
+                        {
+                            // File access error; ignore this file or folder
                         }
                     }
                 }

@@ -20,28 +20,34 @@ namespace BuzzardWPF.Windows
     public partial class WatcherControl
         : UserControl, INotifyPropertyChanged
     {
+        #region Constants
+
+        protected const int DEFAULT_WAIT_TIME_MINUTES = 15;
+
+        #endregion
+
         #region Events
         public event PropertyChangedEventHandler PropertyChanged;
         public EventHandler<StartStopEventArgs> MonitoringToggled;
         #endregion
 
         #region Attributes
-        private string m_directoryToWatch;
-        private SearchOption m_watchDepth;
-        private int m_waitTime;
-        private int m_minimumFileSize;
-        private string m_extension;
-        private bool m_createTriggerOnDMS_Fail;
 
-        private readonly ConcurrentDictionary<string, DateTime> m_filePathsToProcess;
-        private readonly System.Timers.Timer m_FileUpdateHandler;
+        private string mDirectoryToWatch;
+        private SearchOption mWatchDepth;
+        private int mWaitTimeMinutes;
+        private int mMinimumFileSizeKB;
+        private bool mMatchFolders;
+        private string mExtension;
+        private bool mCreateTriggerOnDMSFail;
 
-        private readonly System.Windows.Forms.FolderBrowserDialog m_folderDialog;
-        private readonly FileSystemWatcher m_fileSystemWatcher;
+        private readonly ConcurrentDictionary<string, DateTime> mFilePathsToProcess;
+        private readonly System.Timers.Timer mFileUpdateHandler;
 
+        readonly Ookii.Dialogs.Wpf.VistaFolderBrowserDialog mFolderDialog;
+        private readonly FileSystemWatcher mFileSystemWatcher;
        
         #endregion
-
 
         #region Initialization
         public WatcherControl()
@@ -52,41 +58,55 @@ namespace BuzzardWPF.Windows
 
             //this.EMSL_DataSelector.BoundContainer = this;
 
-            m_filePathsToProcess = new ConcurrentDictionary<string, DateTime>();
+            mFilePathsToProcess = new ConcurrentDictionary<string, DateTime>();
 
-            m_FileUpdateHandler = new System.Timers.Timer
+            mFileUpdateHandler = new System.Timers.Timer
             {
                 AutoReset = true,
                 Interval = 1000         // Process new/changed files once per second
             };
-            m_FileUpdateHandler.Elapsed += m_FileUpdateHandler_Elapsed;
-            m_FileUpdateHandler.Enabled = false;
+            mFileUpdateHandler.Elapsed += m_FileUpdateHandler_Elapsed;
+            mFileUpdateHandler.Enabled = false;
 
-            m_folderDialog = new System.Windows.Forms.FolderBrowserDialog { ShowNewFolderButton = true };
+            mFolderDialog = new Ookii.Dialogs.Wpf.VistaFolderBrowserDialog { ShowNewFolderButton = true };
 
-            m_fileSystemWatcher = new FileSystemWatcher();
-            m_fileSystemWatcher.Created += SystemWatcher_FileCreated;
-            m_fileSystemWatcher.Renamed += SystemWatcher_FileRenamed;
-            m_fileSystemWatcher.Deleted += SystemWatcher_FileDeleted;
-            m_fileSystemWatcher.Changed += SystemWatcher_Changed;
-
-            MinimumFileSize = 99;
+            mFileSystemWatcher = new FileSystemWatcher();
+            mFileSystemWatcher.Created += SystemWatcher_FileCreated;
+            mFileSystemWatcher.Renamed += SystemWatcher_FileRenamed;
+            mFileSystemWatcher.Deleted += SystemWatcher_FileDeleted;
+            mFileSystemWatcher.Changed += SystemWatcher_Changed;
+           
             IsWatching = false;
 
+            ResetToDefaults();
+
         }
-     
+
+        private void ResetToDefaults()
+        {
+            
+            // Leave this unchanged: m_directoryToWatch;
+
+            WatchDepth = SearchConfig.DEFAULT_SEARCH_DEPTH;
+            WaitTime = DEFAULT_WAIT_TIME_MINUTES;
+            MinimumFileSize = SearchConfig.DEFAULT_MINIMUM_FILE_SIZE_KB;
+            MatchFolders = SearchConfig.DEFAULT_MATCH_FOLDERS;
+            Extension = SearchConfig.DEFAULT_FILE_EXTENSION;
+            CreateTriggerOnDMSFail = false;
+        }
+
         #endregion
 
 
         #region Properties
         public bool CreateTriggerOnDMSFail
         {
-            get { return m_createTriggerOnDMS_Fail; }
+            get { return mCreateTriggerOnDMSFail; }
             set
             {
-                if (m_createTriggerOnDMS_Fail != value)
+                if (mCreateTriggerOnDMSFail != value)
                 {
-                    m_createTriggerOnDMS_Fail = value;
+                    mCreateTriggerOnDMSFail = value;
                     OnPropertyChanged("CreateTriggerOnDMSFail");
                 }
 
@@ -96,12 +116,12 @@ namespace BuzzardWPF.Windows
 
         public string Extension
         {
-            get { return m_extension; }
+            get { return mExtension; }
             set
             {
-                if (m_extension != value)
+                if (mExtension != value)
                 {
-                    m_extension = value;
+                    mExtension = value;
                     OnPropertyChanged("Extension");
                 }
             }
@@ -109,12 +129,12 @@ namespace BuzzardWPF.Windows
 
         public SearchOption WatchDepth
         {
-            get { return m_watchDepth; }
+            get { return mWatchDepth; }
             set
             {
-                if (m_watchDepth != value)
+                if (mWatchDepth != value)
                 {
-                    m_watchDepth = value;
+                    mWatchDepth = value;
                     OnPropertyChanged("WatchDepth");
                 }
             }
@@ -122,12 +142,12 @@ namespace BuzzardWPF.Windows
 
         public string DirectoryToWatch
         {
-            get { return m_directoryToWatch; }
+            get { return mDirectoryToWatch; }
             set
             {
-                if (m_directoryToWatch != value)
+                if (mDirectoryToWatch != value)
                 {
-                    m_directoryToWatch = value;
+                    mDirectoryToWatch = value;
 
                     if (value != null)
                     {
@@ -159,6 +179,21 @@ namespace BuzzardWPF.Windows
             get { return !IsWatching; }
         }
 
+        public bool MatchFolders
+        {
+            get { return mMatchFolders; }
+            set
+            {
+                if (mMatchFolders != value)
+                {
+                    mMatchFolders = value;
+                    OnPropertyChanged("MatchFolders");
+                }
+
+                DatasetManager.Manager.MatchFolders = value;
+            }
+        }
+
         /// <summary>
         /// Gets or sets the amount of time to wait for
         /// trigger file creation on files that were
@@ -169,12 +204,12 @@ namespace BuzzardWPF.Windows
         /// </remarks>
         public int WaitTime
         {
-            get { return m_waitTime; }
+            get { return mWaitTimeMinutes; }
             set
             {
-                if (m_waitTime != value)
+                if (mWaitTimeMinutes != value)
                 {
-                    m_waitTime = value;
+                    mWaitTimeMinutes = value;
                     OnPropertyChanged("WaitTime");
                     OnPropertyChanged("WaitTime_MinComp");
                     OnPropertyChanged("WaitTime_HrComp");
@@ -183,17 +218,18 @@ namespace BuzzardWPF.Windows
                 DatasetManager.Manager.TriggerFileCreationWaitTime = value;
             }
         }
+
         /// <summary>
         /// Gets or sets the minimum file size in KB before starting a trigger creation
         /// </summary>
         public int MinimumFileSize
         {
-            get { return m_minimumFileSize; }
+            get { return mMinimumFileSizeKB; }
             set
             {
-                if (m_minimumFileSize != value)
+                if (mMinimumFileSizeKB != value)
                 {
-                    m_minimumFileSize = value;
+                    mMinimumFileSizeKB = value;
                     OnPropertyChanged("MinimumFileSize");
                 }
                 DatasetManager.Manager.MinimumFileSize = value;
@@ -207,12 +243,12 @@ namespace BuzzardWPF.Windows
 
         void SystemWatcher_Changed(object sender, FileSystemEventArgs e)
         {
-            m_filePathsToProcess.TryAdd(e.FullPath, DateTime.UtcNow);
+            mFilePathsToProcess.TryAdd(e.FullPath, DateTime.UtcNow);
         }
 
         void SystemWatcher_FileCreated(object sender, FileSystemEventArgs e)
         {
-            m_filePathsToProcess.TryAdd(e.FullPath, DateTime.UtcNow);
+            mFilePathsToProcess.TryAdd(e.FullPath, DateTime.UtcNow);
 
         }
 
@@ -254,7 +290,7 @@ namespace BuzzardWPF.Windows
                 if (string.IsNullOrWhiteSpace(dirname))
                 {
                     var drives = DriveInfo.GetDrives();
-                    var driveNames = drives.Select(drive => { return drive.Name; }).ToArray();
+                    var driveNames = drives.Select(drive => drive.Name).ToArray();
                     m_autoFillDirectorySelector.ItemsSource = driveNames;
                 }
                 else if (Directory.Exists(dirname))
@@ -275,37 +311,25 @@ namespace BuzzardWPF.Windows
         {
             ProcessFilePathQueue();
         }
-       
+
+        private void m_ResetToDefaults_Click(object sender, RoutedEventArgs e)
+        {
+            ResetToDefaults();
+        }
+
+
         private void SelectDirectory_Click(object sender, RoutedEventArgs e)
         {
-            m_folderDialog.SelectedPath = DirectoryToWatch;
+            mFolderDialog.SelectedPath = DirectoryToWatch;
 
-            var result = m_folderDialog.ShowDialog();
+            var result = mFolderDialog.ShowDialog();
 
-            if (result == System.Windows.Forms.DialogResult.OK)
+            if (result.HasValue && result.Value)
             {
-                DirectoryToWatch = m_folderDialog.SelectedPath;
+                DirectoryToWatch = mFolderDialog.SelectedPath;
             }
         }
-
-        private void OpenExplorerWindow_Click(object sender, RoutedEventArgs e)
-        {
-            if (Directory.Exists(DirectoryToWatch))
-            {
-                try
-                {
-                    Process.Start(DirectoryToWatch);
-                }
-                catch (Exception ex)
-                {
-                    classApplicationLogger.LogError(
-                        0,
-                        "Could not open an Explorer window to that path.",
-                        ex);
-                }
-            }
-        }
-
+ 
         private void MonitorStartStop_Click(object sender, RoutedEventArgs e)
         {
             if (IsWatching)
@@ -317,6 +341,7 @@ namespace BuzzardWPF.Windows
 
 
         #region Methods
+
         public void SaveSettings()
         {
             Settings.Default.Watcher_FilePattern = Extension;
@@ -324,8 +349,8 @@ namespace BuzzardWPF.Windows
             Settings.Default.Watcher_WaitTime = WaitTime;
             Settings.Default.Watcher_WatchDir = DirectoryToWatch;
             Settings.Default.Watcher_FileSize = MinimumFileSize;
-            Settings.Default.WatcherConfig_CreateTriggerOnDMS_Fail = CreateTriggerOnDMSFail;
-
+            Settings.Default.Watcher_MatchFolders = MatchFolders;
+            Settings.Default.WatcherConfig_CreateTriggerOnDMS_Fail = CreateTriggerOnDMSFail;            
 
         }
 
@@ -336,25 +361,25 @@ namespace BuzzardWPF.Windows
             WaitTime = Settings.Default.Watcher_WaitTime;
             DirectoryToWatch = Settings.Default.Watcher_WatchDir;
             MinimumFileSize = Settings.Default.Watcher_FileSize;
-
+            MatchFolders = Settings.Default.Watcher_MatchFolders;
             CreateTriggerOnDMSFail = Settings.Default.WatcherConfig_CreateTriggerOnDMS_Fail;
             
         }
 
         private void ProcessFilePathQueue()
         {
-            if (m_filePathsToProcess.Count == 0)
+            if (mFilePathsToProcess.Count == 0)
                 return;
 
-            var lstKeys = m_filePathsToProcess.Keys.ToList();
+            var lstKeys = mFilePathsToProcess.Keys.ToList();
             
-            m_FileUpdateHandler.Enabled = false;
+            mFileUpdateHandler.Enabled = false;
 
             foreach (var fullFilePath in lstKeys)
             {
                 DateTime queueTime;
 
-                if (m_filePathsToProcess.TryRemove(fullFilePath, out queueTime))
+                if (mFilePathsToProcess.TryRemove(fullFilePath, out queueTime))
                 {
                     var extension = Path.GetExtension(fullFilePath).ToLower();
 
@@ -368,16 +393,16 @@ namespace BuzzardWPF.Windows
                 }
             }
 
-            m_FileUpdateHandler.Enabled = IsWatching;
+            mFileUpdateHandler.Enabled = IsWatching;
 
         }
 
         private void StopWatching()
         {
-            m_fileSystemWatcher.EnableRaisingEvents = false;
+            mFileSystemWatcher.EnableRaisingEvents = false;
             IsWatching = false;
 
-            m_FileUpdateHandler.Enabled = false;
+            mFileUpdateHandler.Enabled = false;
 
             // This may seem a bit strange since I used bindings to 
             // enable and disable the other controls, but for some 
@@ -399,13 +424,13 @@ namespace BuzzardWPF.Windows
             {
                 DatasetManager.Manager.FileWatchRoot = DirectoryToWatch;
 
-                m_fileSystemWatcher.Path = DirectoryToWatch;
-                m_fileSystemWatcher.IncludeSubdirectories = WatchDepth == SearchOption.AllDirectories;
-                m_fileSystemWatcher.Filter = "*.*";
-                m_fileSystemWatcher.EnableRaisingEvents = true;
+                mFileSystemWatcher.Path = DirectoryToWatch;
+                mFileSystemWatcher.IncludeSubdirectories = WatchDepth == SearchOption.AllDirectories;
+                mFileSystemWatcher.Filter = "*.*";
+                mFileSystemWatcher.EnableRaisingEvents = true;
                 IsWatching = true;
 
-                m_FileUpdateHandler.Enabled = true;
+                mFileUpdateHandler.Enabled = true;
 
                 // This may seem a bit strange since I used bindings to 
                 // enable and disable the other controls, but for some 

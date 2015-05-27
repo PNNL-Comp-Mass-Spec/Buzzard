@@ -10,9 +10,9 @@
              xmlns:windows="clr-namespace:BuzzardWPF.Windows"
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              MinWidth="200"
-             MinHeight="215"
+             MinHeight="200"
              Background="{x:Null}"
-             d:DesignHeight="215"
+             d:DesignHeight="200"
              d:DesignWidth="800"
              mc:Ignorable="d">
     <UserControl.Resources>
@@ -43,23 +43,22 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="40" />
-            <RowDefinition Height="43" />
+            <RowDefinition Height="40" />
             <RowDefinition Height="40" />
             <RowDefinition Height="40" />
             <RowDefinition Height="40" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-
-            <ColumnDefinition Width="185" />
-            <ColumnDefinition />
-            <ColumnDefinition />
-            <ColumnDefinition />
-            <ColumnDefinition />
+            <ColumnDefinition Width="180" />
+            <ColumnDefinition Width="140" />
+            <ColumnDefinition Width="50" />
+            <ColumnDefinition Width="2*" />
             <ColumnDefinition Width="140" />
         </Grid.ColumnDefinitions>
 
         <Label Grid.Row="0"
                Grid.Column="0"
+               Margin="0,4"
                HorizontalAlignment="Left"
                VerticalAlignment="Center"
                VerticalContentAlignment="Center"
@@ -69,9 +68,9 @@
         <toolKit:AutoCompleteBox x:Name="m_autoFillDirectorySelector"
                                  Grid.Row="0"
                                  Grid.Column="1"
-                                 Grid.ColumnSpan="4"
+                                 Grid.ColumnSpan="3"
                                  MinHeight="32"
-                                 Margin="5.2,4,5,4.8"
+                                 Margin="5,4"
                                  VerticalAlignment="Center"
                                  VerticalContentAlignment="Center"
                                  FontSize="16"
@@ -84,8 +83,8 @@
 
         <Button x:Name="m_dialogButton"
                 Grid.Row="0"
-                Grid.Column="5"
-                Margin="5,4,0,4.8"
+                Grid.Column="4"
+                Margin="5,4,0,4"
                 VerticalAlignment="Center"
                 HorizontalContentAlignment="Center"
                 Click="SelectDirectory_Click"
@@ -93,9 +92,10 @@
                 IsEnabled="{Binding Path=IsNotMonitoring}"
                 Style="{StaticResource SimpleButtonStyle}" />
 
-        <Label Name="m_searchOptionLabel"
+        <Label x:Name="m_searchOptionLabel"
                Grid.Row="1"
                Grid.Column="0"
+               Margin="0,4"
                HorizontalAlignment="Left"
                VerticalAlignment="Center"
                Content="...and check..."
@@ -105,7 +105,7 @@
                   Grid.Row="1"
                   Grid.Column="1"
                   Grid.ColumnSpan="2"
-                  Margin="5,2.2,5,5.8"
+                  Margin="5"
                   VerticalContentAlignment="Center"
                   IsEnabled="{Binding Path=IsNotMonitoring}"
                   ItemsSource="{Binding Source={StaticResource SearchTypeSource}}"
@@ -114,21 +114,29 @@
                                          RelativeSource={RelativeSource AncestorType={x:Type UserControl}},
                                          UpdateSourceTrigger=PropertyChanged}" />
 
-        <Label Name="m_extensionLabel"
+        <Button x:Name="m_ResetToDefaults"
+                Grid.Row="1"
+                Grid.Column="4"
+                Margin="5,5,0,5"
+                VerticalAlignment="Center"
+                HorizontalContentAlignment="Center"
+                Click="m_ResetToDefaults_Click"
+                Content="Defaults"
+                Style="{StaticResource SimpleButtonStyle}" />
+
+        <Label x:Name="m_extensionLabel"
                Grid.Row="2"
                Grid.Column="0"
+               Margin="0,4"
                HorizontalAlignment="Left"
                VerticalAlignment="Center"
                Content="...that end with"
                FontSize="16" />
 
-
         <TextBox Grid.Row="2"
                  Grid.Column="1"
-                 Grid.ColumnSpan="2"
-                 Height="32"
-                 MinHeight="24"
-                 Margin="5.2,4.2,5.4,4.6"
+                 MinHeight="32"
+                 Margin="5,4"
                  VerticalAlignment="Center"
                  VerticalContentAlignment="Center"
                  FontSize="15"
@@ -138,41 +146,49 @@
                                 RelativeSource={RelativeSource AncestorType={x:Type UserControl}},
                                 UpdateSourceTrigger=PropertyChanged}" />
 
-
+        <CheckBox Grid.Row="2"
+                  Grid.Column="3"
+                  Margin="15,10,15,5"
+                  VerticalAlignment="Center"
+                  Content="Match Folders"
+                  FontSize="15"
+                  IsChecked="{Binding Path=MatchFolders,
+                                      Mode=TwoWay,
+                                      UpdateSourceTrigger=PropertyChanged}" />
 
         <Label Grid.Row="3"
                Grid.Column="0"
                HorizontalAlignment="Left"
                VerticalAlignment="Center"
-               Content="Minimum File Size (Kb)"
+               Content="Minimum file size (KB)"
                FontSize="16" />
 
-        <xctk:IntegerUpDown Name="m_MinimumFileSize"
+        <xctk:IntegerUpDown x:Name="m_MinimumFileSize"
                             Grid.Row="3"
                             Grid.Column="1"
                             MinHeight="32"
-                            MaxHeight="32"
-                            Margin="5.2,5.4,5.2,3.4"
+                            Margin="5"
                             HorizontalContentAlignment="Center"
                             DefaultValue="100"
-                            FormatString="N0"
-                            Increment="1"
+                            FontSize="15"
+                            FormatString="0"
+                            Increment="5"
                             IsEnabled="{Binding Path=IsNotMonitoring}"
-                            Maximum="99999"
-                            Minimum="0"
+                            Maximum="2000000"
+                            Minimum="30"
                             Value="{Binding Path=MinimumFileSize,
                                             Mode=TwoWay,
                                             UpdateSourceTrigger=PropertyChanged,
                                             RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
 
-        <Button Name="m_monitor"
+        <Button x:Name="m_monitor"
                 Grid.Row="3"
                 Grid.RowSpan="2"
-                Grid.Column="5"
+                Grid.Column="4"
                 Height="55"
                 MinWidth="95"
                 MinHeight="32"
-                Margin="5,0,7,-0.2"
+                Margin="6,0,6,5"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Bottom"
                 Click="MonitorStartStop_Click"
@@ -180,7 +196,6 @@
             <DockPanel Width="128" Height="32">
                 <Label x:Name="MonitorButtonText"
                        Width="80"
-                       Margin="0,0,5,0"
                        VerticalContentAlignment="Center"
                        Content="{Binding Path=IsWatching,
                                          Mode=OneWay,
@@ -200,6 +215,7 @@
 
         <Label Grid.Row="4"
                Grid.Column="0"
+               Margin="0,4"
                HorizontalAlignment="Left"
                VerticalAlignment="Center"
                Content="Minutes To Wait: "
@@ -208,25 +224,24 @@
         <xctk:IntegerUpDown Grid.Row="4"
                             Grid.Column="1"
                             MinHeight="32"
-                            Margin="5.2,4.6,5.2,4.2"
+                            Margin="5,5,5,3"
                             HorizontalContentAlignment="Center"
                             DefaultValue="5"
-                            FormatString="N0"
+                            FontSize="15"
+                            FormatString="15"
                             Increment="1"
                             IsEnabled="{Binding Path=IsNotMonitoring}"
                             Maximum="600"
-                            Minimum="0"
+                            Minimum="1"
                             Value="{Binding Path=WaitTime,
                                             Mode=TwoWay,
                                             UpdateSourceTrigger=PropertyChanged,
                                             RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
 
-
         <CheckBox Grid.Row="4"
-                  Grid.Column="2"
-                  Grid.ColumnSpan="3"
-                  Height="27"
-                  Margin="45.8,13.6,22,0.2"
+                  Grid.Column="3"
+                  Grid.ColumnSpan="1"
+                  Margin="15,6,10,6"
                   VerticalAlignment="Center"
                   Content="Upload when DMS request not found"
                   FontSize="15"
