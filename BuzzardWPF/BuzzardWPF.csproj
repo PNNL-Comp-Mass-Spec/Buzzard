@@ -164,7 +164,6 @@
     <Compile Include="Management\DMSConfig.cs" />
     <Compile Include="Management\DMS_DataAccessor.cs" />
     <Compile Include="Management\MoveDataRequest.cs" />
-    <Compile Include="RangeValidationRule.cs" />
     <Compile Include="Windows\BuzzardDatasetDetail.xaml.cs">
       <DependentUpon>BuzzardDatasetDetail.xaml</DependentUpon>
     </Compile>

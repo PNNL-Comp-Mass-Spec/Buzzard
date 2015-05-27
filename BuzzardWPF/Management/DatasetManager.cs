@@ -40,6 +40,11 @@ namespace BuzzardWPF.Management
         /// Flag indicating when true, that the dataset names have been loaded from DMS.
         /// </summary>
         private bool m_datasetsReady;
+
+        private string m_fileWatchRoot;
+
+        private Main m_mainWindow;
+
         /// <summary>
         /// Synchs data saving between the DMS database load thread and the rest of the data management.
         /// </summary>
@@ -47,13 +52,11 @@ namespace BuzzardWPF.Management
 
         private List<string> m_triggerFolderContents;
 
-
         private DispatcherTimer m_scannedDatasetTimer;
 
-        #region Static
         private static readonly string[] INTEREST_RATING_ARRAY = { "Unreviewed", "Not Released", "Released", "Rerun (Good Data)", "Rerun (Superseded)" };
         public static readonly ObservableCollection<string> INTEREST_RATINGS_COLLECTION;
-        #endregion
+
         #endregion
 
 
@@ -110,6 +113,7 @@ namespace BuzzardWPF.Management
             }
             m_dmsLoadThread = null;
         }
+
         /// <summary>
         /// Loads the DMS Data Cache
         /// </summary>
@@ -355,6 +359,14 @@ namespace BuzzardWPF.Management
 
 
         #region Properties
+
+        public ObservableCollection<BuzzardDataset> Datasets
+        {
+            get;
+            private set;
+        }
+
+
         public string FileWatchRoot
         {
             get { return m_fileWatchRoot; }
@@ -367,9 +379,12 @@ namespace BuzzardWPF.Management
 
             }
         }
-        private string m_fileWatchRoot;
 
-        private Main m_mainWindow;
+        public bool IsLoading
+        {
+            get { return m_datasetsReady == false; }
+        }
+
         public Main MainWindow
         {
             get { return m_mainWindow; }
@@ -382,6 +397,16 @@ namespace BuzzardWPF.Management
                 }
             }
         }
+
+        public static DatasetManager Manager
+        {
+            get;
+            private set;
+        }
+
+        public string UserComments { get; set; }
+
+        #endregion
 
         private void SetupTimers()
         {
@@ -500,7 +525,6 @@ namespace BuzzardWPF.Management
             }
         }
 
-
         #region Searcher Config
         /// <summary>
         /// This value tells the DatasetManager whether or not
@@ -618,6 +642,7 @@ namespace BuzzardWPF.Management
         public string Watcher_EMSL_Usage { get; set; }
         public string Watcher_EMSL_ProposalID { get; set; }
         public IEnumerable<classProposalUser> Watcher_SelectedProposalUsers { get; set; }
+
         #endregion
 
 
@@ -629,21 +654,6 @@ namespace BuzzardWPF.Management
 
         public IEnumerable<classProposalUser> QC_SelectedProposalUsers { get; set; }
         #endregion
-
-        public static DatasetManager Manager
-        {
-            get;
-            private set;
-        }
-
-        public ObservableCollection<BuzzardDataset> Datasets
-        {
-            get;
-            private set;
-        }
-        #endregion
-
-
 
         #region Dataset RunTime Updates
         //private void m_fileSystemWatcher_Deleted(object sender, FileSystemEventArgs e)
@@ -748,43 +758,10 @@ namespace BuzzardWPF.Management
                 return;
             }
 
-
-            if (string.IsNullOrWhiteSpace(path))
-            {
-                classApplicationLogger.LogError(0, "No data path was given for the create new Dataset request.");
+            bool isArchived;
+            var originalPath = ValidateFileOrFolderPath(path, out isArchived);
+            if (string.IsNullOrEmpty(originalPath))
                 return;
-            }
-
-
-            if (!File.Exists(path))
-            {
-                // Not looking for a file; must be looking for a folder
-
-                if (!Directory.Exists(path))
-                {
-                    // File or folder not found; skip it
-                    return;
-                }
-
-                if (!MatchFolders)
-                {
-                    // Do not add folders to DMS as new datasets
-                    return;
-                }
-            }
-            
-
-            //
-            // Files that have been archived are renamed to start with a "x_"
-            // 
-            var fileName = Path.GetFileName(path);
-
-            var isArchived = fileName.StartsWith("x_", StringComparison.OrdinalIgnoreCase);
-            var originalPath = path;
-
-            if (isArchived)
-                originalPath = Path.Combine(Path.GetDirectoryName(path), fileName.Substring(2));
-
 
             BuzzardDataset dataset = null;
             bool newDatasetFound = false;
@@ -963,11 +940,88 @@ namespace BuzzardWPF.Management
             Manager.ResolveDms(dataset, newDatasetFound);
         }
 
-        public bool IsLoading
+        public void UpdateDataset(string path)
         {
-            get { return m_datasetsReady == false; }
+            // If we're on the wrong thread, then put in 
+            // a call to this in the correct thread and exit.
+            if (!MainWindow.Dispatcher.CheckAccess())
+            {
+                Action action = delegate
+                {
+                    UpdateDataset(path);
+                };
+
+                MainWindow.Dispatcher.BeginInvoke(action, DispatcherPriority.Normal);
+                return;
+            }
+
+            bool isArchived;
+            var pathToUse = ValidateFileOrFolderPath(path, out isArchived);
+           
+            foreach (var datasetEntry in Datasets)
+            {
+                if (datasetEntry.FilePath.Equals(pathToUse, StringComparison.OrdinalIgnoreCase))
+                {
+                    datasetEntry.UpdateFileProperties();
+                    break;
+                }
+            }
+
+
         }
 
-        public string UserComments { get; set; }
+        private string ValidateFileOrFolderPath(string path, out bool isArchived)
+        {
+
+            isArchived = false;
+
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                classApplicationLogger.LogError(0, "No data path was given for the create new Dataset request.");
+                return string.Empty;
+            }
+
+            var fiDatasetFile = new FileInfo(path);
+
+            if (fiDatasetFile.Exists)
+            {
+
+                isArchived = fiDatasetFile.Name.StartsWith("x_", StringComparison.OrdinalIgnoreCase);
+
+                if (isArchived && fiDatasetFile.Name.Length > 2)
+                    return Path.Combine(fiDatasetFile.DirectoryName, fiDatasetFile.Name.Substring(2));
+                else
+                    return fiDatasetFile.FullName;
+            }
+            else
+            {
+                // Not looking for a file; must be looking for a folder
+
+                var diDatasetFolder = new DirectoryInfo(path);
+
+                if (!diDatasetFolder.Exists)
+                {
+                    // File or folder not found; skip it
+                    return string.Empty;
+                }
+
+                if (!MatchFolders)
+                {
+                    // Do not add folders to DMS as new datasets
+                    return string.Empty;
+                }
+
+                isArchived = diDatasetFolder.Name.StartsWith("x_", StringComparison.OrdinalIgnoreCase);
+
+                if (isArchived && diDatasetFolder.Name.Length > 2)
+                    return Path.Combine(diDatasetFolder.Parent.FullName, diDatasetFolder.Name.Substring(2));
+                else
+                    return diDatasetFolder.FullName;
+
+            
+            }
+
+        }
+
     }
 }

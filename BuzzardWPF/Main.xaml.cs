@@ -323,6 +323,7 @@ namespace BuzzardWPF
         /// <param name="e"></param>
         private void m_searchWindow_SearchStart(object sender, SearchEventArgs e)
         {
+            m_dataGrid.Datasets.Clear();
             m_buzzadier.Search(e.Config);
         }
 
@@ -346,9 +347,9 @@ namespace BuzzardWPF
             // same data
             //
 
-            // There's nothing ot create a dataset from
             if (string.IsNullOrWhiteSpace(path))
             {
+                // There's nothing to create a dataset from
                 classApplicationLogger.LogError(
                     0,
                     "No path was given for found datasource. Can not create Dataset.");
@@ -368,16 +369,16 @@ namespace BuzzardWPF
                     return ds.FilePath.Equals(path, StringComparison.OrdinalIgnoreCase);
                 });
 
-            // The dataset is already there, just log it, and
-            // get out of here.
+            // The dataset is already there, make sure the file size and modification date properties are up-to-date
             if (alreadyPresent)
             {
                 classApplicationLogger.LogMessage(
                     0,
                     string.Format("Data source: '{0}' is already present.", path));
+                
+                DatasetManager.Manager.UpdateDataset(path);
                 return;
             }
-
 
             //
             // Create a dataset from the given path,
@@ -527,25 +528,18 @@ namespace BuzzardWPF
             if (eResult != MessageBoxResult.Yes)
                 return;
 
-            var dlg = new System.Windows.Forms.FolderBrowserDialog();
+            var folderDialog = new Ookii.Dialogs.Wpf.VistaFolderBrowserDialog();
             if (!string.IsNullOrWhiteSpace(TriggerFileLocation))
-                dlg.SelectedPath = TriggerFileLocation;
+                folderDialog.SelectedPath = TriggerFileLocation;
 
-            dlg.ShowNewFolderButton = true;
-            var keepGoing = dlg.ShowDialog();
+            var result = folderDialog.ShowDialog();
 
-            switch (keepGoing)
+            if (result.HasValue && result.Value)
             {
-                case System.Windows.Forms.DialogResult.Abort:
-                case System.Windows.Forms.DialogResult.Cancel:
-                case System.Windows.Forms.DialogResult.Ignore:
-                case System.Windows.Forms.DialogResult.No:
-                case System.Windows.Forms.DialogResult.None:
-                    return;
+                UpdateTriggerFolderPath(folderDialog.SelectedPath);
+                TxtRemoteFolderLocation.IsEnabled = true;
             }
 
-            UpdateTriggerFolderPath(dlg.SelectedPath);
-            TxtRemoteFolderLocation.IsEnabled = true;
         }
 
         private void UseDefaultTriggerFileLocation_Click(object sender, RoutedEventArgs e)
