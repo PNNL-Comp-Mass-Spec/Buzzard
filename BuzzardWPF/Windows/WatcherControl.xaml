@@ -122,6 +122,7 @@
                 HorizontalContentAlignment="Center"
                 Click="m_ResetToDefaults_Click"
                 Content="Defaults"
+                IsEnabled="{Binding Path=IsNotMonitoring}"
                 Style="{StaticResource SimpleButtonStyle}" />
 
         <Label x:Name="m_extensionLabel"
@@ -154,7 +155,8 @@
                   FontSize="15"
                   IsChecked="{Binding Path=MatchFolders,
                                       Mode=TwoWay,
-                                      UpdateSourceTrigger=PropertyChanged}" />
+                                      UpdateSourceTrigger=PropertyChanged}"
+                  IsEnabled="{Binding Path=IsNotMonitoring}" />
 
         <Label Grid.Row="3"
                Grid.Column="0"

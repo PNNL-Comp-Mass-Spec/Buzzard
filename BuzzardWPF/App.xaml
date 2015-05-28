@@ -12,6 +12,7 @@
         <BitmapImage x:Key="SearchKey" UriSource="Resources\search-3-32.png" />
         <BitmapImage x:Key="Tools" UriSource="Resources\tool-box-32.png" />
         <BitmapImage x:Key="Trigger" UriSource="Resources\trigger.png" />
+        <BitmapImage x:Key="Abort" UriSource="Resources\abort-32.png" />
         <BitmapImage x:Key="Filldown" UriSource="Resources\filldown.png" />
         <BitmapImage x:Key="MoveDataset" UriSource="Resources\movedataset.png" />
         <BitmapImage x:Key="Experiments" UriSource="Resources\experiments.png" />

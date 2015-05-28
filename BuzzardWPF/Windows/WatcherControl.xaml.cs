@@ -149,6 +149,7 @@ namespace BuzzardWPF.Windows
                 {
                     mDirectoryToWatch = value;
 
+                    /*
                     if (value != null)
                     {
                         if (value.ToLower() == "lamarche")
@@ -156,6 +157,7 @@ namespace BuzzardWPF.Windows
                             StateSingleton.SetState();
                         }
                     }
+                    */
                     OnPropertyChanged("DirectoryToWatch");
                 }
 

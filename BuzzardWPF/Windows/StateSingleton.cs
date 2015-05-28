@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Security.Cryptography.X509Certificates;
 
 namespace BuzzardWPF.Windows
 {
@@ -8,13 +7,33 @@ namespace BuzzardWPF.Windows
     /// </summary>
     public static class StateSingleton
     {
+        public static event EventHandler CreatingTriggerFilesStateChanged;
         public static event EventHandler WatchingStateChanged;
+
+        [ObsoleteAttribute("Previously used for debugging")]
         public static event EventHandler StateChanged;
+
+        private static bool m_isCreatingTriggerFiles;
+
         private static bool m_isMonitoring;
 
         static StateSingleton()
         {
-            IsMonitoring = false;
+            IsCreatingTriggerFiles = false;
+            IsMonitoring = false;            
+        }
+
+        public static bool IsCreatingTriggerFiles
+        {
+            get { return m_isCreatingTriggerFiles; }
+            set
+            {
+                m_isCreatingTriggerFiles = value;
+                if (CreatingTriggerFilesStateChanged != null)
+                {
+                    CreatingTriggerFilesStateChanged(null, null);
+                }
+            }
         }
         /// <summary>
         /// Gets or sets whether the system is monitoring 
@@ -32,6 +51,7 @@ namespace BuzzardWPF.Windows
             }
         }
 
+        [ObsoleteAttribute("Previously used for debugging")]
         public static void SetState()
         {
             if (StateChanged != null)

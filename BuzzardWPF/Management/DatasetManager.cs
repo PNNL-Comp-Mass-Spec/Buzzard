@@ -50,7 +50,10 @@ namespace BuzzardWPF.Management
         /// </summary>
         private object m_synchObject;
 
-        private List<string> m_triggerFolderContents;
+        /// <summary>
+        /// Dictionary where keys are FileInfo objects and values are false if the file is still waiting to be processed, or True if it has been processed (is found in the Success folder)
+        /// </summary>
+        private static Dictionary<string, bool> m_triggerFolderContents;
 
         private DispatcherTimer m_scannedDatasetTimer;
 
@@ -88,6 +91,7 @@ namespace BuzzardWPF.Management
 
 
         #region Loading Data
+
         /// <summary>
         /// Abort for the Dms Thread.
         /// </summary>
@@ -99,7 +103,7 @@ namespace BuzzardWPF.Management
             }
             catch
             {
-                // who cares.
+                // Ignore errors here
             }
             finally
             {
@@ -109,6 +113,7 @@ namespace BuzzardWPF.Management
                 }
                 catch
                 {
+                    // Ignore errors here
                 }
             }
             m_dmsLoadThread = null;
@@ -162,31 +167,38 @@ namespace BuzzardWPF.Management
             // We can use this to get an idea if any datasets already have
             // trigger files that were sent.
             var triggerFileDestination = classLCMSSettings.GetParameter("TriggerFileFolder");
-            if (!string.IsNullOrWhiteSpace(triggerFileDestination) && Directory.Exists(triggerFileDestination))
+
+            if (m_triggerFolderContents == null)
+            {
+                m_triggerFolderContents = new Dictionary<string, bool>(StringComparer.CurrentCultureIgnoreCase);
+            }
+            else
+            {
+                m_triggerFolderContents.Clear();
+            }
+
+            if (!string.IsNullOrWhiteSpace(triggerFileDestination))
             {
                 try
                 {
-                    m_triggerFolderContents = Directory.GetFiles(triggerFileDestination, "*.xml", SearchOption.TopDirectoryOnly).ToList();
+                    var diTriggerFolder = new DirectoryInfo(triggerFileDestination);
 
-                    if (m_triggerFolderContents == null)
-                        m_triggerFolderContents = new List<string>();
+                    if (diTriggerFolder.Exists)
+                    {
+                        AddTriggerFiles(diTriggerFolder, false);
 
-                    var successFolderPath = Path.Combine(triggerFileDestination, "success");
-                    if (Directory.Exists(successFolderPath))
-                        m_triggerFolderContents.AddRange(Directory.GetFiles(successFolderPath, "*.xml", SearchOption.TopDirectoryOnly).ToList());
+                        var diSuccessFolder = new DirectoryInfo(Path.Combine(diTriggerFolder.FullName, "success"));
+                        AddTriggerFiles(diSuccessFolder, true);
+                    }
 
                 }
                 catch
                 {
-                    m_triggerFolderContents = new List<string>();
+                    // Ignore errors here
                 }
             }
-            else
-            {
-                m_triggerFolderContents = new List<string>();
-            }
 
-            // Use an interlocked atomic operation for this flag.
+
             m_datasetsReady = true;
 
             LastUpdated = string.Format("Cache Last Updated: {0}", DateTime.Now);
@@ -205,6 +217,7 @@ namespace BuzzardWPF.Management
 
 
         #region Trigger Files
+
         /// <summary>
         /// Creates trigger files based on the dataset data sent
         /// </summary>
@@ -252,6 +265,8 @@ namespace BuzzardWPF.Management
                 classApplicationLogger.LogMessage(0, string.Format("Saved Trigger File: {0} for {1}", DateTime.Now, dataset.Name));
                 dataset.DatasetStatus = DatasetStatus.TriggerFileSent;
                 dataset.TriggerCreationWarning = string.Empty;
+                
+                AddUpdateTriggerFile(triggerFilePath, false);
 
                 return triggerFilePath;
             }
@@ -266,9 +281,9 @@ namespace BuzzardWPF.Management
                 dataset.TriggerCreationWarning = "Exception: " + ex.Message;
             }
             return null;
-        }
+        }     
 
-        public List<string> TriggerDirectoryContents
+        public Dictionary<string, bool> TriggerDirectoryContents
         {
             get { return m_triggerFolderContents; }
         }
@@ -448,11 +463,17 @@ namespace BuzzardWPF.Management
                 if (dataset.DatasetStatus == DatasetStatus.Ignored)
                     continue;
 
+                var hasTriggerFileSent = false;
+
                 // Also make sure that the trigger file does not exist on the server...
-                var hasTriggerFileSent =
-                        Manager.TriggerDirectoryContents.Any
-                        (
-                            trig => trig.Contains(dataset.DMSData.DatasetName));
+                foreach (var filePath in Manager.TriggerDirectoryContents.Keys)
+                {
+                    if (filePath.ToLower().Contains(dataset.DMSData.DatasetName.ToLower()))
+                    {
+                        hasTriggerFileSent = true;
+                        break;
+                    }
+                }              
 
                 if (hasTriggerFileSent)
                 {
@@ -494,15 +515,12 @@ namespace BuzzardWPF.Management
                             continue;
                     }
 
-                    string name = CreateTriggerFileBuzzard(dataset, false);
-                    if (string.IsNullOrWhiteSpace(name))
-                        continue;
+                    string triggerFilePath = CreateTriggerFileBuzzard(dataset, false);
+                    if (string.IsNullOrWhiteSpace(triggerFilePath))
+                        continue;               
 
-                    if (m_triggerFolderContents == null)
-                    {
-                        m_triggerFolderContents = new List<string>();
-                    }
-                    m_triggerFolderContents.Add(name);
+                    var fiTriggerFile = new FileInfo(triggerFilePath);
+                    AddUpdateTriggerFile(fiTriggerFile.FullName, false);
                 }
                 else
                 {
@@ -534,7 +552,7 @@ namespace BuzzardWPF.Management
         /// <remarks>
         /// the SearchConvfigView is responsible for setting this.
         /// </remarks>
-        public bool IncludedArchivedItems { get; set; }
+        public bool IncludeArchivedItems { get; set; }
 
         /// <summary>
         /// Set to True to allow folders to be selected as Datasets
@@ -732,6 +750,34 @@ namespace BuzzardWPF.Management
         #endregion
 
 
+        private void AddTriggerFiles(DirectoryInfo diTriggerFolder, bool inSuccessFolder)
+        {
+            if (!diTriggerFolder.Exists)
+            {
+                return;
+            }
+
+            foreach (var file in diTriggerFolder.GetFiles("*.xml", SearchOption.TopDirectoryOnly))
+            {
+                AddUpdateTriggerFile(file.FullName, inSuccessFolder);
+            }
+        }
+
+        private static void AddUpdateTriggerFile(string triggerFilePath, bool inSuccessFolder)
+        {
+            if (m_triggerFolderContents == null)
+            {
+                m_triggerFolderContents = new Dictionary<string, bool>(StringComparer.CurrentCultureIgnoreCase);
+            }
+
+            if (m_triggerFolderContents.ContainsKey(triggerFilePath))
+                m_triggerFolderContents[triggerFilePath] = inSuccessFolder;
+            else
+            {
+                m_triggerFolderContents.Add(triggerFilePath, inSuccessFolder);
+            }
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -820,7 +866,7 @@ namespace BuzzardWPF.Management
             else if (
                 howWasItFound == DatasetSource.Searcher
                 && isArchived
-                && !IncludedArchivedItems)
+                && !IncludeArchivedItems)
             {
                 // Found via the searcher, and the user set the search config to not include archived items
                 // Don't create a new dataset
@@ -920,11 +966,16 @@ namespace BuzzardWPF.Management
                 {
                     ResolveDms(dataset, true);
 
-                    var hasTriggerFileSent =
-                        Manager.TriggerDirectoryContents.Any
-                        (
-                            trig => trig.Contains(dataset.DMSData.DatasetName));
-
+                    var hasTriggerFileSent = false;
+                    foreach (var filePath in Manager.TriggerDirectoryContents.Keys)
+                    {
+                        if (filePath.ToLower().Contains(dataset.DMSData.DatasetName.ToLower()))
+                        {
+                            hasTriggerFileSent = true;
+                            break;
+                        }
+                    }              
+                  
                     if (hasTriggerFileSent)
                         dataset.DatasetStatus = DatasetStatus.TriggerFileSent;
                 }
@@ -957,7 +1008,7 @@ namespace BuzzardWPF.Management
 
             bool isArchived;
             var pathToUse = ValidateFileOrFolderPath(path, out isArchived);
-           
+
             foreach (var datasetEntry in Datasets)
             {
                 if (datasetEntry.FilePath.Equals(pathToUse, StringComparison.OrdinalIgnoreCase))
@@ -1018,7 +1069,7 @@ namespace BuzzardWPF.Management
                 else
                     return diDatasetFolder.FullName;
 
-            
+
             }
 
         }

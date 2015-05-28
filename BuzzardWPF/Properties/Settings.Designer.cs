@@ -338,12 +338,12 @@ namespace BuzzardWPF.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool Searcher_IncludedArchivedItems {
+        public bool Searcher_IncludeArchivedItems {
             get {
-                return ((bool)(this["Searcher_IncludedArchivedItems"]));
+                return ((bool)(this["Searcher_IncludeArchivedItems"]));
             }
             set {
-                this["Searcher_IncludedArchivedItems"] = value;
+                this["Searcher_IncludeArchivedItems"] = value;
             }
         }
         
@@ -695,12 +695,12 @@ namespace BuzzardWPF.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool Searcher_MatchFolders {
+        public bool Search_MatchFolders {
             get {
-                return ((bool)(this["Searcher_MatchFolders"]));
+                return ((bool)(this["Search_MatchFolders"]));
             }
             set {
-                this["Searcher_MatchFolders"] = value;
+                this["Search_MatchFolders"] = value;
             }
         }
         

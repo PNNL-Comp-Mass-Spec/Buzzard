@@ -29,13 +29,17 @@ namespace BuzzardWPF.Windows
         #endregion
 
 
-        #region Attibutes
+        #region Attributes
+
+        private bool mIncludeArchivedItems;
+
         /// <summary>
         /// Configuration for searching for files.
         /// </summary>
-        private SearchConfig m_config;
-        
+        private SearchConfig mConfig;
+    
         readonly Ookii.Dialogs.Wpf.VistaFolderBrowserDialog m_folderDialog;
+
         #endregion
 
         /// <summary>
@@ -47,7 +51,7 @@ namespace BuzzardWPF.Windows
             DataContext = this;
 
             m_folderDialog = new Ookii.Dialogs.Wpf.VistaFolderBrowserDialog { ShowNewFolderButton = true };
-            m_config = new SearchConfig();
+            mConfig = new SearchConfig();
 
             // Combo box for the search types.
             var options = new ObservableCollection<SearchOption>
@@ -68,33 +72,49 @@ namespace BuzzardWPF.Windows
         #region Properties
         public SearchConfig Config
         {
-            get { return m_config; }
+            get { return mConfig; }
             set
             {
-                if (m_config != value)
+                if (mConfig != value)
                 {
-                    m_config = value;
+                    mConfig = value;
                     OnPropertyChanged("Config");
                 }
             }
         }
 
-        public bool IncludedArchivedItems
+        public bool IncludeArchivedItems
         {
-            get { return m_includedArchivedItems; }
+            get { return mIncludeArchivedItems; }
             set
             {
-                if (m_includedArchivedItems != value)
+                if (mIncludeArchivedItems != value)
                 {
-                    m_includedArchivedItems = value;
-                    OnPropertyChanged("IncludedArchivedItems");
+                    mIncludeArchivedItems = value;
+                    OnPropertyChanged("IncludeArchivedItems");
                 }
 
-                DatasetManager.Manager.IncludedArchivedItems = value;
+                DatasetManager.Manager.IncludeArchivedItems = value;
             }
         }
-        private bool m_includedArchivedItems;
 
+        public bool IsCreatingTriggerFiles
+        {
+            get { return StateSingleton.IsCreatingTriggerFiles; }
+            private set
+            {
+                if (StateSingleton.IsCreatingTriggerFiles == value) return;
+                StateSingleton.IsCreatingTriggerFiles = value;
+                OnPropertyChanged("IsCreatingTriggerFiles");
+            }
+        }
+
+        public bool IsNotCreatingTriggerFiles
+        {
+            get { return !IsCreatingTriggerFiles; }
+        }
+
+        [Obsolete("Likely not used; a result of copying from WatcherControl.xaml")]
         public bool IsWatching
         {
             get { return StateSingleton.IsMonitoring; }
@@ -107,25 +127,11 @@ namespace BuzzardWPF.Windows
             }
         }
 
+        [Obsolete("Likely not used; a result of copying from WatcherControl.xaml")]
         public bool IsNotMonitoring
         {
             get { return !IsWatching; }
-        }
-
-        public bool MatchFolders
-        {
-            get { return m_config.MatchFolders; }
-            set
-            {
-                if (m_config.MatchFolders != value)
-                {
-                    m_config.MatchFolders = value;
-                    OnPropertyChanged("MatchFolders");
-                }
-
-                DatasetManager.Manager.MatchFolders = value;
-            }
-        }
+        }           
 
         #endregion
 
@@ -203,11 +209,18 @@ namespace BuzzardWPF.Windows
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void m_monitor_Click(object sender, RoutedEventArgs e)
+        private void m_search_Click(object sender, RoutedEventArgs e)
         {
+            if (IsCreatingTriggerFiles)
+            {
+                MessageBox.Show("Currently creating trigger files; cannot search for new datasets at this time", "Busy",
+                                MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                return;
+            }
+
             if (SearchStart != null)
             {
-                SearchStart(this, new SearchEventArgs(m_config));
+                SearchStart(this, new SearchEventArgs(mConfig));
             }
         }
 
@@ -237,6 +250,8 @@ namespace BuzzardWPF.Windows
                 return;
 
             Config.ResetToDefaults(false);
+            IncludeArchivedItems = false;
+
         }
 
         private void m_ResetDateRange_Click(object sender, RoutedEventArgs e)
@@ -254,8 +269,8 @@ namespace BuzzardWPF.Windows
         #region Methods
         public void SaveSettings()
         {
-            Settings.Default.Searcher_IncludedArchivedItems = IncludedArchivedItems;
-            Settings.Default.Searcher_MatchFolders = MatchFolders;
+            Settings.Default.Searcher_IncludeArchivedItems = IncludeArchivedItems;
+            Settings.Default.Search_MatchFolders = Config.MatchFolders;
 
             if (Config.StartDate.HasValue)
                 Settings.Default.SearchDateFrom = Config.StartDate.Value;
@@ -272,8 +287,8 @@ namespace BuzzardWPF.Windows
 
         public void LoadSettings()
         {
-            IncludedArchivedItems = Settings.Default.Searcher_IncludedArchivedItems;
-            MatchFolders = Settings.Default.Searcher_MatchFolders;
+            IncludeArchivedItems = Settings.Default.Searcher_IncludeArchivedItems;
+            Config.MatchFolders = Settings.Default.Search_MatchFolders;
 
             Config.StartDate = Settings.Default.SearchDateFrom;
             Config.EndDate = Settings.Default.SearchDateTo;

@@ -22,12 +22,18 @@ namespace BuzzardWPF
     public partial class Main
         : Window, INotifyPropertyChanged
     {
+
+        #region Constants
+
+        private const int DMS_UPDATE_INTERVAL_MINUTES = 10;
+
+        #endregion
+
         #region Events
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
-
 
         #region Attributes
 
@@ -66,7 +72,7 @@ namespace BuzzardWPF
             Title = "Buzzard - v." + version;
 
             StateSingleton.WatchingStateChanged += StateSingleton_WatchingStateChanged;
-            StateSingleton.StateChanged += StateSingleton_StateChanged;
+            // StateSingleton.StateChanged += StateSingleton_StateChanged;
 
             // This gives the dataset manager a way to talk to the main window 
             // in case it needs to. One example is adding items to the dataset 
@@ -95,6 +101,8 @@ namespace BuzzardWPF
                     new[] { "BROKEN", "CAP_DEV", "MAINTENANCE", "USER", "USER_UNKOWN" }
                     );
 
+            m_dataGrid.MainWindow = this;
+
             if (!m_dataGrid.CartNameListSource.Contains("unknown"))
             {
                 m_dataGrid.CartNameListSource.Add("unknown");
@@ -110,7 +118,7 @@ namespace BuzzardWPF
 
             m_dmsCheckTimer = new DispatcherTimer(DispatcherPriority.Normal, Dispatcher)
             {
-                Interval = new TimeSpan(0, 10, 0)
+                Interval = new TimeSpan(0, DMS_UPDATE_INTERVAL_MINUTES, 0)
             };
             m_dmsCheckTimer.Tick += DMSCheckTimer_Tick;
             m_dmsCheckTimer.IsEnabled = true;

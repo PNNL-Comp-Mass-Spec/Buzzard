@@ -42,6 +42,14 @@
         /// <summary>
         /// The dataset starts with x_ and is thus assumed to have been captured
         /// </summary>
-        DatasetMarkedCaptured
+        DatasetMarkedCaptured,
+        /// <summary>
+        /// Checking whether the dataset file or folder is changing (over 30 seconds)
+        /// </summary>
+        ValidatingStable,
+        /// <summary>
+        /// Aborted manual trigger creation while validating that the file or folder is stable
+        /// </summary>
+        TriggerAborted
 	}
 }

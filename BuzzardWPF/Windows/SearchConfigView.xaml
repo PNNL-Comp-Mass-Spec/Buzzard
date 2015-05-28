@@ -97,7 +97,7 @@
                   VerticalAlignment="Center"
                   Content="Include Archived Files (&quot;x__*&quot;)"
                   FontSize="15"
-                  IsChecked="{Binding Path=IncludedArchivedItems,
+                  IsChecked="{Binding Path=IncludeArchivedItems,
                                       Mode=TwoWay,
                                       UpdateSourceTrigger=PropertyChanged}" />
 
@@ -139,8 +139,9 @@
                   VerticalAlignment="Center"
                   Content="Match Folders"
                   FontSize="15"
-                  IsChecked="{Binding Path=MatchFolders,
+                  IsChecked="{Binding Path=Config.MatchFolders,
                                       Mode=TwoWay,
+                                      RelativeSource={RelativeSource AncestorType={x:Type UserControl}},
                                       UpdateSourceTrigger=PropertyChanged}" />
 
         <Label x:Name="m_minimumSizeLabel"
@@ -239,7 +240,10 @@
                 Margin="6,0,6,5"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Bottom"
-                Click="m_monitor_Click"
+                Click="m_search_Click"
+                IsEnabled="{Binding Path=IsNotCreatingTriggerFiles,
+                                    Mode=OneWay,
+                                    UpdateSourceTrigger=PropertyChanged}"
                 Style="{StaticResource SimpleButtonStyle}">
             <DockPanel Width="128" Height="32">
                 <Label Width="80"

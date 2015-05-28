@@ -423,7 +423,12 @@ namespace BuzzardLib.Data
                 }
             }
         }
+        
+        /// <summary>
+        /// True if the dataset is a single file, otherwise false
+        /// </summary>
         public bool IsFile { get; set; }
+
         #endregion
 
         private long CalculateDirectorySize(string path)

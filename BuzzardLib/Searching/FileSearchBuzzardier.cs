@@ -120,20 +120,20 @@ namespace BuzzardLib.Searching
                 }
 
                 // If we have a an ending date, then
-                // we can use the less than opperator
+                // we can use the less than operator
                 // on the next day to make sure the
                 // file's DateTime is on or before the
                 // date specificed.
                 var endDate = DateTime.MaxValue;
                 if (config.EndDate != null)
                 {
-                    endDate = config.EndDate.Value.AddDays(1).Date;
+                    endDate = config.EndDate.Value.Date.AddDays(1).Date;
                 }
 
                 var shouldSearchBelow = (config.SearchDepth == SearchOption.AllDirectories);
                 var searchFilter = string.Format("*{0}", config.FileExtension);
 
-                if (String.IsNullOrWhiteSpace(config.DirectoryPath))
+                if (string.IsNullOrWhiteSpace(config.DirectoryPath))
                 {
                     ReportError("The search directory is empty");
                     return;

@@ -25,7 +25,13 @@ namespace BuzzardLib.Converters
                         break;
 
                     case DatasetStatus.FailedFileError:
+                        returnValue = "File Error";
+                        break;
+
                     case DatasetStatus.FailedNoDmsRequest:
+                        returnValue = "No DMS Request";
+                        break;
+
                     case DatasetStatus.FailedUnknown:
                         returnValue = "Error";
                         break;
@@ -36,6 +42,14 @@ namespace BuzzardLib.Converters
 
                     case DatasetStatus.FileNotFound:
                         returnValue = "File Missing";
+                        break;
+
+                    case DatasetStatus.ValidatingStable:
+                        returnValue = "In Progress";
+                        break;
+
+                    case DatasetStatus.TriggerAborted:
+                        returnValue = "Aborted manual trigger";
                         break;
                 }
 

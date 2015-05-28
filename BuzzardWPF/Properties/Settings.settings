@@ -80,7 +80,7 @@
     <Setting Name="WatcherConfig_LCColumn" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="Searcher_IncludedArchivedItems" Type="System.Boolean" Scope="User">
+    <Setting Name="Searcher_IncludeArchivedItems" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="QC_ExperimentName" Type="System.String" Scope="User">
@@ -170,7 +170,7 @@
     <Setting Name="SearchMinimumSizeKB" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">100</Value>
     </Setting>
-    <Setting Name="Searcher_MatchFolders" Type="System.Boolean" Scope="User">
+    <Setting Name="Search_MatchFolders" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="Watcher_MatchFolders" Type="System.Boolean" Scope="User">

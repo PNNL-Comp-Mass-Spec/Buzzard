@@ -176,17 +176,25 @@ namespace BuzzardWPF.Windows
 				return;
 			}
 
-			IsFile = File.Exists(PathName);
+		    var fiFile = new FileInfo(PathName);
+		    ItemFound = fiFile.Exists;
 
-			if (IsFile)
+			if (ItemFound)
 			{
-				ItemFound = true;
+			    IsFile = true;
+			    GetPathInfoForFile(fiFile);
 			}
 			else
 			{
-				ItemFound = Directory.Exists(PathName);
+                var diFolder = new DirectoryInfo(PathName);
+			    ItemFound = diFolder.Exists;
 
-				if (!ItemFound)
+			    if (ItemFound)
+			    {
+			        IsFile = false;
+			        GetPathInfoForFolder(diFolder);
+			    }
+                else			    
 				{
 					IsFile				= false;
 					SizeBytes			= 0;
@@ -194,53 +202,53 @@ namespace BuzzardWPF.Windows
 					LastModifiedDate	= DateTime.MinValue;
 					FileCount			= 0;
 					FolderCount			= 0;
-
-					return;
 				}
 			}
 
-			if (IsFile)
-			{
-				var info = new FileInfo(PathName);
-
-				CreationDate		= info.CreationTime;
-				LastModifiedDate	= info.LastWriteTime;
-				SizeBytes			= info.Length;
-				FileCount			= 1;
-				FolderCount			= 0;
-			}
-			else
-			{
-				var info = new DirectoryInfo(PathName);
-				
-				CreationDate		= info.CreationTime;
-				LastModifiedDate	= info.LastWriteTime;
-				SizeBytes			= -1;
-
-				int count;
-				try
-				{
-					count = info.GetDirectories().Length;
-				}
-				catch
-				{
-					count = 0;
-				}
-				FolderCount = count;
-
-				try
-				{
-					count = info.GetFiles().Length;
-				}
-				catch
-				{
-					count = 0;
-				}
-				FileCount = count;
-			}
 		}
 
-		private void OnPropertyChanged(string propertyName)
+	    private void GetPathInfoForFile(FileInfo fiFile)
+	    {
+            CreationDate = fiFile.CreationTime;
+            LastModifiedDate = fiFile.LastWriteTime;
+            SizeBytes = fiFile.Length;
+            FileCount = 1;
+            FolderCount = 0;
+	    }
+
+        private void GetPathInfoForFolder(DirectoryInfo diFolder)
+        {
+            CreationDate = diFolder.CreationTime;
+            LastModifiedDate = diFolder.LastWriteTime;
+            SizeBytes = 0;            
+            FileCount = 0;
+            FolderCount = 0;      
+
+            try
+            {
+                foreach (var file in diFolder.GetFiles("*", SearchOption.AllDirectories))
+                {
+                    FileCount++;
+                    SizeBytes += file.Length;
+                }
+            }
+            catch
+            {
+                // Ignore errors here
+            }
+
+            try
+            {
+                FolderCount = diFolder.GetDirectories("*", SearchOption.AllDirectories).Length;
+            }
+            catch
+            {
+                // Ignore errors here
+            }
+
+        }
+
+	    private void OnPropertyChanged(string propertyName)
 		{
 			if (PropertyChanged != null)
 				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
