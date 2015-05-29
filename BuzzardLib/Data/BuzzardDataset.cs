@@ -30,7 +30,7 @@ namespace BuzzardLib.Data
         private string m_experimentName;
         private string m_comment = string.Empty;
         private string m_lcColumn;
-        private string mRelativeParentFolderPath = string.Empty;
+        private string mCaptureSubfolderPath = string.Empty;
 
         private bool m_isQC;
 
@@ -160,15 +160,15 @@ namespace BuzzardLib.Data
             }
         }
 
-        public string RelativeParentFolderPath
+        public string CaptureSubfolderPath
         {
-            get { return mRelativeParentFolderPath; }
+            get { return mCaptureSubfolderPath; }
             set
             {
-                if (mRelativeParentFolderPath != value)
+                if (mCaptureSubfolderPath != value)
                 {
-                    mRelativeParentFolderPath = value;
-                    OnPropertyChanged("RelativeParentFolderPath");
+                    mCaptureSubfolderPath = value;
+                    OnPropertyChanged("CaptureSubfolderPath");
                 }
             }
         }

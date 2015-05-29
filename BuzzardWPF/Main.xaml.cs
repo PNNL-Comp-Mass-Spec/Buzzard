@@ -135,6 +135,7 @@ namespace BuzzardWPF
 
             scanWindow.MonitoringToggled += scanConfig.MonitoringToggleHandler;
             scanWindow.MonitoringToggled += qcView.MonitoringToggleHandler;
+            scanWindow.MonitoringToggled += m_searchWindow.MonitoringToggleHandler;
 
             LoadImages();
             LastUpdated = DatasetManager.Manager.LastUpdated;
@@ -344,14 +345,14 @@ namespace BuzzardWPF
         {
             Action workAction = delegate
             {
-                AddDataset(e.Path, e.RelativeParentFolderPath, e.CurrentSearchConfig);
+                AddDataset(e.Path, e.CaptureSubfolderPath, e.CurrentSearchConfig);
             };
 
             m_dataGrid.Dispatcher.BeginInvoke(workAction, DispatcherPriority.Normal);
 
         }
 
-        private void AddDataset(string datasetFileOrFolderPath, string relativeParentFolderPath, SearchConfig config)
+        private void AddDataset(string datasetFileOrFolderPath, string captureSubfolderPath, SearchConfig config)
         {
             //
             // Run checks to make sure we don't re-insert the
@@ -395,7 +396,7 @@ namespace BuzzardWPF
             // Create a dataset from the given path,
             // and load it into the UI.
             //
-            DatasetManager.Manager.CreatePendingDataset(datasetFileOrFolderPath, relativeParentFolderPath, config.MatchFolders);
+            DatasetManager.Manager.CreatePendingDataset(datasetFileOrFolderPath, captureSubfolderPath, config.MatchFolders);
         }
 
         private void SetTriggerFolderToTestPath()
@@ -415,13 +416,13 @@ namespace BuzzardWPF
         }
 
         private void m_buzzadier_SearchStarted(object sender, EventArgs e)
-        {
+        {            
             LastStatusMessage = "Searching for datasets";
         }
 
         private void m_buzzadier_SearchStopped(object sender, EventArgs e)
         {
-            LastStatusMessage = "Search aborted";            
+            LastStatusMessage = "";            
         }
 
         #endregion

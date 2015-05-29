@@ -222,7 +222,7 @@ namespace BuzzardLib.Searching
                                 datasetSizeKB = (datasetFile.Length / 1024.0);
                                 creationDate = datasetFile.CreationTime;
                                 lastWriteDate = datasetFile.LastAccessTime;
-                                parentFolderPath = TriggerFileTools.GetRelativeParentFolderPath(diBaseFolder,
+                                parentFolderPath = TriggerFileTools.GetCaptureSubfolderPath(diBaseFolder,
                                                                                                 datasetFile);
                             }
                             else
@@ -233,7 +233,7 @@ namespace BuzzardLib.Searching
                                         .Sum(file => file.Length / 1024.0);
                                 creationDate = datasetFolder.CreationTime;
                                 lastWriteDate = datasetFolder.LastAccessTime;
-                                parentFolderPath = TriggerFileTools.GetRelativeParentFolderPath(diBaseFolder,
+                                parentFolderPath = TriggerFileTools.GetCaptureSubfolderPath(diBaseFolder,
                                                                                                 datasetFolder);
                             }
 

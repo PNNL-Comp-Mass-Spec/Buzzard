@@ -195,9 +195,9 @@
                 VerticalAlignment="Bottom"
                 Click="MonitorStartStop_Click"
                 Style="{StaticResource SimpleButtonStyle}">
-            <DockPanel Width="128" Height="32">
+            <DockPanel Width="128" Height="45">
                 <Label x:Name="MonitorButtonText"
-                       Width="80"
+                       Width="90"
                        VerticalContentAlignment="Center"
                        Content="{Binding Path=IsWatching,
                                          Mode=OneWay,
@@ -206,6 +206,7 @@
                        DockPanel.Dock="Right"
                        FontFamily="Arial" />
                 <Image Width="41"
+                       Height="25"
                        Margin="5"
                        DockPanel.Dock="Left"
                        Source="{Binding Path=Monitor,
@@ -230,7 +231,7 @@
                             HorizontalContentAlignment="Center"
                             DefaultValue="5"
                             FontSize="15"
-                            FormatString="15"
+                            FormatString="0"
                             Increment="1"
                             IsEnabled="{Binding Path=IsNotMonitoring}"
                             Maximum="600"

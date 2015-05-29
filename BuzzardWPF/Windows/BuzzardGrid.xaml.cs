@@ -710,30 +710,7 @@ namespace BuzzardWPF.Windows
         /// Abort for the Trigger Creation Thread.
         /// </summary>
         private void AbortTriggerThread()
-        {
-            /*
-            try
-            {
-                m_TriggerCreateThread.Abort();
-            }
-            catch
-            {
-                // Ignore errors here
-            }
-            finally
-            {
-                try
-                {
-                    m_TriggerCreateThread.Join(250);
-                }
-                catch
-                {
-                    // Ignore errors here
-                }
-            }
-            m_TriggerCreateThread = null;            
-            */
-
+        {           
             mAbortTriggerCreationNow = true;
             IsCreatingTriggerFiles = false;
         }

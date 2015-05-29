@@ -32,6 +32,7 @@ namespace BuzzardWPF.Windows
         #region Attributes
 
         private bool mIncludeArchivedItems;
+        private bool mIsNotMonitoring;
 
         /// <summary>
         /// Configuration for searching for files.
@@ -62,11 +63,13 @@ namespace BuzzardWPF.Windows
 
             // Add the search options to the list box
             m_SearchDepth.ItemsSource = options;
-                    
+
+            IsNotMonitoring = true;
         }
 
 
         #region Properties
+
         public SearchConfig Config
         {
             get { return mConfig; }
@@ -103,6 +106,8 @@ namespace BuzzardWPF.Windows
                 if (StateSingleton.IsCreatingTriggerFiles == value) return;
                 StateSingleton.IsCreatingTriggerFiles = value;
                 OnPropertyChanged("IsCreatingTriggerFiles");
+                OnPropertyChanged("IsSafeToSearch");
+                OnPropertyChanged("SearchButtonText");
             }
         }
 
@@ -111,27 +116,27 @@ namespace BuzzardWPF.Windows
             get { return !IsCreatingTriggerFiles; }
         }
 
-        [Obsolete("Likely not used; a result of copying from WatcherControl.xaml")]
-        public bool IsWatching
+        public bool IsSafeToSearch {
+            get { return IsNotMonitoring && IsNotCreatingTriggerFiles; }
+        }
+
+        public bool IsNotMonitoring
         {
-            get { return StateSingleton.IsMonitoring; }
+            get { return mIsNotMonitoring; }
             private set
             {
-                if (StateSingleton.IsMonitoring == value) return;
-                StateSingleton.IsMonitoring = value;
-                OnPropertyChanged("IsWatching");
+                mIsNotMonitoring = value;
                 OnPropertyChanged("IsNotMonitoring");
+                OnPropertyChanged("IsSafeToSearch");
+                OnPropertyChanged("SearchButtonText");
             }
         }
 
-        [Obsolete("Likely not used; a result of copying from WatcherControl.xaml")]
-        public bool IsNotMonitoring
+        public string SearchButtonText
         {
-            get { return !IsWatching; }
-        }           
-
+            get { return IsSafeToSearch ? "Search" : "(disabled)"; }           
+        }
         #endregion
-
 
         #region Event Handlers
         /// <summary>
@@ -296,11 +301,23 @@ namespace BuzzardWPF.Windows
 
         }
 
+        /// <summary>
+        /// Enables / disables the controls based on e.Monitoring
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void MonitoringToggleHandler(object sender, StartStopEventArgs e)
+        {
+            IsNotMonitoring = !e.Monitoring;
+        }
+
         private void OnPropertyChanged(string propertyName)
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
         #endregion
+
+      
     }
 }

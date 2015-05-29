@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -47,7 +48,7 @@ namespace BuzzardWPF.Windows
 
         readonly Ookii.Dialogs.Wpf.VistaFolderBrowserDialog mFolderDialog;
         private readonly FileSystemWatcher mFileSystemWatcher;
-       
+
         #endregion
 
         #region Initialization
@@ -252,7 +253,6 @@ namespace BuzzardWPF.Windows
         void SystemWatcher_FileCreated(object sender, FileSystemEventArgs e)
         {
             mFilePathsToProcess.TryAdd(e.FullPath, DateTime.UtcNow);
-
         }
 
         void SystemWatcher_FileRenamed(object sender, RenamedEventArgs e)
@@ -269,7 +269,7 @@ namespace BuzzardWPF.Windows
                 // File was renamed, either update an existing dataset, or add a new one
                 DatasetManager.Manager.CreatePendingDataset(
                     e.FullPath,
-                    TriggerFileTools.GetRelativeParentFolderPath(DirectoryToWatch, e.FullPath),
+                    TriggerFileTools.GetCaptureSubfolderPath(DirectoryToWatch, e.FullPath),
                     allowFolderMatch,
                     DatasetSource.Watcher, 
                     e.OldFullPath);
@@ -430,36 +430,70 @@ namespace BuzzardWPF.Windows
 
         private void StartWatching()
         {
-
-            if (Directory.Exists(DirectoryToWatch))
+            if (!Directory.Exists(DirectoryToWatch))
             {
-                DatasetManager.Manager.FileWatchRoot = DirectoryToWatch;
+                var msg = "Could not start the monitor. The supplied path does not exits.";
 
-                mFileSystemWatcher.Path = DirectoryToWatch;
-                mFileSystemWatcher.IncludeSubdirectories = WatchDepth == SearchOption.AllDirectories;
-                mFileSystemWatcher.Filter = "*.*";
-                mFileSystemWatcher.EnableRaisingEvents = true;
-                IsWatching = true;
-
-                mFileUpdateHandler.Enabled = true;
-
-                // This may seem a bit strange since I used bindings to 
-                // enable and disable the other controls, but for some 
-                // reason bindings didn't work for doing that to these 
-                // two controls.
-                m_dialogButton.IsEnabled = false;
-                m_dropDown.IsEnabled = false;
-
-                OnMonitoringToggled(true);
-
-                classApplicationLogger.LogMessage(0, "Watcher is monitoring.");
-            }
-            else
-            {
                 classApplicationLogger.LogError(
                     0,
-                    "Could not start the monitor. The supplied path does not exits.");
+                    msg);
+
+                MessageBox.Show(msg, "Error", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                return;
             }
+            
+            // Make sure the required metadata has been defined
+            var missingData = DatasetManager.Manager.GetMissingRequiredFields();
+
+            if (missingData.Count > 0)
+            {
+                if (!DatasetManager.Manager.CreateTriggerOnDMSFail &&
+                    missingData.Contains(DatasetManager.EXPERIMENT_NAME_DESCRIPTION))
+                {
+                    missingData.Remove(DatasetManager.EXPERIMENT_NAME_DESCRIPTION);
+                }
+
+                if (!DatasetManager.Manager.QC_CreateTriggerOnDMSFail && 
+                    missingData.Contains(DatasetManager.QC_EXPERIMENT_NAME_DESCRIPTION))
+                {
+                    missingData.Remove(DatasetManager.QC_EXPERIMENT_NAME_DESCRIPTION);
+                }
+            }
+
+            if (missingData.Count > 0)
+            {
+                var msg = "Could not start the monitor.  One or more key fields is undefined on the configuration tabs: ";
+                for (var i = 0; i < missingData.Count; i++)
+                {
+                    msg += missingData[i];
+                    if (i < missingData.Count - 1)
+                        msg += ", ";
+                }
+
+                MessageBox.Show(msg, "Error", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                return;
+            }
+
+            DatasetManager.Manager.FileWatchRoot = DirectoryToWatch;
+
+            mFileSystemWatcher.Path = DirectoryToWatch;
+            mFileSystemWatcher.IncludeSubdirectories = WatchDepth == SearchOption.AllDirectories;
+            mFileSystemWatcher.Filter = "*.*";
+            mFileSystemWatcher.EnableRaisingEvents = true;
+            IsWatching = true;
+
+            mFileUpdateHandler.Enabled = true;
+
+            // This may seem a bit strange since I used bindings to 
+            // enable and disable the other controls, but for some 
+            // reason bindings didn't work for doing that to these 
+            // two controls.
+            m_dialogButton.IsEnabled = false;
+            m_dropDown.IsEnabled = false;
+
+            OnMonitoringToggled(true);
+
+            classApplicationLogger.LogMessage(0, "Watcher is monitoring.");
         }
 
         private void OnMonitoringToggled(bool monitoring)
@@ -474,6 +508,7 @@ namespace BuzzardWPF.Windows
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
         #endregion
+       
     }
   
 }

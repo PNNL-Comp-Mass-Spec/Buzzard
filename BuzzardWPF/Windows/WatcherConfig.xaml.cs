@@ -168,7 +168,7 @@ namespace BuzzardWPF.Windows
 					OnPropertyChanged("SelectedDatasetType");
 				}
 
-				DatasetManager.Manager.WatcherConfigSelectedColumnType = value;
+                DatasetManager.Manager.WatcherConfigSelectedDatasetType = value;
 			}
 		}
 
@@ -270,6 +270,7 @@ namespace BuzzardWPF.Windows
 
 
 		#region Methods
+      
 		public void SaveSettings()
 		{
 			Settings.Default.WatcherConfig_SelectedCartName			= SelectedCartName;
@@ -282,7 +283,6 @@ namespace BuzzardWPF.Windows
 			Settings.Default.WatcherConfig_LCColumn					= LCColumn;
             Settings.Default.Watcher_EMSL_UsageType = SelectedEMSLUsageType;
             Settings.Default.Watcher_EMSL_ProposalID = EMSLProposalID;
-
 
             var selectedEmslUsers = new StringCollection();
             foreach (var user in SelectedEMSLProposalUsers)
@@ -452,6 +452,6 @@ namespace BuzzardWPF.Windows
         private ObservableCollection<classProposalUser> m_selectedEMSLProposalUsers;
 
         #endregion
-       
+
 	}
 }

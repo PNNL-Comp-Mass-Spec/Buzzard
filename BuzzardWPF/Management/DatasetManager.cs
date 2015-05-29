@@ -21,6 +21,8 @@ namespace BuzzardWPF.Management
     public class DatasetManager
     {
         public const string PREVIEW_TRIGGERFILE_FLAG = "Nonexistent_Fake_TriggerFile.xmL";
+        public const string EXPERIMENT_NAME_DESCRIPTION = "Experiment";
+        public const string QC_EXPERIMENT_NAME_DESCRIPTION = "QC Experiment Name";
 
         #region Events
         /// <summary>
@@ -67,7 +69,7 @@ namespace BuzzardWPF.Management
             Datasets = new ObservableCollection<BuzzardDataset>();
 
             WatcherConfigSelectedCartName = null;
-            WatcherConfigSelectedColumnType = null;
+            WatcherConfigSelectedDatasetType = null;
             WatcherConfigSelectedInstrument = null;
             WatcherConfigSelectedOperator = null;
             WatcherConfigSelectedSeparationType = null;
@@ -607,10 +609,12 @@ namespace BuzzardWPF.Management
         /// The Watcher control is responsible for setting this.
         /// </remarks>
         public int TriggerFileCreationWaitTime { get; set; }
+
         /// <summary>
         /// Gets or sets the minimum file size before starting the time.
         /// </summary>
         public int MinimumFileSize { get; set; }
+
         /// <summary>
         /// This item contains a copy of the SelectedInstrument value of
         /// the WatcherConfig tool.
@@ -639,13 +643,13 @@ namespace BuzzardWPF.Management
         public string WatcherConfigSelectedSeparationType { get; set; }
 
         /// <summary>
-        /// This item contains a copy of the SelectedColumnType value of
+        /// This item contains a copy of the SelectedDatasetType value of
         /// the WatcherConfig tool.
         /// </summary>
         /// <remarks>
         /// WatcherConfig is responsible for setting this value.
         /// </remarks>
-        public string WatcherConfigSelectedColumnType { get; set; }
+        public string WatcherConfigSelectedDatasetType { get; set; }
 
         /// <summary>
         /// This item contains a copy of the SelectedOperator value of
@@ -783,7 +787,7 @@ namespace BuzzardWPF.Management
         /// 
         /// </summary>
         /// <param name="datasetFileOrFolderPath"></param>
-        /// <param name ="relativeParentFolderPath"></param>
+        /// <param name ="captureSubfolderPath"></param>
         /// <param name="allowFolderMatch">True to allow a dataset to be a folder</param>
         /// <param name="howWasItFound"></param>
         /// <param name="oldFullPath">Use this parameter when a file is renamed</param>
@@ -793,8 +797,8 @@ namespace BuzzardWPF.Management
         /// executing, they could crash the program.
         /// </remarks>
         public void CreatePendingDataset(
-            string datasetFileOrFolderPath, 
-            string relativeParentFolderPath, 
+            string datasetFileOrFolderPath,
+            string captureSubfolderPath, 
             bool allowFolderMatch,
             DatasetSource howWasItFound = DatasetSource.Searcher, 
             string oldFullPath = "")
@@ -805,7 +809,7 @@ namespace BuzzardWPF.Management
             {
                 Action action = delegate
                 {
-                    CreatePendingDataset(datasetFileOrFolderPath, relativeParentFolderPath, allowFolderMatch, howWasItFound, oldFullPath);
+                    CreatePendingDataset(datasetFileOrFolderPath, captureSubfolderPath, allowFolderMatch, howWasItFound, oldFullPath);
                 };
 
                 MainWindow.Dispatcher.BeginInvoke(action, DispatcherPriority.Normal);
@@ -836,7 +840,7 @@ namespace BuzzardWPF.Management
 
                             dataset = datasetEntry;
                             dataset.FilePath = datasetFileOrFolderPath;
-                            dataset.RelativeParentFolderPath = relativeParentFolderPath;
+                            dataset.CaptureSubfolderPath = captureSubfolderPath;
                             dataset.UpdateFileProperties();
                             break;
                         }
@@ -865,7 +869,7 @@ namespace BuzzardWPF.Management
 
             if (dataset != null)
             {
-                dataset.RelativeParentFolderPath = relativeParentFolderPath;
+                dataset.CaptureSubfolderPath = captureSubfolderPath;
                 if (isArchived)
                     dataset.FilePath = datasetFileOrFolderPath;
                 else
@@ -884,7 +888,7 @@ namespace BuzzardWPF.Management
             else
             {
                 dataset = DatasetFactory.LoadDataset(datasetFileOrFolderPath);
-                dataset.RelativeParentFolderPath = relativeParentFolderPath;
+                dataset.CaptureSubfolderPath = captureSubfolderPath;
                 dataset.Comment = Manager.UserComments;
                 newDatasetFound = true;
             }
@@ -916,7 +920,7 @@ namespace BuzzardWPF.Management
                     dataset.SeparationType = WatcherConfigSelectedSeparationType;
 
                 if (string.IsNullOrWhiteSpace(dataset.DMSData.DatasetType))
-                    dataset.DMSData.DatasetType = WatcherConfigSelectedColumnType;
+                    dataset.DMSData.DatasetType = WatcherConfigSelectedDatasetType;
 
                 if (string.IsNullOrWhiteSpace(dataset.Operator))
                     dataset.Operator = WatcherConfigSelectedOperator;
@@ -1001,6 +1005,37 @@ namespace BuzzardWPF.Management
             Manager.ResolveDms(dataset, newDatasetFound);
         }
 
+        public List<string> GetMissingRequiredFields()
+        {
+            var missingFields = new List<string>();
+
+            if (string.IsNullOrWhiteSpace(WatcherConfigSelectedInstrument))
+                missingFields.Add("Instrument");
+
+            if (string.IsNullOrWhiteSpace(WatcherConfigSelectedCartName))
+                missingFields.Add("LC Cart");
+
+            if (string.IsNullOrWhiteSpace(WatcherConfigSelectedSeparationType))
+                missingFields.Add("Separation Type");
+
+            if (string.IsNullOrWhiteSpace(WatcherConfigSelectedDatasetType))
+                missingFields.Add("Dataset Type");
+
+            if (string.IsNullOrWhiteSpace(WatcherConfigSelectedOperator))
+                missingFields.Add("Operator");
+
+            if (string.IsNullOrWhiteSpace(ExperimentName))
+                missingFields.Add(EXPERIMENT_NAME_DESCRIPTION);
+
+            if (string.IsNullOrWhiteSpace(LCColumn))
+                missingFields.Add("LC Column");
+
+            if (string.IsNullOrWhiteSpace(QC_ExperimentName))
+                missingFields.Add(QC_EXPERIMENT_NAME_DESCRIPTION);
+
+            return missingFields;
+        }
+
         public void UpdateDataset(string path)
         {
             // If we're on the wrong thread, then put in 
@@ -1078,5 +1113,6 @@ namespace BuzzardWPF.Management
                 return diDatasetFolder.FullName;
         }
 
+     
     }
 }

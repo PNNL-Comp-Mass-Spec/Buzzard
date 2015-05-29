@@ -11,12 +11,12 @@ namespace BuzzardLib.Searching
         /// Constructor.
         /// </summary>
         /// <param name="datasetPath">Full path to the dataset file or folder</param>
-        /// <param name="parentFolderPathRelative">Relative </param>
+        /// <param name="subfolderPathRelative">Subfolder path, relative to the base folder we searched from</param>
         /// <param name="config">Search config options</param>
-        public DatasetFoundEventArgs(string datasetPath, string parentFolderPathRelative, SearchConfig config)
+        public DatasetFoundEventArgs(string datasetPath, string subfolderPathRelative, SearchConfig config)
         {
             Path = datasetPath;
-            RelativeParentFolderPath = parentFolderPathRelative;
+            CaptureSubfolderPath = subfolderPathRelative;
             CurrentSearchConfig = config;
         }
 
@@ -41,7 +41,7 @@ namespace BuzzardLib.Searching
         /// <summary>
         /// Gets the relative storage path of the parent folder for the found dataset
         /// </summary>
-        public string RelativeParentFolderPath
+        public string CaptureSubfolderPath
         {
             get;
             private set;

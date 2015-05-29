@@ -241,17 +241,21 @@
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Bottom"
                 Click="m_search_Click"
-                IsEnabled="{Binding Path=IsNotCreatingTriggerFiles,
+                IsEnabled="{Binding Path=IsSafeToSearch,
                                     Mode=OneWay,
                                     UpdateSourceTrigger=PropertyChanged}"
                 Style="{StaticResource SimpleButtonStyle}">
-            <DockPanel Width="128" Height="32">
-                <Label Width="80"
+            <DockPanel Width="128" Height="45">
+                <Label Width="90"
                        VerticalContentAlignment="Center"
-                       Content="Search"
+                       Content="{Binding Path=SearchButtonText,
+                                         Mode=OneWay,
+                                         UpdateSourceTrigger=PropertyChanged,
+                                         FallbackValue=Search}"
                        DockPanel.Dock="Right"
                        FontFamily="Arial" />
                 <Image Width="41"
+                       Height="25"
                        Margin="5"
                        DockPanel.Dock="Left"
                        Source="{Binding Path=Monitor,

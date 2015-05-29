@@ -129,14 +129,11 @@ namespace BuzzardLib.IO
             var rootElement = mobject_TriggerFileContents.CreateElement("Dataset");
             mobject_TriggerFileContents.AppendChild(rootElement);
 
-            var datasetPath = dmsData.DatasetName;
-            if (!string.IsNullOrEmpty(dataset.RelativeParentFolderPath))
-                datasetPath = Path.Combine(dataset.RelativeParentFolderPath, dmsData.DatasetName);
-
             // Add the parameters
-            AddParam(rootElement, "Dataset Name", datasetPath);
+            AddParam(rootElement, "Dataset Name", dmsData.DatasetName);
             AddParam(rootElement, "Experiment Name", TrimWhitespace(experimentName));
             AddParam(rootElement, "Instrument Name", TrimWhitespace(dataset.Instrument));
+            AddParam(rootElement, "Capture Subfolder", TrimWhitespace(dataset.CaptureSubfolderPath));
             AddParam(rootElement, "Separation Type", TrimWhitespace(dataset.SeparationType));
             AddParam(rootElement, "LC Cart Name", TrimWhitespace(dataset.CartName));
             AddParam(rootElement, "LC Column", TrimWhitespace(dataset.LCColumn));
@@ -304,7 +301,7 @@ namespace BuzzardLib.IO
 
         }
 
-        public static string GetRelativeParentFolderPath(string baseFolderPath, string datasetFileOrFolderPath)
+        public static string GetCaptureSubfolderPath(string baseFolderPath, string datasetFileOrFolderPath)
         {
             if (string.IsNullOrEmpty(baseFolderPath) ||
                 string.IsNullOrEmpty(datasetFileOrFolderPath))
@@ -315,19 +312,19 @@ namespace BuzzardLib.IO
 
             if (datasetFile.Exists)
             {
-                return GetRelativeParentFolderPath(diBaseFolder, datasetFile);
+                return GetCaptureSubfolderPath(diBaseFolder, datasetFile);
             }
 
             var datasetFolder = new DirectoryInfo(datasetFileOrFolderPath);
             if (datasetFolder.Exists)
             {
-                return GetRelativeParentFolderPath(diBaseFolder, datasetFolder);
+                return GetCaptureSubfolderPath(diBaseFolder, datasetFolder);
             }
 
             return string.Empty;
         }
 
-        public static string GetRelativeParentFolderPath(DirectoryInfo diBaseFolder, FileInfo datasetFile)
+        public static string GetCaptureSubfolderPath(DirectoryInfo diBaseFolder, FileInfo datasetFile)
         {
             if (datasetFile.DirectoryName == null)
                 return string.Empty;
@@ -342,7 +339,7 @@ namespace BuzzardLib.IO
             return relativePath;
         }
 
-        public static string GetRelativeParentFolderPath(DirectoryInfo diBaseFolder, DirectoryInfo datasetFolder)
+        public static string GetCaptureSubfolderPath(DirectoryInfo diBaseFolder, DirectoryInfo datasetFolder)
         {
             if (datasetFolder.Parent == null)
                 return string.Empty;
