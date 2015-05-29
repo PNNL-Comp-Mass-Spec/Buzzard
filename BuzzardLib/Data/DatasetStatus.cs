@@ -50,6 +50,10 @@
         /// <summary>
         /// Aborted manual trigger creation while validating that the file or folder is stable
         /// </summary>
-        TriggerAborted
+        TriggerAborted,
+        /// <summary>
+        /// Dataset size changed over 60 seconds
+        /// </summary>
+        FileSizeChanged
 	}
 }

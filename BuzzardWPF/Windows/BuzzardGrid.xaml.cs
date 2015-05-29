@@ -823,6 +823,25 @@ namespace BuzzardWPF.Windows
                     return;
                 }
 
+                // Update field .IsFile
+                foreach (var dataset in selectedDatasets)
+                {
+                    dataset.TriggerCreationWarning = string.Empty;
+
+                    var fiFile = new FileInfo(dataset.FilePath);
+                    if (!fiFile.Exists)
+                    {
+                        var diFolder = new DirectoryInfo(dataset.FilePath);
+                        if (diFolder.Exists && dataset.IsFile)
+                            dataset.IsFile = false;
+                    }
+                }
+
+
+                var success = (SimulateTriggerCreation(selectedDatasets));
+                if (!success)
+                    return;
+
                 // Confirm that the dataset are not changing and are thus safe to create trigger files for
                 var stableDatasets = VerifyDatasetsStable(selectedDatasets);
 
@@ -833,7 +852,7 @@ namespace BuzzardWPF.Windows
 
                 foreach (var dataset in stableDatasets)
                 {
-                    DatasetManager.CreateTriggerFileBuzzard(dataset, true);
+                    var triggerFilePath = DatasetManager.CreateTriggerFileBuzzard(dataset, forceSend: true, preview: false);
 
                     if (mAbortTriggerCreationNow)
                     {
@@ -882,6 +901,56 @@ namespace BuzzardWPF.Windows
         {
             foreach (var dataset in selectedDatasets)
                 dataset.DatasetStatus = DatasetStatus.TriggerAborted;
+        }
+
+        /// <summary>
+        /// Creates the xml trigger file for each dataset but does not save it to disk
+        /// </summary>
+        /// <param name="selectedDatasets"></param>
+        /// <returns>True if no problems, False if a problem with one or more datasets</returns>
+        private bool SimulateTriggerCreation(List<BuzzardDataset> selectedDatasets)
+        {
+            var validDatasets = new List<BuzzardDataset>();
+
+            // Simulate trigger file creation to check for errors
+            foreach (var dataset in selectedDatasets)
+            {
+                DatasetManager.CreateTriggerFileBuzzard(dataset, forceSend: true, preview: true);
+
+                if (mAbortTriggerCreationNow)
+                {
+                    MarkAborted(selectedDatasets);
+                    return false;
+                }
+
+                if ((dataset.DatasetStatus == DatasetStatus.Pending ||
+                     dataset.DatasetStatus == DatasetStatus.ValidatingStable))
+                {
+                    validDatasets.Add(dataset);
+                }
+            }
+
+            var invalidDatasetCount = selectedDatasets.Count - validDatasets.Count;
+            if (invalidDatasetCount <= 0)
+            {
+                return true;
+            }
+
+            var warningMessage = "Warning, " + invalidDatasetCount;
+            if (invalidDatasetCount == 1)
+            {
+                warningMessage += " dataset has ";
+            }
+            else
+            {
+                warningMessage += " datasets have ";
+            }
+
+            warningMessage += "validation errors; fix the errors then try again.";
+
+            MessageBox.Show(warningMessage, "Validation Errors", MessageBoxButton.OK, MessageBoxImage.Warning);
+
+            return false;
         }
 
         private List<BuzzardDataset> VerifyDatasetsStable(List<BuzzardDataset> selectedDatasets)
@@ -946,6 +1015,14 @@ namespace BuzzardWPF.Windows
                 {
                     if (fiFile.Length == entry.Value)
                         stableDatasets.Add(entry.Key);
+                    else
+                    {
+                        entry.Key.DatasetStatus = DatasetStatus.FileSizeChanged;
+                    }
+                }
+                else
+                {
+                    entry.Key.DatasetStatus = DatasetStatus.FileNotFound;
                 }
             }
 
@@ -961,6 +1038,14 @@ namespace BuzzardWPF.Windows
                     if (fileCountAndSizeNow.Key == fileCountAndSizeAtStart.Key &&
                         fileCountAndSizeNow.Value == fileCountAndSizeAtStart.Value)
                         stableDatasets.Add(entry.Key);
+                    else
+                    {
+                        entry.Key.DatasetStatus = DatasetStatus.FileSizeChanged;
+                    }
+                }
+                else
+                {
+                    entry.Key.DatasetStatus = DatasetStatus.FileNotFound;
                 }
             }
 

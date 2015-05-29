@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Data;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -313,12 +314,14 @@ namespace BuzzardWPF
             if (m_buzzadier != null)
             {
                 m_buzzadier.Stop();
-                m_buzzadier.DatasetFound -= m_buzzadier_DatasetFound;
-                m_buzzadier.SearchComplete -= m_buzzadier_SearchComplete;
+                m_buzzadier.SearchStarted -= m_buzzadier_SearchStarted;
                 m_buzzadier.SearchStopped -= m_buzzadier_SearchStopped;
+                m_buzzadier.SearchComplete -= m_buzzadier_SearchComplete;
+                m_buzzadier.DatasetFound -= m_buzzadier_DatasetFound;
             }
 
             m_buzzadier = buzzadier;
+            m_buzzadier.SearchStarted += m_buzzadier_SearchStarted;
             m_buzzadier.SearchStopped += m_buzzadier_SearchStopped;
             m_buzzadier.SearchComplete += m_buzzadier_SearchComplete;
             m_buzzadier.DatasetFound += m_buzzadier_DatasetFound;
@@ -341,21 +344,21 @@ namespace BuzzardWPF
         {
             Action workAction = delegate
             {
-                AddDataset(e.Path);
+                AddDataset(e.Path, e.RelativeParentFolderPath, e.CurrentSearchConfig);
             };
 
             m_dataGrid.Dispatcher.BeginInvoke(workAction, DispatcherPriority.Normal);
 
         }
 
-        private void AddDataset(string path)
+        private void AddDataset(string datasetFileOrFolderPath, string relativeParentFolderPath, SearchConfig config)
         {
             //
             // Run checks to make sure we don't re-insert the
             // same data
             //
 
-            if (string.IsNullOrWhiteSpace(path))
+            if (string.IsNullOrWhiteSpace(datasetFileOrFolderPath))
             {
                 // There's nothing to create a dataset from
                 classApplicationLogger.LogError(
@@ -374,7 +377,7 @@ namespace BuzzardWPF
                     if (string.IsNullOrWhiteSpace(ds.FilePath))
                         return false;
 
-                    return ds.FilePath.Equals(path, StringComparison.OrdinalIgnoreCase);
+                    return ds.FilePath.Equals(datasetFileOrFolderPath, StringComparison.OrdinalIgnoreCase);
                 });
 
             // The dataset is already there, make sure the file size and modification date properties are up-to-date
@@ -382,9 +385,9 @@ namespace BuzzardWPF
             {
                 classApplicationLogger.LogMessage(
                     0,
-                    string.Format("Data source: '{0}' is already present.", path));
+                    string.Format("Data source: '{0}' is already present.", datasetFileOrFolderPath));
                 
-                DatasetManager.Manager.UpdateDataset(path);
+                DatasetManager.Manager.UpdateDataset(datasetFileOrFolderPath);
                 return;
             }
 
@@ -392,7 +395,7 @@ namespace BuzzardWPF
             // Create a dataset from the given path,
             // and load it into the UI.
             //
-            DatasetManager.Manager.CreatePendingDataset(path);
+            DatasetManager.Manager.CreatePendingDataset(datasetFileOrFolderPath, relativeParentFolderPath, config.MatchFolders);
         }
 
         private void SetTriggerFolderToTestPath()
@@ -408,12 +411,17 @@ namespace BuzzardWPF
 
         private void m_buzzadier_SearchComplete(object sender, EventArgs e)
         {
+            LastStatusMessage = "Search complete";
+        }
 
+        private void m_buzzadier_SearchStarted(object sender, EventArgs e)
+        {
+            LastStatusMessage = "Searching for datasets";
         }
 
         private void m_buzzadier_SearchStopped(object sender, EventArgs e)
         {
-
+            LastStatusMessage = "Search aborted";            
         }
 
         #endregion

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Policy;
 using System.Threading;
+using BuzzardLib.IO;
 using LcmsNet.Method;
 using LcmsNetDataClasses.Logging;
 
@@ -20,10 +21,17 @@ namespace BuzzardLib.Searching
         /// Fired when a dataset is found.
         /// </summary>
         public event EventHandler<DatasetFoundEventArgs> DatasetFound;
+
         /// <summary>
         /// Fired when a search was completed.
         /// </summary>
         public event EventHandler SearchComplete;
+
+        /// <summary>
+        /// Fired when a search was started.
+        /// </summary>
+        public event EventHandler SearchStarted;
+
         /// <summary>
         /// Fired when a search was stopped.
         /// </summary>
@@ -53,6 +61,7 @@ namespace BuzzardLib.Searching
         #endregion
 
         #region Searching and Threading Methods
+
         /// <summary>
         /// Stops searching
         /// </summary>
@@ -97,7 +106,15 @@ namespace BuzzardLib.Searching
         {
             if (m_thread != null)
             {
-                Stop();
+                try
+                {
+                    Stop();
+                }
+                catch (Exception)
+                {
+                    return;
+                }
+                
             }
 
             var start = new ParameterizedThreadStart(Search);
@@ -111,6 +128,11 @@ namespace BuzzardLib.Searching
 
             try
             {
+                if (SearchStarted != null)
+                {
+                    SearchStarted(this, null);
+                }
+
                 var config = objectConfig as SearchConfig;
                 if (config == null)
                 {
@@ -139,9 +161,11 @@ namespace BuzzardLib.Searching
                     return;
                 }
 
+                var diBaseFolder = new DirectoryInfo(config.DirectoryPath);
+
                 // Breadth first search across directories as to make it fast and responsive to a listening UI
                 var m_paths = new Queue<string>();
-                m_paths.Enqueue(config.DirectoryPath);
+                m_paths.Enqueue(diBaseFolder.FullName);
 
                 while (m_paths.Count > 0 && m_keepSearching)
                 {
@@ -157,12 +181,20 @@ namespace BuzzardLib.Searching
                             fileAndFolderPaths.Add(new KeyValuePair<DatasetType, FileSystemInfo>(DatasetType.File, file));
                         }
 
-                        foreach (var subDirectory in currentDirectory.GetDirectories())
+                        if (config.MatchFolders)
                         {
-                            if (config.MatchFolders)
-                                fileAndFolderPaths.Add(new KeyValuePair<DatasetType, FileSystemInfo>(DatasetType.Folder, subDirectory));
+                            foreach (
+                                var subDirectory in
+                                    currentDirectory.GetDirectories(searchFilter, SearchOption.TopDirectoryOnly))
+                            {
+                                fileAndFolderPaths.Add(new KeyValuePair<DatasetType, FileSystemInfo>(
+                                                           DatasetType.Folder, subDirectory));
+                            }
+                        }
 
-                            if (shouldSearchBelow)
+                        if (shouldSearchBelow)
+                        {
+                            foreach (var subDirectory in currentDirectory.GetDirectories())
                             {
                                 m_paths.Enqueue(subDirectory.FullName);
                             }
@@ -183,20 +215,26 @@ namespace BuzzardLib.Searching
                             DateTime creationDate;
                             DateTime lastWriteDate;
                             double datasetSizeKB = 0;
-
+                            string parentFolderPath;
                             if (datasetEntry.Key == DatasetType.File)
                             {
                                 var datasetFile = (FileInfo)datasetEntry.Value;
                                 datasetSizeKB = (datasetFile.Length / 1024.0);
                                 creationDate = datasetFile.CreationTime;
                                 lastWriteDate = datasetFile.LastAccessTime;
+                                parentFolderPath = TriggerFileTools.GetRelativeParentFolderPath(diBaseFolder,
+                                                                                                datasetFile);
                             }
                             else
                             {
                                 var datasetFolder = (DirectoryInfo)datasetEntry.Value;
-                                datasetSizeKB += datasetFolder.GetFiles("*", SearchOption.AllDirectories).Sum(file => file.Length / 1024.0);
+                                datasetSizeKB +=
+                                    datasetFolder.GetFiles("*", SearchOption.AllDirectories)
+                                        .Sum(file => file.Length / 1024.0);
                                 creationDate = datasetFolder.CreationTime;
                                 lastWriteDate = datasetFolder.LastAccessTime;
+                                parentFolderPath = TriggerFileTools.GetRelativeParentFolderPath(diBaseFolder,
+                                                                                                datasetFolder);
                             }
 
                             if (datasetSizeKB < config.MinimumSizeKB)
@@ -221,7 +259,8 @@ namespace BuzzardLib.Searching
 
                             if (DatasetFound != null)
                             {
-                                DatasetFound(this, new DatasetFoundEventArgs(datasetEntry.Value.FullName));
+                                DatasetFound(this,
+                                             new DatasetFoundEventArgs(datasetEntry.Value.FullName, parentFolderPath, config));
                             }
 
                         }
@@ -238,9 +277,13 @@ namespace BuzzardLib.Searching
                 }
 
             }
+            catch (ThreadAbortException)
+            {
+                ReportError("Aborted Buzzardier.Search");
+            }
             catch (Exception ex)
             {
-                ReportError("Exception in Buzzardier.Search", ex);
+                ReportError("Exception in Buzzardier.Search: " + ex.Message, ex);
             }
 
         }

@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Threading;
 using BuzzardLib.Data;
 using BuzzardLib.IO;
+using BuzzardLib.Searching;
 using LcmsNetDataClasses;
 using LcmsNetDataClasses.Data;
 using LcmsNetDataClasses.Logging;
@@ -20,6 +20,8 @@ namespace BuzzardWPF.Management
     /// </summary>
     public class DatasetManager
     {
+        public const string PREVIEW_TRIGGERFILE_FLAG = "Nonexistent_Fake_TriggerFile.xmL";
+
         #region Events
         /// <summary>
         /// Fired when datasets are loaded.
@@ -31,46 +33,37 @@ namespace BuzzardWPF.Management
         /// <summary>
         /// thread for loading data from DMS.
         /// </summary>
-        private Thread m_dmsLoadThread;
+        private Thread mDmsLoadThread;
         /// <summary>
         /// Trie that holds dataset names from DMS.
         /// </summary>        
-        private DatasetTrie m_datasetTrie;
+        private readonly DatasetTrie mDatasetTrie;
         /// <summary>
         /// Flag indicating when true, that the dataset names have been loaded from DMS.
         /// </summary>
-        private bool m_datasetsReady;
+        private bool mDatasetsReady;
 
-        private string m_fileWatchRoot;
-
-        private Main m_mainWindow;
-
-        /// <summary>
-        /// Synchs data saving between the DMS database load thread and the rest of the data management.
-        /// </summary>
-        private object m_synchObject;
+        private Main mMainWindow;
 
         /// <summary>
         /// Dictionary where keys are FileInfo objects and values are false if the file is still waiting to be processed, or True if it has been processed (is found in the Success folder)
         /// </summary>
-        private static Dictionary<string, bool> m_triggerFolderContents;
+        private static Dictionary<string, bool> mTriggerFolderContents;
 
-        private DispatcherTimer m_scannedDatasetTimer;
+        private DispatcherTimer mScannedDatasetTimer;
 
         private static readonly string[] INTEREST_RATING_ARRAY = { "Unreviewed", "Not Released", "Released", "Rerun (Good Data)", "Rerun (Superseded)" };
         public static readonly ObservableCollection<string> INTEREST_RATINGS_COLLECTION;
 
         #endregion
 
-
         /// <summary>
         /// Constructor.
         /// </summary>
         private DatasetManager()
         {
-            m_datasetTrie = new DatasetTrie();
-            m_synchObject = new object();
-            m_datasetsReady = false;
+            mDatasetTrie = new DatasetTrie();           
+            mDatasetsReady = false;
             Datasets = new ObservableCollection<BuzzardDataset>();
 
             WatcherConfigSelectedCartName = null;
@@ -99,7 +92,7 @@ namespace BuzzardWPF.Management
         {
             try
             {
-                m_dmsLoadThread.Abort();
+                mDmsLoadThread.Abort();
             }
             catch
             {
@@ -109,14 +102,14 @@ namespace BuzzardWPF.Management
             {
                 try
                 {
-                    m_dmsLoadThread.Join(100);
+                    mDmsLoadThread.Join(100);
                 }
                 catch
                 {
                     // Ignore errors here
                 }
             }
-            m_dmsLoadThread = null;
+            mDmsLoadThread = null;
         }
 
         /// <summary>
@@ -124,16 +117,16 @@ namespace BuzzardWPF.Management
         /// </summary>
         public void LoadDmsCache()
         {
-            if (m_dmsLoadThread != null)
+            if (mDmsLoadThread != null)
             {
                 AbortDmsThread();
             }
 
             // Create a new threaded load.
             var start = new ThreadStart(LoadThread);
-            m_dmsLoadThread = new Thread(start);
-            m_dmsLoadThread.Start();
-            m_datasetsReady = false;
+            mDmsLoadThread = new Thread(start);
+            mDmsLoadThread.Start();
+            mDatasetsReady = false;
         }
 
         private void LoadThread()
@@ -154,13 +147,13 @@ namespace BuzzardWPF.Management
             var dbTools = new classDBTools();
             var samples = dbTools.GetSamplesFromDMS(query);
 
-            lock (m_datasetTrie)
+            lock (mDatasetTrie)
             {
-                m_datasetTrie.Clear();
+                mDatasetTrie.Clear();
 
                 foreach (var sample in samples)
                 {
-                    m_datasetTrie.AddData(sample.DmsData);
+                    mDatasetTrie.AddData(sample.DmsData);
                 }
             }
 
@@ -168,13 +161,13 @@ namespace BuzzardWPF.Management
             // trigger files that were sent.
             var triggerFileDestination = classLCMSSettings.GetParameter("TriggerFileFolder");
 
-            if (m_triggerFolderContents == null)
+            if (mTriggerFolderContents == null)
             {
-                m_triggerFolderContents = new Dictionary<string, bool>(StringComparer.CurrentCultureIgnoreCase);
+                mTriggerFolderContents = new Dictionary<string, bool>(StringComparer.CurrentCultureIgnoreCase);
             }
             else
             {
-                m_triggerFolderContents.Clear();
+                mTriggerFolderContents.Clear();
             }
 
             if (!string.IsNullOrWhiteSpace(triggerFileDestination))
@@ -199,7 +192,7 @@ namespace BuzzardWPF.Management
             }
 
 
-            m_datasetsReady = true;
+            mDatasetsReady = true;
 
             LastUpdated = string.Format("Cache Last Updated: {0}", DateTime.Now);
             if (DatasetsLoaded != null)
@@ -223,9 +216,10 @@ namespace BuzzardWPF.Management
         /// </summary>
         /// <param name="dataset">Dataset information to send.</param>
         /// <param name="forceSend">If true, this forces the trigger file to send again even if it's already been sent.</param>
+        /// <param name="preview">If true then simulates the creation of the trigger file so that the calling procedure can confirm that DatasetStatus is not set to MissingRequiredInfo</param>
         /// <returns>File path if submitted, otherwise null</returns>
         /// <remarks>In the dataset object, DatasetStatus will be set to MissingRequiredInfo if field validation fails</remarks>
-        public static string CreateTriggerFileBuzzard(BuzzardDataset dataset, bool forceSend)
+        public static string CreateTriggerFileBuzzard(BuzzardDataset dataset, bool forceSend, bool preview)
         {
             if (dataset.ShouldIgnore)
             {
@@ -247,17 +241,35 @@ namespace BuzzardWPF.Management
 
             try
             {
-                if (dataset.DatasetStatus == DatasetStatus.TriggerFileSent && !forceSend)
+                if (dataset.DatasetStatus == DatasetStatus.TriggerFileSent && !forceSend && !preview)
                     return null;
 
-                if (dataset.Name == null)
+                if (string.IsNullOrWhiteSpace(dataset.Name))
                     dataset.Name = string.Copy(dataset.DMSData.DatasetName);
 
-                if (dataset.Name == null)
-                    dataset.Name = "Undefined";
+                if (string.IsNullOrWhiteSpace(dataset.Name))
+                {
+                    dataset.DatasetStatus = DatasetStatus.MissingRequiredInfo;
+                    dataset.TriggerCreationWarning = "Dataset name is empty";
+                    return null;
+                }
+
+                if (preview)
+                {
+                    if (!(dataset.DatasetStatus == DatasetStatus.Pending || 
+                          dataset.DatasetStatus == DatasetStatus.ValidatingStable))
+                        dataset.DatasetStatus = DatasetStatus.Pending;
+
+                    var triggerXML = TriggerFileTools.CreateTriggerString(sample, dataset, dataset.DMSData);
+
+                    if (dataset.DatasetStatus == DatasetStatus.MissingRequiredInfo)
+                        return null;
+
+                    return PREVIEW_TRIGGERFILE_FLAG;
+                }
 
                 classApplicationLogger.LogMessage(0, string.Format("Creating Trigger File: {0} for {1}", DateTime.Now, dataset.Name));
-                var triggerFilePath = TriggerFileTools.GenerateTriggerFileBuzzard(sample, dataset, dataset.DMSData, DatasetManager.Manager.TriggerFileLocation);
+                var triggerFilePath = TriggerFileTools.GenerateTriggerFileBuzzard(sample, dataset, dataset.DMSData, Manager.TriggerFileLocation);
 
                 if (string.IsNullOrEmpty(triggerFilePath))
                     return null;
@@ -280,12 +292,13 @@ namespace BuzzardWPF.Management
                 dataset.DatasetStatus = DatasetStatus.FailedUnknown;
                 dataset.TriggerCreationWarning = "Exception: " + ex.Message;
             }
+
             return null;
         }     
 
         public Dictionary<string, bool> TriggerDirectoryContents
         {
-            get { return m_triggerFolderContents; }
+            get { return mTriggerFolderContents; }
         }
 
         #endregion
@@ -343,13 +356,13 @@ namespace BuzzardWPF.Management
                 classDMSData data = null;
                 try
                 {
-                    data = m_datasetTrie.FindData(fileName);
+                    data = mDatasetTrie.FindData(fileName);
                 }
                 catch (KeyNotFoundException)
                 {
                     // Now get the path name of the directory, then use that as the "search string for dms"
                     fileName = Path.GetFileName(fiDataset.Directory.Name);
-                    data = m_datasetTrie.FindData(fileName);
+                    data = mDatasetTrie.FindData(fileName);
                 }
 
                 dataset.DMSData = new DMSData(data, dataset.FilePath);
@@ -382,32 +395,21 @@ namespace BuzzardWPF.Management
         }
 
 
-        public string FileWatchRoot
-        {
-            get { return m_fileWatchRoot; }
-            set
-            {
-
-
-                m_fileWatchRoot = value;
-
-
-            }
-        }
+        public string FileWatchRoot { get; set; }
 
         public bool IsLoading
         {
-            get { return m_datasetsReady == false; }
+            get { return mDatasetsReady == false; }
         }
 
         public Main MainWindow
         {
-            get { return m_mainWindow; }
+            get { return mMainWindow; }
             set
             {
-                if (m_mainWindow != value)
+                if (mMainWindow != value)
                 {
-                    m_mainWindow = value;
+                    mMainWindow = value;
                     SetupTimers();
                 }
             }
@@ -428,10 +430,10 @@ namespace BuzzardWPF.Management
             if (MainWindow == null)
                 return;
 
-            m_scannedDatasetTimer = new DispatcherTimer(DispatcherPriority.Normal, MainWindow.Dispatcher);
-            m_scannedDatasetTimer.Interval = new TimeSpan(0, 0, 0, 0, 500);     // Update every 500 msec
-            m_scannedDatasetTimer.Tick += ScannedDatasetTimer_Tick;
-            m_scannedDatasetTimer.Start();
+            mScannedDatasetTimer = new DispatcherTimer(DispatcherPriority.Normal, MainWindow.Dispatcher);
+            mScannedDatasetTimer.Interval = new TimeSpan(0, 0, 0, 0, 500);     // Update every 500 msec
+            mScannedDatasetTimer.Tick += ScannedDatasetTimer_Tick;
+            mScannedDatasetTimer.Start();
         }
 
 
@@ -442,11 +444,11 @@ namespace BuzzardWPF.Management
         {
             // Find the datasets that have source data found by the
             // file watcher.
-            var x = from BuzzardDataset ds in Datasets
+            var query = from BuzzardDataset ds in Datasets
                     where ds.DatasetSource == DatasetSource.Watcher
                     select ds;
 
-            var datasets = new List<BuzzardDataset>(x);
+            var datasets = new List<BuzzardDataset>(query);
 
             // If there aren't any, then we're done.
             if (datasets.Count == 0)
@@ -515,7 +517,7 @@ namespace BuzzardWPF.Management
                             continue;
                     }
 
-                    string triggerFilePath = CreateTriggerFileBuzzard(dataset, false);
+                    string triggerFilePath = CreateTriggerFileBuzzard(dataset, forceSend:false, preview:false);
                     if (string.IsNullOrWhiteSpace(triggerFilePath))
                         continue;               
 
@@ -536,8 +538,8 @@ namespace BuzzardWPF.Management
                     dataset.WaitTimePercentage = percentWaited;
                     if (pulseIt)
                     {
-                        dataset.PluseText = true;
-                        dataset.PluseText = false;
+                        dataset.PulseText = true;
+                        dataset.PulseText = false;
                     }
                 }
             }
@@ -560,7 +562,6 @@ namespace BuzzardWPF.Management
         public bool MatchFolders { get; set; }
 
         #endregion
-
 
         #region Watcher Config
         /// <summary>
@@ -765,23 +766,25 @@ namespace BuzzardWPF.Management
 
         private static void AddUpdateTriggerFile(string triggerFilePath, bool inSuccessFolder)
         {
-            if (m_triggerFolderContents == null)
+            if (mTriggerFolderContents == null)
             {
-                m_triggerFolderContents = new Dictionary<string, bool>(StringComparer.CurrentCultureIgnoreCase);
+                mTriggerFolderContents = new Dictionary<string, bool>(StringComparer.CurrentCultureIgnoreCase);
             }
 
-            if (m_triggerFolderContents.ContainsKey(triggerFilePath))
-                m_triggerFolderContents[triggerFilePath] = inSuccessFolder;
+            if (mTriggerFolderContents.ContainsKey(triggerFilePath))
+                mTriggerFolderContents[triggerFilePath] = inSuccessFolder;
             else
             {
-                m_triggerFolderContents.Add(triggerFilePath, inSuccessFolder);
+                mTriggerFolderContents.Add(triggerFilePath, inSuccessFolder);
             }
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="path"></param>
+        /// <param name="datasetFileOrFolderPath"></param>
+        /// <param name ="relativeParentFolderPath"></param>
+        /// <param name="allowFolderMatch">True to allow a dataset to be a folder</param>
         /// <param name="howWasItFound"></param>
         /// <param name="oldFullPath">Use this parameter when a file is renamed</param>
         /// <remarks>
@@ -789,7 +792,12 @@ namespace BuzzardWPF.Management
         /// with the contents of the Datasets property while this method is
         /// executing, they could crash the program.
         /// </remarks>
-        public void CreatePendingDataset(string path, DatasetSource howWasItFound = DatasetSource.Searcher, string oldFullPath = "")
+        public void CreatePendingDataset(
+            string datasetFileOrFolderPath, 
+            string relativeParentFolderPath, 
+            bool allowFolderMatch,
+            DatasetSource howWasItFound = DatasetSource.Searcher, 
+            string oldFullPath = "")
         {
             // If we're on the wrong thread, then put in 
             // a call to this in the correct thread and exit.
@@ -797,7 +805,7 @@ namespace BuzzardWPF.Management
             {
                 Action action = delegate
                 {
-                    CreatePendingDataset(path, howWasItFound, oldFullPath);
+                    CreatePendingDataset(datasetFileOrFolderPath, relativeParentFolderPath, allowFolderMatch, howWasItFound, oldFullPath);
                 };
 
                 MainWindow.Dispatcher.BeginInvoke(action, DispatcherPriority.Normal);
@@ -805,7 +813,7 @@ namespace BuzzardWPF.Management
             }
 
             bool isArchived;
-            var originalPath = ValidateFileOrFolderPath(path, out isArchived);
+            var originalPath = ValidateFileOrFolderPath(datasetFileOrFolderPath, allowFolderMatch, out isArchived);
             if (string.IsNullOrEmpty(originalPath))
                 return;
 
@@ -827,8 +835,8 @@ namespace BuzzardWPF.Management
                             // Update the existing entry to use the new path
 
                             dataset = datasetEntry;
-
-                            dataset.FilePath = path;
+                            dataset.FilePath = datasetFileOrFolderPath;
+                            dataset.RelativeParentFolderPath = relativeParentFolderPath;
                             dataset.UpdateFileProperties();
                             break;
                         }
@@ -844,7 +852,7 @@ namespace BuzzardWPF.Management
                 // 
                 foreach (var datasetEntry in Datasets)
                 {
-                    if (datasetEntry.FilePath.Equals(path, StringComparison.OrdinalIgnoreCase) ||
+                    if (datasetEntry.FilePath.Equals(datasetFileOrFolderPath, StringComparison.OrdinalIgnoreCase) ||
                         datasetEntry.FilePath.Equals(originalPath, StringComparison.OrdinalIgnoreCase))
                     {
                         // Match found
@@ -857,10 +865,11 @@ namespace BuzzardWPF.Management
 
             if (dataset != null)
             {
+                dataset.RelativeParentFolderPath = relativeParentFolderPath;
                 if (isArchived)
-                    dataset.FilePath = path;
+                    dataset.FilePath = datasetFileOrFolderPath;
                 else
-                    dataset.UpdateFileProperties();
+                    dataset.UpdateFileProperties();                
 
             }
             else if (
@@ -874,7 +883,8 @@ namespace BuzzardWPF.Management
             }
             else
             {
-                dataset = DatasetFactory.LoadDataset(path);
+                dataset = DatasetFactory.LoadDataset(datasetFileOrFolderPath);
+                dataset.RelativeParentFolderPath = relativeParentFolderPath;
                 dataset.Comment = Manager.UserComments;
                 newDatasetFound = true;
             }
@@ -984,7 +994,7 @@ namespace BuzzardWPF.Management
 
                 classApplicationLogger.LogMessage(
                     0,
-                    string.Format("Data source: '{0}' found.", path));
+                    string.Format("Data source: '{0}' found.", datasetFileOrFolderPath));
             }
 
 
@@ -1007,7 +1017,7 @@ namespace BuzzardWPF.Management
             }
 
             bool isArchived;
-            var pathToUse = ValidateFileOrFolderPath(path, out isArchived);
+            var pathToUse = ValidateFileOrFolderPath(path, true, out isArchived);
 
             foreach (var datasetEntry in Datasets)
             {
@@ -1021,7 +1031,7 @@ namespace BuzzardWPF.Management
 
         }
 
-        private string ValidateFileOrFolderPath(string path, out bool isArchived)
+        private string ValidateFileOrFolderPath(string path, bool allowFolderMatch, out bool isArchived)
         {
 
             isArchived = false;
@@ -1044,34 +1054,28 @@ namespace BuzzardWPF.Management
                 else
                     return fiDatasetFile.FullName;
             }
-            else
+            
+            // Not looking for a file; must be looking for a folder
+            var diDatasetFolder = new DirectoryInfo(path);
+
+            if (!diDatasetFolder.Exists)
             {
-                // Not looking for a file; must be looking for a folder
-
-                var diDatasetFolder = new DirectoryInfo(path);
-
-                if (!diDatasetFolder.Exists)
-                {
-                    // File or folder not found; skip it
-                    return string.Empty;
-                }
-
-                if (!MatchFolders)
-                {
-                    // Do not add folders to DMS as new datasets
-                    return string.Empty;
-                }
-
-                isArchived = diDatasetFolder.Name.StartsWith("x_", StringComparison.OrdinalIgnoreCase);
-
-                if (isArchived && diDatasetFolder.Name.Length > 2)
-                    return Path.Combine(diDatasetFolder.Parent.FullName, diDatasetFolder.Name.Substring(2));
-                else
-                    return diDatasetFolder.FullName;
-
-
+                // File or folder not found; skip it
+                return string.Empty;
             }
 
+            if (!allowFolderMatch)
+            {
+                // Do not add folders to DMS as new datasets
+                return string.Empty;
+            }
+
+            isArchived = diDatasetFolder.Name.StartsWith("x_", StringComparison.OrdinalIgnoreCase);
+
+            if (isArchived && diDatasetFolder.Name.Length > 2)
+                return Path.Combine(diDatasetFolder.Parent.FullName, diDatasetFolder.Name.Substring(2));
+            else
+                return diDatasetFolder.FullName;
         }
 
     }

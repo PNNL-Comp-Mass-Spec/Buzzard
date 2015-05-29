@@ -10,18 +10,42 @@ namespace BuzzardLib.Searching
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="path">Path of dataset that was found.</param>
-        public DatasetFoundEventArgs(string path)
+        /// <param name="datasetPath">Full path to the dataset file or folder</param>
+        /// <param name="parentFolderPathRelative">Relative </param>
+        /// <param name="config">Search config options</param>
+        public DatasetFoundEventArgs(string datasetPath, string parentFolderPathRelative, SearchConfig config)
         {
-            Path = path;
+            Path = datasetPath;
+            RelativeParentFolderPath = parentFolderPathRelative;
+            CurrentSearchConfig = config;
         }
+
         /// <summary>
-        /// Gets the path found by a Buzzadier.
+        /// Current search configuration
+        /// </summary>
+        public SearchConfig CurrentSearchConfig
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets the full dataset path found by a Buzzadier.
         /// </summary>
         public string Path
         {
             get;
             private set;
         }
+
+        /// <summary>
+        /// Gets the relative storage path of the parent folder for the found dataset
+        /// </summary>
+        public string RelativeParentFolderPath
+        {
+            get;
+            private set;
+        }
+
     }
 }

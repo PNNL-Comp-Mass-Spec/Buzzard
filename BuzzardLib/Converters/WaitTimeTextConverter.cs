@@ -51,6 +51,10 @@ namespace BuzzardLib.Converters
                     case DatasetStatus.TriggerAborted:
                         returnValue = "Aborted manual trigger";
                         break;
+
+                    case DatasetStatus.FileSizeChanged:
+                        returnValue = "Aborted, size changed";
+                        break;
                 }
 
 

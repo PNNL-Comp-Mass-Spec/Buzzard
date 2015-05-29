@@ -163,9 +163,9 @@
                             DefaultValue="100"
                             FontSize="15"
                             FormatString="0"
-                            Increment="10"
+                            Increment="5"
                             Maximum="2000000"
-                            Minimum="25"
+                            Minimum="5"
                             ParsingNumberStyle="Integer"
                             Value="{Binding Path=Config.MinimumSizeKB,
                                             Mode=TwoWay,

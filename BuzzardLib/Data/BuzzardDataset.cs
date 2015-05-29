@@ -28,8 +28,11 @@ namespace BuzzardLib.Data
         private DatasetSource m_datasetSource;
         private TriggerFileStatus m_triggerFileStatus;
         private string m_experimentName;
-
+        private string m_comment = string.Empty;
         private string m_lcColumn;
+        private string mRelativeParentFolderPath = string.Empty;
+
+        private bool m_isQC;
 
         /// <summary>
         /// Status of the dataset.
@@ -47,6 +50,11 @@ namespace BuzzardLib.Data
 
         private int m_secondsRemainingTillTriggerCreation;
         private double m_waitTimePercentage;
+
+        private bool m_PulseText;
+        private ObservableCollection<classProposalUser> m_emslProposalUsers;
+        private string m_interestRating;
+
         #endregion
 
         #region Initialization
@@ -70,19 +78,18 @@ namespace BuzzardLib.Data
 
 
         #region UI data place holders
-        public bool PluseText
+        public bool PulseText
         {
-            get { return m_PluseText; }
+            get { return m_PulseText; }
             set
             {
-                if (m_PluseText != value)
+                if (m_PulseText != value)
                 {
-                    m_PluseText = value;
-                    OnPropertyChanged("PluseText");
+                    m_PulseText = value;
+                    OnPropertyChanged("PulseText");
                 }
             }
-        }
-        private bool m_PluseText;
+        }        
 
         public int SecondsTillTriggerCreation
         {
@@ -123,8 +130,6 @@ namespace BuzzardLib.Data
                 }
             }
         }
-        private ObservableCollection<classProposalUser> m_emslProposalUsers;
-
 
         public string LCColumn
         {
@@ -138,8 +143,7 @@ namespace BuzzardLib.Data
                 }
             }
         }
-
-        private string m_comment = "";
+        
         public string Comment
         {
             get
@@ -152,6 +156,19 @@ namespace BuzzardLib.Data
                 {
                     m_comment = value;
                     OnPropertyChanged("Comment");
+                }
+            }
+        }
+
+        public string RelativeParentFolderPath
+        {
+            get { return mRelativeParentFolderPath; }
+            set
+            {
+                if (mRelativeParentFolderPath != value)
+                {
+                    mRelativeParentFolderPath = value;
+                    OnPropertyChanged("RelativeParentFolderPath");
                 }
             }
         }
@@ -218,8 +235,6 @@ namespace BuzzardLib.Data
                 }
             }
         }
-        private bool m_isQC;
-
 
         /// <summary>
         /// If there's another dataset with the same Request Name,
@@ -323,7 +338,6 @@ namespace BuzzardLib.Data
                 }
             }
         }
-        private string m_interestRating;
 
         /// <summary>
         /// Gets or sets the status of the trigger file.

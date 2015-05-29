@@ -7,6 +7,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using BuzzardLib.Data;
+using BuzzardLib.IO;
 using BuzzardLib.Searching;
 using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
@@ -263,8 +264,15 @@ namespace BuzzardWPF.Windows
 
             if (extension == Extension.ToLower())
             {
+                const bool allowFolderMatch = true;
+
                 // File was renamed, either update an existing dataset, or add a new one
-                DatasetManager.Manager.CreatePendingDataset(e.FullPath, DatasetSource.Watcher, e.OldFullPath);
+                DatasetManager.Manager.CreatePendingDataset(
+                    e.FullPath,
+                    TriggerFileTools.GetRelativeParentFolderPath(DirectoryToWatch, e.FullPath),
+                    allowFolderMatch,
+                    DatasetSource.Watcher, 
+                    e.OldFullPath);
             }
         }
 
@@ -390,7 +398,8 @@ namespace BuzzardWPF.Windows
 
                     if (extension == Extension.ToLower())
                     {
-                        DatasetManager.Manager.CreatePendingDataset(fullFilePath, DatasetSource.Watcher);
+                        const bool allowFolderMatch = true;
+                        DatasetManager.Manager.CreatePendingDataset(fullFilePath, DirectoryToWatch, allowFolderMatch, DatasetSource.Watcher);
                     }
                 }
             }

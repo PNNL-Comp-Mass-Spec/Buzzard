@@ -228,7 +228,7 @@
                                 </TextBlock>
                             </Grid>
                             <DataTemplate.Triggers>
-                                <DataTrigger Binding="{Binding PluseText}" Value="True">
+                                <DataTrigger Binding="{Binding PulseText}" Value="True">
                                     <DataTrigger.EnterActions>
                                         <BeginStoryboard>
                                             <Storyboard>
@@ -372,6 +372,7 @@
                 <DataGridTextColumn		Header="Created"			Binding="{Binding RunStart}"        IsReadOnly="True"/>
                 <DataGridTextColumn		Header="Last Modified"		Binding="{Binding RunFinish}"		IsReadOnly="True"/>
                 <DataGridTextColumn		Header="Source Data Path"	Binding="{Binding FilePath}"		IsReadOnly="True"/>
+                <DataGridTextColumn		Header="Relative Parent Path"	Binding="{Binding RelativeParentFolderPath}"  IsReadOnly="True"/>
             </DataGrid.Columns>
         </DataGrid>
 

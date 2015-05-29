@@ -16,7 +16,12 @@ namespace BuzzardLib.Searching
         /// Fired when a search was completed.
         /// </summary>
         event EventHandler SearchComplete;
-        
+
+        /// <summary>
+        /// Fired when we start searching for datasets
+        /// </summary>
+        event EventHandler SearchStarted;
+
         /// <summary>
         /// Fired when a search was stopped.
         /// </summary>

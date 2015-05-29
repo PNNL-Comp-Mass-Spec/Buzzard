@@ -177,7 +177,7 @@
                             Increment="5"
                             IsEnabled="{Binding Path=IsNotMonitoring}"
                             Maximum="2000000"
-                            Minimum="30"
+                            Minimum="5"
                             Value="{Binding Path=MinimumFileSize,
                                             Mode=TwoWay,
                                             UpdateSourceTrigger=PropertyChanged,

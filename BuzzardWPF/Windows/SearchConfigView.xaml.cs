@@ -62,10 +62,7 @@ namespace BuzzardWPF.Windows
 
             // Add the search options to the list box
             m_SearchDepth.ItemsSource = options;
-            
-            //m_SearchDepth.DataContext = m_config;
-            //m_extension.DataContext = m_config;
-            //m_minimumSizeKB.DataContext = m_config;
+                    
         }
 
 

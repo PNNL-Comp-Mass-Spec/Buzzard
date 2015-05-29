@@ -15,7 +15,7 @@ namespace BuzzardLib.Searching
         public const int DEFAULT_MINIMUM_FILE_SIZE_KB = 100;
         public const string DEFAULT_FILE_EXTENSION = ".raw";
         public const SearchOption DEFAULT_SEARCH_DEPTH = SearchOption.TopDirectoryOnly;
-        public const bool DEFAULT_MATCH_FOLDERS = false;
+        public const bool DEFAULT_MATCH_FOLDERS = true;
 
         #endregion
 
