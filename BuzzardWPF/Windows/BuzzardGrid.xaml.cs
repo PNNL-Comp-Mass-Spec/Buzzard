@@ -973,6 +973,8 @@ namespace BuzzardWPF.Windows
             }
 
             var startTime = DateTime.UtcNow;
+            var nextLogTime = startTime.AddSeconds(2);
+            classApplicationLogger.LogMessage(0, "Verifying stable dataset files for " + SECONDS_TO_WAIT + " seconds");
 
             while (DateTime.UtcNow.Subtract(startTime).TotalSeconds < SECONDS_TO_WAIT)
             {
@@ -981,7 +983,15 @@ namespace BuzzardWPF.Windows
                 if (mAbortTriggerCreationNow)
                 {
                     MarkAborted(selectedDatasets);
+                    classApplicationLogger.LogMessage(0, "Aborted verification of stable dataset files");
                     return stableDatasets;
+                }
+
+                if (DateTime.UtcNow >= nextLogTime)
+                {
+                    nextLogTime = nextLogTime.AddSeconds(2);
+                    var secondsRemaining = (int)(Math.Round(SECONDS_TO_WAIT - DateTime.UtcNow.Subtract(startTime).TotalSeconds));
+                    classApplicationLogger.LogMessage(0, "Verifying stable dataset files for " + SECONDS_TO_WAIT + " seconds; " + secondsRemaining + " seconds remain");
                 }
             }
 
