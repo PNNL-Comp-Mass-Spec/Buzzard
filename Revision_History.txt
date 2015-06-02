@@ -1,0 +1,13 @@
+Buzzard Change Log
+
+Version 1.7.11; May 29, 2015
+	- Now validating that dataset files or folders are unchanged for 30 seconds before manually creating trigger files
+	- Replace WPF date pickers with Xceed DateTimePicker controls
+	- Added tracking of Capture Subfolder path, meaning dataset files do not need to be moved to the base share folder in order to be captured
+	- Now referencing LCMSNet DLLs instead of their Visual Studio projects
+	- Add Minimum File Size to the Search tab
+	- Add Defaults buttons
+
+Version 1.7.10; June 20, 2014
+	- Now allowing settings on other tabs to be viewed when monitoring for new files
+	- Fixed bug that failed to change the Monitor button text to "Stop" when running
