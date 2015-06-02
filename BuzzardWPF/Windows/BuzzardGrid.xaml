@@ -544,19 +544,19 @@
             </Button>
 
             <Button Grid.Column="3"
-                    Width="164"
+                    Width="190"
                     Height="48"
-                    Click="MoveDataset_Click"
+                    Click="FixDatasetNames_Click"
                     Style="{StaticResource SimpleButtonStyle}">
                 <DockPanel>
                     <Image Margin="5"
                            DockPanel.Dock="Left"
-                           Source="{StaticResource MoveDataset}"
+                           Source="{StaticResource FixDatasetNames}"
                            Stretch="None" />
                     <Label VerticalContentAlignment="Center"
                            FontFamily="Arial"
                            FontSize="14">
-                        Move Dataset
+                        Fix Dataset Names
                     </Label>
                 </DockPanel>
             </Button>

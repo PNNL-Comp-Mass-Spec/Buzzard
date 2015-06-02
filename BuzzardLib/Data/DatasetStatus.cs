@@ -54,6 +54,6 @@
         /// <summary>
         /// Dataset size changed over 60 seconds
         /// </summary>
-        FileSizeChanged
+        FileSizeChanged        
 	}
 }

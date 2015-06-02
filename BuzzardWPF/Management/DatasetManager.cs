@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Windows.Markup.Localizer;
 using System.Windows.Threading;
 using BuzzardLib.Data;
 using BuzzardLib.IO;
@@ -256,6 +257,11 @@ namespace BuzzardWPF.Management
                     return null;
                 }
 
+                if (!TriggerFileTools.ValidateDatasetName(dataset, dataset.Name))
+                {
+                    return null;
+                }
+
                 if (preview)
                 {
                     if (!(dataset.DatasetStatus == DatasetStatus.Pending || 
@@ -296,7 +302,8 @@ namespace BuzzardWPF.Management
             }
 
             return null;
-        }     
+     
+        }
 
         public Dictionary<string, bool> TriggerDirectoryContents
         {
@@ -372,7 +379,7 @@ namespace BuzzardWPF.Management
             }
             catch (KeyNotFoundException)
             {
-                if (Path.GetFileNameWithoutExtension(fiDataset.Name).StartsWith("x_"))
+                if (fiDataset.Name.StartsWith("x_", StringComparison.OrdinalIgnoreCase))
                     dataset.DatasetStatus = DatasetStatus.DatasetMarkedCaptured;
                 else
                 {
@@ -890,6 +897,9 @@ namespace BuzzardWPF.Management
                 dataset = DatasetFactory.LoadDataset(datasetFileOrFolderPath);
                 dataset.CaptureSubfolderPath = captureSubfolderPath;
                 dataset.Comment = Manager.UserComments;
+
+                TriggerFileTools.ValidateDatasetName(dataset, dataset.DMSData.DatasetName);
+
                 newDatasetFound = true;
             }
 
@@ -1079,6 +1089,13 @@ namespace BuzzardWPF.Management
 
             var fiDatasetFile = new FileInfo(path);
 
+            // Check for a file named simple "x_"
+            if (string.Equals(Path.GetFileNameWithoutExtension(fiDatasetFile.Name), "x_", StringComparison.OrdinalIgnoreCase))
+            {
+                classApplicationLogger.LogMessage(0, "Skipping file with 2 character name of x_, " + fiDatasetFile.Name);
+                return string.Empty;
+            }
+
             if (fiDatasetFile.Exists)
             {
 
@@ -1086,8 +1103,8 @@ namespace BuzzardWPF.Management
 
                 if (isArchived && fiDatasetFile.Name.Length > 2)
                     return Path.Combine(fiDatasetFile.DirectoryName, fiDatasetFile.Name.Substring(2));
-                else
-                    return fiDatasetFile.FullName;
+                
+                return fiDatasetFile.FullName;
             }
             
             // Not looking for a file; must be looking for a folder
@@ -1109,8 +1126,8 @@ namespace BuzzardWPF.Management
 
             if (isArchived && diDatasetFolder.Name.Length > 2)
                 return Path.Combine(diDatasetFolder.Parent.FullName, diDatasetFolder.Name.Substring(2));
-            else
-                return diDatasetFolder.FullName;
+            
+            return diDatasetFolder.FullName;
         }
 
      

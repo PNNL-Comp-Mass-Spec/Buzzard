@@ -163,7 +163,7 @@
     <Compile Include="Management\DatasetManager.cs" />
     <Compile Include="Management\DMSConfig.cs" />
     <Compile Include="Management\DMS_DataAccessor.cs" />
-    <Compile Include="Management\MoveDataRequest.cs" />
+    <Compile Include="Management\RenameDataRequest.cs" />
     <Compile Include="Windows\BuzzardDatasetDetail.xaml.cs">
       <DependentUpon>BuzzardDatasetDetail.xaml</DependentUpon>
     </Compile>
@@ -174,9 +174,6 @@
     </Compile>
     <Compile Include="Windows\Dialogs\DatasetOverwriteDialog.xaml.cs">
       <DependentUpon>DatasetOverwriteDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Windows\DateRangeSelector.xaml.cs">
-      <DependentUpon>DateRangeSelector.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\DMSConfigView.xaml.cs">
       <DependentUpon>DMSConfigView.xaml</DependentUpon>
@@ -236,10 +233,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Windows\Dialogs\DatasetOverwriteDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Windows\DateRangeSelector.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

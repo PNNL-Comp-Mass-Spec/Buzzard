@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using BuzzardLib.Data;
+using BuzzardLib.IO;
 
 namespace BuzzardWPF.Management
 {
@@ -47,11 +48,8 @@ namespace BuzzardWPF.Management
 				FilePath = path
 			};
 
-			dataset.DMSData.DatasetName = Path.GetFileNameWithoutExtension(path);
-
-			if (dataset.DMSData.DatasetName.StartsWith("x_", StringComparison.OrdinalIgnoreCase))
-				dataset.DMSData.DatasetName = dataset.DMSData.DatasetName.Substring(2);
-
+		    dataset.DMSData.DatasetName = TriggerFileTools.GetDatasetNameFromFilePath(path);
+			
 			if (dataset.DMSData.DatasetName.StartsWith("qc_shew", StringComparison.OrdinalIgnoreCase))
 				dataset.IsQC = true;
 

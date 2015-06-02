@@ -64,7 +64,7 @@ namespace BuzzardLib.Data
             DMSDataLastUpdate = DateTime.UtcNow.Subtract(new TimeSpan(1, 0, 0));
 
             NotOnlyDatasource = false;
-            DatasetSource = Data.DatasetSource.Searcher;
+            DatasetSource = DatasetSource.Searcher;
             DatasetStatus = DatasetStatus.Pending;
 
             WaitTimePercentage = 0;

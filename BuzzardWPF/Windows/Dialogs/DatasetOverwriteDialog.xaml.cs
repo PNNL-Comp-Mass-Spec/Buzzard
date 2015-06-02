@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Windows;
 
-namespace BuzzardWPF.Windows
+namespace BuzzardWPF.Windows.Dialogs
 {
 	/// <summary>
 	/// Interaction logic for DatasetOverwriteDialog.xaml
@@ -15,10 +15,10 @@ namespace BuzzardWPF.Windows
 
 
 		#region Attributes
-		private string	m_fileToMovePath;
+		private string	m_fileToRenamePath;
 		private string	m_fileInWayPath;
 		private bool	m_doSameToOtherConflicts;
-		private bool	m_skipMove;
+		private bool	m_skipRename;
 		#endregion
 
 
@@ -29,23 +29,23 @@ namespace BuzzardWPF.Windows
 			DataContext = this;
 
 			DoSameToOtherConflicts	= false;
-			FileToMovePath			= null;
+			FileToRenamePath		= null;
 			FileInWayPath			= null;
-			SkipDatasetMove			= false;
+			SkipDatasetRename		= false;
 		}
 		#endregion
 
 
 		#region Properties
-		public string FileToMovePath
+		public string FileToRenamePath
 		{
-			get { return m_fileToMovePath; }
+			get { return m_fileToRenamePath; }
 			set
 			{
-				if (m_fileToMovePath != value)
+				if (m_fileToRenamePath != value)
 				{
-					m_fileToMovePath = value;
-					OnPropertyChanged("FileToMovePath");
+					m_fileToRenamePath = value;
+					OnPropertyChanged("FileToRenamePath");
 
 					m_sourcePathDataViewer.PathName = value;
 				}
@@ -80,15 +80,15 @@ namespace BuzzardWPF.Windows
 			}
 		}
 
-		public bool SkipDatasetMove
+		public bool SkipDatasetRename
 		{
-			get { return m_skipMove; }
+			get { return m_skipRename; }
 			private set
 			{
-				if (m_skipMove != value)
+                if (m_skipRename != value)
 				{
-					m_skipMove = value;
-					OnPropertyChanged("SkipDatasetMove");
+                    m_skipRename = value;
+					OnPropertyChanged("SkipDatasetRename");
 				}
 			}
 		}
@@ -96,15 +96,15 @@ namespace BuzzardWPF.Windows
 
 
 		#region Event Handlers
-		private void CopyAndReplace_Click(object sender, RoutedEventArgs e)
+        private void Replace_Click(object sender, RoutedEventArgs e)
 		{
-			SkipDatasetMove = false;
+			SkipDatasetRename = false;
 			DialogResult	= true;
 		}
 
 		private void SkipDataset_Click(object sender, RoutedEventArgs e)
 		{
-			SkipDatasetMove = true;
+			SkipDatasetRename = true;
 			DialogResult	= true;
 		}
 		#endregion

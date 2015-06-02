@@ -208,8 +208,8 @@
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition />
-                                    <ColumnDefinition Width="155" />
-                                    <ColumnDefinition Width="155" />
+                                    <ColumnDefinition Width="180" />
+                                    <ColumnDefinition Width="180" />
                                 </Grid.ColumnDefinitions>
 
                                 <Grid.RowDefinitions>
@@ -222,66 +222,60 @@
                                 <TextBlock Grid.Row="0"
                                            Grid.Column="0"
                                            Style="{StaticResource TextBlockStyle}"
-                                           Text="Remote Folder Location" />
-                                
+                                           Text="Remote Folder Location" Margin="20,11,20.2,11" />
+
                                 <TextBox x:Name="TxtRemoteFolderLocation"
                                          Grid.Row="0"
                                          Grid.Column="1"
                                          Height="32"
-                                         Margin="5"
+                                         Margin="4.8,4"
                                          IsEnabled="False"
                                          Style="{StaticResource TextBoxStyle}"
                                          Text="{Binding Path=TriggerFileLocation,
                                                         Mode=TwoWay,
                                                         UpdateSourceTrigger=LostFocus}" />
-                                
+
                                 <Button Grid.Row="0"
                                         Grid.Column="2"
-                                        Margin="0,5,5,0"
+                                        Width="160"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
                                         Click="UseDefaultTriggerFileLocation_Click"
                                         Content="Use default"
-                                        FontFamily="Calibri"
                                         Style="{StaticResource SimpleButtonStyle}" />
-                                
+
                                 <Button Grid.Row="0"
                                         Grid.Column="3"
-                                        Margin="0,5,5,0"
+                                        Width="160"                                        
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
                                         Click="SelectTriggerFileLocation_Click"
                                         Content="Select folder ..."
-                                        FontFamily="Calibri"
                                         Style="{StaticResource SimpleButtonStyle}" />
-                                
+
                                 <Button x:Name="CmdUseTestFolder"
                                         Grid.Row="1"
-                                        Grid.RowSpan="1"
-                                        Grid.Column="2"
-                                        Margin="0,5,5,0"
+                                        Grid.Column="2"                                       
+                                        Width="160"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
                                         Click="UseTestFolder_Click"
                                         Content="Use test folder"
-                                        FontFamily="Calibri"
                                         Style="{StaticResource SimpleButtonStyle}" />
-                                
+
                                 <Button Grid.Row="1"
-                                        Grid.RowSpan="1"
                                         Grid.Column="3"
-                                        Margin="0,5,5,0"
+                                        Width="160"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
                                         Click="ForceDmsReload_Click"
                                         Content="Reload DMS cache"
-                                        FontFamily="Calibri"
                                         Style="{StaticResource SimpleButtonStyle}" />
-                                
+
                                 <Label Grid.Row="1"
-                                       Grid.Column="1"
                                        Grid.RowSpan="3"
-                                       Margin="10"
+                                       Grid.Column="1"
+                                       Margin="9.8,10"
                                        Content="{Binding LastUpdated}"
                                        Foreground="Gray" />
                             </Grid>

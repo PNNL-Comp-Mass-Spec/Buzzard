@@ -12,6 +12,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Threading;
 using BuzzardLib.Data;
+using BuzzardLib.IO;
 using BuzzardWPF.Management;
 using LcmsNetDataClasses.Data;
 using LcmsNetDataClasses.Logging;
@@ -39,8 +40,6 @@ namespace BuzzardWPF.Windows
 
         private bool m_showGridItemDetail;
         private bool mAbortTriggerCreationNow;
-
-        private string m_moveDestinationDir;
 
         #endregion
 
@@ -73,9 +72,6 @@ namespace BuzzardWPF.Windows
                     DatasetType = Properties.Settings.Default.FilldownDatasetType
                 }
             };
-
-            m_moveDestinationDir = null;
-
 
             DMS_DataAccessor.Instance.PropertyChanged += DMSDataManager_PropertyChanged;
         }
@@ -359,182 +355,95 @@ namespace BuzzardWPF.Windows
 
 
         /// <summary>
-        /// Moves the data for the selected datasets to a new location.
+        /// Renames the specified datasets to remove invalid characters
         /// </summary>
-        private void MoveDataset_Click(object sender, RoutedEventArgs e)
+        private void FixDatasetNames_Click(object sender, RoutedEventArgs e)
         {
-            //
-            // Get location in which to move them.
-            //
-            var dialogWindow = new System.Windows.Forms.FolderBrowserDialog
-            {
-                ShowNewFolderButton = true,
-                Description = "Move data to:",
-            };
-
-            // If there was a last path for this call then use it.
-            if (!string.IsNullOrWhiteSpace(m_moveDestinationDir))
-                dialogWindow.SelectedPath = m_moveDestinationDir;
-
-            var dialogResult = dialogWindow.ShowDialog();
-
-            // Check if the User does not want to continue.
-            switch (dialogResult)
-            {
-                case System.Windows.Forms.DialogResult.Abort:
-                case System.Windows.Forms.DialogResult.Cancel:
-                case System.Windows.Forms.DialogResult.Ignore:
-                case System.Windows.Forms.DialogResult.No:
-                case System.Windows.Forms.DialogResult.None:
-                case System.Windows.Forms.DialogResult.Retry:
-                    return;
-
-                default:
-                    break;
-            }
-
-            m_moveDestinationDir = dialogWindow.SelectedPath;
-
-            classApplicationLogger.LogMessage(
-                0,
-                string.Format("Starting dataset move to: {0}", m_moveDestinationDir));
-
-            // Make sure destination directory really exists before 
-            // trying to stuff files into it.
-            if (!Directory.Exists(m_moveDestinationDir))
-            {
-                try
-                {
-                    Directory.CreateDirectory(m_moveDestinationDir);
-                    System.Threading.Thread.Sleep(75);
-                }
-                catch (Exception ex)
-                {
-                    classApplicationLogger.LogError(
-                        0,
-                        string.Format(
-                            "Destination directory: \"{0}\" for dataset move could not be found or created.",
-                            m_moveDestinationDir),
-                        ex);
-                    return;
-                }
-            }
-
-
+         
             //
             // Get list of selected datasets
             //
             var selectedDatasets = GetSelectedDatasets();
 
-            // If there's nothing to move, then
-            // don't bother with the rest.
+            // If there's nothing to rename, then exit
             if (selectedDatasets.Count == 0)
             {
-                classApplicationLogger.LogMessage(
-                    0,
-                    string.Format("Finished moving datasets to: {0}", m_moveDestinationDir));
                 return;
             }
 
-
-            //
-            // Remove datasets that are already at that location
-            //
-            for (var i = selectedDatasets.Count - 1; i >= 0; i--)
+            var datasetsToRename = new List<BuzzardDataset>();
+            foreach (var dataset in selectedDatasets)
             {
                 // Check that the dataset has a path to get data from.
-                if (string.IsNullOrWhiteSpace(selectedDatasets[i].FilePath))
+                if (string.IsNullOrEmpty(dataset.FilePath))
                 {
                     classApplicationLogger.LogError(
                         0,
-                        string.Format("Dataset {0} has no associated data.", selectedDatasets[i].DMSData.DatasetName));
+                        string.Format("Dataset {0} has no associated data.", dataset.DMSData.DatasetName));
 
-                    selectedDatasets.RemoveAt(i);
                     continue;
                 }
 
-                var datasetDir = Path.GetDirectoryName(selectedDatasets[i].FilePath);
-
-                // If the location we're moving the files over to is the same location they 
-                // are currently in, then we don't need to move them.
-                if (Path.GetFullPath(datasetDir).Equals(Path.GetFullPath(m_moveDestinationDir), StringComparison.OrdinalIgnoreCase))
-                {
-                    classApplicationLogger.LogMessage(
-                        0,
-                        string.Format(
-                            "Dataset '{0}' doesn't need to be moved to: {1}",
-                            selectedDatasets[i].DMSData.DatasetName,
-                            m_moveDestinationDir));
-
-                    selectedDatasets.RemoveAt(i);
-                }
+                var currentName = TriggerFileTools.GetDatasetNameFromFilePath(dataset.FilePath);
+               
+                if (TriggerFileTools.NameHasInvalidCharacters(currentName) || currentName.Length < TriggerFileTools.MINIMUM_DATASET_NAME_LENGTH)
+                    datasetsToRename.Add(dataset);
             }
 
-            // If there's nothing to move, then
-            // don't bother with the rest.
-            if (selectedDatasets.Count == 0)
+            // If there's nothing to process, then exit
+            if (datasetsToRename.Count == 0)
             {
                 classApplicationLogger.LogMessage(
                     0,
-                    string.Format("Finished moving datasets to: {0}", m_moveDestinationDir));
+                    "No datasets have invalid characters in their name or are too short; nothing to rename");
                 return;
             }
 
-            //
-            // Create list of move requests.
-            //
-            var moveRequests = new List<MoveDataRequest>(selectedDatasets.Count);
-            foreach (var dataset in selectedDatasets)
-            {
-                var moveRequest = new MoveDataRequest
-                {
-                    Dataset = dataset,
-                    SourceDataPath = dataset.FilePath,
-                    DestinationDataPath = Path.Combine(m_moveDestinationDir, Path.GetFileName(dataset.FilePath))
-                };
-
-                moveRequests.Add(moveRequest);
-            }
+            classApplicationLogger.LogMessage(
+                0,
+                "Starting dataset renames to remove invalid characters or lengthen dataset names");
 
             //
-            // Put in call to start moving data
-            // to new directory
+            // Create list of Rename requests.
+            //
+            var renameRequests = new List<RenameDataRequest>(datasetsToRename.Count);
+            renameRequests.AddRange(datasetsToRename.Select(dataset => new RenameDataRequest(dataset)));
+
+            //
+            // Put in call to start renaming data
             //
             Action action = delegate
             {
-                MoveDatasets(moveRequests, 0, true, false, m_moveDestinationDir);
+                RenameDatasets(renameRequests, 0, true, false);
             };
 
             Dispatcher.BeginInvoke(action, DispatcherPriority.Normal);
-        }
+        }       
 
         /// <summary>
-        /// Moves the data for the selected datasets to a new location.
+        /// Renames the data for the selected datasets to replace invalid characters in the name with underscores
         /// </summary>
-        /// <param name="moveRequests">List of requests to move.</param>
-        /// <param name="startingIndex">The index location of the dataset that will be moved on this call of MoveDatasets</param>		
+        /// <param name="renameRequests">List of datasets to rename.</param>
+        /// <param name="startingIndex">The index location of the dataset that will be renamedd on this call of RenameDatasets</param>		
         /// <param name="informUserOnConflict">Tells us if we should inform the user when we hit a conflict, or do what skipOnConflicts says.</param>
         /// <param name="skipOnConflicts">Tells us if we should overwrite or skip a dataset on a conflict</param>
-        /// <param name="destinationLocation">The directory in which to move the datasets</param>
-        private void MoveDatasets(List<MoveDataRequest> moveRequests, int startingIndex, bool informUserOnConflict,
-            bool skipOnConflicts, string destinationLocation)
+        private void RenameDatasets(IList<RenameDataRequest> renameRequests, int startingIndex, bool informUserOnConflict, bool skipOnConflicts)
         {
             //
-            // Move data
+            // Rename data
             //
-            var moveRequest = moveRequests[startingIndex];
-            moveRequest.MoveData(ref informUserOnConflict, ref skipOnConflicts);
-
+            var renameRequest = renameRequests[startingIndex];
+            renameRequest.RenameData(ref informUserOnConflict, ref skipOnConflicts);
 
             //
-            // Put in call to move next dataset
+            // Put in call to rename the next dataset
             //
             startingIndex++;
-            if (startingIndex < moveRequests.Count)
+            if (startingIndex < renameRequests.Count)
             {
                 Action action = delegate
                 {
-                    MoveDatasets(moveRequests, startingIndex, informUserOnConflict, skipOnConflicts, destinationLocation);
+                    RenameDatasets(renameRequests, startingIndex, informUserOnConflict, skipOnConflicts);
                 };
 
                 Dispatcher.BeginInvoke(action, DispatcherPriority.Normal);
@@ -543,7 +452,7 @@ namespace BuzzardWPF.Windows
             {
                 classApplicationLogger.LogMessage(
                     0,
-                    string.Format("Finished moving datasets to: {0}", destinationLocation));
+                    "Finished renaming datasets to remove invalid characters");
             }
         }
 
@@ -974,7 +883,8 @@ namespace BuzzardWPF.Windows
 
             var startTime = DateTime.UtcNow;
             var nextLogTime = startTime.AddSeconds(2);
-            classApplicationLogger.LogMessage(0, "Verifying stable dataset files for " + SECONDS_TO_WAIT + " seconds");
+            var baseMessage = "Verifying dataset files are unchanged for " + SECONDS_TO_WAIT + " seconds";
+            classApplicationLogger.LogMessage(0, baseMessage);
 
             while (DateTime.UtcNow.Subtract(startTime).TotalSeconds < SECONDS_TO_WAIT)
             {
@@ -991,7 +901,7 @@ namespace BuzzardWPF.Windows
                 {
                     nextLogTime = nextLogTime.AddSeconds(2);
                     var secondsRemaining = (int)(Math.Round(SECONDS_TO_WAIT - DateTime.UtcNow.Subtract(startTime).TotalSeconds));
-                    classApplicationLogger.LogMessage(0, "Verifying stable dataset files for " + SECONDS_TO_WAIT + " seconds; " + secondsRemaining + " seconds remain");
+                    classApplicationLogger.LogMessage(0, baseMessage + "; " + secondsRemaining + " seconds remain");
                 }
             }
 

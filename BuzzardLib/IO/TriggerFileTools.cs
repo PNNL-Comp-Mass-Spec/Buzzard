@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Xml;
 using BuzzardLib.Data;
 using LcmsNetDataClasses;
@@ -15,9 +16,16 @@ namespace BuzzardLib.IO
     /// </summary>
     public class TriggerFileTools
     {
+        /// <summary>
+        /// Minimum dataset name length
+        /// </summary>
+        /// <remarks>The minimum in DMS is 6 characters, but we're using 8 here to avoid uploading more datasets with 6 or 7 character names</remarks>
+        public const int MINIMUM_DATASET_NAME_LENGTH = 8;
 
         private static XmlDocument mobject_TriggerFileContents;
 
+        private static readonly Regex mInValidChar = new Regex(@"[^a-z0-9_-]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        
         /// <summary>
         /// Generates the trigger file text, but does not save a file
         /// </summary>
@@ -28,6 +36,11 @@ namespace BuzzardLib.IO
         /// <remarks>In the dataset object, DatasetStatus will be set to MissingRequiredInfo if field validation fails</remarks>
         public static string CreateTriggerString(classSampleData sample, BuzzardDataset dataset, DMSData dmsData)
         {
+            if (!ValidateDatasetName(dataset, dmsData.DatasetName))
+            {
+                return null;
+            }
+           
             var data = GenerateXmlDoc(sample, dataset, dmsData);
 
             if (dataset.DatasetStatus == DatasetStatus.MissingRequiredInfo)
@@ -56,6 +69,11 @@ namespace BuzzardLib.IO
             {
                 var msg = "Generate Trigger File: Sample " + sample.DmsData.DatasetName + ", Trigger file creation disabled";
                 classApplicationLogger.LogMessage(0, msg);
+                return null;
+            }
+
+            if (!ValidateDatasetName(dataset, dmsData.DatasetName))
+            {
                 return null;
             }
 
@@ -88,11 +106,11 @@ namespace BuzzardLib.IO
             if (dmsData.LockData || string.IsNullOrWhiteSpace(dataset.ExperimentName))
                 experimentName = dmsData.Experiment;
             else
-                experimentName = dataset.ExperimentName;
+                experimentName = dataset.ExperimentName;      
 
-            string comment = dmsData.Comment;
+            var comment = dmsData.Comment;
 
-            if (String.Compare(dataset.Comment, "HailWhiteshoes", StringComparison.CurrentCultureIgnoreCase) == 0)
+            if (string.Compare(dataset.Comment, "HailWhiteshoes", StringComparison.CurrentCultureIgnoreCase) == 0)
                 dataset.Comment = string.Empty;
 
             if (!string.IsNullOrWhiteSpace(dataset.Comment))
@@ -354,6 +372,16 @@ namespace BuzzardLib.IO
             return relativePath;
         }
 
+        public static string GetDatasetNameFromFilePath(string filePath)
+        {
+            var datasetName = Path.GetFileNameWithoutExtension(filePath);
+
+            if (datasetName != null && (datasetName.StartsWith("x_", StringComparison.OrdinalIgnoreCase) && datasetName.Length > 2))
+                datasetName = datasetName.Substring(2);
+
+            return datasetName;
+        }
+
         public static string GetTriggerFileName(classSampleData sample, string extension, BuzzardDataset dataset)
         {
             var datasetName = sample.DmsData.DatasetName;
@@ -366,12 +394,50 @@ namespace BuzzardLib.IO
             return outFileName;
         }
 
+        public static bool NameHasInvalidCharacters(string datasetFileOrFolderName)
+        {
+            return mInValidChar.IsMatch(datasetFileOrFolderName);
+        }
+
         private static string TrimWhitespace(string metadata)
         {
             if (string.IsNullOrWhiteSpace(metadata))
                 return string.Empty;
 
             return metadata.Trim();
+        }
+
+        /// <summary>
+        /// Validate that the dataset name is at least 6 characters in length and does not contain spaces
+        /// </summary>
+        /// <param name="dataset"></param>
+        /// <param name="datasetName"></param>
+        /// <returns>True if valid, false if problems</returns>
+        public static bool ValidateDatasetName(BuzzardDataset dataset, string datasetName)
+        {
+            
+            if (string.IsNullOrWhiteSpace(datasetName) || datasetName.Length < MINIMUM_DATASET_NAME_LENGTH)
+            {
+                dataset.DatasetStatus = DatasetStatus.MissingRequiredInfo;
+                dataset.TriggerCreationWarning = "Name too short (" + MINIMUM_DATASET_NAME_LENGTH + " char minimum)";
+                return false;
+            }
+
+            if (datasetName.Contains(" "))
+            {
+                dataset.DatasetStatus = DatasetStatus.MissingRequiredInfo;
+                dataset.TriggerCreationWarning = "Space in dataset name";
+                return false;
+            }
+
+            if (NameHasInvalidCharacters(datasetName))
+            {
+                dataset.DatasetStatus = DatasetStatus.MissingRequiredInfo;
+                dataset.TriggerCreationWarning = "Invalid chars in name";
+                return false;
+            }
+
+            return true;
         }
 
         /// <summary>
