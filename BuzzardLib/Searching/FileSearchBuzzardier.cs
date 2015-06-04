@@ -153,7 +153,7 @@ namespace BuzzardLib.Searching
                 }
 
                 var shouldSearchBelow = (config.SearchDepth == SearchOption.AllDirectories);
-                var searchFilter = string.Format("*{0}", config.FileExtension);
+                var extensionFilter = string.Format("*{0}", config.FileExtension);
 
                 if (string.IsNullOrWhiteSpace(config.DirectoryPath))
                 {
@@ -176,19 +176,32 @@ namespace BuzzardLib.Searching
 
                     try
                     {
-                        foreach (var file in currentDirectory.GetFiles(searchFilter, SearchOption.TopDirectoryOnly))
+                        var processFolder = true;
+
+                        if (!string.IsNullOrWhiteSpace(config.FolderNameFilter))
                         {
-                            fileAndFolderPaths.Add(new KeyValuePair<DatasetType, FileSystemInfo>(DatasetType.File, file));
+                            if (!currentDirectory.Name.ToLower().Contains(config.FolderNameFilter.ToLower()))
+                                processFolder = false;
                         }
 
-                        if (config.MatchFolders)
+                        if (processFolder)
                         {
                             foreach (
-                                var subDirectory in
-                                    currentDirectory.GetDirectories(searchFilter, SearchOption.TopDirectoryOnly))
+                                var file in currentDirectory.GetFiles(extensionFilter, SearchOption.TopDirectoryOnly))
                             {
-                                fileAndFolderPaths.Add(new KeyValuePair<DatasetType, FileSystemInfo>(
-                                                           DatasetType.Folder, subDirectory));
+                                fileAndFolderPaths.Add(new KeyValuePair<DatasetType, FileSystemInfo>(DatasetType.File,
+                                                                                                     file));
+                            }
+
+                            if (config.MatchFolders)
+                            {
+                                foreach (
+                                    var subDirectory in
+                                        currentDirectory.GetDirectories(extensionFilter, SearchOption.TopDirectoryOnly))
+                                {
+                                    fileAndFolderPaths.Add(new KeyValuePair<DatasetType, FileSystemInfo>(
+                                                               DatasetType.Folder, subDirectory));
+                                }
                             }
                         }
 
@@ -212,6 +225,12 @@ namespace BuzzardLib.Searching
 
                         try
                         {
+                            if (!string.IsNullOrWhiteSpace(config.FilenameFilter))
+                            {
+                                if (!datasetEntry.Value.Name.ToLower().Contains(config.FilenameFilter.ToLower()))
+                                    continue;
+                            }
+
                             DateTime creationDate;
                             DateTime lastWriteDate;
                             double datasetSizeKB = 0;

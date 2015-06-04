@@ -24,7 +24,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="180" />
             <ColumnDefinition Width="140" />
-            <ColumnDefinition Width="50" />
+            <ColumnDefinition Width="75" />
             <ColumnDefinition Width="140" />
             <ColumnDefinition />
             <ColumnDefinition Width="140" />
@@ -43,7 +43,7 @@
         <my:AutoCompleteBox x:Name="m_directoryPath"
                             Grid.Row="0"
                             Grid.Column="1"
-                            Grid.ColumnSpan="4"
+                            Grid.ColumnSpan="2"
                             MinHeight="32"
                             Margin="5"
                             VerticalAlignment="Center"
@@ -90,10 +90,10 @@
                                           RelativeSource={RelativeSource AncestorType={x:Type UserControl}},
                                           UpdateSourceTrigger=PropertyChanged}" />
 
-        <CheckBox Grid.Row="1"
+        <CheckBox Grid.Row="2"
                   Grid.Column="3"
                   Grid.ColumnSpan="2"
-                  Margin="15,10,15,5"
+                  Margin="10,10,15,5"
                   VerticalAlignment="Center"
                   Content="Include Archived Files (&quot;x__*&quot;)"
                   FontSize="15"
@@ -132,10 +132,10 @@
                                 RelativeSource={RelativeSource AncestorType={x:Type UserControl}},
                                 UpdateSourceTrigger=PropertyChanged}" />
 
-        <CheckBox Grid.Row="2"
+        <CheckBox Grid.Row="3"
                   Grid.Column="3"
                   Grid.ColumnSpan="2"
-                  Margin="15,10,15,5"
+                  Margin="10,10,15,5"
                   VerticalAlignment="Center"
                   Content="Match Folders"
                   FontSize="15"
@@ -172,6 +172,30 @@
                                             RelativeSource={RelativeSource AncestorType={x:Type UserControl}},
                                             UpdateSourceTrigger=PropertyChanged}" />
 
+        <TextBox x:Name="m_NameFilter"
+                 Grid.Row="1"
+                 Grid.Column="4"
+                 MinHeight="32"
+                 Margin="5"
+                 VerticalAlignment="Center"
+                 VerticalContentAlignment="Center"
+                 FontSize="15"
+                 Text="{Binding Config.FilenameFilter,
+                                Mode=TwoWay,
+                                RelativeSource={RelativeSource AncestorType={x:Type UserControl}},
+                                UpdateSourceTrigger=PropertyChanged}" />
+        <TextBox x:Name="m_FolderNameFilter"
+                 Grid.Row="0"
+                 Grid.Column="4"
+                 MinHeight="32"
+                 Margin="5"
+                 VerticalAlignment="Center"
+                 VerticalContentAlignment="Center"
+                 FontSize="15"
+                 Text="{Binding Config.FolderNameFilter,
+                                Mode=TwoWay,
+                                RelativeSource={RelativeSource AncestorType={x:Type UserControl}},
+                                UpdateSourceTrigger=PropertyChanged}" />
 
         <Label Grid.Row="4"
                Grid.Column="0"
@@ -264,6 +288,22 @@
                                         FallbackValue={StaticResource SearchGreen}}" />
             </DockPanel>
         </Button>
+        <Label x:Name="m_FolderNameFilter_Label"
+               Grid.Row="0"
+               Grid.Column="3"
+               Margin="5"
+               HorizontalAlignment="Left"
+               VerticalAlignment="Center"
+               Content="Folder filter:"
+               FontSize="16" />
+        <Label x:Name="m_NameFilter_Label"
+               Grid.Row="1"
+               Grid.Column="3"
+               Margin="5"
+               HorizontalAlignment="Left"
+               VerticalAlignment="Center"
+               Content="Filename filter:"
+               FontSize="16" />
 
     </Grid>
 </UserControl>

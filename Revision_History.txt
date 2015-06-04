@@ -1,6 +1,7 @@
 Buzzard Change Log
 
 Version 1.7.11.3; June 3, 2015
+	- Add Subfolder filter and Filename filter options when manually searching for datasets to upload
 	- Update variable names and comments to clearly indicate where we're tracking requested runs, not datasets
 
 Version 1.7.11.2; June 2, 2015

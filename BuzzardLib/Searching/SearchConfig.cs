@@ -30,6 +30,8 @@ namespace BuzzardLib.Searching
         /// </summary>
         private string mDirectoryPath;
         private string mFileExtension;
+        private string mFolderNameFilter;
+        private string mFilenameFilter;
         private SearchOption mSearchDepth;
         private bool mMatchFolders;
         private int mMinimumSizeKB;
@@ -80,7 +82,39 @@ namespace BuzzardLib.Searching
                 }
             }
         }
-       
+
+        /// <summary>
+        /// Gets or sets the folder name to filter on (partial match)
+        /// </summary>
+        public string FolderNameFilter
+        {
+            get { return mFolderNameFilter; }
+            set
+            {
+                if (mFolderNameFilter != value)
+                {
+                    mFolderNameFilter = value;
+                    OnPropertyChanged("FolderNameFilter");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the filename to filter on (partial match)
+        /// </summary>
+        public string FilenameFilter
+        {
+            get { return mFilenameFilter; }
+            set
+            {
+                if (mFilenameFilter != value)
+                {
+                    mFilenameFilter = value;
+                    OnPropertyChanged("FilenameFilter");
+                }
+            }
+        }
+
         /// <summary>
         /// Gets or sets the way to search for files in a directory
         /// </summary>
