@@ -3,6 +3,9 @@ using LcmsNetDataClasses;
 
 namespace BuzzardLib.Data
 {
+    /// <summary>
+    /// Used to track Requested Runs (instruments runs) in DMS
+    /// </summary>
     public class DatasetTrie
 	{
         private const bool DEFAULT_IGNORE_CASE = true;
@@ -53,6 +56,7 @@ namespace BuzzardLib.Data
             }
             node.Edges.Clear();
         }
+
         /// <summary>
         /// Adds a dataset name to the trie.
         /// </summary>
@@ -101,6 +105,7 @@ namespace BuzzardLib.Data
 
 			return m_requestIDToDMS[requestID];
 		}
+
         /// <summary>
         /// Finds the dataset data that closest resembles the dataset name.
         /// </summary>
@@ -119,6 +124,7 @@ namespace BuzzardLib.Data
                 return FindData(m_root, datasetName);
             }
         }
+
         private classDMSData FindData(classTrieNode node, string datasetName)
         {
             if (string.IsNullOrWhiteSpace(datasetName))
@@ -135,11 +141,11 @@ namespace BuzzardLib.Data
             var key = datasetName[0];
             if (node.Edges.Count < 1)
             {
-                // but now we are out of datasets to search now...this has to be the guy...                    
-                // although it could still not be him...
-                //TODO: Speak with Gary or Matt about this.                    
+                // Found a request whose full name matches the start of the dataset file on the instrument (but not the entire filename)
+                // Return this as the best matching active request
                 return node.DmsData;
             }
+
             // more datasets exist past this point...
             var hasKey = node.Edges.ContainsKey(key);
             if (hasKey)

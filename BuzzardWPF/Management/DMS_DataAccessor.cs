@@ -6,7 +6,6 @@ using System.Linq;
 using LcmsNetDataClasses;
 using LcmsNetDataClasses.Data;
 using LcmsNetDataClasses.Logging;
-using LcmsNetDmsTools;
 using LcmsNetSQLiteTools;
 
 namespace BuzzardWPF.Management
@@ -176,79 +175,81 @@ namespace BuzzardWPF.Management
 
 			// We haven't built a quick reference collection for this PID
 			// yet, so lets do that.
-			if (!m_proposalUserCollections.ContainsKey(proposalID))
-			{
-				ObservableCollection<classProposalUser> newUserCollection = null;
+		    if (m_proposalUserCollections.ContainsKey(proposalID))
+		    {
+		        return m_proposalUserCollections[proposalID];
+		    }
 
-				// We weren't given a PID to filter out the results, so we are returning every user
-				// (unless told otherwise).
-				if (proposalID == string.Empty)
-				{
-					if (returnAllWhenEmpty)
-					{
-						newUserCollection = new ObservableCollection<classProposalUser>(m_proposalUsers);
-					}
-					else
-					{
-						return new ObservableCollection<classProposalUser>();
-					}
-				}
-				else if (m_pidIndexedCrossReferenceList.ContainsKey(proposalID))
-				{
-					var crossReferenceList = m_pidIndexedCrossReferenceList[proposalID];
+		    ObservableCollection<classProposalUser> newUserCollection;
 
-					// This really shouldn't be possible because the PIDs are generated from the
-					// User lists, so if there are no Users list, then there's no PID generated.
-					// Log there error, and hope that the person that reads it realizes that something
-					// is going wrong in the code.
-					if (crossReferenceList.Count == 0)
-					{
-						classApplicationLogger.LogError(
-							0,
-							string.Format(
-								"Requested Proposal ID '{0}' has no users. Returning empty collection of Proposal Users.",
-								proposalID));
+		    // We weren't given a PID to filter out the results, so we are returning every user
+		    // (unless told otherwise).
+		    if (proposalID == string.Empty)
+		    {
+		        if (returnAllWhenEmpty)
+		        {
+		            newUserCollection = new ObservableCollection<classProposalUser>(m_proposalUsers);
+		        }
+		        else
+		        {
+		            return new ObservableCollection<classProposalUser>();
+		        }
+		    }
+		    else if (m_pidIndexedCrossReferenceList.ContainsKey(proposalID))
+		    {
+		        var crossReferenceList = m_pidIndexedCrossReferenceList[proposalID];
 
-						newUserCollection = new ObservableCollection<classProposalUser>();
-					}
-					else
-					{
-						// The dictionary has already grouped the cross references by PID, so we just need
-						// to get the UIDs that are in that group.
-						var uIDs = from classUserIDPIDCrossReferenceEntry xRef in crossReferenceList
-												select xRef.UserID;
-						var hashedUIDs = new HashSet<int>(uIDs);
+		        // This really shouldn't be possible because the PIDs are generated from the
+		        // User lists, so if there are no Users list, then there's no PID generated.
+		        // Log there error, and hope that the person that reads it realizes that something
+		        // is going wrong in the code.
+		        if (crossReferenceList.Count == 0)
+		        {
+		            classApplicationLogger.LogError(
+		                0,
+		                string.Format(
+		                    "Requested Proposal ID '{0}' has no users. Returning empty collection of Proposal Users.",
+		                    proposalID));
 
-						// Get the users based on the given UIDs.
-						var selectedUsers = from classProposalUser user in m_proposalUsers
-											where hashedUIDs.Contains(user.UserID)
-											select user;
+		            newUserCollection = new ObservableCollection<classProposalUser>();
+		        }
+		        else
+		        {
+		            // The dictionary has already grouped the cross references by PID, so we just need
+		            // to get the UIDs that are in that group.
+		            var uIDs = from classUserIDPIDCrossReferenceEntry xRef in crossReferenceList
+		                       select xRef.UserID;
+		            var hashedUIDs = new HashSet<int>(uIDs);
 
-						// Create the user collection and set it for future use.
-						newUserCollection = new ObservableCollection<classProposalUser>(selectedUsers);
-					}
-				}
-				// The given PID wasn't in our cross reference list, log the error
-				// and return insert an empty collection under it. And, don't insert
-				// this into the dictionary of user collections.
-				else
-				{
-					classApplicationLogger.LogMessage(
-						0,
-						string.Format(
-							"Requested Proposal ID '{0}' was not found. Returning empty collection of Proposal Users.",
-							proposalID));
+		            // Get the users based on the given UIDs.
+		            var selectedUsers = from classProposalUser user in m_proposalUsers
+		                                where hashedUIDs.Contains(user.UserID)
+		                                select user;
 
-					// Return the collection before we can insert it into the dictionary.
-					return new ObservableCollection<classProposalUser>();
-				}
+		            // Create the user collection and set it for future use.
+		            newUserCollection = new ObservableCollection<classProposalUser>(selectedUsers);
+		        }
+		    }
+		    // The given PID wasn't in our cross reference list, log the error
+		    // and return insert an empty collection under it. And, don't insert
+		    // this into the dictionary of user collections.
+		    else
+		    {
+		        classApplicationLogger.LogMessage(
+		            0,
+		            string.Format(
+		                "Requested Proposal ID '{0}' was not found. Returning empty collection of Proposal Users.",
+		                proposalID));
 
-				m_proposalUserCollections.Add(proposalID, newUserCollection);
-			}
+		        // Return the collection before we can insert it into the dictionary.
+		        return new ObservableCollection<classProposalUser>();
+		    }
 
-			return m_proposalUserCollections[proposalID];
+		    m_proposalUserCollections.Add(proposalID, newUserCollection);
+
+		    return m_proposalUserCollections[proposalID];
 		}
-		private Dictionary<string, ObservableCollection<classProposalUser>> m_proposalUserCollections;
+		private readonly Dictionary<string, ObservableCollection<classProposalUser>> m_proposalUserCollections;
 
 		public ObservableCollection<string> ProposalIDs
 		{

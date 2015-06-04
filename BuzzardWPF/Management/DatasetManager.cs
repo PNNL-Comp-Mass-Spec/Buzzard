@@ -37,10 +37,12 @@ namespace BuzzardWPF.Management
         /// thread for loading data from DMS.
         /// </summary>
         private Thread mDmsLoadThread;
+
         /// <summary>
-        /// Trie that holds dataset names from DMS.
+        /// Trie that holds requested run names from DMS.
         /// </summary>        
-        private readonly DatasetTrie mDatasetTrie;
+        private readonly DatasetTrie mRequestedRunTrie;
+
         /// <summary>
         /// Flag indicating when true, that the dataset names have been loaded from DMS.
         /// </summary>
@@ -65,7 +67,7 @@ namespace BuzzardWPF.Management
         /// </summary>
         private DatasetManager()
         {
-            mDatasetTrie = new DatasetTrie();           
+            mRequestedRunTrie = new DatasetTrie();           
             mDatasetsReady = false;
             Datasets = new ObservableCollection<BuzzardDataset>();
 
@@ -150,13 +152,13 @@ namespace BuzzardWPF.Management
             var dbTools = new classDBTools();
             var samples = dbTools.GetSamplesFromDMS(query);
 
-            lock (mDatasetTrie)
+            lock (mRequestedRunTrie)
             {
-                mDatasetTrie.Clear();
+                mRequestedRunTrie.Clear();
 
                 foreach (var sample in samples)
                 {
-                    mDatasetTrie.AddData(sample.DmsData);
+                    mRequestedRunTrie.AddData(sample.DmsData);
                 }
             }
 
@@ -363,15 +365,23 @@ namespace BuzzardWPF.Management
             {
                 var fileName = Path.GetFileNameWithoutExtension(fiDataset.Name);
                 classDMSData data = null;
-                try
+
+                lock (mRequestedRunTrie)
                 {
-                    data = mDatasetTrie.FindData(fileName);
-                }
-                catch (KeyNotFoundException)
-                {
-                    // Now get the path name of the directory, then use that as the "search string for dms"
-                    fileName = Path.GetFileName(fiDataset.Directory.Name);
-                    data = mDatasetTrie.FindData(fileName);
+                    try
+                    {
+                        data = mRequestedRunTrie.FindData(fileName);
+                    }
+                    catch (KeyNotFoundException)
+                    {
+                        // Not found
+                        // Get the path name of the directory, then use that as the "search string for dms"
+                        if (fiDataset.Directory != null)
+                        {
+                            fileName = Path.GetFileName(fiDataset.Directory.Name);
+                            data = mRequestedRunTrie.FindData(fileName);
+                        }
+                    }
                 }
 
                 dataset.DMSData = new DMSData(data, dataset.FilePath);

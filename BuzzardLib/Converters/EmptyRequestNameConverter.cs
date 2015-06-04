@@ -10,7 +10,7 @@ namespace BuzzardLib.Converters
 		{
 			var s = value as string;
 			if (string.IsNullOrWhiteSpace(s))
-				s = "None found";
+				s = "    (none)    ";
 			
 			return s;
 		}

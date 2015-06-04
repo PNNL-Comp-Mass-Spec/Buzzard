@@ -23,7 +23,7 @@ namespace BuzzardWPF
         /// </summary>
         private const int CONST_DEFAULT_MESSAGE_LOG_LEVEL   = 5;
 
-        public const string PROGRAM_DATE = "June 2, 2015";
+        public const string PROGRAM_DATE = "June 3, 2015";
         #endregion
 
         #region Configuration Loading
