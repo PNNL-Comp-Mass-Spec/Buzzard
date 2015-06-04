@@ -347,13 +347,17 @@ namespace BuzzardLib.IO
             if (datasetFile.DirectoryName == null)
                 return string.Empty;
 
-            if (string.Equals(diBaseFolder.FullName, datasetFile.DirectoryName, StringComparison.OrdinalIgnoreCase))
+            // If the user included a trailing slash in the text box, then .FullName will show it (stupid C# bug)
+            // The following checks for this and removes the training slash
+            var baseFullName = diBaseFolder.FullName.TrimEnd('\\');
+
+            if (string.Equals(baseFullName, datasetFile.DirectoryName, StringComparison.OrdinalIgnoreCase))
                 return string.Empty;
 
-            if (!datasetFile.DirectoryName.StartsWith(diBaseFolder.FullName))
-                throw new Exception("Dataset " + datasetFile.Name + " not in expected parent folder: " + diBaseFolder.FullName);
+            if (!datasetFile.DirectoryName.StartsWith(baseFullName))
+                throw new Exception("Dataset " + datasetFile.Name + " not in expected parent folder: " + baseFullName);
 
-            var relativePath = datasetFile.DirectoryName.Substring(diBaseFolder.FullName.Length + 1);
+            var relativePath = datasetFile.DirectoryName.Substring(baseFullName.Length + 1);
             return relativePath;
         }
 
@@ -362,13 +366,15 @@ namespace BuzzardLib.IO
             if (datasetFolder.Parent == null)
                 return string.Empty;
 
-            if (string.Equals(diBaseFolder.FullName, datasetFolder.Parent.FullName, StringComparison.OrdinalIgnoreCase))
+            var baseFullName = diBaseFolder.FullName.TrimEnd('\\');
+
+            if (string.Equals(baseFullName, datasetFolder.Parent.FullName, StringComparison.OrdinalIgnoreCase))
                 return string.Empty;
 
-            if (!datasetFolder.Parent.FullName.StartsWith(diBaseFolder.FullName))
-                throw new Exception("Dataset " + datasetFolder.Name + " not in expected parent folder: " + diBaseFolder.FullName);
+            if (!datasetFolder.Parent.FullName.StartsWith(baseFullName))
+                throw new Exception("Dataset " + datasetFolder.Name + " not in expected parent folder: " + baseFullName);
 
-            var relativePath = datasetFolder.Parent.FullName.Substring(diBaseFolder.FullName.Length + 1);
+            var relativePath = datasetFolder.Parent.FullName.Substring(baseFullName.Length + 1);
             return relativePath;
         }
 
