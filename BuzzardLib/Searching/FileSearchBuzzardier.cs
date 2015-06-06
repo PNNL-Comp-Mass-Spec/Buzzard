@@ -6,6 +6,7 @@ using System.Security.Policy;
 using System.Threading;
 using BuzzardLib.IO;
 using LcmsNet.Method;
+using LcmsNetDataClasses;
 using LcmsNetDataClasses.Logging;
 
 namespace BuzzardLib.Searching
@@ -58,9 +59,20 @@ namespace BuzzardLib.Searching
         /// Flag inidicating whether to search
         /// </summary>
         private volatile bool m_keepSearching;
+
+        private readonly Dictionary<string, classInstrumentInfo> mInstrumentInfo;
+
         #endregion
 
         #region Searching and Threading Methods
+
+        /// <summary>
+        ///  Constructor
+        /// </summary>
+        public FileSearchBuzzardier(Dictionary<string, classInstrumentInfo> instrumentInfo)
+        {
+            mInstrumentInfo = instrumentInfo;
+        }
 
         /// <summary>
         /// Stops searching
@@ -162,7 +174,30 @@ namespace BuzzardLib.Searching
                 }
 
                 var diBaseFolder = new DirectoryInfo(config.DirectoryPath);
+                if (!diBaseFolder.Exists)
+                {
+                    ReportError("Folder not found: " + config.DirectoryPath);
+                    return;
+                }
 
+                string expectedBaseFolderPath;
+
+                var baseFolderValidator = new InstrumentFolderValidator(mInstrumentInfo);
+
+                if (!baseFolderValidator.ValidateBaseFolder(diBaseFolder, out expectedBaseFolderPath))
+                {
+                    if (string.IsNullOrWhiteSpace(baseFolderValidator.ErrorMessage))
+                        ReportError("Base folder not valid for this instrument; should be " + expectedBaseFolderPath);
+                    else
+                        ReportError(baseFolderValidator.ErrorMessage);
+                    return;
+                }
+
+                var folderNameFilterLCase = string.Empty;
+
+                if (!string.IsNullOrWhiteSpace(config.FolderNameFilter))
+                    folderNameFilterLCase = config.FolderNameFilter.ToLower();
+                
                 // Breadth first search across directories as to make it fast and responsive to a listening UI
                 var m_paths = new Queue<string>();
                 m_paths.Enqueue(diBaseFolder.FullName);
@@ -178,9 +213,9 @@ namespace BuzzardLib.Searching
                     {
                         var processFolder = true;
 
-                        if (!string.IsNullOrWhiteSpace(config.FolderNameFilter))
+                        if (!string.IsNullOrWhiteSpace(folderNameFilterLCase))
                         {
-                            if (!currentDirectory.Name.ToLower().Contains(config.FolderNameFilter.ToLower()))
+                            if (!currentDirectory.FullName.ToLower().Contains(folderNameFilterLCase))
                                 processFolder = false;
                         }
 

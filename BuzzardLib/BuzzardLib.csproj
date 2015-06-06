@@ -63,6 +63,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -93,6 +94,7 @@
     <Compile Include="IO\ManifestWriter.cs" />
     <Compile Include="IO\TriggerFileTools.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Searching\InstrumentFolderValidator.cs" />
     <Compile Include="Searching\StartStopEventArgs.cs" />
     <Compile Include="Searching\DatasetFoundEventArgs.cs" />
     <Compile Include="Searching\FileSearchBuzzardier.cs" />

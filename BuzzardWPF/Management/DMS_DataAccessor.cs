@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -58,9 +59,22 @@ namespace BuzzardWPF.Management
 		    }
 
 		    if (tempInstrumentData != null && tempInstrumentData.Count != 0)
-				InstrumentData = new ObservableCollection<string>(tempInstrumentData.Select(instDatum => instDatum.DMSName));
+		    {
+		        InstrumentData = new ObservableCollection<string>(tempInstrumentData.Select(instDatum => instDatum.DMSName));
 
-			//
+		        var instrumentDetails = new Dictionary<string, classInstrumentInfo>();
+
+                foreach (var instrument in tempInstrumentData)
+                {
+                    if (!instrumentDetails.ContainsKey(instrument.DMSName))
+                    {
+                        instrumentDetails.Add(instrument.DMSName, instrument);
+                    }
+                }
+
+                InstrumentDetails = instrumentDetails;
+		    }
+		    //
 			// Load Operator Data
 			//
 			var tempUserList = classSQLiteTools.GetUserList(false);
@@ -117,6 +131,13 @@ namespace BuzzardWPF.Management
 				classApplicationLogger.LogError(0, "Experiment list retrieval returned null.");
 			else
 				Experiments = new List<classExperimentData>(tempExperimentsList);
+
+            //
+            // Load Instruments and source folders
+            //
+
+		    throw new NotImplementedException();
+
 		}
 		#endregion
 
@@ -313,7 +334,13 @@ namespace BuzzardWPF.Management
 		}
 		private ObservableCollection<string> m_instrumentData;
 
-		/// <summary>
+        /// <summary>
+        /// Instrument details (Name, status, source hostname, source share name, capture method
+        /// </summary>
+        /// <remarks>Key is instrument name, value is the details</remarks>
+	    public Dictionary<string, classInstrumentInfo> InstrumentDetails { get; private set; }
+
+	    /// <summary>
 		/// This is a list of the names of the cart Operators.
 		/// </summary>
 		public ObservableCollection<string> OperatorData

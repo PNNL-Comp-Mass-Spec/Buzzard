@@ -1,5 +1,10 @@
 Buzzard Change Log
 
+Version 1.7.11.4; June 5, 2015
+	- Now validating that the base folder used for manual searches is a shared folder that is known to DMS for the instrument associated with the given computer
+		- This is important for guaranteeing that the datasets can be successfully captured by DMS
+	- Fix name matching bug when defining a Folder Filter for manual search
+
 Version 1.7.11.3; June 3, 2015
 	- Add Subfolder filter and Filename filter options when manually searching for datasets to upload
 	- Update variable names and comments to clearly indicate where we're tracking requested runs, not datasets

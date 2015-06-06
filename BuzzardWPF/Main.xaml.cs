@@ -126,7 +126,7 @@ namespace BuzzardWPF
 
 
             m_searchWindow.SearchStart += m_searchWindow_SearchStart;
-            RegisterSearcher(new FileSearchBuzzardier());
+            RegisterSearcher(new FileSearchBuzzardier(DMS_DataAccessor.Instance.InstrumentDetails));
 
             // Wire up event handler on the embedded controls
             var scanWindow = (WatcherControl)m_scanWindow.DataContext;
