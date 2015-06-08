@@ -1,5 +1,9 @@
 Buzzard Change Log
 
+Version 1.7.11.5; June 8, 2015
+	- Now showing errors from a manual Buzzard search in a popup MessageBox for maximum visibility
+	- Add option DisableBaseFolderValidation
+
 Version 1.7.11.4; June 5, 2015
 	- Now validating that the base folder used for manual searches is a shared folder that is known to DMS for the instrument associated with the given computer
 		- This is important for guaranteeing that the datasets can be successfully captured by DMS

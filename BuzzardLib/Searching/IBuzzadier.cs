@@ -28,6 +28,11 @@ namespace BuzzardLib.Searching
         event EventHandler SearchStopped;
 
         /// <summary>
+        /// Fired when an error occurs
+        /// </summary>
+        event EventHandler<ErrorEventArgs> ErrorEvent;
+
+        /// <summary>
         /// Call to start searching.
         /// </summary>
         /// <param name="config"></param>

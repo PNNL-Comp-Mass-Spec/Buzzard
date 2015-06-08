@@ -221,8 +221,9 @@
                                 </Grid.RowDefinitions>
                                 <TextBlock Grid.Row="0"
                                            Grid.Column="0"
+                                           Margin="20,11,20.2,11"
                                            Style="{StaticResource TextBlockStyle}"
-                                           Text="Remote Folder Location" Margin="20,11,20.2,11" />
+                                           Text="Remote Folder Location" />
 
                                 <TextBox x:Name="TxtRemoteFolderLocation"
                                          Grid.Row="0"
@@ -246,7 +247,7 @@
 
                                 <Button Grid.Row="0"
                                         Grid.Column="3"
-                                        Width="160"                                        
+                                        Width="160"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
                                         Click="SelectTriggerFileLocation_Click"
@@ -255,7 +256,7 @@
 
                                 <Button x:Name="CmdUseTestFolder"
                                         Grid.Row="1"
-                                        Grid.Column="2"                                       
+                                        Grid.Column="2"
                                         Width="160"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
@@ -276,8 +277,22 @@
                                        Grid.RowSpan="3"
                                        Grid.Column="1"
                                        Margin="9.8,10"
-                                       Content="{Binding LastUpdated}"
+                                       Content="{Binding LastUpdated,
+                                                         FallbackValue='DMS Cache Last Update Time'}"
                                        Foreground="Gray" />
+
+
+                                <CheckBox Grid.Row="2"
+                                          Grid.Column="2"
+                                          Grid.ColumnSpan="2"
+                                          Margin="15,10,15,5"
+                                          VerticalAlignment="Center"
+                                          Content="Disable base folder validation (manual search)"
+                                          FontSize="15"
+                                          IsChecked="{Binding Path=DisableBaseFolderValidation,
+                                                              Mode=TwoWay,
+                                                              UpdateSourceTrigger=PropertyChanged}"
+                                          IsEnabled="{Binding Path=IsNotMonitoring}" />
                             </Grid>
                         </TabItem>
                     </TabControl>

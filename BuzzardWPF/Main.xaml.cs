@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -36,7 +35,7 @@ namespace BuzzardWPF
 
         #endregion
 
-        #region Attributes
+        #region "Member Variables"
 
         private readonly object m_cacheLoadingSync;
 
@@ -55,6 +54,11 @@ namespace BuzzardWPF
         private bool m_firstTimeLoading;
         // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
         private readonly DispatcherTimer m_dmsCheckTimer;
+
+        private BitmapImage m_CurrentImage;
+
+        private string m_triggerFileLocation;
+        private string m_lastUpdated;     
 
         #endregion
 
@@ -158,16 +162,6 @@ namespace BuzzardWPF
             m_animationImages = m_imagesEaster;
         }
 
-        public string LastUpdated
-        {
-            get { return m_lastUpdated; }
-            set
-            {
-                m_lastUpdated = value;
-                OnPropertyChanged("LastUpdated");
-            }
-        }
-
         private void StateSingleton_WatchingStateChanged(object sender, EventArgs e)
         {
             m_animationTimer.IsEnabled = StateSingleton.IsMonitoring;
@@ -239,6 +233,41 @@ namespace BuzzardWPF
 
 
         #region Properties
+        
+        /// <summary>
+        /// Gets or sets the image source containing the current image (not Image)
+        /// of the buzzard animation.
+        /// </summary>
+        public BitmapImage CurrentImage
+        {
+            get { return m_CurrentImage; }
+            set
+            {
+                if (!Equals(m_CurrentImage, value))
+                {
+                    m_CurrentImage = value;
+                    OnPropertyChanged("CurrentImage");
+                }
+            }
+        }
+
+        public bool DisableBaseFolderValidation
+        {
+            get { return m_searchWindow.Config.DisableBaseFolderValidation; }
+            set
+            {
+                m_searchWindow.Config.DisableBaseFolderValidation = value;
+                OnPropertyChanged("DisableBaseFolderValidation");
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets whether the system is monitoring or not.
+        /// </summary>
+        public bool IsNotMonitoring
+        {
+            get { return !StateSingleton.IsMonitoring; }
+        }
 
         /// <summary>
         /// Gets and sets a string containing the last message or error
@@ -257,24 +286,30 @@ namespace BuzzardWPF
             }
         }
 
-        /// <summary>
-        /// Gets or sets the image source containing the current image (not Image)
-        /// of the buzzard animation.
-        /// </summary>
-        public BitmapImage CurrentImage
+        public string LastUpdated
         {
-            get { return m_CurrentImage; }
+            get { return m_lastUpdated; }
             set
             {
-                if (m_CurrentImage != value)
-                {
-                    m_CurrentImage = value;
-                    OnPropertyChanged("CurrentImage");
-                }
+                m_lastUpdated = value;
+                OnPropertyChanged("LastUpdated");
             }
         }
+    
+        public string TriggerFileLocation
+        {
+            get { return m_triggerFileLocation; }
+            set
+            {
+                if (m_triggerFileLocation != value)
+                {
+                    m_triggerFileLocation = value;
+                    OnPropertyChanged("TriggerFileLocation");
+                }
 
-        private BitmapImage m_CurrentImage;
+                DatasetManager.Manager.TriggerFileLocation = value;
+            }
+        }
 
         #endregion
 
@@ -319,6 +354,7 @@ namespace BuzzardWPF
                 m_buzzadier.SearchStopped -= m_buzzadier_SearchStopped;
                 m_buzzadier.SearchComplete -= m_buzzadier_SearchComplete;
                 m_buzzadier.DatasetFound -= m_buzzadier_DatasetFound;
+                m_buzzadier.ErrorEvent -= m_buzzadier_ErrorEvent;
             }
 
             m_buzzadier = buzzadier;
@@ -326,6 +362,7 @@ namespace BuzzardWPF
             m_buzzadier.SearchStopped += m_buzzadier_SearchStopped;
             m_buzzadier.SearchComplete += m_buzzadier_SearchComplete;
             m_buzzadier.DatasetFound += m_buzzadier_DatasetFound;
+            m_buzzadier.ErrorEvent += m_buzzadier_ErrorEvent;
         }
 
         /// <summary>
@@ -339,8 +376,6 @@ namespace BuzzardWPF
             m_buzzadier.Search(e.Config);
         }
 
-        private delegate void DelegateUpdatePath(string path);
-
         private void m_buzzadier_DatasetFound(object sender, DatasetFoundEventArgs e)
         {
             Action workAction = delegate
@@ -350,6 +385,11 @@ namespace BuzzardWPF
 
             m_dataGrid.Dispatcher.BeginInvoke(workAction, DispatcherPriority.Normal);
 
+        }
+
+        private void m_buzzadier_ErrorEvent(object sender, BuzzardLib.Searching.ErrorEventArgs e)
+        {
+            MessageBox.Show(e.ErrorMessage, "Search Error", MessageBoxButton.OK, MessageBoxImage.Exclamation);
         }
 
         private void AddDataset(string datasetFileOrFolderPath, string captureSubfolderPath, SearchConfig config)
@@ -516,25 +556,6 @@ namespace BuzzardWPF
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
-
-        private string m_triggerFileLocation;
-        private string m_lastUpdated;
-
-        public string TriggerFileLocation
-        {
-            get { return m_triggerFileLocation; }
-            set
-            {
-                if (m_triggerFileLocation != value)
-                {
-                    m_triggerFileLocation = value;
-                    OnPropertyChanged("TriggerFileLocation");
-                }
-
-                DatasetManager.Manager.TriggerFileLocation = value;
-            }
-        }
-
         private void SelectTriggerFileLocation_Click(object sender, RoutedEventArgs e)
         {
             var eResult =
@@ -593,14 +614,6 @@ namespace BuzzardWPF
         private void UseTestFolder_Click(object sender, RoutedEventArgs e)
         {
             SetTriggerFolderToTestPath();
-        }
-
-        /// <summary>
-        /// Gets or sets whether the system is monitoring or not.
-        /// </summary>
-        public bool IsNotMonitoring
-        {
-            get { return !StateSingleton.IsMonitoring; }
         }
 
     }

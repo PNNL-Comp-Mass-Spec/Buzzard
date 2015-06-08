@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Linq;
 using System.Management;
-using System.Text;
 using LcmsNetDataClasses;
 using LcmsNetDataClasses.Logging;
 
@@ -127,13 +125,6 @@ namespace BuzzardLib.Searching
                     localShares = GetWindowsShares(baseFolderHostName);
 
                     baseFolderPathToUse = baseFolderPath;
-
-                    //if (baseFolderHostName == "MONROE3")
-                    //{
-                    //    // Debug override
-                    //    baseFolderHostName = "LTQ_ETD_1";
-                    //    localShares.Add("ProteomicsData", @"D:\ProteomicsData");
-                    //}
                 }
 
                 // Keys in the dictionary are the share name; values are additional subfolders to append to the share name
@@ -216,10 +207,10 @@ namespace BuzzardLib.Searching
                 }
 
 
-                ErrorMessage = "Current base folder (" + diBaseFolder.FullName + ") " +
+                ErrorMessage = "Base folder not valid for this instrument; " + diBaseFolder.FullName + " " +
                                "does not match the expected base folder of " +
                                expectedBaseFolderPath +
-                               " -- dataset upload will fail -- search aborted";
+                               " -- dataset upload will fail; earch aborted";
 
                 
 

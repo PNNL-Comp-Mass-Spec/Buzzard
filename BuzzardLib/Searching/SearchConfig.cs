@@ -20,7 +20,9 @@ namespace BuzzardLib.Searching
         #endregion
 
         #region Events
+
         public event PropertyChangedEventHandler PropertyChanged;
+
 		#endregion
 
 		#region Attributes
@@ -38,6 +40,9 @@ namespace BuzzardLib.Searching
 
 		private DateTime? mStartDate;
 		private DateTime? mEndDate;
+
+        // Do not save this option to the registry / settings; always keep it off when the program starts
+        private bool mDisableBaseFolderValidation;
 
 		#endregion
 
@@ -66,7 +71,18 @@ namespace BuzzardLib.Searching
                 }
             }
         }
-        
+
+        public bool DisableBaseFolderValidation
+        {
+            get { return mDisableBaseFolderValidation; }
+            set
+            {
+                mDisableBaseFolderValidation = value;
+                OnPropertyChanged("DisableBaseFolderValidation");
+            }
+        }
+
+
         /// <summary>
         /// Gets or sets the file extension to look for.
         /// </summary>

@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Policy;
 using System.Threading;
 using BuzzardLib.IO;
-using LcmsNet.Method;
 using LcmsNetDataClasses;
 using LcmsNetDataClasses.Logging;
 
@@ -38,6 +36,11 @@ namespace BuzzardLib.Searching
         /// </summary>
         public event EventHandler SearchStopped;
 
+        /// <summary>
+        /// Fired when an error occurs
+        /// </summary>
+        public event EventHandler<ErrorEventArgs> ErrorEvent;
+
         #endregion
 
         #region "Enums"
@@ -51,9 +54,11 @@ namespace BuzzardLib.Searching
         #endregion
 
         #region Members
+
         /// <summary>
         /// Thread for searching.
         /// </summary>
+        /// 
         private Thread m_thread;
         /// <summary>
         /// Flag inidicating whether to search
@@ -180,17 +185,19 @@ namespace BuzzardLib.Searching
                     return;
                 }
 
-                string expectedBaseFolderPath;
-
-                var baseFolderValidator = new InstrumentFolderValidator(mInstrumentInfo);
-
-                if (!baseFolderValidator.ValidateBaseFolder(diBaseFolder, out expectedBaseFolderPath))
+                if (!config.DisableBaseFolderValidation)
                 {
-                    if (string.IsNullOrWhiteSpace(baseFolderValidator.ErrorMessage))
-                        ReportError("Base folder not valid for this instrument; should be " + expectedBaseFolderPath);
-                    else
-                        ReportError(baseFolderValidator.ErrorMessage);
-                    return;
+                    var baseFolderValidator = new InstrumentFolderValidator(mInstrumentInfo);
+
+                    string expectedBaseFolderPath;
+                    if (!baseFolderValidator.ValidateBaseFolder(diBaseFolder, out expectedBaseFolderPath))
+                    {
+                        if (string.IsNullOrWhiteSpace(baseFolderValidator.ErrorMessage))
+                            ReportError("Base folder not valid for this instrument; should be " + expectedBaseFolderPath);
+                        else
+                            ReportError(baseFolderValidator.ErrorMessage);
+                        return;
+                    }
                 }
 
                 var folderNameFilterLCase = string.Empty;
@@ -348,6 +355,11 @@ namespace BuzzardLib.Searching
                 classApplicationLogger.LogError(0, errorMessage);
             else
                 classApplicationLogger.LogError(0, errorMessage, ex);
+
+            if (ErrorEvent != null)
+            {
+                ErrorEvent(this, new ErrorEventArgs(errorMessage));
+            }
         }
 
         #endregion
