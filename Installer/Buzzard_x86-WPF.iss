@@ -2,11 +2,12 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
                                     
 ; MyAppVerName will appear in the Uninstall Programs list
-#define MyAppVerName "Buzzard_1.7.11.5"
+#define ReleaseVersion =     "1.7.12.0"
+#define MyAppVerName "Buzzard_1.7.12.0"
 #define MySource "F:\My Documents\Projects\Instrument-Software\Buzzard\BuzzardWPF"
 #define MyAppName "Buzzard"
 #define MyAppVis  "PNNL"
-#define MyAppPublisher "Battelle"
+#define MyAppPublisher "PNNL"
 #define MyAppExeName "BuzzardWPF.exe"  
 #define MyDateTime GetDateTimeString('mm_dd_yyyy', "_","_");
 #define InstallerFolder "F:\My Documents\Projects\Instrument-Software\Buzzard\Installer\Output"
@@ -18,6 +19,7 @@
 AppId={{C617288A-CBA4-44C7-9899-153B4AC1F34F}}
 AppName={#MyAppName}
 AppVerName={#MyAppVerName}
+VersionInfoVersion={#ReleaseVersion}
 AppPublisher={#MyAppPublisher}
 DefaultDirName={pf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
@@ -31,7 +33,7 @@ SolidCompression=yes
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Tasks]
-Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
 
 [Dirs]        
 Name: "{app}\x64"
@@ -42,6 +44,7 @@ Name: "{app}\x86"
 Source: "{#MySource}\bin\x86\Release\BuzzardWPF.exe";                         DestDir: "{app}";             Flags: ignoreversion
 Source: "{#MySource}\bin\x86\Release\BuzzardWPF.exe.config";                  DestDir: "{app}";             Flags: ignoreversion
 Source: "{#MySource}\bin\x86\Release\BuzzardLib.dll";                         DestDir: "{app}";             Flags: ignoreversion  
+Source: "{#MySource}\bin\x86\Release\PrismDMS.config";                        DestDir: "{app}";             Flags: ignoreversion
 Source: "{#MySource}\bin\x86\Release\LcmsNetDmsTools.dll";                    DestDir: "{app}";             Flags: ignoreversion  
 Source: "{#MySource}\bin\x86\Release\LcmsNetSDK.dll";                         DestDir: "{app}";             Flags: ignoreversion
 Source: "{#MySource}\bin\x86\Release\LcmsNetSQLiteTools.dll";                 DestDir: "{app}";             Flags: ignoreversion

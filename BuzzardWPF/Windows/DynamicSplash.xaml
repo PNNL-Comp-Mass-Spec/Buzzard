@@ -58,7 +58,7 @@
 					   MaxWidth="350" 
 					   TextWrapping="WrapWithOverflow"
 					   FontSize="12" Margin="233,9.6,233.8,9.6" Height="44" Width="322">
-				Brian LaMarche, Danny Orton, Tom Metz, Gary Kiebel, Matthew Monroe, Ron Moore, Francisco Chavez, Gordon Anderson, Richard Smith
+				Matthew Monroe, Danny Orton, Brian LaMarche, Tom Metz, Gary Kiebel, Ron Moore, Francisco Chavez, Gordon Anderson, and Richard Smith
             </TextBlock>
 
             <TextBlock Grid.Row="4"
