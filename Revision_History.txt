@@ -1,6 +1,11 @@
 Buzzard Change Log
 
-Version 1.7.12.0
+Version 1.7.12.1; June 8, 2015
+	- Now copies the updated installer to the local temp folder prior to running it.
+	- Changed the LC Column selector to be a textbox with a dropdown box beside it
+	- Fix search bug that affected the 12T because two DMS instruments list 12TFTICR64 as the source machine
+
+Version 1.7.12.0; June 8, 2015
 	- Now checking for an updated installer at \\proto-5\BionetSoftware\Buzzard
 		- If found, prompts the user to install the new version
 	- Added PrismDMS.config to the installer

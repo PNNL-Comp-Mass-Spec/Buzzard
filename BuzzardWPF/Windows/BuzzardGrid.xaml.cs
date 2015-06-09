@@ -533,7 +533,6 @@ namespace BuzzardWPF.Windows
             // 
             var selectedDatasets = GetSelectedDatasets();
 
-
             //
             // Prep the Filldown Window for use.
             // 
@@ -558,12 +557,21 @@ namespace BuzzardWPF.Windows
             if (stopDoingThis)
                 return;
 
+            var filldownData = m_filldownWindow.Dataset;
+
+            if (filldownData.ShouldUseLCColumn &&
+                !DMS_DataAccessor.Instance.LCColumnNames.Contains(filldownData.LCColumn))
+            {
+                MessageBox.Show("Unknown LC column: " + filldownData.LCColumn +
+                                "; please use the dropdown to select a valid column name");
+                return;
+            }
+
             SaveSettings();
-            //
+
+
             // Any changes that were selected in the Filldown
             // Window are passed on to the selected Datasets.
-            // 
-            var filldownData = m_filldownWindow.Dataset;
 
             foreach (var dataset in selectedDatasets)
             {
@@ -586,7 +594,9 @@ namespace BuzzardWPF.Windows
                     dataset.ExperimentName = filldownData.ExperimentName;
 
                 if (filldownData.ShouldUseLCColumn)
+                {                    
                     dataset.LCColumn = filldownData.LCColumn;
+                }
 
                 if (filldownData.ShouldUseInterestRating)
                     dataset.InterestRating = filldownData.InterestRating;

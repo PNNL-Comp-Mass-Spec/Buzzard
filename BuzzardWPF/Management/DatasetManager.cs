@@ -4,11 +4,9 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using System.Windows.Markup.Localizer;
 using System.Windows.Threading;
 using BuzzardLib.Data;
 using BuzzardLib.IO;
-using BuzzardLib.Searching;
 using LcmsNetDataClasses;
 using LcmsNetDataClasses.Data;
 using LcmsNetDataClasses.Logging;
@@ -263,7 +261,7 @@ namespace BuzzardWPF.Management
                 {
                     return null;
                 }
-
+            
                 if (preview)
                 {
                     if (!(dataset.DatasetStatus == DatasetStatus.Pending || 
@@ -1049,6 +1047,9 @@ namespace BuzzardWPF.Management
 
             if (string.IsNullOrWhiteSpace(LCColumn))
                 missingFields.Add("LC Column");
+
+            if (!DMS_DataAccessor.Instance.LCColumnNames.Contains(LCColumn))
+                missingFields.Add("Invalid LC Column name");
 
             if (string.IsNullOrWhiteSpace(QC_ExperimentName))
                 missingFields.Add(QC_EXPERIMENT_NAME_DESCRIPTION);

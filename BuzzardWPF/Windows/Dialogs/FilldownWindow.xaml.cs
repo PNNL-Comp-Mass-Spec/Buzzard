@@ -260,6 +260,15 @@ namespace BuzzardWPF.Windows
             DialogResult = true;
         }
 
+        private void LCColumnSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems != null && e.AddedItems.Count > 0)
+            {
+                Dataset.LCColumn = e.AddedItems[0].ToString();
+                LCColumnSelector.SelectedIndex = -1;
+            }
+        }
+
 		private void UseAll_Click(object sender, RoutedEventArgs e)
 		{
 			ShouldUseAllSettings(true);
@@ -281,7 +290,7 @@ namespace BuzzardWPF.Windows
 			var selectedExperiment = dialog.SelectedExperiment;
 			Dataset.ExperimentName = selectedExperiment.Experiment;
 		}
-		
+
 		private void ProposalIDSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			if (e.AddedItems != null && e.AddedItems.Count > 0)
@@ -290,6 +299,7 @@ namespace BuzzardWPF.Windows
 				ProposalIDSelector.SelectedIndex = -1;
 			}
 		}
+
 		#endregion
 
 

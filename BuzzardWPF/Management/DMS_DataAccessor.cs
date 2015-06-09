@@ -118,12 +118,16 @@ namespace BuzzardWPF.Management
 			// Load column data
 			//
 			var tempColumnData = classSQLiteTools.GetColumnList(false);
-			if (tempColumnData == null)
-				classApplicationLogger.LogError(0, "Column data list retrieval returned null.");
-			else
-				ColumnData = new ObservableCollection<string>(tempColumnData);
+		    if (tempColumnData == null)
+		        classApplicationLogger.LogError(0, "Column data list retrieval returned null.");
+		    else
+		    {
+		        ColumnData = new ObservableCollection<string>(tempColumnData);
 
-			//
+		        LCColumnNames = tempColumnData;
+		    }
+
+		    //
 			// Load Experiments
 			//
 			var tempExperimentsList = classSQLiteTools.GetExperimentList();
@@ -339,6 +343,12 @@ namespace BuzzardWPF.Management
         /// </summary>
         /// <remarks>Key is instrument name, value is the details</remarks>
 	    public Dictionary<string, classInstrumentInfo> InstrumentDetails { get; private set; }
+
+        /// <summary>
+        /// Instrument details (Name, status, source hostname, source share name, capture method
+        /// </summary>
+        /// <remarks>Key is instrument name, value is the details</remarks>
+        public List<string> LCColumnNames { get; private set; }
 
 	    /// <summary>
 		/// This is a list of the names of the cart Operators.

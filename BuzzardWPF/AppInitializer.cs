@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using System.Windows.Navigation;
 using BuzzardWPF.Management;
 using LcmsNetDataClasses;
 using LcmsNetDataClasses.Logging;
@@ -87,7 +86,7 @@ namespace BuzzardWPF
         /// <summary>
         /// Creates the path required for local operation.
         /// </summary>
-        /// <param name="path">Local path to create.</param>
+        /// <param name="localPath">Local path to create.</param>
         static void CreatePath(string localPath)
         {
 
@@ -143,7 +142,7 @@ namespace BuzzardWPF
                     return false;
                 }
 
-                var fileVersionInfo = System.Diagnostics.FileVersionInfo.GetVersionInfo(fiInstaller.FullName);
+                var fileVersionInfo = FileVersionInfo.GetVersionInfo(fiInstaller.FullName);
 
                 var fileVersion = fileVersionInfo.FileVersion.Trim();
 
@@ -170,12 +169,10 @@ namespace BuzzardWPF
                         if (eResponse == DialogResult.Yes)
                         {
                             // Launch the installer
-                            var startInfo = new ProcessStartInfo(fiInstaller.FullName)
-                            {
-                                UseShellExecute = true
-                            };
+                            // First need to copy it locally (since running over the network fails on some of the computers)
 
-                            Process.Start(startInfo);
+                            LaunchTheInstaller(fiInstaller);
+                            
                             return true;
                         }
                     }
@@ -186,7 +183,7 @@ namespace BuzzardWPF
             catch (Exception ex)
             {
                 classApplicationLogger.LogMessage(0, "Error checking for a new version: " + ex.Message);
-                System.Threading.Thread.Sleep(500);
+                System.Threading.Thread.Sleep(750);
                 return false;
             }
         }
@@ -336,6 +333,34 @@ namespace BuzzardWPF
 
 
             return openMainWindow;
+        }
+
+        private static void LaunchTheInstaller(FileInfo fiInstaller)
+        {
+            var localInstallerPath = "??";
+
+            try
+            {
+                var tempFolder = Path.GetTempPath();
+                localInstallerPath = Path.Combine(tempFolder, fiInstaller.Name);
+
+                var fiLocalInstaller = new FileInfo(localInstallerPath);
+
+                fiInstaller.CopyTo(fiLocalInstaller.FullName, true);
+
+                var startInfo = new ProcessStartInfo(fiLocalInstaller.FullName)
+                {
+                    UseShellExecute = true
+                };
+
+                Process.Start(startInfo);
+            }
+            catch (Exception ex)
+            {
+                classApplicationLogger.LogMessage(0, "Error launching the installer for the new version (" + localInstallerPath + "): " + ex.Message);
+                System.Threading.Thread.Sleep(750);
+            }
+
         }
 
         private static void LogCriticalError(string errorMessage, Exception ex, bool showPopup = true)

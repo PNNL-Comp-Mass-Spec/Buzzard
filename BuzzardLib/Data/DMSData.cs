@@ -110,7 +110,7 @@ namespace BuzzardLib.Data
 		/// <summary>
 		/// When the data comes from DMS, it will be
 		/// locked. This is meant to stop the user
-		/// from alterning it.
+		/// from altering it.
 		/// </summary>
 		public bool LockData
 		{

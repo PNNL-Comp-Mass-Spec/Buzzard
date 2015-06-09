@@ -54,10 +54,7 @@
                            Style="{StaticResource TextBlockStyle}"
                            Text="Comments" />
             </Label>
-            <TextBox Margin="5" 
-                     Text="{Binding Path=UserComments,
-                                            Mode=TwoWay,
-                                            UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBox Margin="5" Text="{Binding Path=UserComments, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         </DockPanel>
 
         <Grid Grid.Column="1" Margin="5,5,5,5">
@@ -213,17 +210,35 @@
                                                      Mode=TwoWay,
                                                      UpdateSourceTrigger=PropertyChanged}"
                               Style="{StaticResource ComboBoxStyle}" />
-                    <ComboBox Grid.Row="3"
-                              Grid.Column="1"
-                              FontWeight="Regular"
-                              IsEnabled="{Binding Path=IsNotMonitoring}"
-                              ItemsSource="{Binding Path=LCColumnSource,
-                                                    Mode=OneWay,
-                                                    UpdateSourceTrigger=PropertyChanged}"
-                              SelectedItem="{Binding Path=LCColumn,
-                                                     Mode=TwoWay,
-                                                     UpdateSourceTrigger=PropertyChanged}"
-                              Style="{StaticResource ComboBoxStyle}" />
+
+
+                    <Grid Grid.Row="3" Grid.Column="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="1*" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBox x:Name="m_LCColumn"
+                                 Grid.Column="0"
+                                 Margin="2"
+                                 FontWeight="Regular"
+                                 IsEnabled="{Binding Path=IsNotMonitoring}"
+                                 Text="{Binding Path=LCColumn,
+                                                Mode=TwoWay,
+                                                UpdateSourceTrigger=PropertyChanged}" />
+
+                        <ComboBox x:Name="LCColumnSelector"
+                                  Grid.Column="1"
+                                  Margin="2"
+                                  FontWeight="Regular"
+                                  IsEnabled="{Binding Path=IsNotMonitoring}"
+                                  ItemsSource="{Binding Path=LCColumnSource,
+                                                        Mode=OneWay,
+                                                        UpdateSourceTrigger=PropertyChanged}"
+                                  SelectionChanged="LCColumnSelector_SelectionChanged" />
+
+                    </Grid>
+
                     <ComboBox Grid.Row="4"
                               Grid.Column="1"
                               FontWeight="Regular"

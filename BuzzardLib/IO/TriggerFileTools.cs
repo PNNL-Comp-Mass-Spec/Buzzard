@@ -411,7 +411,7 @@ namespace BuzzardLib.IO
                 return string.Empty;
 
             return metadata.Trim();
-        }
+        }        
 
         /// <summary>
         /// Validate that the dataset name is at least 6 characters in length and does not contain spaces

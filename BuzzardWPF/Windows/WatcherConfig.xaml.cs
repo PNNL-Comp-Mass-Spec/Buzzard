@@ -243,6 +243,16 @@ namespace BuzzardWPF.Windows
 
 
 		#region Event Handlers
+
+        private void LCColumnSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems != null && e.AddedItems.Count > 0)
+            {
+                LCColumn = e.AddedItems[0].ToString();
+                LCColumnSelector.SelectedIndex = -1;
+            }
+        }
+
 		/// <summary>
 		/// The brings up a dialog window that lets the user choose
 		/// an experiment name they wish to apply to the new datasets.

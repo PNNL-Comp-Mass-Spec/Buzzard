@@ -124,6 +124,10 @@ namespace BuzzardLib.Searching
                     // Determine the local shares
                     localShares = GetWindowsShares(baseFolderHostName);
 
+                    // Uncomment the following for debugging
+                    // if (string.Equals(baseFolderHostName, "monroe3", StringComparison.CurrentCultureIgnoreCase))
+                    //    baseFolderHostName = "12TFTICR64";
+
                     baseFolderPathToUse = baseFolderPath;
                 }
 
@@ -158,7 +162,11 @@ namespace BuzzardLib.Searching
 
                         }
 
-                        sharePathsInDMS.Add(shareName, sharePath);
+                        if (!sharePathsInDMS.ContainsKey(shareName))
+                        {
+                            sharePathsInDMS.Add(shareName, sharePath);
+                        }
+                        
                     }
                 }
 
@@ -210,7 +218,7 @@ namespace BuzzardLib.Searching
                 ErrorMessage = "Base folder not valid for this instrument; " + diBaseFolder.FullName + " " +
                                "does not match the expected base folder of " +
                                expectedBaseFolderPath +
-                               " -- dataset upload will fail; earch aborted";
+                               " -- dataset upload will fail; search aborted";
 
                 
 
