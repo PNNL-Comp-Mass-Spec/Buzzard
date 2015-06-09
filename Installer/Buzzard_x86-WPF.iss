@@ -2,8 +2,8 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
                                     
 ; MyAppVerName will appear in the Uninstall Programs list
-#define ReleaseVersion =     "1.7.12.1"
-#define MyAppVerName "Buzzard_1.7.12.1"
+#define ReleaseVersion =     "1.7.12.2"
+#define MyAppVerName "Buzzard_1.7.12.2"
 #define MySource "F:\My Documents\Projects\Instrument-Software\Buzzard\BuzzardWPF"
 #define MyAppName "Buzzard"
 #define MyAppVis  "PNNL"

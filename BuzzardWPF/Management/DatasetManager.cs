@@ -65,7 +65,7 @@ namespace BuzzardWPF.Management
         /// </summary>
         private DatasetManager()
         {
-            mRequestedRunTrie = new DatasetTrie();           
+            mRequestedRunTrie = new DatasetTrie();
             mDatasetsReady = false;
             Datasets = new ObservableCollection<BuzzardDataset>();
 
@@ -261,10 +261,10 @@ namespace BuzzardWPF.Management
                 {
                     return null;
                 }
-            
+
                 if (preview)
                 {
-                    if (!(dataset.DatasetStatus == DatasetStatus.Pending || 
+                    if (!(dataset.DatasetStatus == DatasetStatus.Pending ||
                           dataset.DatasetStatus == DatasetStatus.ValidatingStable))
                         dataset.DatasetStatus = DatasetStatus.Pending;
 
@@ -285,7 +285,7 @@ namespace BuzzardWPF.Management
                 classApplicationLogger.LogMessage(0, string.Format("Saved Trigger File: {0} for {1}", DateTime.Now, dataset.Name));
                 dataset.DatasetStatus = DatasetStatus.TriggerFileSent;
                 dataset.TriggerCreationWarning = string.Empty;
-                
+
                 AddUpdateTriggerFile(triggerFilePath, false);
 
                 return triggerFilePath;
@@ -302,7 +302,7 @@ namespace BuzzardWPF.Management
             }
 
             return null;
-     
+
         }
 
         public Dictionary<string, bool> TriggerDirectoryContents
@@ -459,106 +459,162 @@ namespace BuzzardWPF.Management
         /// </summary>
         void ScannedDatasetTimer_Tick(object sender, EventArgs e)
         {
-            // Find the datasets that have source data found by the
-            // file watcher.
-            var query = from BuzzardDataset ds in Datasets
-                    where ds.DatasetSource == DatasetSource.Watcher
-                    select ds;
-
-            var datasets = new List<BuzzardDataset>(query);
-
-            // If there aren't any, then we're done.
-            if (datasets.Count == 0)
-                return;
-
-            var now = DateTime.Now;
-            var timeToWait = new TimeSpan(0, TriggerFileCreationWaitTime, 0);
-
-            var totalSecondsToWait = TriggerFileCreationWaitTime * 60;
-
-            foreach (var dataset in datasets.Where(dataset => dataset.DatasetStatus != DatasetStatus.TriggerFileSent))
+            try
             {
-                // Make sure that the status is not set to ignore (x_ or some other rule elsewhere)
-                if (dataset.DatasetStatus == DatasetStatus.Ignored)
-                    continue;
 
-                var hasTriggerFileSent = false;
 
-                // Also make sure that the trigger file does not exist on the server...
-                foreach (var filePath in Manager.TriggerDirectoryContents.Keys)
+                // Find the datasets that have source data found by the
+                // file watcher.
+                var query = (from BuzzardDataset ds in Datasets
+                             where ds.DatasetSource == DatasetSource.Watcher
+                             select ds).ToList();
+
+                var datasets = new List<BuzzardDataset>(query);
+
+                // If there aren't any, then we're done.
+                if (datasets.Count == 0)
+                    return;
+
+                var now = DateTime.Now;
+                var timeToWait = new TimeSpan(0, TriggerFileCreationWaitTime, 0);
+
+                var totalSecondsToWait = TriggerFileCreationWaitTime * 60;
+                var datasetsToCheck = (from item in datasets
+                                       where item.DatasetStatus != DatasetStatus.TriggerFileSent &&
+                                             item.DatasetStatus != DatasetStatus.Ignored
+                                       select item).ToList();
+
+                foreach (var dataset in datasetsToCheck)
                 {
-                    if (filePath.ToLower().Contains(dataset.DMSData.DatasetName.ToLower()))
+                    var datasetName = dataset.Name;
+
+                    try
                     {
-                        hasTriggerFileSent = true;
-                        break;
-                    }
-                }              
 
-                if (hasTriggerFileSent)
-                {
-                    dataset.DatasetStatus = DatasetStatus.TriggerFileSent;
-                    continue;
-                }
 
-                if (!dataset.UpdateFileProperties())
-                {
-                    dataset.DatasetStatus = DatasetStatus.FileNotFound;
-                    continue;
-                }
+                        var hasTriggerFileSent = false;
 
-                if (dataset.DatasetStatus == DatasetStatus.FileNotFound)
-                    dataset.DatasetStatus = DatasetStatus.Pending;
+                        // Also make sure that the trigger file does not exist on the server...
+                        foreach (var filePath in Manager.TriggerDirectoryContents.Keys)
+                        {
+                            if (filePath.ToLower().Contains(dataset.DMSData.DatasetName.ToLower()))
+                            {
+                                hasTriggerFileSent = true;
+                                break;
+                            }
+                        }
 
-                if ((dataset.FileSize / 1024d) < MinimumFileSize)
-                {
-                    dataset.DatasetStatus = DatasetStatus.PendingFileSize;
-                    continue;
-                }
-
-                var timeWaited = now - dataset.RunFinish;
-                if (timeWaited >= timeToWait)
-                {
-                    if (!dataset.DMSData.LockData)
-                    {
-                        ResolveDms(dataset, true);
-                    }
-
-                    if (dataset.IsQC)
-                    {
-                        if (!QC_CreateTriggerOnDMSFail)
+                        if (hasTriggerFileSent)
+                        {
+                            dataset.DatasetStatus = DatasetStatus.TriggerFileSent;
                             continue;
-                    }
-                    else
-                    {
-                        if (!dataset.DMSData.LockData && !CreateTriggerOnDMSFail)
+                        }
+
+                        if (!dataset.UpdateFileProperties())
+                        {
+                            dataset.DatasetStatus = DatasetStatus.FileNotFound;
                             continue;
+                        }
+
+                        if (dataset.DatasetStatus == DatasetStatus.FileNotFound)
+                            dataset.DatasetStatus = DatasetStatus.Pending;
+
+                        if ((dataset.FileSize / 1024d) < MinimumFileSize)
+                        {
+                            dataset.DatasetStatus = DatasetStatus.PendingFileSize;
+                            continue;
+                        }
+
+                        var timeWaited = now - dataset.RunFinish;
+                        if (timeWaited >= timeToWait)
+                        {
+                            CreateTriggerFileForDataset(dataset);
+                        }
+                        else
+                        {
+                            // If it's not time to create the trigger file, then update
+                            // the display telling the user when it will be created.
+                            var secondsLeft = totalSecondsToWait - timeWaited.TotalSeconds;
+                            var percentWaited = 100 * timeWaited.TotalSeconds / totalSecondsToWait;
+                            var secondsLeftInt = Convert.ToInt32(secondsLeft);
+
+                            var pulseIt = secondsLeftInt > dataset.SecondsTillTriggerCreation;
+
+                            dataset.SecondsTillTriggerCreation = Convert.ToInt32(secondsLeft);
+                            dataset.WaitTimePercentage = percentWaited;
+                            if (pulseIt)
+                            {
+                                dataset.PulseText = true;
+                                dataset.PulseText = false;
+                            }
+                        }
+
                     }
+                    catch (Exception ex)
+                    {
+                        if (string.IsNullOrWhiteSpace(datasetName))
+                            datasetName = "??";
 
-                    string triggerFilePath = CreateTriggerFileBuzzard(dataset, forceSend:false, preview:false);
-                    if (string.IsNullOrWhiteSpace(triggerFilePath))
-                        continue;               
+                        classApplicationLogger.LogError(
+                        0,
+                        "Exception in ScannedDatasetTimer_Tick for dataset " + datasetName, ex);
+                    }
+                }
 
-                    var fiTriggerFile = new FileInfo(triggerFilePath);
-                    AddUpdateTriggerFile(fiTriggerFile.FullName, false);
+            }
+            catch (Exception ex)
+            {
+                classApplicationLogger.LogError(
+                       0,
+                       "Exception in ScannedDatasetTimer_Tick (general)", ex);
+            }
+        }
+
+        private void CreateTriggerFileForDataset(BuzzardDataset dataset)
+        {
+            var datasetName = dataset.Name;
+
+            try
+            {
+
+                if (!dataset.DMSData.LockData)
+                {
+                    ResolveDms(dataset, true);
+                }
+
+                if (dataset.IsQC)
+                {
+                    if (!QC_CreateTriggerOnDMSFail)
+                    {
+                        return;
+                    }
                 }
                 else
                 {
-                    // If it's not time to create the trigger file, then update
-                    // the display telling the user when it will be created.
-                    var secondsLeft = totalSecondsToWait - timeWaited.TotalSeconds;
-                    var percentWaited = 100 * timeWaited.TotalSeconds / totalSecondsToWait;
-                    var secondsLeftInt = Convert.ToInt32(secondsLeft);
-
-                    var pulseIt = secondsLeftInt > dataset.SecondsTillTriggerCreation;
-
-                    dataset.SecondsTillTriggerCreation = Convert.ToInt32(secondsLeft);
-                    dataset.WaitTimePercentage = percentWaited;
-                    if (pulseIt)
+                    if (!dataset.DMSData.LockData && !CreateTriggerOnDMSFail)
                     {
-                        dataset.PulseText = true;
-                        dataset.PulseText = false;
+                        return;
                     }
                 }
+
+                var triggerFilePath = CreateTriggerFileBuzzard(dataset, forceSend: false, preview: false);
+                if (string.IsNullOrWhiteSpace(triggerFilePath))
+                {
+                    return;
+                }
+
+                var fiTriggerFile = new FileInfo(triggerFilePath);
+                AddUpdateTriggerFile(fiTriggerFile.FullName, false);
+
+            }
+            catch (Exception ex)
+            {
+                if (string.IsNullOrWhiteSpace(datasetName))
+                    datasetName = "??";
+
+                classApplicationLogger.LogError(
+                0,
+                "Exception in CreateTriggerFileForDataset for dataset " + datasetName, ex);
             }
         }
 
@@ -813,9 +869,9 @@ namespace BuzzardWPF.Management
         /// </remarks>
         public void CreatePendingDataset(
             string datasetFileOrFolderPath,
-            string captureSubfolderPath, 
+            string captureSubfolderPath,
             bool allowFolderMatch,
-            DatasetSource howWasItFound = DatasetSource.Searcher, 
+            DatasetSource howWasItFound = DatasetSource.Searcher,
             string oldFullPath = "")
         {
             // If we're on the wrong thread, then put in 
@@ -888,7 +944,7 @@ namespace BuzzardWPF.Management
                 if (isArchived)
                     dataset.FilePath = datasetFileOrFolderPath;
                 else
-                    dataset.UpdateFileProperties();                
+                    dataset.UpdateFileProperties();
 
             }
             else if (
@@ -1006,8 +1062,8 @@ namespace BuzzardWPF.Management
                             hasTriggerFileSent = true;
                             break;
                         }
-                    }              
-                  
+                    }
+
                     if (hasTriggerFileSent)
                         dataset.DatasetStatus = DatasetStatus.TriggerFileSent;
                 }
@@ -1114,10 +1170,10 @@ namespace BuzzardWPF.Management
 
                 if (isArchived && fiDatasetFile.Name.Length > 2)
                     return Path.Combine(fiDatasetFile.DirectoryName, fiDatasetFile.Name.Substring(2));
-                
+
                 return fiDatasetFile.FullName;
             }
-            
+
             // Not looking for a file; must be looking for a folder
             var diDatasetFolder = new DirectoryInfo(path);
 
@@ -1137,10 +1193,10 @@ namespace BuzzardWPF.Management
 
             if (isArchived && diDatasetFolder.Name.Length > 2)
                 return Path.Combine(diDatasetFolder.Parent.FullName, diDatasetFolder.Name.Substring(2));
-            
+
             return diDatasetFolder.FullName;
         }
 
-     
+
     }
 }

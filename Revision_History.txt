@@ -1,5 +1,8 @@
 Buzzard Change Log
 
+Version 1.7.12.2; June 9, 2015
+	- Add exception handling to ScannedDatasetTimer_Tick
+
 Version 1.7.12.1; June 8, 2015
 	- Now copies the updated installer to the local temp folder prior to running it.
 	- Changed the LC Column selector to be a textbox with a dropdown box beside it
