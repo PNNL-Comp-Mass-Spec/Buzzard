@@ -858,7 +858,7 @@ namespace BuzzardWPF.Management
         /// 
         /// </summary>
         /// <param name="datasetFileOrFolderPath"></param>
-        /// <param name ="captureSubfolderPath"></param>
+        /// <param name="captureSubfolderPath">Capture subfolder (relative path); typically empty</param>
         /// <param name="allowFolderMatch">True to allow a dataset to be a folder</param>
         /// <param name="howWasItFound"></param>
         /// <param name="oldFullPath">Use this parameter when a file is renamed</param>
@@ -940,6 +940,7 @@ namespace BuzzardWPF.Management
 
             if (dataset != null)
             {
+
                 dataset.CaptureSubfolderPath = captureSubfolderPath;
                 if (isArchived)
                     dataset.FilePath = datasetFileOrFolderPath;
@@ -972,7 +973,7 @@ namespace BuzzardWPF.Management
             // We don't really care if a dataset was found
             // while doing a search, but we do care if it
             // was picked up by the watcher. If the watcher
-            // pickes it up, then we might have to do a bit
+            // picks it up, then we might have to do a bit
             // of a delay before creating the trigger file
             // 
             if (howWasItFound == DatasetSource.Watcher)
@@ -981,7 +982,7 @@ namespace BuzzardWPF.Management
 
 
                 // Since this dataset was picked up by the file scanner,
-                // we want to fill this in with inforamtion that was set
+                // we want to fill this in with information that was set
                 // in the watcher config tool. Yet, we don't want to 
                 // overwrite something that was set by the user.
                 if (string.IsNullOrWhiteSpace(dataset.Instrument))

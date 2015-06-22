@@ -1,5 +1,8 @@
 Buzzard Change Log
 
+Version 1.7.12.3; June 22, 2015
+	- Updated monitoring to properly determine the capture subfolder path (if any) when searching for dataset folders
+
 Version 1.7.12.2; June 9, 2015
 	- Add exception handling to ScannedDatasetTimer_Tick
 

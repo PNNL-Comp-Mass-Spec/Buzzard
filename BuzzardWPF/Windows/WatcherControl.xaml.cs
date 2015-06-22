@@ -384,6 +384,7 @@ namespace BuzzardWPF.Windows
             var lstKeys = mFilePathsToProcess.Keys.ToList();
             
             mFileUpdateHandler.Enabled = false;
+            var diBaseFolder = new DirectoryInfo(DirectoryToWatch);
 
             foreach (var fullFilePath in lstKeys)
             {
@@ -396,16 +397,48 @@ namespace BuzzardWPF.Windows
                     if (string.IsNullOrWhiteSpace(fullFilePath) || fullFilePath.Contains('$'))
                         continue;
 
-                    if (extension == Extension.ToLower())
+                    if (extension != Extension.ToLower())
                     {
-                        const bool allowFolderMatch = true;
-                        DatasetManager.Manager.CreatePendingDataset(fullFilePath, DirectoryToWatch, allowFolderMatch, DatasetSource.Watcher);
+                        continue;
                     }
+
+                    const bool allowFolderMatch = true;
+                    string parentFolderPath;
+
+                    var fiDatasetFile = new FileInfo(fullFilePath);
+                    if (fiDatasetFile.Exists)
+                    {
+                        parentFolderPath = TriggerFileTools.GetCaptureSubfolderPath(diBaseFolder, fiDatasetFile);
+                    }
+                    else
+                    {
+                        var diDatasetFolder = new DirectoryInfo(fullFilePath);
+                        if (diDatasetFolder.Exists)
+                        {
+                            parentFolderPath = TriggerFileTools.GetCaptureSubfolderPath(diBaseFolder, diDatasetFolder);
+                        }
+                        else
+                        {
+                            // File not found and folder not found; this is unexpected, but no point in continuing
+                            continue;
+                        }
+                    }
+
+                    DatasetManager.Manager.CreatePendingDataset(fullFilePath, parentFolderPath, allowFolderMatch, DatasetSource.Watcher);
                 }
             }
 
             mFileUpdateHandler.Enabled = IsWatching;
 
+        }
+
+        private void ReportError(string errorMsg)
+        {
+            classApplicationLogger.LogError(
+                0,
+                errorMsg);
+
+            MessageBox.Show(errorMsg, "Error", MessageBoxButton.OK, MessageBoxImage.Exclamation);
         }
 
         private void StopWatching()
@@ -430,15 +463,12 @@ namespace BuzzardWPF.Windows
 
         private void StartWatching()
         {
-            if (!Directory.Exists(DirectoryToWatch))
+            var diBaseFolder = new DirectoryInfo(DirectoryToWatch);
+
+            if (!diBaseFolder.Exists)
             {
-                var msg = "Could not start the monitor. The supplied path does not exits.";
-
-                classApplicationLogger.LogError(
-                    0,
-                    msg);
-
-                MessageBox.Show(msg, "Error", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                ReportError("Could not start the monitor. Fold path not found: " + DirectoryToWatch);
+                
                 return;
             }
             
@@ -474,9 +504,21 @@ namespace BuzzardWPF.Windows
                 return;
             }
 
-            DatasetManager.Manager.FileWatchRoot = DirectoryToWatch;
+            var baseFolderValidator = new InstrumentFolderValidator(DMS_DataAccessor.Instance.InstrumentDetails);
 
-            mFileSystemWatcher.Path = DirectoryToWatch;
+            string expectedBaseFolderPath;
+            if (!baseFolderValidator.ValidateBaseFolder(diBaseFolder, out expectedBaseFolderPath))
+            {
+                if (string.IsNullOrWhiteSpace(baseFolderValidator.ErrorMessage))
+                    ReportError("Base folder not valid for this instrument; should be " + expectedBaseFolderPath);
+                else
+                    ReportError(baseFolderValidator.ErrorMessage);
+                return;
+            }
+
+            DatasetManager.Manager.FileWatchRoot = diBaseFolder.FullName;
+
+            mFileSystemWatcher.Path = diBaseFolder.FullName;
             mFileSystemWatcher.IncludeSubdirectories = WatchDepth == SearchOption.AllDirectories;
             mFileSystemWatcher.Filter = "*.*";
             mFileSystemWatcher.EnableRaisingEvents = true;
@@ -494,7 +536,7 @@ namespace BuzzardWPF.Windows
             OnMonitoringToggled(true);
 
             classApplicationLogger.LogMessage(0, "Watcher is monitoring.");
-        }
+        }      
 
         private void OnMonitoringToggled(bool monitoring)
         {
