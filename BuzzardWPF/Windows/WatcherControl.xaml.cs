@@ -91,7 +91,7 @@ namespace BuzzardWPF.Windows
 
             WatchDepth = SearchConfig.DEFAULT_SEARCH_DEPTH;
             WaitTime = DEFAULT_WAIT_TIME_MINUTES;
-            MinimumFileSize = SearchConfig.DEFAULT_MINIMUM_FILE_SIZE_KB;
+            MinimumFileSizeKB = SearchConfig.DEFAULT_MINIMUM_FILE_SIZE_KB;
             MatchFolders = SearchConfig.DEFAULT_MATCH_FOLDERS;
             Extension = SearchConfig.DEFAULT_FILE_EXTENSION;
             CreateTriggerOnDMSFail = false;
@@ -226,7 +226,7 @@ namespace BuzzardWPF.Windows
         /// <summary>
         /// Gets or sets the minimum file size in KB before starting a trigger creation
         /// </summary>
-        public int MinimumFileSize
+        public int MinimumFileSizeKB
         {
             get { return mMinimumFileSizeKB; }
             set
@@ -236,7 +236,7 @@ namespace BuzzardWPF.Windows
                     mMinimumFileSizeKB = value;
                     OnPropertyChanged("MinimumFileSize");
                 }
-                DatasetManager.Manager.MinimumFileSize = value;
+                DatasetManager.Manager.MinimumFileSizeKB = value;
             }
         }
 
@@ -257,23 +257,31 @@ namespace BuzzardWPF.Windows
 
         void SystemWatcher_FileRenamed(object sender, RenamedEventArgs e)
         {
-            var extension = Path.GetExtension(e.FullPath).ToLower();
+            var fileExtension = Path.GetExtension(e.FullPath);
+            if (fileExtension == null)
+            {
+                return;
+            }
+
+            var extensionLcase = fileExtension.ToLower();
 
             if (string.IsNullOrWhiteSpace(e.FullPath) || e.FullPath.Contains('$'))
                 return;
 
-            if (extension == Extension.ToLower())
+            if (extensionLcase != Extension.ToLower())
             {
-                const bool allowFolderMatch = true;
-
-                // File was renamed, either update an existing dataset, or add a new one
-                DatasetManager.Manager.CreatePendingDataset(
-                    e.FullPath,
-                    TriggerFileTools.GetCaptureSubfolderPath(DirectoryToWatch, e.FullPath),
-                    allowFolderMatch,
-                    DatasetSource.Watcher, 
-                    e.OldFullPath);
+                return;
             }
+
+            const bool allowFolderMatch = true;
+
+            // File was renamed, either update an existing dataset, or add a new one
+            DatasetManager.Manager.CreatePendingDataset(
+                e.FullPath,
+                TriggerFileTools.GetCaptureSubfolderPath(DirectoryToWatch, e.FullPath),
+                allowFolderMatch,
+                DatasetSource.Watcher, 
+                e.OldFullPath);
         }
 
         void SystemWatcher_FileDeleted(object sender, FileSystemEventArgs e)
@@ -358,7 +366,7 @@ namespace BuzzardWPF.Windows
             Settings.Default.Watcher_SearchType = WatchDepth;
             Settings.Default.Watcher_WaitTime = WaitTime;
             Settings.Default.Watcher_WatchDir = DirectoryToWatch;
-            Settings.Default.Watcher_FileSize = MinimumFileSize;
+            Settings.Default.Watcher_FileSize = MinimumFileSizeKB;
             Settings.Default.Watcher_MatchFolders = MatchFolders;
             Settings.Default.WatcherConfig_CreateTriggerOnDMS_Fail = CreateTriggerOnDMSFail;            
 
@@ -370,7 +378,7 @@ namespace BuzzardWPF.Windows
             WatchDepth = Settings.Default.Watcher_SearchType;
             WaitTime = Settings.Default.Watcher_WaitTime;
             DirectoryToWatch = Settings.Default.Watcher_WatchDir;
-            MinimumFileSize = Settings.Default.Watcher_FileSize;
+            MinimumFileSizeKB = Settings.Default.Watcher_FileSize;
             MatchFolders = Settings.Default.Watcher_MatchFolders;
             CreateTriggerOnDMSFail = Settings.Default.WatcherConfig_CreateTriggerOnDMS_Fail;
             

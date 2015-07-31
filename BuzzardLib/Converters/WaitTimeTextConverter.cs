@@ -9,7 +9,7 @@ namespace BuzzardLib.Converters
     {
         public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            string returnValue = string.Empty;
+            var returnValue = string.Empty;
 
             try
             {
@@ -54,6 +54,10 @@ namespace BuzzardLib.Converters
 
                     case DatasetStatus.FileSizeChanged:
                         returnValue = "Aborted, size changed";
+                        break;
+
+                    case DatasetStatus.DatasetExists:
+                        returnValue = "Already in DMS";
                         break;
                 }
 

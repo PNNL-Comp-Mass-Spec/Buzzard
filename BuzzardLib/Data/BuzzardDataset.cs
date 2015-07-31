@@ -109,7 +109,7 @@ namespace BuzzardLib.Data
             get { return m_waitTimePercentage; }
             set
             {
-                if (m_waitTimePercentage != value)
+                if (Math.Abs(m_waitTimePercentage - value) > float.Epsilon)
                 {
                     m_waitTimePercentage = value;
                     OnPropertyChanged("WaitTimePercentage");
@@ -452,16 +452,18 @@ namespace BuzzardLib.Data
                 var info = new FileInfo(path);
                 return info.Length;
             }
-            if (Directory.Exists(path))
+            if (!Directory.Exists(path))
             {
-                long sum = 0;
-                foreach (var file in Directory.GetFiles(path))
-                {
-                    sum += CalculateDirectorySize(file);
-                }
-                return sum;
+                return 0;
             }
-            return 0;
+
+            long sum = 0;
+            foreach (var file in Directory.GetFiles(path))
+            {
+                sum += CalculateDirectorySize(file);
+            }
+
+            return sum;
         }
 
         /// <summary>

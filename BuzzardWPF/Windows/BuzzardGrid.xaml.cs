@@ -560,7 +560,7 @@ namespace BuzzardWPF.Windows
             var filldownData = m_filldownWindow.Dataset;
 
             if (filldownData.ShouldUseLCColumn &&
-                !DMS_DataAccessor.Instance.LCColumnNames.Contains(filldownData.LCColumn))
+                !DMS_DataAccessor.Instance.ColumnData.Contains(filldownData.LCColumn))
             {
                 MessageBox.Show("Unknown LC column: " + filldownData.LCColumn +
                                 "; please use the dropdown to select a valid column name");

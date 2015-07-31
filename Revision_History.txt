@@ -1,5 +1,8 @@
 Buzzard Change Log
 
+Version 1.7.12.4; July 1, 2015
+	- Now replacing percent signs in dataset names with "pct" when removing invalid characters
+
 Version 1.7.12.3; June 22, 2015
 	- Updated monitoring to properly determine the capture subfolder path (if any) when searching for dataset folders
 

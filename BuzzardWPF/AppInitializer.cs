@@ -26,7 +26,7 @@ namespace BuzzardWPF
         /// </summary>
         private const int CONST_DEFAULT_MESSAGE_LOG_LEVEL = 5;
 
-        public const string PROGRAM_DATE = "June 22, 2015";
+        public const string PROGRAM_DATE = "July 30, 2015";
         #endregion
 
         #region Configuration Loading
@@ -120,7 +120,10 @@ namespace BuzzardWPF
         /// 
         /// </summary>
         /// <param name="installerFolderPath"></param>
-        /// <returns>True if a new version exists and the user has chosen to launch the installer</returns>
+        /// <returns>
+        /// True if a new version exists and the user launched the installer
+        /// In that case, this program will exit, thus allowing the installer to complete successfully
+        /// </returns>
         private static bool CheckForNewVersion(string installerFolderPath = @"\\proto-5\BionetSoftware\Buzzard")
         {
             try
@@ -214,8 +217,9 @@ namespace BuzzardWPF
 
             const string name = "Buzzard";
             classFileLogging.AppFolder = name;
-            classSQLiteTools.AppDataFolderName = name;
-            classSQLiteTools.CacheName = "BuzzardCache.que";
+            
+            classSQLiteTools.Initialize(name);            
+            classSQLiteTools.SetCacheLocation("BuzzardCache.que");
             classSQLiteTools.BuildConnectionString(false);
 
             //Application.EnableVisualStyles();
@@ -264,8 +268,18 @@ namespace BuzzardWPF
 
             try
             {
-                var dbTools = new classDBTools();
+                var dbTools = new classDBTools()
+                 {
+                    LoadExperiments = true,
+                    LoadDatasets = true,
+                    RecentExperimentsMonthsToLoad = 0,
+                    RecentDatasetsMonthsToLoad = 12
+                };
+
+                dbTools.ProgressEvent += dbTools_ProgressEvent;
+
                 dbTools.LoadCacheFromDMS();
+               
             }
             catch (Exception ex)
             {
@@ -299,16 +313,14 @@ namespace BuzzardWPF
 
             try
             {
+                // Load the requested runs from DMS
                 DatasetManager.Manager.LoadDmsCache();
 
-                // This is where we used to open the main window, but this process is 
-                // now running in a background thread where creating a DependencyObject
-                // would not be adivsed. So, I'm setting a flag that saying that the main
-                // window should be opened. I'm also moving some initialization logic out 
-                // of the main window's constructor and placing it here, since this is
-                // where it was being done before.
+                // Set a flag to indicate that the main window can now be shown
                 openMainWindow = true;
-                DMS_DataAccessor.Instance.Initialize();
+
+                // Load the experiments, datasets, instruments, etc. from the SQLite cache file
+                DMS_DataAccessor.Instance.LoadDMSDataFromCache();
             }
             catch (Exception ex)
             {
@@ -333,6 +345,11 @@ namespace BuzzardWPF
 
 
             return openMainWindow;
+        }
+
+        static void dbTools_ProgressEvent(object sender, ProgressEventArgs e)
+        {
+            classApplicationLogger.LogMessage(-1, "Loading DMS data: " + e.CurrentTask);
         }
 
         private static void LaunchTheInstaller(FileInfo fiInstaller)

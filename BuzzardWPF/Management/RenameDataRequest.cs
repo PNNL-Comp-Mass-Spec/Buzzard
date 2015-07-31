@@ -144,7 +144,14 @@ namespace BuzzardWPF.Management
 
         private string FixName(string sourceDataPath, string datasetName)
         {
+            // Auto-replace percent signs with "pct"
+            if (datasetName.Contains("%"))
+                datasetName = datasetName.Replace("%", "pct");
+
             var fixedName = new StringBuilder(datasetName.Length);
+
+            // Examine each letter to see if it is invalid (e.g. a space or other disallowed character)
+            // If it is invalid, replace with an underscore
             foreach (var letter in datasetName)
             {
                 if (TriggerFileTools.NameHasInvalidCharacters(letter.ToString()))

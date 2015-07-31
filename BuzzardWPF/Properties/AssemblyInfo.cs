@@ -46,8 +46,9 @@ using System.Windows;
 //      Build Number
 //      Revision
 //
-// You can specify all the values or you can default the Build and Revision Numbers 
-// by using the '*' as shown below:
-// [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.7.12.3")]
-[assembly: AssemblyFileVersion("1.7.12.3")]
+// This program informs the user when a new version is available by comparing
+// the build version of the running program to that at \\proto-5\BionetSoftware\Buzzard
+//
+// The following version numbers must match that defined in the Innosetup build script, Buzzard_x86-WPF.iss
+[assembly: AssemblyVersion("1.7.12.5")]
+[assembly: AssemblyFileVersion("1.7.12.5")]

@@ -31,6 +31,12 @@ namespace BuzzardWPF.Management
         #endregion
 
         #region Attributes
+
+        /// <summary>
+        /// Dictionary that tracks datasets that already exist in DMS
+        /// </summary>
+        private readonly Dictionary<string, int> mExistingDatasets;
+
         /// <summary>
         /// thread for loading data from DMS.
         /// </summary>
@@ -69,13 +75,15 @@ namespace BuzzardWPF.Management
             mDatasetsReady = false;
             Datasets = new ObservableCollection<BuzzardDataset>();
 
+            mExistingDatasets = new Dictionary<string, int>();
+
             WatcherConfigSelectedCartName = null;
             WatcherConfigSelectedDatasetType = null;
             WatcherConfigSelectedInstrument = null;
             WatcherConfigSelectedOperator = null;
             WatcherConfigSelectedSeparationType = null;
             TriggerFileCreationWaitTime = 5;
-            MinimumFileSize = 100;
+            MinimumFileSizeKB = 100;
 
         }
 
@@ -116,7 +124,7 @@ namespace BuzzardWPF.Management
         }
 
         /// <summary>
-        /// Loads the DMS Data Cache
+        /// Loads the requested runs from DMS
         /// </summary>
         public void LoadDmsCache()
         {
@@ -147,6 +155,7 @@ namespace BuzzardWPF.Management
             };
             query.BuildSqlString();
 
+            // Load the samples (essentially requested runs) from DMS
             var dbTools = new classDBTools();
             var samples = dbTools.GetSamplesFromDMS(query);
 
@@ -193,7 +202,6 @@ namespace BuzzardWPF.Management
                     // Ignore errors here
                 }
             }
-
 
             mDatasetsReady = true;
 
@@ -405,6 +413,9 @@ namespace BuzzardWPF.Management
 
         #region Properties
 
+        /// <summary>
+        /// Instrument data files / folders that are candidate datasets
+        /// </summary>
         public ObservableCollection<BuzzardDataset> Datasets
         {
             get;
@@ -424,11 +435,13 @@ namespace BuzzardWPF.Management
             get { return mMainWindow; }
             set
             {
-                if (mMainWindow != value)
+                if (Equals(mMainWindow, value))
                 {
-                    mMainWindow = value;
-                    SetupTimers();
+                    return;
                 }
+
+                mMainWindow = value;
+                SetupTimers();
             }
         }
 
@@ -447,8 +460,12 @@ namespace BuzzardWPF.Management
             if (MainWindow == null)
                 return;
 
-            mScannedDatasetTimer = new DispatcherTimer(DispatcherPriority.Normal, MainWindow.Dispatcher);
-            mScannedDatasetTimer.Interval = new TimeSpan(0, 0, 0, 0, 500);     // Update every 500 msec
+            mScannedDatasetTimer = new DispatcherTimer(DispatcherPriority.Normal, MainWindow.Dispatcher)
+            {
+                // Update every 500 msec
+                Interval = new TimeSpan(0, 0, 0, 0, 500)
+            };
+
             mScannedDatasetTimer.Tick += ScannedDatasetTimer_Tick;
             mScannedDatasetTimer.Start();
         }
@@ -519,7 +536,7 @@ namespace BuzzardWPF.Management
                         if (dataset.DatasetStatus == DatasetStatus.FileNotFound)
                             dataset.DatasetStatus = DatasetStatus.Pending;
 
-                        if ((dataset.FileSize / 1024d) < MinimumFileSize)
+                        if ((dataset.FileSize / 1024d) < MinimumFileSizeKB)
                         {
                             dataset.DatasetStatus = DatasetStatus.PendingFileSize;
                             continue;
@@ -682,9 +699,9 @@ namespace BuzzardWPF.Management
         public int TriggerFileCreationWaitTime { get; set; }
 
         /// <summary>
-        /// Gets or sets the minimum file size before starting the time.
+        /// Gets or sets the minimum file size (in KB) before starting the timer for trigger file creation
         /// </summary>
-        public int MinimumFileSize { get; set; }
+        public int MinimumFileSizeKB { get; set; }
 
         /// <summary>
         /// This item contains a copy of the SelectedInstrument value of
@@ -893,7 +910,7 @@ namespace BuzzardWPF.Management
                 return;
 
             BuzzardDataset dataset = null;
-            bool newDatasetFound = false;
+            var newDatasetFound = false;
 
             //
             // Look for an existing dataset that matches the old name
@@ -1105,7 +1122,7 @@ namespace BuzzardWPF.Management
             if (string.IsNullOrWhiteSpace(LCColumn))
                 missingFields.Add("LC Column");
 
-            if (!DMS_DataAccessor.Instance.LCColumnNames.Contains(LCColumn))
+            if (!DMS_DataAccessor.Instance.ColumnData.Contains(LCColumn))
                 missingFields.Add("Invalid LC Column name");
 
             if (string.IsNullOrWhiteSpace(QC_ExperimentName))

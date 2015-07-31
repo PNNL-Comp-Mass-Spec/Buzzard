@@ -57,10 +57,11 @@ namespace BuzzardWPF.Windows
 			// we better be sure that it's been initialized first.
             try
             {
-                DMS_DataAccessor.Instance.Initialize();
+                DMS_DataAccessor.Instance.LoadDMSDataFromCache();
             }
             catch
             {
+                // Ignore errors here
             }
 		}
 		#endregion

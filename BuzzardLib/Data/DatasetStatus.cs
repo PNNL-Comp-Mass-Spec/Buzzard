@@ -5,7 +5,9 @@
 	/// </summary>
 	public enum DatasetStatus
 	{
-
+        /// <summary>
+        /// File size is smaller than MinimumFileSizeKB
+        /// </summary>
         PendingFileSize,
 		/// <summary>
 		/// The trigger file could not be created.
@@ -54,6 +56,10 @@
         /// <summary>
         /// Dataset size changed over 60 seconds
         /// </summary>
-        FileSizeChanged        
+        FileSizeChanged,
+        /// <summary>
+        /// The dataset already exists in DMS
+        /// </summary>
+        DatasetExists         
 	}
 }

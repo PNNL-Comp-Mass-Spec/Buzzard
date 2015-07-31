@@ -4,9 +4,11 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 using LcmsNetDataClasses;
 using LcmsNetDataClasses.Data;
 using LcmsNetDataClasses.Logging;
+using LcmsNetDmsTools;
 using LcmsNetSQLiteTools;
 
 namespace BuzzardWPF.Management
@@ -18,8 +20,11 @@ namespace BuzzardWPF.Management
 		public event PropertyChangedEventHandler PropertyChanged;
 		#endregion
 
-
 		#region Initialize
+        
+        /// <summary>
+        /// Constructor
+        /// </summary>
 		private DMS_DataAccessor()
 		{
 			m_proposalUserCollections = new Dictionary<string, ObservableCollection<classProposalUser>>();
@@ -29,19 +34,36 @@ namespace BuzzardWPF.Management
 			InstrumentData		= new ObservableCollection<string>();
 			OperatorData		= new ObservableCollection<string>();
 			DatasetTypes		= new ObservableCollection<string>();
-			SeparationTypes	= new ObservableCollection<string>();
+			SeparationTypes	    = new ObservableCollection<string>();
 
 			CartNames			= new ObservableCollection<string>();
 			ColumnData			= new ObservableCollection<string>();
-			Experiments		= new List<classExperimentData>();
+			Experiments		    = new List<classExperimentData>();
+            Datasets            = new SortedSet<string>();
+
+            mLastUpdate = DateTime.UtcNow;
+
+            mDataRefreshIntervalHours = 12;
+
+            mAutoUpdateTimer = new System.Timers.Timer
+            {
+                AutoReset = true,
+                Enabled = false,
+                Interval = 30 * 1000
+            };
+
+            mAutoUpdateTimer.Elapsed += mAutoUpdateTimer_Elapsed;
 		}
 
-		static DMS_DataAccessor()
+	    static DMS_DataAccessor()
 		{
 			Instance = new DMS_DataAccessor();
 		}
 
-		public void Initialize()
+        /// <summary>
+        /// Loads the DMS data from the SQLite cache file
+        /// </summary>
+		public void LoadDMSDataFromCache()
 		{
 			//
 			// Load Instrument Data
@@ -74,6 +96,7 @@ namespace BuzzardWPF.Management
 
                 InstrumentDetails = instrumentDetails;
 		    }
+
 		    //
 			// Load Operator Data
 			//
@@ -82,7 +105,6 @@ namespace BuzzardWPF.Management
 				classApplicationLogger.LogError(0, "User retrieval returned null.");
 			else
 				OperatorData = new ObservableCollection<string>(tempUserList.Select(userDatum => userDatum.UserName));
-
 
 			//
 			// Load Dataset Types
@@ -93,7 +115,6 @@ namespace BuzzardWPF.Management
 			else
 				DatasetTypes = new ObservableCollection<string>(tempDatasetTypesList);
 
-
 			//
 			// Load Separation Types
 			//
@@ -102,7 +123,6 @@ namespace BuzzardWPF.Management
 				classApplicationLogger.LogError(0, "Separation types retrieval returned null.");
 			else
 				SeparationTypes = new ObservableCollection<string>(tempSeparationTypesList);
-
 
 			//
 			// Load Cart Names
@@ -113,7 +133,6 @@ namespace BuzzardWPF.Management
 			else
 				CartNames = new ObservableCollection<string>(tempCartsList);
 
-
 			//
 			// Load column data
 			//
@@ -123,28 +142,122 @@ namespace BuzzardWPF.Management
 		    else
 		    {
 		        ColumnData = new ObservableCollection<string>(tempColumnData);
-
-		        LCColumnNames = tempColumnData;
 		    }
 
-		    //
-			// Load Experiments
-			//
-			var tempExperimentsList = classSQLiteTools.GetExperimentList();
-			if (tempExperimentsList == null)
-				classApplicationLogger.LogError(0, "Experiment list retrieval returned null.");
-			else
-				Experiments = new List<classExperimentData>(tempExperimentsList);
+            //
+            // Load Experiments
+            //
+            var experimentList = classSQLiteTools.GetExperimentList();
+            if (experimentList == null)
+                classApplicationLogger.LogError(0, "Experiment list retrieval returned null.");
+            else
+                Experiments = experimentList;
 
             //
-            // Load Instruments and source folders
-            //
+            // Load datasets
+            //            
+            var datasetList = classSQLiteTools.GetDatasetList();
+            if (datasetList == null)
+                classApplicationLogger.LogError(0, "Dataset list retrieval returned null.");
+            else
+            {
+                var datasetSortedSet = new SortedSet<string>();
+                foreach (var dataset in datasetList)
+                {
+                    try
+                    {
+                        datasetSortedSet.Add(dataset);
+                    }
+                    catch (Exception)
+                    {
+                        // There should not be any duplicate datasets; but this try/catch block is here to silently ignore the situation if it is encountered
+                    }
+                }
 
-		    throw new NotImplementedException();
+                Datasets = datasetSortedSet;
+            }
 
+            // Now that data has been loaded, enable the timer that will auto-update the data every mDataRefreshIntervalHours hours
+		    mAutoUpdateTimer.Enabled = true;
 		}
-		#endregion
 
+        /// <summary>
+        /// Abort for the Dms Thread.
+        /// </summary>
+        private void AbortUpdateThread()
+        {
+            try
+            {
+                mUpdateCacheThread.Abort();
+            }
+            catch
+            {
+                // Ignore errors here
+            }
+            finally
+            {
+                try
+                {
+                    mUpdateCacheThread.Join(100);
+                }
+                catch
+                {
+                    // Ignore errors here
+                }
+            }
+            mUpdateCacheThread = null;
+        }
+
+        /// <summary>
+        /// Loads the DMS Data Cache
+        /// </summary>
+        private void StartUpdateThreaded()
+        {
+            if (mUpdateCacheThread != null)
+            {
+                AbortUpdateThread();
+            }
+
+            // Create a new threaded update
+            var start = new ThreadStart(UpdateCacheThread);
+            mUpdateCacheThread = new Thread(start);
+            mUpdateCacheThread.Start();
+        }
+
+        private void UpdateCacheThread()
+        {
+            mIsUpdating = true;
+
+            var success = UpdateSQLiteCache();
+            if (!success)
+            {
+                mIsUpdating = false;
+                return;
+            }
+
+            mLastUpdate = DateTime.UtcNow;
+            LoadDMSDataFromCache();
+
+            mIsUpdating = false;
+        }
+
+        /// <summary>
+        /// Force updating the SQLite cache database with instrument, experiment, dataset, etc. info
+        /// </summary>
+        public void UpdateCacheNow()
+        {
+
+            lock (m_cacheLoadingSync)
+            {
+                if (mIsUpdating)
+                {
+                    return;
+                }
+                StartUpdateThreaded();
+            }
+        }
+
+	    #endregion
 
 		public static DMS_DataAccessor Instance
 		{
@@ -152,9 +265,64 @@ namespace BuzzardWPF.Management
 			private set;
 		}
 
+        #region Member Variables
 
-		#region EMSL Proposal User Items
-		/// <summary>
+        private readonly System.Timers.Timer mAutoUpdateTimer;
+
+        private float mDataRefreshIntervalHours;
+	    private DateTime mLastUpdate;
+
+        private readonly object m_cacheLoadingSync = new object();
+        private bool mIsUpdating;
+	    private Thread mUpdateCacheThread;
+
+        #endregion
+
+        #region Private Methods
+
+        void mAutoUpdateTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            if (DataRefreshIntervalHours <= 0)
+                return;
+
+            if (!(DateTime.UtcNow.Subtract(mLastUpdate).TotalHours >= DataRefreshIntervalHours))
+            {
+                return;
+            }
+
+            // Set the Last Update time to now to prevent this function from calling UpdateCacheNow repeatedly if the DMS update takes over 30 seconds
+            mLastUpdate = DateTime.UtcNow;
+
+            UpdateCacheNow();
+        }
+
+	    private bool UpdateSQLiteCache()
+	    {
+            try
+            {
+                var dbTools = new classDBTools()
+                {
+                    LoadExperiments = true,
+                    LoadDatasets = true,
+                    RecentExperimentsMonthsToLoad = 0,
+                    RecentDatasetsMonthsToLoad = 12
+                };
+
+                dbTools.LoadCacheFromDMS();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                classApplicationLogger.LogError(0, "Error updating the SQLite cache file", ex);
+                return false;
+            }
+	    }
+
+        #endregion
+
+        #region EMSL Proposal User Items
+        /// <summary>
 		/// This method load Proposal User data from a SQLite cache of DMS data. The data includes
 		/// a list of the Proposal Users and a dictionary of UserIDs to ProposalID cross references.
 		/// The dictionary is indexed by ProposalID.
@@ -303,10 +471,27 @@ namespace BuzzardWPF.Management
 				new ObservableCollection<classProposalUser>(selectedUsers);
 			return result;
 		}
-		#endregion
 
+	    #endregion
 
-		#region Data Source Collections
+		#region Properties
+
+	    public float DataRefreshIntervalHours
+	    {
+	        get { return mDataRefreshIntervalHours; }
+	        set
+	        {
+	            if (value < 0.5)
+	                value = 0.5f;
+
+	            mDataRefreshIntervalHours = value;
+
+	        }
+	    }
+
+	    /// <summary>
+        /// List of DMS LC column names
+        /// </summary>
 		public ObservableCollection<string> ColumnData
 		{
 			get { return m_ColumnData; }
@@ -322,7 +507,7 @@ namespace BuzzardWPF.Management
 		private ObservableCollection<string> m_ColumnData;
 
 		/// <summary>
-		/// This is a list of the DMS names of the different intruments.
+		/// List of the DMS instrument names
 		/// </summary>
 		public ObservableCollection<string> InstrumentData
 		{
@@ -343,12 +528,6 @@ namespace BuzzardWPF.Management
         /// </summary>
         /// <remarks>Key is instrument name, value is the details</remarks>
 	    public Dictionary<string, classInstrumentInfo> InstrumentDetails { get; private set; }
-
-        /// <summary>
-        /// Instrument details (Name, status, source hostname, source share name, capture method
-        /// </summary>
-        /// <remarks>Key is instrument name, value is the details</remarks>
-        public List<string> LCColumnNames { get; private set; }
 
 	    /// <summary>
 		/// This is a list of the names of the cart Operators.
@@ -409,8 +588,26 @@ namespace BuzzardWPF.Management
 		}
 		private ObservableCollection<string> m_cartNames;
 
+        /// <summary>
+        /// List of DMS dataset names
+        /// </summary>
+        /// <remarks>Sorted set for fast lookups</remarks>
+        public SortedSet<string> Datasets
+        {
+            get { return m_Datasets; }
+            private set
+            {
+                if (m_Datasets != value)
+                {
+                    m_Datasets = value;
+                    OnPropertyChanged("Datasets");
+                }
+            }
+        }
+        private SortedSet<string> m_Datasets;
+
 		/// <summary>
-		/// A list experiments from dms.
+		/// List of DMS experiment names
 		/// </summary>
 		/// <remarks>
 		/// This isn't meant to be bound to directly, which is why it's a 
@@ -432,6 +629,7 @@ namespace BuzzardWPF.Management
 			}
 		}
 		private List<classExperimentData> m_experiments;
+
 		#endregion
 
 

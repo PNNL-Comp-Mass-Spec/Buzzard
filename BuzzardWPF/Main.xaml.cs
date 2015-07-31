@@ -366,7 +366,7 @@ namespace BuzzardWPF
         }
 
         /// <summary>
-        /// Searches a directory for buzzard datasets
+        /// Searches a directory for instrument files (or folders) that buzzard could process
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -457,7 +457,7 @@ namespace BuzzardWPF
 
         private void m_buzzadier_SearchStarted(object sender, EventArgs e)
         {            
-            LastStatusMessage = "Searching for datasets";
+            LastStatusMessage = "Searching for instrument data";
         }
 
         private void m_buzzadier_SearchStopped(object sender, EventArgs e)
@@ -608,6 +608,9 @@ namespace BuzzardWPF
                     return;
                 }
                 DatasetManager.Manager.LoadDmsCache();
+
+                // Also force an update on DMS_DataAccessor.Instance
+                DMS_DataAccessor.Instance.UpdateCacheNow();
             }
         }
 
