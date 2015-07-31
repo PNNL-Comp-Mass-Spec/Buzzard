@@ -44,7 +44,7 @@ namespace BuzzardWPF.Windows
 			InitializeComponent();
 			DataContext = this;
 
-			UsageTypesSource	= EMSL_UsageSelectionView.EMSL_USAGE_TYPES_COLLECTION;
+			UsageTypesSource	= EMSL_USAGE_TYPES_COLLECTION;
 			AvailablePIDs		= DMS_DataAccessor.Instance.ProposalIDs;
 
 		}
@@ -53,8 +53,7 @@ namespace BuzzardWPF.Windows
 		{
 			EMSL_USAGE_TYPES_COLLECTION = new ObservableCollection<string>(EMSL_USAGE_TYPES);
 
-			// If we're going to be using items from this guy, then
-			// we better be sure that it's been initialized first.
+			// Assure that the DataAccessor has been initialized
             try
             {
                 DMS_DataAccessor.Instance.LoadDMSDataFromCache();

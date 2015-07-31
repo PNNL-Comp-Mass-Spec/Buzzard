@@ -1,5 +1,10 @@
 Buzzard Change Log
 
+Version 1.7.12.5; July 31, 2015
+	- Added caching of dataset names
+	- Now updating instruments, experiments, columns, etc. every 6 hours
+	- Now prevents creation of a trigger file if the dataset already exists in DMS
+
 Version 1.7.12.4; July 1, 2015
 	- Now replacing percent signs in dataset names with "pct" when removing invalid characters
 

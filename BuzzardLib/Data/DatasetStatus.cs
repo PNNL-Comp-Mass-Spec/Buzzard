@@ -60,6 +60,6 @@
         /// <summary>
         /// The dataset already exists in DMS
         /// </summary>
-        DatasetExists         
+        DatasetAlreadyInDMS
 	}
 }

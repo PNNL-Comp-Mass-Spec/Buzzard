@@ -7,6 +7,7 @@ using System.Threading;
 using System.Windows.Threading;
 using BuzzardLib.Data;
 using BuzzardLib.IO;
+using BuzzardLib.LcmsNetTemp;
 using LcmsNetDataClasses;
 using LcmsNetDataClasses.Data;
 using LcmsNetDataClasses.Logging;
@@ -124,7 +125,7 @@ namespace BuzzardWPF.Management
         }
 
         /// <summary>
-        /// Loads the requested runs from DMS
+        /// Loads active requested runs from DMS
         /// </summary>
         public void LoadDmsCache()
         {
@@ -239,6 +240,13 @@ namespace BuzzardWPF.Management
                 return null;
             }
 
+            if (dataset.DatasetStatus == DatasetStatus.DatasetAlreadyInDMS)
+            {
+                dataset.TriggerCreationWarning = "Skipped since already in DMS";
+                dataset.TriggerFileStatus = TriggerFileStatus.Skipped;
+                return null;
+            }
+
             var sample = new classSampleData
             {
                 LCMethod = new LcmsNetDataClasses.Method.classLCMethod()
@@ -338,7 +346,7 @@ namespace BuzzardWPF.Management
         }
 
         /// <summary>
-        /// Resolves the entries in DMS for a list of given datasets.
+        /// Resolves a list of datasets (instrument files) with the requested runs and datasets in DMS
         /// </summary>
         public void ResolveDms(BuzzardDataset dataset, bool forceUpdate)
         {
@@ -346,11 +354,12 @@ namespace BuzzardWPF.Management
                 return;
 
             // Here we don't want to resolve the dataset in DMS. if it was told to be ignored...or if we already sent it...
-            if (dataset.DatasetStatus == DatasetStatus.Ignored)
-                return;
-
-            if (dataset.DatasetStatus == DatasetStatus.TriggerFileSent)
-                return;
+            switch (dataset.DatasetStatus)
+            {
+                case DatasetStatus.Ignored:
+                case DatasetStatus.TriggerFileSent:
+                    return;
+            }
 
             if (string.IsNullOrWhiteSpace(dataset.FilePath))
             {
@@ -366,10 +375,13 @@ namespace BuzzardWPF.Management
             }
 
             var fiDataset = new FileInfo(dataset.FilePath);
+            var datasetName = string.Empty;
 
             try
             {
                 var fileName = Path.GetFileNameWithoutExtension(fiDataset.Name);
+                datasetName = fileName;
+
                 classDMSData data = null;
 
                 lock (mRequestedRunTrie)
@@ -386,12 +398,17 @@ namespace BuzzardWPF.Management
                         {
                             fileName = Path.GetFileName(fiDataset.Directory.Name);
                             data = mRequestedRunTrie.FindData(fileName);
+
+                            // Match found to the directory name; update the dataset name
+                            datasetName = fileName;
                         }
                     }
                 }
 
+                // Match found
                 dataset.DMSData = new DMSData(data, dataset.FilePath);
                 dataset.DMSDataLastUpdate = DateTime.UtcNow;
+                
             }
             catch (KeyNotFoundException)
             {
@@ -406,6 +423,13 @@ namespace BuzzardWPF.Management
             catch (Exception)
             {
                 dataset.DatasetStatus = DatasetStatus.FailedUnknown;
+            }
+
+            if (!string.IsNullOrWhiteSpace(datasetName))
+            {
+                // Look for a match to an existing dataset in DMS
+                if (DMS_DataAccessor.Instance.Datasets.Contains(datasetName))
+                    dataset.DatasetStatus = DatasetStatus.DatasetAlreadyInDMS;
             }
         }
         #endregion
@@ -498,16 +522,24 @@ namespace BuzzardWPF.Management
                 var totalSecondsToWait = TriggerFileCreationWaitTime * 60;
                 var datasetsToCheck = (from item in datasets
                                        where item.DatasetStatus != DatasetStatus.TriggerFileSent &&
-                                             item.DatasetStatus != DatasetStatus.Ignored
+                                             item.DatasetStatus != DatasetStatus.Ignored &&
+                                             item.DatasetStatus != DatasetStatus.DatasetAlreadyInDMS
                                        select item).ToList();
 
                 foreach (var dataset in datasetsToCheck)
                 {
                     var datasetName = dataset.Name;
 
+                    if (DMS_DataAccessor.Instance.Datasets.Contains(datasetName))
+                    {
+                        dataset.DatasetStatus = DatasetStatus.DatasetAlreadyInDMS;
+                        dataset.PulseText = true;
+                        dataset.PulseText = false;
+                        continue;
+                    }
+
                     try
                     {
-
 
                         var hasTriggerFileSent = false;
 
@@ -1063,8 +1095,7 @@ namespace BuzzardWPF.Management
 
             //
             // If it wasn't already in the set, then
-            // that means that this dataset is brand
-            // new.
+            // that means that this dataset is brand new
             // 
             if (newDatasetFound)
             {

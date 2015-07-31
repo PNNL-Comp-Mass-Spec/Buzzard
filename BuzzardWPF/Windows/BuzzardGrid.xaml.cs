@@ -733,13 +733,13 @@ namespace BuzzardWPF.Windows
                     }
                 }
 
-
-                var success = (SimulateTriggerCreation(selectedDatasets));
+                List<BuzzardDataset> validDatasets;
+                var success = SimulateTriggerCreation(selectedDatasets, out validDatasets);
                 if (!success)
                     return;
 
                 // Confirm that the dataset are not changing and are thus safe to create trigger files for
-                var stableDatasets = VerifyDatasetsStable(selectedDatasets);
+                var stableDatasets = VerifyDatasetsStable(validDatasets);
 
                 if (mAbortTriggerCreationNow)
                     return;
@@ -804,9 +804,10 @@ namespace BuzzardWPF.Windows
         /// </summary>
         /// <param name="selectedDatasets"></param>
         /// <returns>True if no problems, False if a problem with one or more datasets</returns>
-        private bool SimulateTriggerCreation(List<BuzzardDataset> selectedDatasets)
+        private bool SimulateTriggerCreation(List<BuzzardDataset> selectedDatasets, out List<BuzzardDataset> validDatasets)
         {
-            var validDatasets = new List<BuzzardDataset>();
+            validDatasets = new List<BuzzardDataset>();
+            var datasetsAlreadyInDMS = 0;
 
             // Simulate trigger file creation to check for errors
             foreach (var dataset in selectedDatasets)
@@ -824,9 +825,18 @@ namespace BuzzardWPF.Windows
                 {
                     validDatasets.Add(dataset);
                 }
+
+                if (dataset.DatasetStatus == DatasetStatus.DatasetAlreadyInDMS)
+                    datasetsAlreadyInDMS++;
             }
 
-            var invalidDatasetCount = selectedDatasets.Count - validDatasets.Count;
+            if (datasetsAlreadyInDMS > 0 && datasetsAlreadyInDMS == selectedDatasets.Count)
+            {
+                // All of the datasets were already in DMS
+                return false;
+            }
+
+            var invalidDatasetCount = selectedDatasets.Count - validDatasets.Count - datasetsAlreadyInDMS;
             if (invalidDatasetCount <= 0)
             {
                 return true;

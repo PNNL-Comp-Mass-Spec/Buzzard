@@ -15,9 +15,17 @@ namespace BuzzardWPF.Management
 {
 	public class DMS_DataAccessor
 		: INotifyPropertyChanged
-	{
-		#region Events
-		public event PropertyChangedEventHandler PropertyChanged;
+    {
+
+        #region Constants
+
+	    public const int RECENT_EXPERIMENT_MONTHS = 18;
+        public const int RECENT_DATASET_MONTHS = 12;
+
+        #endregion
+
+        #region Events
+        public event PropertyChangedEventHandler PropertyChanged;
 		#endregion
 
 		#region Initialize
@@ -39,11 +47,12 @@ namespace BuzzardWPF.Management
 			CartNames			= new ObservableCollection<string>();
 			ColumnData			= new ObservableCollection<string>();
 			Experiments		    = new List<classExperimentData>();
-            Datasets            = new SortedSet<string>();
+            Datasets            = new SortedSet<string>(StringComparer.CurrentCultureIgnoreCase);
 
-            mLastUpdate = DateTime.UtcNow;
+            mLastSQLiteUpdate = DateTime.UtcNow;
+            mLastLoadFromCache = DateTime.UtcNow.AddMinutes(-60);
 
-            mDataRefreshIntervalHours = 12;
+            mDataRefreshIntervalHours = 6;
 
             mAutoUpdateTimer = new System.Timers.Timer
             {
@@ -63,8 +72,14 @@ namespace BuzzardWPF.Management
         /// <summary>
         /// Loads the DMS data from the SQLite cache file
         /// </summary>
-		public void LoadDMSDataFromCache()
-		{
+        /// <remarks>When forceLoad is false, will not re-load the data from the cache if it was last loaded in the last 60 seconds</remarks>
+		public void LoadDMSDataFromCache(bool forceLoad = false)
+        {
+            if (DateTime.UtcNow.Subtract(mLastLoadFromCache).TotalMinutes < 1 && !forceLoad)
+                return;
+
+            mLastLoadFromCache = DateTime.UtcNow;
+
 			//
 			// Load Instrument Data
 			//
@@ -161,7 +176,7 @@ namespace BuzzardWPF.Management
                 classApplicationLogger.LogError(0, "Dataset list retrieval returned null.");
             else
             {
-                var datasetSortedSet = new SortedSet<string>();
+                var datasetSortedSet = new SortedSet<string>(StringComparer.CurrentCultureIgnoreCase);
                 foreach (var dataset in datasetList)
                 {
                     try
@@ -235,8 +250,8 @@ namespace BuzzardWPF.Management
                 return;
             }
 
-            mLastUpdate = DateTime.UtcNow;
-            LoadDMSDataFromCache();
+            mLastSQLiteUpdate = DateTime.UtcNow;
+            LoadDMSDataFromCache(true);
 
             mIsUpdating = false;
         }
@@ -270,7 +285,8 @@ namespace BuzzardWPF.Management
         private readonly System.Timers.Timer mAutoUpdateTimer;
 
         private float mDataRefreshIntervalHours;
-	    private DateTime mLastUpdate;
+	    private DateTime mLastSQLiteUpdate;
+	    private DateTime mLastLoadFromCache;
 
         private readonly object m_cacheLoadingSync = new object();
         private bool mIsUpdating;
@@ -285,13 +301,13 @@ namespace BuzzardWPF.Management
             if (DataRefreshIntervalHours <= 0)
                 return;
 
-            if (!(DateTime.UtcNow.Subtract(mLastUpdate).TotalHours >= DataRefreshIntervalHours))
+            if (!(DateTime.UtcNow.Subtract(mLastSQLiteUpdate).TotalHours >= DataRefreshIntervalHours))
             {
                 return;
             }
 
             // Set the Last Update time to now to prevent this function from calling UpdateCacheNow repeatedly if the DMS update takes over 30 seconds
-            mLastUpdate = DateTime.UtcNow;
+            mLastSQLiteUpdate = DateTime.UtcNow;
 
             UpdateCacheNow();
         }
@@ -300,12 +316,13 @@ namespace BuzzardWPF.Management
 	    {
             try
             {
-                var dbTools = new classDBTools()
+                // Load active experiments (created/used in the last 18 months), daasets, instruments, etc.
+                var dbTools = new classDBTools
                 {
                     LoadExperiments = true,
                     LoadDatasets = true,
-                    RecentExperimentsMonthsToLoad = 0,
-                    RecentDatasetsMonthsToLoad = 12
+                    RecentExperimentsMonthsToLoad = RECENT_EXPERIMENT_MONTHS,
+                    RecentDatasetsMonthsToLoad = RECENT_DATASET_MONTHS
                 };
 
                 dbTools.LoadCacheFromDMS();
@@ -591,7 +608,7 @@ namespace BuzzardWPF.Management
         /// <summary>
         /// List of DMS dataset names
         /// </summary>
-        /// <remarks>Sorted set for fast lookups</remarks>
+        /// <remarks>Sorted set for fast lookups (not-case sensitive)</remarks>
         public SortedSet<string> Datasets
         {
             get { return m_Datasets; }

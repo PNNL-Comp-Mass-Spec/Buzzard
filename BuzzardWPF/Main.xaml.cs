@@ -594,7 +594,12 @@ namespace BuzzardWPF
                 {
                     return;
                 }
+
+                // Load active requested runs from DMS
                 DatasetManager.Manager.LoadDmsCache();
+
+                // Do not call DMS_DataAccessor.Instance.UpdateCacheNow()
+                // That class has its own timer for updating the data
             }
         }
 
@@ -607,6 +612,8 @@ namespace BuzzardWPF
                 {
                     return;
                 }
+
+                // Load active requested runs from DMS
                 DatasetManager.Manager.LoadDmsCache();
 
                 // Also force an update on DMS_DataAccessor.Instance

@@ -26,7 +26,7 @@ namespace BuzzardWPF
         /// </summary>
         private const int CONST_DEFAULT_MESSAGE_LOG_LEVEL = 5;
 
-        public const string PROGRAM_DATE = "July 30, 2015";
+        public const string PROGRAM_DATE = "July 31, 2015";
         #endregion
 
         #region Configuration Loading
@@ -268,12 +268,13 @@ namespace BuzzardWPF
 
             try
             {
-                var dbTools = new classDBTools()
-                 {
+                // Load active experiments (created/used in the last 18 months), daasets, instruments, etc.
+                var dbTools = new classDBTools
+                {
                     LoadExperiments = true,
                     LoadDatasets = true,
-                    RecentExperimentsMonthsToLoad = 0,
-                    RecentDatasetsMonthsToLoad = 12
+                    RecentExperimentsMonthsToLoad = DMS_DataAccessor.RECENT_EXPERIMENT_MONTHS,
+                    RecentDatasetsMonthsToLoad = DMS_DataAccessor.RECENT_DATASET_MONTHS
                 };
 
                 dbTools.ProgressEvent += dbTools_ProgressEvent;
@@ -313,14 +314,14 @@ namespace BuzzardWPF
 
             try
             {
-                // Load the requested runs from DMS
+                // Load active requested runs from DMS
                 DatasetManager.Manager.LoadDmsCache();
 
                 // Set a flag to indicate that the main window can now be shown
                 openMainWindow = true;
 
                 // Load the experiments, datasets, instruments, etc. from the SQLite cache file
-                DMS_DataAccessor.Instance.LoadDMSDataFromCache();
+                DMS_DataAccessor.Instance.LoadDMSDataFromCache(true);
             }
             catch (Exception ex)
             {

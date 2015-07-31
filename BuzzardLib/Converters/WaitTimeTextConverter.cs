@@ -56,7 +56,7 @@ namespace BuzzardLib.Converters
                         returnValue = "Aborted, size changed";
                         break;
 
-                    case DatasetStatus.DatasetExists:
+                    case DatasetStatus.DatasetAlreadyInDMS:
                         returnValue = "Already in DMS";
                         break;
                 }
