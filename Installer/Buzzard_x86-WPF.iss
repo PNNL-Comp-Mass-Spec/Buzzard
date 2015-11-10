@@ -10,7 +10,7 @@
 #define MyAppPublisher "PNNL"
 #define MyAppExeName "BuzzardWPF.exe"  
 #define MyDateTime GetDateTimeString('mm_dd_yyyy', "_","_");
-#define InstallerFolder "Output"
+#define InstallerFolder "..\Installer\Output"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
