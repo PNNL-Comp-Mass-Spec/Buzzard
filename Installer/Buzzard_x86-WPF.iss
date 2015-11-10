@@ -4,13 +4,13 @@
 ; MyAppVerName will appear in the Uninstall Programs list
 #define ReleaseVersion =     "1.7.12.5"
 #define MyAppVerName "Buzzard_1.7.12.5"
-#define MySource "F:\My Documents\Projects\Instrument-Software\Buzzard\BuzzardWPF"
+#define MySource "..\BuzzardWPF"
 #define MyAppName "Buzzard"
 #define MyAppVis  "PNNL"
 #define MyAppPublisher "PNNL"
 #define MyAppExeName "BuzzardWPF.exe"  
 #define MyDateTime GetDateTimeString('mm_dd_yyyy', "_","_");
-#define InstallerFolder "F:\My Documents\Projects\Instrument-Software\Buzzard\Installer\Output"
+#define InstallerFolder "Output"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -41,29 +41,29 @@ Name: "{app}\x86"
 
 [Files]
 ; Exe and supporting libraries
-Source: "{#MySource}\bin\x86\Release\BuzzardWPF.exe";                         DestDir: "{app}";             Flags: ignoreversion
-Source: "{#MySource}\bin\x86\Release\BuzzardWPF.exe.config";                  DestDir: "{app}";             Flags: ignoreversion
-Source: "{#MySource}\bin\x86\Release\BuzzardLib.dll";                         DestDir: "{app}";             Flags: ignoreversion  
-Source: "{#MySource}\bin\x86\Release\PrismDMS.config";                        DestDir: "{app}";             Flags: ignoreversion
-Source: "{#MySource}\bin\x86\Release\LcmsNetDmsTools.dll";                    DestDir: "{app}";             Flags: ignoreversion  
-Source: "{#MySource}\bin\x86\Release\LcmsNetSDK.dll";                         DestDir: "{app}";             Flags: ignoreversion
-Source: "{#MySource}\bin\x86\Release\LcmsNetSQLiteTools.dll";                 DestDir: "{app}";             Flags: ignoreversion
-Source: "{#MySource}\bin\x86\Release\System.Data.SQLite.DLL";                 DestDir: "{app}";             Flags: ignoreversion  
-Source: "{#MySource}\bin\x86\Release\System.Data.SQLite.xml";                 DestDir: "{app}";             Flags: ignoreversion  
-Source: "{#MySource}\bin\x86\Release\System.Windows.Controls.Input.Toolkit.dll";    DestDir: "{app}";       Flags: ignoreversion 
-Source: "{#MySource}\bin\x86\Release\System.Windows.Controls.Layout.Toolkit.dll";   DestDir: "{app}";       Flags: ignoreversion 
-Source: "{#MySource}\bin\x86\Release\Ookii.Dialogs.Wpf.dll";                  DestDir: "{app}";       Flags: ignoreversion 
-Source: "{#MySource}\bin\x86\Release\WPFToolkit.dll";                         DestDir: "{app}";             Flags: ignoreversion   
-Source: "{#MySource}\bin\x86\Release\Xceed.Wpf.AvalonDock.dll";               DestDir: "{app}";             Flags: ignoreversion   
-Source: "{#MySource}\bin\x86\Release\Xceed.Wpf.AvalonDock.Themes.Aero.dll";   DestDir: "{app}";             Flags: ignoreversion   
-Source: "{#MySource}\bin\x86\Release\Xceed.Wpf.AvalonDock.Themes.Metro.dll";  DestDir: "{app}";             Flags: ignoreversion   
-Source: "{#MySource}\bin\x86\Release\Xceed.Wpf.AvalonDock.Themes.VS2010.dll"; DestDir: "{app}";             Flags: ignoreversion   
-Source: "{#MySource}\bin\x86\Release\Xceed.Wpf.DataGrid.dll";                 DestDir: "{app}";             Flags: ignoreversion   
-Source: "{#MySource}\bin\x86\Release\Xceed.Wpf.Toolkit.dll";                  DestDir: "{app}";             Flags: ignoreversion
-Source: "{#MySource}\bin\x86\Release\x86\Sqlite.Interop.DLL";                 DestDir: "{app}\x86";         Flags: ignoreversion  
-Source: "{#MySource}\bin\x86\Release\x64\Sqlite.Interop.DLL";                 DestDir: "{app}\x64";         Flags: ignoreversion  
-Source: "{#MySource}\Resources\IconImage.ico";                                DestDir: "{app}";             Flags: ignoreversion  
-Source: "{#MySource}\..\Revision_History.txt";                                DestDir: "{app}";             Flags: ignoreversion  
+Source: "bin\x86\Release\BuzzardWPF.exe";                         DestDir: "{app}";             Flags: ignoreversion
+Source: "bin\x86\Release\BuzzardWPF.exe.config";                  DestDir: "{app}";             Flags: ignoreversion
+Source: "bin\x86\Release\BuzzardLib.dll";                         DestDir: "{app}";             Flags: ignoreversion  
+Source: "bin\x86\Release\PrismDMS.config";                        DestDir: "{app}";             Flags: ignoreversion
+Source: "bin\x86\Release\LcmsNetDmsTools.dll";                    DestDir: "{app}";             Flags: ignoreversion  
+Source: "bin\x86\Release\LcmsNetSDK.dll";                         DestDir: "{app}";             Flags: ignoreversion
+Source: "bin\x86\Release\LcmsNetSQLiteTools.dll";                 DestDir: "{app}";             Flags: ignoreversion
+Source: "bin\x86\Release\System.Data.SQLite.DLL";                 DestDir: "{app}";             Flags: ignoreversion  
+Source: "bin\x86\Release\System.Data.SQLite.xml";                 DestDir: "{app}";             Flags: ignoreversion  
+Source: "bin\x86\Release\System.Windows.Controls.Input.Toolkit.dll";    DestDir: "{app}";       Flags: ignoreversion 
+Source: "bin\x86\Release\System.Windows.Controls.Layout.Toolkit.dll";   DestDir: "{app}";       Flags: ignoreversion 
+Source: "bin\x86\Release\Ookii.Dialogs.Wpf.dll";                  DestDir: "{app}";       Flags: ignoreversion 
+Source: "bin\x86\Release\WPFToolkit.dll";                         DestDir: "{app}";             Flags: ignoreversion   
+Source: "bin\x86\Release\Xceed.Wpf.AvalonDock.dll";               DestDir: "{app}";             Flags: ignoreversion   
+Source: "bin\x86\Release\Xceed.Wpf.AvalonDock.Themes.Aero.dll";   DestDir: "{app}";             Flags: ignoreversion   
+Source: "bin\x86\Release\Xceed.Wpf.AvalonDock.Themes.Metro.dll";  DestDir: "{app}";             Flags: ignoreversion   
+Source: "bin\x86\Release\Xceed.Wpf.AvalonDock.Themes.VS2010.dll"; DestDir: "{app}";             Flags: ignoreversion   
+Source: "bin\x86\Release\Xceed.Wpf.DataGrid.dll";                 DestDir: "{app}";             Flags: ignoreversion   
+Source: "bin\x86\Release\Xceed.Wpf.Toolkit.dll";                  DestDir: "{app}";             Flags: ignoreversion
+Source: "bin\x86\Release\x86\Sqlite.Interop.DLL";                 DestDir: "{app}\x86";         Flags: ignoreversion  
+Source: "bin\x86\Release\x64\Sqlite.Interop.DLL";                 DestDir: "{app}\x64";         Flags: ignoreversion  
+Source: "Resources\IconImage.ico";                                DestDir: "{app}";             Flags: ignoreversion  
+Source: "..\RevisionHistory.txt";                                 DestDir: "{app}";             Flags: ignoreversion  
 
 ;-----------------------------------------------------------------------------------------------------------------------------------------------
 
