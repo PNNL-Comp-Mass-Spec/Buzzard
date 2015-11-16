@@ -50,5 +50,6 @@ using System.Windows;
 // the build version of the running program to that at \\proto-5\BionetSoftware\Buzzard
 //
 // The following version numbers must match that defined in the Innosetup build script, Buzzard_x86-WPF.iss
+//  11/16/2015, BCG: Buzzard_x86-WPF.iss now pulls the BuzzardWPF.exe file version to set the installer version
 [assembly: AssemblyVersion("1.7.12.5")]
-[assembly: AssemblyFileVersion("1.7.12.5")]
+//[assembly: AssemblyFileVersion("1.7.12.5")] // If not set, defaults to AssemblyVersion

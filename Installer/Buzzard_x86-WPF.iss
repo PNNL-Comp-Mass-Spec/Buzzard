@@ -2,8 +2,8 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
                                     
 ; MyAppVerName will appear in the Uninstall Programs list
-#define ReleaseVersion =     "1.7.12.5"
-#define MyAppVerName "Buzzard_1.7.12.5"
+#define ReleaseVersion GetFileVersion('..\BuzzardWPF\bin\x86\Release\BuzzardWPF.exe')
+;#define MyAppVerName "Buzzard_1.7.12.5"
 #define MySource "..\BuzzardWPF"
 #define MyAppName "Buzzard"
 #define MyAppVis  "PNNL"
@@ -18,7 +18,9 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{C617288A-CBA4-44C7-9899-153B4AC1F34F}}
 AppName={#MyAppName}
-AppVerName={#MyAppVerName}
+;AppVerName={#MyAppVerName}
+AppVerName={#MyAppName}_{#ReleaseVersion}
+AppVersion={#ReleaseVersion}
 VersionInfoVersion={#ReleaseVersion}
 AppPublisher={#MyAppPublisher}
 DefaultDirName={pf}\{#MyAppName}
@@ -52,7 +54,7 @@ Source: "bin\x86\Release\System.Data.SQLite.DLL";                 DestDir: "{app
 Source: "bin\x86\Release\System.Data.SQLite.xml";                 DestDir: "{app}";             Flags: ignoreversion  
 Source: "bin\x86\Release\System.Windows.Controls.Input.Toolkit.dll";    DestDir: "{app}";       Flags: ignoreversion 
 Source: "bin\x86\Release\System.Windows.Controls.Layout.Toolkit.dll";   DestDir: "{app}";       Flags: ignoreversion 
-Source: "bin\x86\Release\Ookii.Dialogs.Wpf.dll";                  DestDir: "{app}";       Flags: ignoreversion 
+Source: "bin\x86\Release\Ookii.Dialogs.Wpf.dll";                  DestDir: "{app}";             Flags: ignoreversion 
 Source: "bin\x86\Release\WPFToolkit.dll";                         DestDir: "{app}";             Flags: ignoreversion   
 Source: "bin\x86\Release\Xceed.Wpf.AvalonDock.dll";               DestDir: "{app}";             Flags: ignoreversion   
 Source: "bin\x86\Release\Xceed.Wpf.AvalonDock.Themes.Aero.dll";   DestDir: "{app}";             Flags: ignoreversion   
