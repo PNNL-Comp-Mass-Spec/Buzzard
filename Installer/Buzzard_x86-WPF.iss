@@ -3,7 +3,7 @@
                                     
 ; MyAppVerName will appear in the Uninstall Programs list
 #define ReleaseVersion GetFileVersion('..\BuzzardWPF\bin\x86\Release\BuzzardWPF.exe')
-;#define MyAppVerName "Buzzard_1.7.12.5"
+#define MyAppVerName "Buzzard_" + ReleaseVersion
 #define MySource "..\BuzzardWPF"
 #define MyAppName "Buzzard"
 #define MyAppVis  "PNNL"
