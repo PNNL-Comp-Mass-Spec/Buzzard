@@ -617,7 +617,7 @@ namespace BuzzardWPF
                 DatasetManager.Manager.LoadDmsCache();
 
                 // Also force an update on DMS_DataAccessor.Instance
-                DMS_DataAccessor.Instance.UpdateCacheNow();
+                DMS_DataAccessor.Instance.UpdateCacheNow("ForceDmsReload_Click");
             }
         }
 

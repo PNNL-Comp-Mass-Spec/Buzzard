@@ -62,13 +62,14 @@
                 <ComboBox Name="UsageTypeSelector"
                           Grid.Row="0"
                           Grid.Column="1"
+                          Margin="0,3,3.4,3"
                           ItemsSource="{Binding Path=UsageTypesSource,
                                                 Mode=OneWay,
                                                 UpdateSourceTrigger=PropertyChanged}"
                           SelectedItem="{Binding Path=BoundContainer.SelectedEMSLUsageType,
                                                  Mode=TwoWay,
                                                  UpdateSourceTrigger=PropertyChanged}"
-                          Style="{StaticResource ComboBoxStyle}" />
+                          Style="{StaticResource ComboBoxStyle}" MinWidth="125" />
 
                 <TextBlock Grid.Row="1"
                            Grid.Column="0"

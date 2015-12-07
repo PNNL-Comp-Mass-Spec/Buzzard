@@ -26,7 +26,7 @@ namespace BuzzardWPF
         /// </summary>
         private const int CONST_DEFAULT_MESSAGE_LOG_LEVEL = 5;
 
-        public const string PROGRAM_DATE = "July 31, 2015";
+        public const string PROGRAM_DATE = "December 7, 2015";
         #endregion
 
         #region Configuration Loading
@@ -325,7 +325,7 @@ namespace BuzzardWPF
             }
             catch (Exception ex)
             {
-                classFileLogging.LogError(0, new classErrorLoggerArgs("Program Failed!", ex));
+                classFileLogging.LogError(0, new classErrorLoggerArgs("Error loading data from DMS at program startup", ex));
             }
             finally
             {
