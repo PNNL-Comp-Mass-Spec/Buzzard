@@ -58,11 +58,11 @@
 
         <Button Grid.Row="2"
                 Click="Replace_Click"
-                Content="Replace" 
+                Content="Replace"
                 Style="{StaticResource SimpleButtonStyle}" />
         <Button Grid.Row="3"
                 Click="SkipDataset_Click"
-                Content="Don't Rename" 
+                Content="Don't Rename"
                 Style="{StaticResource SimpleButtonStyle}" />
         <CheckBox Grid.Row="4"
                   Margin="1,4,1,1"

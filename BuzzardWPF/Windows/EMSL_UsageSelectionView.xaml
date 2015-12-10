@@ -2,11 +2,9 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:lcmsData="clr-namespace:LcmsNetDataClasses.Data;assembly=LcmsNetSDK"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:toolkit="http://schemas.xceed.com/wpf/xaml/toolkit"
              xmlns:window="clr-namespace:BuzzardWPF.Windows"
-             xmlns:xctk="clr-namespace:Xceed.Wpf.Toolkit;assembly=WPFToolkit.Extended"
              d:DesignHeight="152.8"
              d:DesignWidth="600"
              mc:Ignorable="d">
@@ -62,6 +60,7 @@
                 <ComboBox Name="UsageTypeSelector"
                           Grid.Row="0"
                           Grid.Column="1"
+                          MinWidth="125"
                           Margin="0,3,3.4,3"
                           ItemsSource="{Binding Path=UsageTypesSource,
                                                 Mode=OneWay,
@@ -69,7 +68,7 @@
                           SelectedItem="{Binding Path=BoundContainer.SelectedEMSLUsageType,
                                                  Mode=TwoWay,
                                                  UpdateSourceTrigger=PropertyChanged}"
-                          Style="{StaticResource ComboBoxStyle}" MinWidth="125" />
+                          Style="{StaticResource ComboBoxStyle}" />
 
                 <TextBlock Grid.Row="1"
                            Grid.Column="0"
