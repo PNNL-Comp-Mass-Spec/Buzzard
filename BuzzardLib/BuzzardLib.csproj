@@ -53,7 +53,8 @@
     <Reference Include="LcmsNetDmsTools">
       <HintPath>..\lib\LcmsNetDmsTools.dll</HintPath>
     </Reference>
-    <Reference Include="LcmsNetSdk">
+    <Reference Include="LcmsNetSdk, Version=3.4.17.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\LcmsNetSdk.dll</HintPath>
     </Reference>
     <Reference Include="LcmsNetSQLiteTools">
