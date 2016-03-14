@@ -5,7 +5,6 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
-using System.Windows.Documents;
 using LcmsNetDataClasses;
 using LcmsNetDataClasses.Data;
 using LcmsNetDataClasses.Logging;

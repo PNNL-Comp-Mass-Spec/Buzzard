@@ -1,5 +1,10 @@
 Buzzard Change Log
 
+Version 1.7.12.7; March 14, 2016
+	- PrismDMS.config now includes the database server (Gigasax)
+	- Now showing the log folder path on the Configure tab
+	- Update to System.Data.SQLite.dll v1.0.99
+
 Version 1.7.12.6; December 7, 2015
 	- Now sorting EUS proposal user checkboxes by last name on the Instrument Metadata tab
 

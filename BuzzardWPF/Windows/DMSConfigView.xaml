@@ -7,14 +7,14 @@
         d:DesignWidth="479"
         mc:Ignorable="d">
     <Grid>
-        <Button Name="button2"
+        <Button Name="cmdExploreTriggerFileFolder"
                 Width="90"
                 Height="37"
                 Margin="0,91,11.8,0"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Top"
                 Content="Explore" />
-        <Label Name="label3"
+        <Label Name="labelTriggerFileDirectory"
                Width="197"
                Height="41"
                Margin="12,12,0,0"
@@ -27,33 +27,33 @@
                  Height="26"
                  Margin="20,48,106.8,0"
                  VerticalAlignment="Top" />
-        <Button Name="button1"
+        <Button Name="cmdReloadDatasets"
                 Width="241"
                 Height="37"
                 Margin="20,91,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
                 Content="Re-load datasets from DMS" />
-        <Button Name="button3"
+        <Button Name="cmdSelectTriggerFileFolder"
                 Width="90"
                 Height="26"
                 Margin="0,48,11.8,0"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Top"
                 Content="..." />
-        <Button Name="button4"
+        <Button Name="cmdCancel"
                 Width="90"
                 Height="37"
                 Margin="0,0,11.8,10.4"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"
                 Content="Cancel" />
-        <Button Name="button5"
+        <Button Name="cmdOK"
                 Width="90"
                 Height="37"
                 Margin="0,0,106.8,10.4"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"
-                Content="Ok" />
+                Content="Ok" />        
     </Grid>
 </Window>

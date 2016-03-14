@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Windows;
 using System.Windows.Threading;
 using BuzzardLib.Data;
 using BuzzardLib.IO;
@@ -143,73 +144,92 @@ namespace BuzzardWPF.Management
 
         private void LoadThread()
         {
-            var query = new classSampleQueryData
+            var currentTask = "Initializing";
+
+            try
             {
-                UnassignedOnly = true,
-                RequestName = "",
-                Cart = "",
-                BatchID = "",
-                Block = "",
-                MaxRequestNum = "1000000",
-                MinRequestNum = "0",
-                Wellplate = ""
-            };
-            query.BuildSqlString();
 
-            // Load the samples (essentially requested runs) from DMS
-            var dbTools = new classDBTools();
-            var samples = dbTools.GetSamplesFromDMS(query);
-
-            lock (mRequestedRunTrie)
-            {
-                mRequestedRunTrie.Clear();
-
-                foreach (var sample in samples)
+                var query = new classSampleQueryData
                 {
-                    mRequestedRunTrie.AddData(sample.DmsData);
-                }
-            }
+                    UnassignedOnly = true,
+                    RequestName = "",
+                    Cart = "",
+                    BatchID = "",
+                    Block = "",
+                    MaxRequestNum = "1000000",
+                    MinRequestNum = "0",
+                    Wellplate = ""
+                };
+                query.BuildSqlString();
 
-            // We can use this to get an idea if any datasets already have
-            // trigger files that were sent.
-            var triggerFileDestination = classLCMSSettings.GetParameter("TriggerFileFolder");
+                // Load the samples (essentially requested runs) from DMS
+                var dbTools = new classDBTools();
 
-            if (mTriggerFolderContents == null)
-            {
-                mTriggerFolderContents = new Dictionary<string, bool>(StringComparer.CurrentCultureIgnoreCase);
-            }
-            else
-            {
-                mTriggerFolderContents.Clear();
-            }
+                currentTask = "Retrieving samples (requested runs) from DMS";
+                var samples = dbTools.GetSamplesFromDMS(query);
 
-            if (!string.IsNullOrWhiteSpace(triggerFileDestination))
-            {
-                try
+                currentTask = "Populating mRequestedRunTrie";
+                lock (mRequestedRunTrie)
                 {
-                    var diTriggerFolder = new DirectoryInfo(triggerFileDestination);
+                    mRequestedRunTrie.Clear();
 
-                    if (diTriggerFolder.Exists)
+                    foreach (var sample in samples)
                     {
-                        AddTriggerFiles(diTriggerFolder, false);
-
-                        var diSuccessFolder = new DirectoryInfo(Path.Combine(diTriggerFolder.FullName, "success"));
-                        AddTriggerFiles(diSuccessFolder, true);
+                        mRequestedRunTrie.AddData(sample.DmsData);
                     }
-
                 }
-                catch
+
+                // We can use this to get an idea if any datasets already have
+                // trigger files that were sent.
+
+                currentTask = "Examine the trigger file folder";
+                var triggerFileDestination = classLCMSSettings.GetParameter("TriggerFileFolder");
+
+                if (mTriggerFolderContents == null)
                 {
-                    // Ignore errors here
+                    mTriggerFolderContents = new Dictionary<string, bool>(StringComparer.CurrentCultureIgnoreCase);
+                }
+                else
+                {
+                    mTriggerFolderContents.Clear();
+                }
+
+                if (!string.IsNullOrWhiteSpace(triggerFileDestination))
+                {
+                    try
+                    {
+                        var diTriggerFolder = new DirectoryInfo(triggerFileDestination);
+
+                        if (diTriggerFolder.Exists)
+                        {
+                            currentTask = "Parsing trigger files in " + diTriggerFolder.FullName;
+                            AddTriggerFiles(diTriggerFolder, false);
+
+                            var diSuccessFolder = new DirectoryInfo(Path.Combine(diTriggerFolder.FullName, "success"));
+                            currentTask = "Parsing trigger files in " + diSuccessFolder.FullName;
+                            AddTriggerFiles(diSuccessFolder, true);
+                        }
+
+                    }
+                    catch
+                    {
+                        // Ignore errors here
+                    }
+                }
+
+                currentTask = "Raise event DatasetsLoaded";
+                mDatasetsReady = true;
+
+                LastUpdated = string.Format("Cache Last Updated: {0}", DateTime.Now);
+                if (DatasetsLoaded != null)
+                {
+                    DatasetsLoaded(this, null);
                 }
             }
-
-            mDatasetsReady = true;
-
-            LastUpdated = string.Format("Cache Last Updated: {0}", DateTime.Now);
-            if (DatasetsLoaded != null)
+            catch (Exception ex)
             {
-                DatasetsLoaded(this, null);
+                MessageBox.Show("Error loading data, task " + currentTask + ": " + ex.Message, "Error",
+                                MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
         }
 
@@ -408,7 +428,7 @@ namespace BuzzardWPF.Management
                 // Match found
                 dataset.DMSData = new DMSData(data, dataset.FilePath);
                 dataset.DMSDataLastUpdate = DateTime.UtcNow;
-                
+
             }
             catch (KeyNotFoundException)
             {

@@ -229,7 +229,7 @@
                                          Grid.Row="0"
                                          Grid.Column="1"
                                          Height="32"
-                                         Margin="4.8,4"
+                                         Margin="9.8,4,5.2,4"
                                          IsEnabled="False"
                                          Style="{StaticResource TextBoxStyle}"
                                          Text="{Binding Path=TriggerFileLocation,
@@ -293,6 +293,21 @@
                                                               Mode=TwoWay,
                                                               UpdateSourceTrigger=PropertyChanged}"
                                           IsEnabled="{Binding Path=IsNotMonitoring}" />
+
+                                <Label Grid.Row="4"
+                                       Grid.Column="0"
+                                       Margin="1,1"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Content="Log Folder Location" />
+                                <TextBox Grid.Row="4"
+                                         Grid.Column="1"
+                                         Width="480"
+                                         Margin="9.8,9,0,9"
+                                         HorizontalAlignment="Left"
+                                         VerticalAlignment="Center"
+                                         IsReadOnly="true"
+                                         Text="%appdata%\Buzzard\Log" />
                             </Grid>
                         </TabItem>
                     </TabControl>
