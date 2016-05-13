@@ -17,6 +17,10 @@
 		/// The DMS Request could not be resolved.
 		/// </summary>
 		FailedNoDmsRequest,
+        /// <summary>
+        /// The dataset name matches more than one DMS Request 
+        /// </summary>
+        FailedAmbiguousDmsRequest,
 		/// <summary>
 		/// Failure is unknown.
 		/// </summary>

@@ -89,6 +89,7 @@
     <Compile Include="Data\DatasetSource.cs" />
     <Compile Include="Data\DatasetStatus.cs" />
     <Compile Include="Data\DatasetTrie.cs" />
+    <Compile Include="Data\DatasetTrieException.cs" />
     <Compile Include="Data\DMSData.cs" />
     <Compile Include="Data\Enums.cs" />
     <Compile Include="Data\FilldownBuzzardDataset.cs" />

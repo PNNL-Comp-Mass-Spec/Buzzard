@@ -26,7 +26,7 @@ namespace BuzzardWPF
         /// </summary>
         private const int CONST_DEFAULT_MESSAGE_LOG_LEVEL = 5;
 
-        public const string PROGRAM_DATE = "March 14, 2016";
+        public const string PROGRAM_DATE = "May 12, 2016";
         #endregion
 
         #region Configuration Loading
@@ -90,7 +90,7 @@ namespace BuzzardWPF
         static void CreatePath(string localPath)
         {
 
-            var appPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData);
+            var appPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
 
             var path = Path.Combine(appPath, "Buzzard", localPath);
             // 
@@ -231,7 +231,7 @@ namespace BuzzardWPF
 
             LogVersionNumbers();
             LogMachineInformation();
-            classApplicationLogger.LogMessage(0, string.Format("[Log]"));
+            classApplicationLogger.LogMessage(0, "[Log]");
 
 
             // Load settings 
@@ -240,7 +240,11 @@ namespace BuzzardWPF
             LoadSettings();
 
             var instName = classLCMSSettings.GetParameter("InstName");
-            (System.Windows.Application.Current as App).DynamicSplashScreen.InstrumentName = instName;
+            var app = System.Windows.Application.Current as App;
+            if (app != null)
+            {
+                app.DynamicSplashScreen.InstrumentName = instName;
+            }
 
             // Set the logging levels
             if (classLCMSSettings.GetParameter("LoggingErrorLevel") != null)

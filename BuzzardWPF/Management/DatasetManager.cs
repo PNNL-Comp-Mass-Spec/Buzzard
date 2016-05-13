@@ -35,11 +35,6 @@ namespace BuzzardWPF.Management
         #region Attributes
 
         /// <summary>
-        /// Dictionary that tracks datasets that already exist in DMS
-        /// </summary>
-        private readonly Dictionary<string, int> mExistingDatasets;
-
-        /// <summary>
         /// thread for loading data from DMS.
         /// </summary>
         private Thread mDmsLoadThread;
@@ -76,8 +71,6 @@ namespace BuzzardWPF.Management
             mRequestedRunTrie = new DatasetTrie();
             mDatasetsReady = false;
             Datasets = new ObservableCollection<BuzzardDataset>();
-
-            mExistingDatasets = new Dictionary<string, int>();
 
             WatcherConfigSelectedCartName = null;
             WatcherConfigSelectedDatasetType = null;
@@ -370,6 +363,8 @@ namespace BuzzardWPF.Management
         /// </summary>
         public void ResolveDms(BuzzardDataset dataset, bool forceUpdate)
         {
+            const int SEARCH_DEPTH_AMBIGUOUS_MATCH = 5;
+
             if (dataset == null)
                 return;
 
@@ -410,14 +405,26 @@ namespace BuzzardWPF.Management
                     {
                         data = mRequestedRunTrie.FindData(fileName);
                     }
-                    catch (KeyNotFoundException)
+                    catch (DatasetTrieException ex)
                     {
                         // Not found
                         // Get the path name of the directory, then use that as the "search string for dms"
                         if (fiDataset.Directory != null)
                         {
                             fileName = Path.GetFileName(fiDataset.Directory.Name);
-                            data = mRequestedRunTrie.FindData(fileName);
+
+                            try
+                            {
+                                data = mRequestedRunTrie.FindData(fileName);
+                            }
+                            catch (DatasetTrieException)
+                            {
+                                // No match to the folder name
+                                if (ex.SearchDepth >= SEARCH_DEPTH_AMBIGUOUS_MATCH)
+                                    throw new DatasetTrieException(ex.Message, ex.SearchDepth, ex.DatasetName, ex);
+                                
+                                throw;
+                            }
 
                             // Match found to the directory name; update the dataset name
                             datasetName = fileName;
@@ -430,14 +437,20 @@ namespace BuzzardWPF.Management
                 dataset.DMSDataLastUpdate = DateTime.UtcNow;
 
             }
-            catch (KeyNotFoundException)
+            catch (DatasetTrieException ex)
             {
                 if (fiDataset.Name.StartsWith("x_", StringComparison.OrdinalIgnoreCase))
                     dataset.DatasetStatus = DatasetStatus.DatasetMarkedCaptured;
                 else
                 {
                     if (!CreateTriggerOnDMSFail)
-                        dataset.DatasetStatus = DatasetStatus.FailedNoDmsRequest;
+                    {
+                        // Either there was no match, or it was an ambiguous match
+                        if (ex.SearchDepth >= SEARCH_DEPTH_AMBIGUOUS_MATCH)
+                            dataset.DatasetStatus = DatasetStatus.FailedAmbiguousDmsRequest;
+                        else
+                            dataset.DatasetStatus = DatasetStatus.FailedNoDmsRequest;
+                    }
                 }
             }
             catch (Exception)

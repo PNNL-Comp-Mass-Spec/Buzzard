@@ -1,5 +1,9 @@
 Buzzard Change Log
 
+Version 1.7.12.8; May 12, 2016
+	- Now indicating data files that match multiple DMS requests as ambiguous matches
+		- The Requested Run cannot be auto-selected when there are multiple matching requests
+
 Version 1.7.12.7; March 14, 2016
 	- PrismDMS.config now includes the database server (Gigasax)
 	- Now showing the log folder path on the Configure tab

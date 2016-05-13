@@ -11,7 +11,7 @@ namespace BuzzardLib.Data
         private const bool DEFAULT_IGNORE_CASE = true;
 
 		#region Attributes
-		private readonly classTrieNode					m_root;
+        private readonly TrieNode                       m_root;
 		private readonly Dictionary<int, classDMSData>	m_requestIDToDMS;
         private readonly bool m_IgnoreCase;
 		#endregion
@@ -23,7 +23,7 @@ namespace BuzzardLib.Data
 
         public DatasetTrie(bool ignoreCase)
         {
-            m_root = new classTrieNode();
+            m_root = new TrieNode();
             m_requestIDToDMS = new Dictionary<int, classDMSData>();
             m_IgnoreCase = ignoreCase;
         }
@@ -48,7 +48,7 @@ namespace BuzzardLib.Data
             RemoveNodes(m_root);
 			m_requestIDToDMS.Clear();
         }
-        private void RemoveNodes(classTrieNode node)
+        private void RemoveNodes(TrieNode node)
         {
             foreach (var edge in node.Edges.Values)
             {
@@ -63,7 +63,7 @@ namespace BuzzardLib.Data
         /// <param name="node">Node to add to.</param>
         /// <param name="datasetName">Dataset name to add</param>
         /// <param name="data">Data to add at leaf</param>
-        private void AddData(classTrieNode node, string datasetName, classDMSData data)
+        private void AddData(TrieNode node, string datasetName, classDMSData data)
         {
           
             if (string.IsNullOrWhiteSpace(datasetName))
@@ -83,7 +83,7 @@ namespace BuzzardLib.Data
                 }
                 else
                 {
-                    var newNode = new classTrieNode();
+                    var newNode = new TrieNode();
                     node.Edges.Add(key, newNode);
                     AddData(newNode, datasetName.Substring(1), data);
                 }
@@ -101,7 +101,7 @@ namespace BuzzardLib.Data
 		public classDMSData FindData(int requestID)
 		{
 			if (!m_requestIDToDMS.ContainsKey(requestID))
-				throw new KeyNotFoundException("Could not resolve the Request ID.  The dataset is just not available.");
+                throw new DatasetTrieException("Could not resolve the Request ID. The dataset is just not available.");
 
 			return m_requestIDToDMS[requestID];
 		}
@@ -109,7 +109,7 @@ namespace BuzzardLib.Data
         /// <summary>
         /// Finds the dataset data that closest resembles the dataset name.
         /// </summary>
-        /// <exception cref="KeyNotFoundException">Thrown if the dataset name does not exist in the trie, or if the dataset name cannot resolve the data.</exception>
+        /// <exception cref="DatasetTrieException">Thrown if the dataset name does not exist in the trie, or if the dataset name cannot resolve the data.</exception>
         /// <param name="datasetName">Name of the dataset to search with.</param>
         /// <returns>DMS Data if it exists.  Exceptions are thrown if the dataset does not.</returns>
         public classDMSData FindData(string datasetName)
@@ -117,28 +117,26 @@ namespace BuzzardLib.Data
             if (m_IgnoreCase)
             {
                 // Dataset names were stored lowercase; must convert to lowercase when calling FindData
-                return FindData(m_root, datasetName.ToLower());
+                return FindData(m_root, datasetName.ToLower(), datasetName, 0);
             }
-            else
-            {
-                return FindData(m_root, datasetName);
-            }
+            
+            return FindData(m_root, datasetName, string.Copy(datasetName), 0);
         }
 
-        private classDMSData FindData(classTrieNode node, string datasetName)
+        private classDMSData FindData(TrieNode node, string datasetNamePart, string fullDatasetName, int searchDepth)
         {
-            if (string.IsNullOrWhiteSpace(datasetName))
+            if (string.IsNullOrWhiteSpace(datasetNamePart))
             {
                 // This means that we are out of our search string.
                 if (node.DmsData != null)
                 {
                     return node.DmsData;
                 }
-                throw new KeyNotFoundException("Could not resolve the dataset name.  The dataset is just not available in this trie.");
+                throw new DatasetTrieException("Could not resolve the dataset name.  The dataset is just not available in this trie.");
             }
             // This means we still have a string to search with...
 
-            var key = datasetName[0];
+            var key = datasetNamePart[0];
             if (node.Edges.Count < 1)
             {
                 // Found a request whose full name matches the start of the dataset file on the instrument (but not the entire filename)
@@ -152,26 +150,27 @@ namespace BuzzardLib.Data
             {
                 // This means that we have the edge we need
                 // we need to keep following.
-                return FindData(node.Edges[key], datasetName.Substring(1));
+                return FindData(node.Edges[key], datasetNamePart.Substring(1), fullDatasetName, searchDepth + 1);
             }
+
             // this means that we have nodes...but we don't have the key...
-            throw new KeyNotFoundException("Could not resolve the dataset name.  The dataset is just not available in this trie.");
+            throw new DatasetTrieException("Could not resolve the dataset name.  The dataset is just not available in this trie.", searchDepth, fullDatasetName);
         }
     }
 
-    public class classTrieNode
+    public class TrieNode
     {
-        public classTrieNode()
+        public TrieNode()
         {
             DmsData = null;
-            Edges   = new Dictionary<char, classTrieNode>();
+            Edges = new Dictionary<char, TrieNode>();
         }
         public classDMSData DmsData
         {
             get;
             set;
         }
-        public Dictionary<char, classTrieNode> Edges
+        public Dictionary<char, TrieNode> Edges
         {
             get;
             set;

@@ -51,5 +51,5 @@ using System.Windows;
 //
 // The following version numbers must match that defined in the Innosetup build script, Buzzard_x86-WPF.iss
 //  11/16/2015, BCG: Buzzard_x86-WPF.iss now pulls the BuzzardWPF.exe file version to set the installer version
-[assembly: AssemblyVersion("1.7.12.7")]
+[assembly: AssemblyVersion("1.7.12.8")]
 

@@ -28,6 +28,10 @@ namespace BuzzardLib.Converters
                         returnValue = "File Error";
                         break;
 
+                    case DatasetStatus.FailedAmbiguousDmsRequest:
+                        returnValue = "Matches Multiple Requests";
+                        break;
+
                     case DatasetStatus.FailedNoDmsRequest:
                         returnValue = "No DMS Request";
                         break;
