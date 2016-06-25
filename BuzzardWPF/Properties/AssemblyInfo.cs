@@ -49,7 +49,6 @@ using System.Windows;
 // This program informs the user when a new version is available by comparing
 // the build version of the running program to that at \\proto-5\BionetSoftware\Buzzard
 //
-// The following version numbers must match that defined in the Innosetup build script, Buzzard_x86-WPF.iss
-//  11/16/2015, BCG: Buzzard_x86-WPF.iss now pulls the BuzzardWPF.exe file version to set the installer version
-[assembly: AssemblyVersion("1.7.12.8")]
+// Innosetup reads this version from file BuzzardWPF.exe when building the installer (see Buzzard_x86-WPF.iss)
+[assembly: AssemblyVersion("1.7.12.9")]
 

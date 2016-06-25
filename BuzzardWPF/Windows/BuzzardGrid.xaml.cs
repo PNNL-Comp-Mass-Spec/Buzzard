@@ -640,7 +640,7 @@ namespace BuzzardWPF.Windows
         }
 
         /// <summary>
-        /// This event handler should find the samples we want to make trigger files fore
+        /// This event handler should find the samples we want to make trigger files for
         /// and make them.
         /// </summary>
         private void CreateTriggers_Click(object sender, RoutedEventArgs e)

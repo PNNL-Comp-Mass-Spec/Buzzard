@@ -1,15 +1,16 @@
 ﻿<UserControl x:Class="BuzzardWPF.Windows.BuzzardGrid"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:componentModel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
              xmlns:converters="clr-namespace:BuzzardLib.Converters;assembly=BuzzardLib"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:data="clr-namespace:BuzzardLib.Data;assembly=BuzzardLib"
              xmlns:dmsData="clr-namespace:LcmsNetDataClasses.Data;assembly=LcmsNetSdk"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:windows="clr-namespace:BuzzardWPF.Windows"
-             Background="{x:Null}"
              d:DesignHeight="267"
              d:DesignWidth="749.4"
+             Background="{x:Null}"
              mc:Ignorable="d">
     <UserControl.Resources>
         <converters:BooleanToDataGridVisibilityModeConverter x:Key="boolConverter" />
@@ -102,26 +103,26 @@
                                VerticalAlignment="Center">
                             Usage:
                         </Label>
-                        <Label Grid.Column="2"
-                               Margin="2"
-                               VerticalAlignment="Center">
-                            Proposal ID:
-                        </Label>
-                        <Label Grid.Column="4"
-                               Margin="2"
-                               VerticalAlignment="Center">
-                            Proposal Users:
-                        </Label>
 
                         <TextBlock Grid.Column="1"
                                    Margin="2 2 8 2"
                                    VerticalAlignment="Center"
                                    Text="{Binding Path=DMSData.EMSLUsageType}" />
+                        <Label Grid.Column="2"
+                               Margin="2"
+                               VerticalAlignment="Center">
+                            Proposal ID:
+                        </Label>
 
                         <TextBlock Grid.Column="3"
                                    Margin="2 2 8 2"
                                    VerticalAlignment="Center"
                                    Text="{Binding Path=DMSData.EMSLProposalID}" />
+                        <Label Grid.Column="4"
+                               Margin="2"
+                               VerticalAlignment="Center">
+                            Proposal Users:
+                        </Label>
 
                         <ScrollViewer Grid.Column="5"
                                       HorizontalScrollBarVisibility="Auto"
@@ -138,7 +139,16 @@
                 </GroupBox>
             </Grid>
         </DataTemplate>
+
+        <!-- The CollectionViewSource wrapper allows us to set the default sort (Modification Date descending) -->
+        <CollectionViewSource x:Key="MyItemsViewSource" Source="{Binding Path=Datasets, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+            <CollectionViewSource.SortDescriptions>
+                <componentModel:SortDescription PropertyName="RunFinish" Direction="Descending" />
+            </CollectionViewSource.SortDescriptions>
+        </CollectionViewSource>
+        
     </UserControl.Resources>
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
@@ -153,6 +163,43 @@
             <ColumnDefinition Width="auto" />
         </Grid.ColumnDefinitions>
 
+        <StackPanel Grid.Row="0"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="5"
+                    Margin="5"
+                    Orientation="Horizontal">
+
+            <Button Click="ClearAllDatasets_Click"
+                    Content="Clear All"
+                    FontFamily="Arial"
+                    FontSize="14"
+                    Style="{StaticResource SimpleButtonStyle}" />
+            <Button Click="ClearSelectedDatasets_Click"
+                    Content="Clear Selected"
+                    FontFamily="Arial"
+                    FontSize="14"
+                    Style="{StaticResource SimpleButtonStyle}" />
+            <Button Click="SelectNoDatasets_Click"
+                    Content="Select None"
+                    FontFamily="Arial"
+                    FontSize="14"
+                    Style="{StaticResource SimpleButtonStyle}" />
+            <Button Click="SelectAllDatasets_Click"
+                    Content=" Select All"
+                    FontFamily="Arial"
+                    FontSize="14"
+                    Style="{StaticResource SimpleButtonStyle}" />
+            <Button Width="153"
+                    Margin="5,5,5,0"
+                    Click="InvertShowDetails_Click"
+                    Content="{Binding Path=ShowGridItemDetail,
+                                      Mode=OneWay,
+                                      UpdateSourceTrigger=PropertyChanged,
+                                      Converter={StaticResource ShowDetailButtonContentConverter}}"
+                    FontFamily="Arial"
+                    Style="{StaticResource SimpleButtonStyle}" />
+        </StackPanel>
+
         <DataGrid x:Name="m_dataGrid"
                   Grid.Row="1"
                   Grid.Column="0"
@@ -165,9 +212,7 @@
                   CanUserAddRows="False"
                   CellStyle="{StaticResource DataGridCellStyle}"
                   IsTextSearchEnabled="True"
-                  ItemsSource="{Binding Path=Datasets,
-                                        Mode=OneWay,
-                                        UpdateSourceTrigger=PropertyChanged}"
+                  ItemsSource="{Binding Source={StaticResource MyItemsViewSource}}"
                   RowDetailsTemplate="{StaticResource RowDetailsTemplate}"
                   RowDetailsVisibilityMode="{Binding Path=ShowGridItemDetail,
                                                      Mode=OneWay,
@@ -412,43 +457,6 @@
                                     IsReadOnly="True" />
             </DataGrid.Columns>
         </DataGrid>
-
-        <StackPanel Grid.Row="0"
-                    Grid.Column="0"
-                    Grid.ColumnSpan="5"
-                    Margin="5"
-                    Orientation="Horizontal">
-
-            <Button Click="ClearAllDatasets_Click"
-                    Content="Clear All"
-                    FontFamily="Arial"
-                    FontSize="14"
-                    Style="{StaticResource SimpleButtonStyle}" />
-            <Button Click="ClearSelectedDatasets_Click"
-                    Content="Clear Selected"
-                    FontFamily="Arial"
-                    FontSize="14"
-                    Style="{StaticResource SimpleButtonStyle}" />
-            <Button Click="SelectNoDatasets_Click"
-                    Content="Select None"
-                    FontFamily="Arial"
-                    FontSize="14"
-                    Style="{StaticResource SimpleButtonStyle}" />
-            <Button Click="SelectAllDatasets_Click"
-                    Content=" Select All"
-                    FontFamily="Arial"
-                    FontSize="14"
-                    Style="{StaticResource SimpleButtonStyle}" />
-            <Button Width="153"
-                    Margin="5,5,5,0"
-                    Click="InvertShowDetails_Click"
-                    Content="{Binding Path=ShowGridItemDetail,
-                                      Mode=OneWay,
-                                      UpdateSourceTrigger=PropertyChanged,
-                                      Converter={StaticResource ShowDetailButtonContentConverter}}"
-                    FontFamily="Arial"
-                    Style="{StaticResource SimpleButtonStyle}" />
-        </StackPanel>
 
         <Grid Grid.Row="2" Grid.Column="0">
             <Grid.RowDefinitions>
