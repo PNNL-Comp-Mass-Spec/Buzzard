@@ -103,7 +103,7 @@ namespace BuzzardWPF
             m_dataGrid.EmslUsageTypesSource =
                 new ObservableCollection<string>
                     (
-                    new[] { "BROKEN", "CAP_DEV", "MAINTENANCE", "USER", "USER_UNKOWN" }
+                    new[] { "BROKEN", "CAP_DEV", "MAINTENANCE", "USER", "USER_UNKNOWN" }
                     );
 
             m_dataGrid.MainWindow = this;

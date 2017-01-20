@@ -1,5 +1,8 @@
 Buzzard Change Log
 
+Version 1.7.12.10; January 20, 2017
+	- Fix misspelled EUS usage type, changing from USER_UNKOWN to USER_UNKNOWN
+
 Version 1.7.12.9; June 25, 2016
 	- By default, sort candidate datasets by modification date descending
 	- Updated LcmsNetDmsTools.dll that uses date-based versioning
