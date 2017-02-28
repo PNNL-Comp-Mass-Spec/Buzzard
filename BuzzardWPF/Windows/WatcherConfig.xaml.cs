@@ -355,8 +355,7 @@ namespace BuzzardWPF.Windows
                 // The setting is not valid. Log the error
                 // and return something that will make sure
                 // the UI doesn't select anything for this
-                // setting.
-                setting = null;
+                // setting.                
                 classApplicationLogger.LogError(
                     0,
                     string.Format(
@@ -364,6 +363,7 @@ namespace BuzzardWPF.Windows
                         setting,
                         s,
                         errorIntro));
+                setting = null;
             }
 
             return setting;
