@@ -40,7 +40,7 @@ namespace BuzzardWPF.Windows
             // - FCT
             // 
             var ms = new MemoryStream();
-            Properties.Resources.logo.Save(ms, ImageFormat.Png);
+            Properties.Resources.logo_2017.Save(ms, ImageFormat.Png);
             ms.Position = 0;
             var bi = new BitmapImage();
             bi.BeginInit();
