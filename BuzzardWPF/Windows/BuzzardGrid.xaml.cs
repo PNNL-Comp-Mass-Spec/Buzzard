@@ -298,11 +298,11 @@ namespace BuzzardWPF.Windows
                         foreach (BuzzardDataset dataset in e.OldItems)
                             if (dataset.NotOnlyDatasource)
                             {
-                                var otherSets = from BuzzardDataset ds in Datasets
+                                var otherSets = (from BuzzardDataset ds in Datasets
                                                 where ds.DMSData.DatasetName.Equals(dataset.DMSData.DatasetName, StringComparison.OrdinalIgnoreCase)
-                                                select ds;
+                                                select ds).ToList();
 
-                                if (otherSets.Count() < 2)
+                                if (otherSets.Count < 2)
                                     foreach (var ds in otherSets)
                                         ds.NotOnlyDatasource = false;
                             }
