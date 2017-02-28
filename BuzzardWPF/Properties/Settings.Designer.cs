@@ -524,22 +524,7 @@ namespace BuzzardWPF.Properties {
                 this["FilldownCart"] = value;
             }
         }
-
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string FilldownCartConfig
-        {
-            get
-            {
-                return ((string)(this["FilldownCartConfig"]));
-            }
-            set
-            {
-                this["FilldownCartConfig"] = value;
-            }
-        }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
@@ -740,6 +725,18 @@ namespace BuzzardWPF.Properties {
             }
             set {
                 this["Watcher_MatchFolders"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string FilldownCartConfig {
+            get {
+                return ((string)(this["FilldownCartConfig"]));
+            }
+            set {
+                this["FilldownCartConfig"] = value;
             }
         }
     }
