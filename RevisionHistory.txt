@@ -1,5 +1,8 @@
 Buzzard Change Log
 
+Version 1.7.13.0; February 28, 2017
+	- Add ability to select LC Cart Configuration
+
 Version 1.7.12.10; January 20, 2017
 	- Fix misspelled EUS usage type, changing from USER_UNKOWN to USER_UNKNOWN
 
