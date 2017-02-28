@@ -3,21 +3,21 @@ using System.Windows.Data;
 
 namespace BuzzardLib.Converters
 {
-	public class EmptyRequestNameConverter
-		: IValueConverter
-	{
-		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-		{
-			var s = value as string;
-			if (string.IsNullOrWhiteSpace(s))
-				s = "    (none)    ";
-			
-			return s;
-		}
+    public class EmptyRequestNameConverter
+        : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            var s = value as string;
+            if (string.IsNullOrWhiteSpace(s))
+                s = "    (none)    ";
 
-		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-		{
-			throw new NotImplementedException();
-		}
-	}
+            return s;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

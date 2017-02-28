@@ -29,10 +29,10 @@ namespace BuzzardWPF.Windows
 
             EMSL_UsageSelectors.BoundContainer = this;
 
-            SelectedEMSLUsageType		= EMSL_UsageSelectors.UsageTypesSource[4];
-            EMSLProposalID				= null;
-            ExperimentName				= null;
-            SelectedEMSLProposalUsers	= new ObservableCollection<classProposalUser>();
+            SelectedEMSLUsageType = EMSL_UsageSelectors.UsageTypesSource[4];
+            EMSLProposalID = null;
+            ExperimentName = null;
+            SelectedEMSLProposalUsers = new ObservableCollection<classProposalUser>();
 
             m_IsNotMonitoring = true;
         }
@@ -166,9 +166,9 @@ namespace BuzzardWPF.Windows
         #region Methods
         public void SaveSettings()
         {
-            Settings.Default.QC_ExperimentName			= ExperimentName;
-            Settings.Default.QC_ProposalID				= EMSLProposalID;
-            Settings.Default.QC_SelectedUsageType		= SelectedEMSLUsageType;
+            Settings.Default.QC_ExperimentName = ExperimentName;
+            Settings.Default.QC_ProposalID = EMSLProposalID;
+            Settings.Default.QC_SelectedUsageType = SelectedEMSLUsageType;
             Settings.Default.QC_CreateTriggerOnDMS_Fail = CreateOnDMSFail;
 
             var selectedEMSLUsers = new StringCollection();
@@ -180,10 +180,10 @@ namespace BuzzardWPF.Windows
 
         public void LoadSettings()
         {
-            ExperimentName			= Settings.Default.QC_ExperimentName;
-            EMSLProposalID			= Settings.Default.QC_ProposalID;
-            SelectedEMSLUsageType	= Settings.Default.QC_SelectedUsageType;
-            CreateOnDMSFail		= Settings.Default.QC_CreateTriggerOnDMS_Fail;
+            ExperimentName = Settings.Default.QC_ExperimentName;
+            EMSLProposalID = Settings.Default.QC_ProposalID;
+            SelectedEMSLUsageType = Settings.Default.QC_SelectedUsageType;
+            CreateOnDMSFail = Settings.Default.QC_CreateTriggerOnDMS_Fail;
 
             var selectedUsers = Settings.Default.QC_EMSL_Users;
             SelectedEMSLProposalUsers = 

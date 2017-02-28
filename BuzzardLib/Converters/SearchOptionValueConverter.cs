@@ -7,7 +7,7 @@ namespace BuzzardLib.Converters
     public class SearchOptionValueConverter: IValueConverter
     {
         private const string ALL_DIRECTORIES = "Include Sub Directories";
-        private const string TOP_DIRECTORY   = "Top Directory";
+        private const string TOP_DIRECTORY = "Top Directory";
 
         #region IValueConverter Members
 

@@ -28,10 +28,10 @@ namespace BuzzardWPF.Windows.Dialogs
             InitializeComponent();
             DataContext = this;
 
-            DoSameToOtherConflicts	= false;
-            FileToRenamePath		= null;
-            FileInWayPath			= null;
-            SkipDatasetRename		= false;
+            DoSameToOtherConflicts = false;
+            FileToRenamePath = null;
+            FileInWayPath = null;
+            SkipDatasetRename = false;
         }
         #endregion
 
@@ -99,13 +99,13 @@ namespace BuzzardWPF.Windows.Dialogs
         private void Replace_Click(object sender, RoutedEventArgs e)
         {
             SkipDatasetRename = false;
-            DialogResult	= true;
+            DialogResult = true;
         }
 
         private void SkipDataset_Click(object sender, RoutedEventArgs e)
         {
             SkipDatasetRename = true;
-            DialogResult	= true;
+            DialogResult = true;
         }
         #endregion
 

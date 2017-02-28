@@ -6,7 +6,7 @@ using System.Windows.Data;
 namespace BuzzardLib.Converters
 {
     public class BooleanToDataGridVisibilityModeConverter
-		: IValueConverter
+        : IValueConverter
     {       
         #region IValueConverter Members
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

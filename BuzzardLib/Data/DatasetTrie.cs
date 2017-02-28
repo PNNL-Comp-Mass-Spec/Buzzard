@@ -7,14 +7,14 @@ namespace BuzzardLib.Data
     /// Used to track Requested Runs (instruments runs) in DMS
     /// </summary>
     public class DatasetTrie
-	{
+    {
         private const bool DEFAULT_IGNORE_CASE = true;
 
-		#region Attributes
+        #region Attributes
         private readonly TrieNode                       m_root;
-		private readonly Dictionary<int, classDMSData>	m_requestIDToDMS;
+        private readonly Dictionary<int, classDMSData>	m_requestIDToDMS;
         private readonly bool m_IgnoreCase;
-		#endregion
+        #endregion
 
         public DatasetTrie()
             : this(DEFAULT_IGNORE_CASE)
@@ -46,7 +46,7 @@ namespace BuzzardLib.Data
         public void Clear()
         {
             RemoveNodes(m_root);
-			m_requestIDToDMS.Clear();
+            m_requestIDToDMS.Clear();
         }
         private void RemoveNodes(TrieNode node)
         {
@@ -72,7 +72,7 @@ namespace BuzzardLib.Data
             }
             else
             {
-                var key     = datasetName[0];
+                var key = datasetName[0];
                 var hasEdge = node.Edges.ContainsKey(key);
 
                 if (hasEdge)
@@ -89,22 +89,22 @@ namespace BuzzardLib.Data
                 }
             }
 
-			if (!m_requestIDToDMS.ContainsKey(data.RequestID))
-				m_requestIDToDMS.Add(data.RequestID, null);
-			
-			m_requestIDToDMS[data.RequestID] = data;
+            if (!m_requestIDToDMS.ContainsKey(data.RequestID))
+                m_requestIDToDMS.Add(data.RequestID, null);
+            
+            m_requestIDToDMS[data.RequestID] = data;
         }
 
-		/// <summary>
-		/// Finds the dataset data that for the given request key
-		/// </summary>
-		public classDMSData FindData(int requestID)
-		{
-			if (!m_requestIDToDMS.ContainsKey(requestID))
+        /// <summary>
+        /// Finds the dataset data that for the given request key
+        /// </summary>
+        public classDMSData FindData(int requestID)
+        {
+            if (!m_requestIDToDMS.ContainsKey(requestID))
                 throw new DatasetTrieException("Could not resolve the Request ID. The dataset is just not available.");
 
-			return m_requestIDToDMS[requestID];
-		}
+            return m_requestIDToDMS[requestID];
+        }
 
         /// <summary>
         /// Finds the dataset data that closest resembles the dataset name.

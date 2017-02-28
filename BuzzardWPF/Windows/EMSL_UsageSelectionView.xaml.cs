@@ -43,8 +43,8 @@ namespace BuzzardWPF.Windows
             InitializeComponent();
             DataContext = this;
 
-            UsageTypesSource	= EMSL_USAGE_TYPES_COLLECTION;
-            AvailablePIDs		= DMS_DataAccessor.Instance.ProposalIDs;
+            UsageTypesSource = EMSL_USAGE_TYPES_COLLECTION;
+            AvailablePIDs = DMS_DataAccessor.Instance.ProposalIDs;
 
         }
 

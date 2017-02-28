@@ -8,7 +8,7 @@ namespace BuzzardWPF.Windows
     /// <summary>
     /// Interaction logic for FileFolderInfoViewer.xaml
     /// </summary>
-    public partial class FileFolderInfoViewer 
+    public partial class FileFolderInfoViewer
         : UserControl, INotifyPropertyChanged
     {
         #region Events
@@ -17,14 +17,14 @@ namespace BuzzardWPF.Windows
 
 
         #region Attributes
-        private string		m_pathName;
-        private bool		m_itemFound;
-        private DateTime	m_creationDate;
-        private DateTime	m_lastModifiedDate;
-        private long		m_sizeBytes;
-        private bool		m_isFile;
-        private int			m_fileCount;
-        private int			m_folderCount;
+        private string m_pathName;
+        private bool m_itemFound;
+        private DateTime m_creationDate;
+        private DateTime m_lastModifiedDate;
+        private long m_sizeBytes;
+        private bool m_isFile;
+        private int m_fileCount;
+        private int m_folderCount;
         #endregion
 
 
@@ -165,13 +165,13 @@ namespace BuzzardWPF.Windows
         {
             if (string.IsNullOrWhiteSpace(PathName))
             {
-                ItemFound			= false;
-                IsFile				= false;
-                SizeBytes			= 0;
-                CreationDate		= DateTime.MinValue;
-                LastModifiedDate	= DateTime.MinValue;
-                FileCount			= 0;
-                FolderCount			= 0;
+                ItemFound = false;
+                IsFile = false;
+                SizeBytes = 0;
+                CreationDate = DateTime.MinValue;
+                LastModifiedDate = DateTime.MinValue;
+                FileCount = 0;
+                FolderCount = 0;
 
                 return;
             }
@@ -194,14 +194,14 @@ namespace BuzzardWPF.Windows
                     IsFile = false;
                     GetPathInfoForFolder(diFolder);
                 }
-                else			    
+                else
                 {
-                    IsFile				= false;
-                    SizeBytes			= 0;
-                    CreationDate		= DateTime.MinValue;
-                    LastModifiedDate	= DateTime.MinValue;
-                    FileCount			= 0;
-                    FolderCount			= 0;
+                    IsFile = false;
+                    SizeBytes = 0;
+                    CreationDate = DateTime.MinValue;
+                    LastModifiedDate = DateTime.MinValue;
+                    FileCount = 0;
+                    FolderCount = 0;
                 }
             }
 
@@ -220,9 +220,9 @@ namespace BuzzardWPF.Windows
         {
             CreationDate = diFolder.CreationTime;
             LastModifiedDate = diFolder.LastWriteTime;
-            SizeBytes = 0;            
+            SizeBytes = 0;
             FileCount = 0;
-            FolderCount = 0;      
+            FolderCount = 0;
 
             try
             {

@@ -8,7 +8,7 @@ namespace BuzzardLib.Searching
     /// Class that holds the information from the user interface about how to find data files.
     /// </summary>
     public class SearchConfig
-		: INotifyPropertyChanged
+        : INotifyPropertyChanged
     {
         #region "Constants"
 
@@ -23,11 +23,11 @@ namespace BuzzardLib.Searching
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-		#endregion
+        #endregion
 
-		#region Attributes
+        #region Attributes
 
-		/// <summary>
+        /// <summary>
         /// Path to the directory where the files are to be searched.
         /// </summary>
         private string mDirectoryPath;
@@ -38,21 +38,21 @@ namespace BuzzardLib.Searching
         private bool mMatchFolders;
         private int mMinimumSizeKB;
 
-		private DateTime? mStartDate;
-		private DateTime? mEndDate;
+        private DateTime? mStartDate;
+        private DateTime? mEndDate;
 
         // Do not save this option to the registry / settings; always keep it off when the program starts
         private bool mDisableBaseFolderValidation;
 
-		#endregion
+        #endregion
 
-		/// <summary>
+        /// <summary>
         /// Default constructor.
         /// </summary>
         public SearchConfig()
-		{
-		    ResetToDefaults(true);
-		}
+        {
+            ResetToDefaults(true);
+        }
 
         #region "Properties"
 
@@ -67,7 +67,7 @@ namespace BuzzardLib.Searching
                 if (mDirectoryPath != value)
                 {
                     mDirectoryPath = value;
-					OnPropertyChanged("DirectoryPath");
+                    OnPropertyChanged("DirectoryPath");
                 }
             }
         }
@@ -94,7 +94,7 @@ namespace BuzzardLib.Searching
                 if (mFileExtension != value)
                 {
                     mFileExtension = value;
-					OnPropertyChanged("FileExtension");
+                    OnPropertyChanged("FileExtension");
                 }
             }
         }
@@ -147,36 +147,36 @@ namespace BuzzardLib.Searching
             }
         }                
         
-		/// <summary>
+        /// <summary>
         /// Gets or sets the start of the search range
         /// </summary>
         public DateTime? StartDate
         {
-			get { return mStartDate; }
-			set
-			{
-				if (mStartDate != value)
-				{
-					mStartDate = value;
-					OnPropertyChanged("StartDate");
-				}
-			}
+            get { return mStartDate; }
+            set
+            {
+                if (mStartDate != value)
+                {
+                    mStartDate = value;
+                    OnPropertyChanged("StartDate");
+                }
+            }
         }
         
-		/// <summary>
+        /// <summary>
         /// Gets or sets the end of the search range
         /// </summary>
         public DateTime? EndDate
         {
-			get { return mEndDate; }
-			set
-			{
-				if (mEndDate != value)
-				{
-					mEndDate = value;
-					OnPropertyChanged("EndDate");
-				}
-			}
+            get { return mEndDate; }
+            set
+            {
+                if (mEndDate != value)
+                {
+                    mEndDate = value;
+                    OnPropertyChanged("EndDate");
+                }
+            }
         }
         
         public bool MatchFolders
@@ -229,10 +229,10 @@ namespace BuzzardLib.Searching
         #endregion
 
         private void OnPropertyChanged(string propertyName)
-		{
-			if (PropertyChanged != null)
-				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-		}
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
 
-	}
+    }
 }

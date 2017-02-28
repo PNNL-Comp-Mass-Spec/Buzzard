@@ -23,15 +23,15 @@ namespace BuzzardWPF.Windows
 
 
         #region Attributes
-        private string							m_selectedOperator;
-        private string							m_selectedInstrument;
-        private string							m_selectedDatasetType;
-        private string							m_selectedSeparationType;
-
-        private string							m_selectedCartName;
-        private string							m_lcColumn;
-
-        private string							m_experimentName;
+        private string m_selectedOperator;
+        private string m_selectedInstrument;
+        private string m_selectedDatasetType;
+        private string m_selectedSeparationType;
+                       
+        private string m_selectedCartName;
+        private string m_lcColumn;
+                       
+        private string m_experimentName;
 
         #endregion
 
@@ -264,14 +264,14 @@ namespace BuzzardWPF.Windows
       
         public void SaveSettings()
         {
-            Settings.Default.WatcherConfig_SelectedCartName			= SelectedCartName;
-            Settings.Default.WatcherConfig_SelectedColumnData		= SelectedDatasetType;
-            Settings.Default.WatcherConfig_SelectedInstrument		= SelectedInstrument;
-            Settings.Default.WatcherConfig_SelectedOperator			= SelectedOperator;
-            Settings.Default.WatcherConfig_UserComment              = UserComments;
-            Settings.Default.WatcherConfig_SelectedSeperationType	= SelectedSeparationType;
-            Settings.Default.WatcherConfig_ExperimentName			= ExperimentName;
-            Settings.Default.WatcherConfig_LCColumn					= LCColumn;
+            Settings.Default.WatcherConfig_SelectedCartName = SelectedCartName;
+            Settings.Default.WatcherConfig_SelectedColumnData = SelectedDatasetType;
+            Settings.Default.WatcherConfig_SelectedInstrument = SelectedInstrument;
+            Settings.Default.WatcherConfig_SelectedOperator = SelectedOperator;
+            Settings.Default.WatcherConfig_UserComment = UserComments;
+            Settings.Default.WatcherConfig_SelectedSeperationType = SelectedSeparationType;
+            Settings.Default.WatcherConfig_ExperimentName = ExperimentName;
+            Settings.Default.WatcherConfig_LCColumn = LCColumn;
             Settings.Default.Watcher_EMSL_UsageType = SelectedEMSLUsageType;
             Settings.Default.Watcher_EMSL_ProposalID = EMSLProposalID;
 
@@ -284,7 +284,7 @@ namespace BuzzardWPF.Windows
 
         public void LoadSettings()
         {
-            ExperimentName			= Settings.Default.WatcherConfig_ExperimentName;
+            ExperimentName = Settings.Default.WatcherConfig_ExperimentName;
 
             SelectedEMSLUsageType = Settings.Default.Watcher_EMSL_UsageType;
             EMSLProposalID = Settings.Default.Watcher_EMSL_ProposalID;
@@ -294,9 +294,10 @@ namespace BuzzardWPF.Windows
                 DMS_DataAccessor.Instance.FindSavedEMSLProposalUsers(EMSLProposalID, selectedUsers);
 
             UserComments = Settings.Default.WatcherConfig_UserComment;
+
             /*
              * The following settings need to be checked before being applied
-             * due to the fact that they need to be valid options withing the
+             * due to the fact that they need to be valid options within the
              * collections that act as their sources.
              */
             SelectedCartName = CheckSetting(

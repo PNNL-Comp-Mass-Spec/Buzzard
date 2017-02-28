@@ -14,23 +14,23 @@ namespace BuzzardWPF.Windows
     /// <summary>
     /// Interaction logic for ExperimentsViewer.xaml
     /// </summary>
-    public partial class ExperimentsViewer 
+    public partial class ExperimentsViewer
         : UserControl, INotifyPropertyChanged
     {
         #region Events
-        public event PropertyChangedEventHandler	PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
         #endregion
 
 
         #region Attributes
-        private string						m_filterText;
-        private classExperimentData			m_selectedExperiment;
+        private string m_filterText;
+        private classExperimentData m_selectedExperiment;
 
-        private List<classExperimentData>	m_experimentList;
-        private List<string>				m_experimentNameList;
-        private List<string>				m_organismNameList;
-        private List<string>				m_researcherList;
-        private List<string>				m_reason;
+        private List<classExperimentData> m_experimentList;
+        private List<string> m_experimentNameList;
+        private List<string> m_organismNameList;
+        private List<string> m_researcherList;
+        private List<string> m_reason;
 
         private ObservableCollection<classExperimentData> m_experiments;
         #endregion
@@ -44,7 +44,7 @@ namespace BuzzardWPF.Windows
 
             FilterText = string.Empty;
 
-            Action loadExperiments = LoadExperiments;            
+            Action loadExperiments = LoadExperiments;
             Dispatcher.BeginInvoke(loadExperiments, DispatcherPriority.Render);
         }
 
@@ -87,7 +87,7 @@ namespace BuzzardWPF.Windows
             m_researcherList.Sort();
         }
 
-        private class StringComparision 
+        private class StringComparision
             : IEqualityComparer<string>
         {
             public bool Equals(string x, string y)
@@ -108,7 +108,7 @@ namespace BuzzardWPF.Windows
             {
                 if (obj != null)
                     return obj.ToUpper().GetHashCode();
-                
+
                 throw new Exception();
             }
         }
@@ -172,25 +172,25 @@ namespace BuzzardWPF.Windows
 
             switch (filterOption)
             {
-            case FilterOption.Researcher:
-                m_filterBox.ItemsSource = m_researcherList;
-                break;
+                case FilterOption.Researcher:
+                    m_filterBox.ItemsSource = m_researcherList;
+                    break;
 
-            case FilterOption.Experiment:
-                m_filterBox.ItemsSource = m_experimentNameList;
-                break;
+                case FilterOption.Experiment:
+                    m_filterBox.ItemsSource = m_experimentNameList;
+                    break;
 
-            case FilterOption.Organism:
-                m_filterBox.ItemsSource = m_organismNameList;
-                break;
+                case FilterOption.Organism:
+                    m_filterBox.ItemsSource = m_organismNameList;
+                    break;
 
-            case FilterOption.Reason:
-                m_filterBox.ItemsSource = m_reason;
-                break;
+                case FilterOption.Reason:
+                    m_filterBox.ItemsSource = m_reason;
+                    break;
 
-            default:
-                m_filterBox.ItemsSource = new string[] { };
-                break;
+                default:
+                    m_filterBox.ItemsSource = new string[] { };
+                    break;
             }
 
             m_filterBox.PopulateComplete();
@@ -250,7 +250,7 @@ namespace BuzzardWPF.Windows
                 // Search error; do not update Experiments              
                 Console.WriteLine("Error ignored in ExperimentsViewser.Search_Click: " + ex.Message);
             }
-           
+
         }
         #endregion
 
@@ -271,25 +271,25 @@ namespace BuzzardWPF.Windows
 
             switch (tag)
             {
-            case "rs":
-                result = FilterOption.Researcher;
-                break;
+                case "rs":
+                    result = FilterOption.Researcher;
+                    break;
 
-            case "ex":
-                result = FilterOption.Experiment;
-                break;
+                case "ex":
+                    result = FilterOption.Experiment;
+                    break;
 
-            case "or":
-                result = FilterOption.Organism;
-                break;
+                case "or":
+                    result = FilterOption.Organism;
+                    break;
 
-            case "ra":
-                result = FilterOption.Reason;
-                break;
+                case "ra":
+                    result = FilterOption.Reason;
+                    break;
 
-            default:
-                result = FilterOption.None;
-                break;
+                default:
+                    result = FilterOption.None;
+                    break;
             }
 
             return result;
@@ -303,10 +303,10 @@ namespace BuzzardWPF.Windows
 
         private enum FilterOption
         {
-            Researcher, 
-            Experiment, 
-            Organism, 
-            Reason, 
+            Researcher,
+            Experiment,
+            Organism,
+            Reason,
             None
         }
     }
