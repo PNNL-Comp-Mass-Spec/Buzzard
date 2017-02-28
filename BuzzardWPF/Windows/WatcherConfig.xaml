@@ -1,12 +1,12 @@
-﻿<UserControl x:Class="BuzzardWPF.Windows.WatcherConfig"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:windows="clr-namespace:BuzzardWPF.Windows"
+﻿<UserControl xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             mc:Ignorable="d"
              d:DesignHeight="400"
              d:DesignWidth="1050"
-             mc:Ignorable="d">
+             x:Class="BuzzardWPF.Windows.WatcherConfig"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:windows="clr-namespace:BuzzardWPF.Windows">
     <UserControl.Resources>
         <Style TargetType="GroupBox">
             <Setter Property="FontSize" Value="16" />
@@ -36,7 +36,7 @@
         </Style>
     </UserControl.Resources>
 
-    <Grid Margin="0" Grid.IsSharedSizeScope="True">
+    <Grid Grid.IsSharedSizeScope="True" Margin="0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto" />
             <ColumnDefinition Width="*" />
@@ -45,85 +45,24 @@
             <RowDefinition Height="290" />
             <RowDefinition Height="20*" />
         </Grid.RowDefinitions>
-
-        <DockPanel Grid.Row="1" Grid.ColumnSpan="2">
-            <Label Foreground="Black">
-                <TextBlock Width="90"
-                           Margin="0"
-                           FontWeight="Regular"
-                           Style="{StaticResource TextBlockStyle}"
-                           Text="Comments" />
-            </Label>
-            <TextBox Margin="5" Text="{Binding Path=UserComments, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-        </DockPanel>
-
-        <Grid Grid.Column="1" Margin="5,5,5,5">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="120" />
-                <RowDefinition Height="140" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            <GroupBox Grid.Row="0" Header="If No Request in DMS">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="auto" SharedSizeGroup="A" />
-                        <ColumnDefinition Width="auto" SharedSizeGroup="B" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-
-                    <TextBlock Grid.Row="0"
-                               Grid.Column="0"
-                               Style="{StaticResource TextBlockStyle}"
-                               Text="Experiment Name:" />
-
-                    <TextBox Grid.Row="0"
-                             Grid.Column="1"
-                             IsEnabled="{Binding Path=IsNotMonitoring}"
-                             Style="{StaticResource TextBoxStyle}"
-                             Text="{Binding Path=ExperimentName,
-                                            Mode=TwoWay,
-                                            UpdateSourceTrigger=PropertyChanged}" />
-
-                    <Button Grid.Row="1"
-                            Grid.Column="1"
-                            Width="186"
-                            Margin="0,5.2,116,0"
-                            HorizontalAlignment="Right"
-                            Click="SelectExperiment_Click"
-                            Content="Select Experiment..."
-                            FontFamily="Arial"
-                            IsEnabled="{Binding Path=IsNotMonitoring}"
-                            Style="{StaticResource SimpleButtonStyle}" />
-                </Grid>
-            </GroupBox>
-
-            <windows:EMSL_UsageSelectionView x:Name="EMSL_DataSelector"
-                                             Grid.Row="1"
-                                             IsEnabled="{Binding Path=IsNotMonitoring}" />
-
-        </Grid>
         <StackPanel Grid.Column="0" Margin="1,1,4,1">
 
             <GroupBox FontWeight="Bold" Header="Mass Spectrometer Instrument">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="auto" SharedSizeGroup="A" />
-                        <ColumnDefinition Width="auto" SharedSizeGroup="B" />
+                        <ColumnDefinition SharedSizeGroup="A" Width="auto" />
+                        <ColumnDefinition SharedSizeGroup="B" Width="auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Grid.Row="0"
-                               Grid.Column="0"
+                    <TextBlock Grid.Column="0"
                                FontWeight="Regular"
+                               Grid.Row="0"
                                Style="{StaticResource TextBlockStyle}"
                                Text="Available Instruments:" />
-                    <ComboBox Grid.Row="0"
-                              Grid.Column="1"
+                    <ComboBox Grid.Column="1"
                               FontWeight="Regular"
+                              Grid.Row="0"
                               IsEnabled="{Binding Path=IsNotMonitoring}"
                               ItemsSource="{Binding Path=InstrumentsSource,
                                                     Mode=OneWay,
@@ -138,8 +77,8 @@
             <GroupBox FontWeight="Bold" Header="Separation System">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="auto" SharedSizeGroup="A" />
-                        <ColumnDefinition Width="auto" SharedSizeGroup="B" />
+                        <ColumnDefinition SharedSizeGroup="A" Width="auto" />
+                        <ColumnDefinition SharedSizeGroup="B" Width="auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
@@ -151,41 +90,15 @@
                         <RowDefinition Height="auto" />
                     </Grid.RowDefinitions>
 
-                    <TextBlock Grid.Row="0"
-                               Grid.Column="0"
+                    <TextBlock Grid.Column="0"
                                FontWeight="Regular"
+                               Grid.Row="0"
                                Style="{StaticResource TextBlockStyle}"
                                Text="Cart Name:" />
-                    <TextBlock Grid.Row="1"
-                               Grid.Column="0"
-                               FontWeight="Regular"
-                               Style="{StaticResource TextBlockStyle}"
-                               Text="Cart Configuration:" />
-                    <TextBlock Grid.Row="2"
-                               Grid.Column="0"
-                               FontWeight="Regular"
-                               Style="{StaticResource TextBlockStyle}"
-                               Text="Separation/Acquistion Type:" />
-                    <TextBlock Grid.Row="3"
-                               Grid.Column="0"
-                               FontWeight="Regular"
-                               Style="{StaticResource TextBlockStyle}"
-                               Text="Dataset Type:" />
-                    <TextBlock Grid.Row="4"
-                               Grid.Column="0"
-                               FontWeight="Regular"
-                               Style="{StaticResource TextBlockStyle}"
-                               Text="LC Column:" />
 
-                    <TextBlock Grid.Row="5"
-                               Grid.Column="0"
-                               FontWeight="Regular"
-                               Style="{StaticResource TextBlockStyle}"
-                               Text="Operator" />
-
-                    <ComboBox Grid.Row="0"
-                              Grid.Column="1"
+                    <ComboBox Grid.Column="1"
                               FontWeight="Regular"
+                              Grid.Row="0"
                               IsEnabled="{Binding Path=IsNotMonitoring}"
                               ItemsSource="{Binding Path=CartNameListSource,
                                                     Mode=OneWay,
@@ -194,9 +107,14 @@
                                                      Mode=TwoWay,
                                                      UpdateSourceTrigger=PropertyChanged}"
                               Style="{StaticResource ComboBoxStyle}" />
-                    <ComboBox Grid.Row="1"
-                              Grid.Column="1"
+                    <TextBlock Grid.Column="0"
+                               FontWeight="Regular"
+                               Grid.Row="1"
+                               Style="{StaticResource TextBlockStyle}"
+                               Text="Cart Configuration:" />
+                    <ComboBox Grid.Column="1"
                               FontWeight="Regular"
+                              Grid.Row="1"
                               IsEnabled="{Binding Path=IsNotMonitoring}"
                               ItemsSource="{Binding Path=CartConfigNameListSource,
                                                     Mode=OneWay,
@@ -205,9 +123,14 @@
                                                      Mode=TwoWay,
                                                      UpdateSourceTrigger=PropertyChanged}"
                               Style="{StaticResource ComboBoxStyle}" />
-                    <ComboBox Grid.Row="2"
-                              Grid.Column="1"
+                    <TextBlock Grid.Column="0"
+                               FontWeight="Regular"
+                               Grid.Row="2"
+                               Style="{StaticResource TextBlockStyle}"
+                               Text="Separation/Acquistion Type:" />
+                    <ComboBox Grid.Column="1"
                               FontWeight="Regular"
+                              Grid.Row="2"
                               IsEnabled="{Binding Path=IsNotMonitoring}"
                               ItemsSource="{Binding Path=SeparationTypeSource,
                                                     Mode=OneWay,
@@ -216,9 +139,14 @@
                                                      Mode=TwoWay,
                                                      UpdateSourceTrigger=PropertyChanged}"
                               Style="{StaticResource ComboBoxStyle}" />
-                    <ComboBox Grid.Row="3"
-                              Grid.Column="1"
+                    <TextBlock Grid.Column="0"
+                               FontWeight="Regular"
+                               Grid.Row="3"
+                               Style="{StaticResource TextBlockStyle}"
+                               Text="Dataset Type:" />
+                    <ComboBox Grid.Column="1"
                               FontWeight="Regular"
+                              Grid.Row="3"
                               IsEnabled="{Binding Path=IsNotMonitoring}"
                               ItemsSource="{Binding Path=DatasetTypesSource,
                                                     Mode=OneWay,
@@ -227,9 +155,14 @@
                                                      Mode=TwoWay,
                                                      UpdateSourceTrigger=PropertyChanged}"
                               Style="{StaticResource ComboBoxStyle}" />
+                    <TextBlock Grid.Column="0"
+                               FontWeight="Regular"
+                               Grid.Row="4"
+                               Style="{StaticResource TextBlockStyle}"
+                               Text="LC Column:" />
 
 
-                    <Grid Grid.Row="4" Grid.Column="1">
+                    <Grid Grid.Column="1" Grid.Row="4">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="2*" />
                             <ColumnDefinition Width="1*" />
@@ -237,28 +170,34 @@
 
                         <TextBox x:Name="m_LCColumn"
                                  Grid.Column="0"
-                                 Margin="2"
                                  FontWeight="Regular"
                                  IsEnabled="{Binding Path=IsNotMonitoring}"
+                                 Margin="2"
                                  Text="{Binding Path=LCColumn,
                                                 Mode=TwoWay,
                                                 UpdateSourceTrigger=PropertyChanged}" />
 
                         <ComboBox x:Name="LCColumnSelector"
                                   Grid.Column="1"
-                                  Margin="2"
                                   FontWeight="Regular"
                                   IsEnabled="{Binding Path=IsNotMonitoring}"
                                   ItemsSource="{Binding Path=LCColumnSource,
                                                         Mode=OneWay,
                                                         UpdateSourceTrigger=PropertyChanged}"
+                                  Margin="2"
                                   SelectionChanged="LCColumnSelector_SelectionChanged" />
 
                     </Grid>
 
-                    <ComboBox Grid.Row="5"
-                              Grid.Column="1"
+                    <TextBlock Grid.Column="0"
+                               FontWeight="Regular"
+                               Grid.Row="5"
+                               Style="{StaticResource TextBlockStyle}"
+                               Text="Operator" />
+
+                    <ComboBox Grid.Column="1"
                               FontWeight="Regular"
+                              Grid.Row="5"
                               IsEnabled="{Binding Path=IsNotMonitoring}"
                               ItemsSource="{Binding Path=OperatorsSource,
                                                     Mode=OneWay,
@@ -271,5 +210,66 @@
             </GroupBox>
 
         </StackPanel>
+
+        <Grid Grid.Column="1" Margin="5,5,5,5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="120" />
+                <RowDefinition Height="140" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <GroupBox Grid.Row="0" Header="If No Request in DMS">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition SharedSizeGroup="A" Width="auto" />
+                        <ColumnDefinition SharedSizeGroup="B" Width="auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0"
+                               Grid.Row="0"
+                               Style="{StaticResource TextBlockStyle}"
+                               Text="Experiment Name:" />
+
+                    <TextBox Grid.Column="1"
+                             Grid.Row="0"
+                             IsEnabled="{Binding Path=IsNotMonitoring}"
+                             Style="{StaticResource TextBoxStyle}"
+                             Text="{Binding Path=ExperimentName,
+                                            Mode=TwoWay,
+                                            UpdateSourceTrigger=PropertyChanged}" />
+
+                    <Button Grid.Column="1"
+                            Click="SelectExperiment_Click"
+                            Content="Select Experiment..."
+                            FontFamily="Arial"
+                            Grid.Row="1"
+                            HorizontalAlignment="Right"
+                            IsEnabled="{Binding Path=IsNotMonitoring}"
+                            Margin="0,5.2,116,0"
+                            Style="{StaticResource SimpleButtonStyle}"
+                            Width="186" />
+                </Grid>
+            </GroupBox>
+
+            <windows:EMSL_UsageSelectionView x:Name="EMSL_DataSelector"
+                                             Grid.Row="1"
+                                             IsEnabled="{Binding Path=IsNotMonitoring}" />
+
+        </Grid>
+
+        <DockPanel Grid.ColumnSpan="2" Grid.Row="1">
+            <Label Foreground="Black">
+                <TextBlock FontWeight="Regular"
+                           Margin="0"
+                           Style="{StaticResource TextBlockStyle}"
+                           Text="Comments"
+                           Width="90" />
+            </Label>
+            <TextBox Margin="5" Text="{Binding Path=UserComments, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        </DockPanel>
     </Grid>
 </UserControl>

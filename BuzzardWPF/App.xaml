@@ -1,9 +1,9 @@
-﻿<Application x:Class="BuzzardWPF.App"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+﻿<Application xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              DispatcherUnhandledException="Application_DispatcherUnhandledException"
              ShutdownMode="OnMainWindowClose"
-             Startup="Application_Startup">
+             Startup="Application_Startup"
+             x:Class="BuzzardWPF.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
     <Application.Resources>
         <BitmapImage x:Key="LogoImageSource" UriSource="Resources/logo.png" />
         <BitmapImage x:Key="Monitor" UriSource="Resources\amphitheater-32.png" />
@@ -36,7 +36,7 @@
                                 Background="#FFFFFFFF"
                                 BorderBrush="Black"
                                 BorderThickness="2">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center" />
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>
