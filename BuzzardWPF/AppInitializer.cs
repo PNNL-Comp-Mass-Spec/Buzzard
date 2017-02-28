@@ -164,7 +164,10 @@ namespace BuzzardWPF
 
                 for (var i = 0; i < versionPartsInstaller.Length; i++)
                 {
-                    if (GetValue(versionPartsInstaller, i) > GetValue(versionPartsRunning, i))
+                    var installerVersionPart = GetValue(versionPartsInstaller, i);
+                    var runningVersionPart = GetValue(versionPartsRunning, i);
+
+                    if (installerVersionPart > runningVersionPart)
                     {
                         var updateMsg = "A new version of Buzzard is available at " + installerFolderPath + "; Install the new version now?";
                         var eResponse = MessageBox.Show(updateMsg, @"Upgrade Advised", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
@@ -175,9 +178,16 @@ namespace BuzzardWPF
                             // First need to copy it locally (since running over the network fails on some of the computers)
 
                             LaunchTheInstaller(fiInstaller);
-                            
+
                             return true;
                         }
+                        break;
+                    }
+
+                    if (installerVersionPart < runningVersionPart)
+                    {
+                        // This version is user; stop comparing to the installer
+                        break;
                     }
                 }
 
