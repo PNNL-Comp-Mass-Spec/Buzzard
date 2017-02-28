@@ -95,10 +95,7 @@ namespace BuzzardLib.Searching
                 m_thread.Abort();
                 m_thread.Join(100);
 
-                if (SearchStopped != null)
-                {
-                    SearchStopped(this, null);
-                }
+                SearchStopped?.Invoke(this, null);
             }
             catch (ThreadAbortException)
             {
@@ -145,10 +142,7 @@ namespace BuzzardLib.Searching
 
             try
             {
-                if (SearchStarted != null)
-                {
-                    SearchStarted(this, null);
-                }
+                SearchStarted?.Invoke(this, null);
 
                 var config = objectConfig as SearchConfig;
                 if (config == null)
@@ -305,11 +299,8 @@ namespace BuzzardLib.Searching
                             }
 
                             // If the file predates the date-range we want, skip it.
-                            if (config.StartDate != null)
-                            {
-                                if (config.StartDate > creationDate && config.StartDate > lastWriteDate)
-                                    continue;
-                            }
+                            if (config.StartDate > creationDate && config.StartDate > lastWriteDate)
+                                continue;
 
                             // If the file postdates the date-range we want, skip it.
                             if (config.EndDate != null)
@@ -318,12 +309,8 @@ namespace BuzzardLib.Searching
                                     continue;
                             }
 
-                            if (DatasetFound != null)
-                            {
-                                DatasetFound(this,
-                                             new DatasetFoundEventArgs(datasetEntry.Value.FullName, parentFolderPath, config));
-                            }
-
+                            DatasetFound?.Invoke(this,
+                                                 new DatasetFoundEventArgs(datasetEntry.Value.FullName, parentFolderPath, config));
                         }
                         catch
                         {
@@ -332,11 +319,7 @@ namespace BuzzardLib.Searching
                     }
                 }
 
-                if (SearchComplete != null)
-                {
-                    SearchComplete(this, null);
-                }
-
+                SearchComplete?.Invoke(this, null);
             }
             catch (ThreadAbortException)
             {
@@ -356,10 +339,7 @@ namespace BuzzardLib.Searching
             else
                 classApplicationLogger.LogError(0, errorMessage, ex);
 
-            if (ErrorEvent != null)
-            {
-                ErrorEvent(this, new ErrorEventArgs(errorMessage));
-            }
+            ErrorEvent?.Invoke(this, new ErrorEventArgs(errorMessage));
         }
 
         #endregion

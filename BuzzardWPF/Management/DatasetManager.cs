@@ -214,10 +214,7 @@ namespace BuzzardWPF.Management
                 mDatasetsReady = true;
 
                 LastUpdated = string.Format("Cache Last Updated: {0}", DateTime.Now);
-                if (DatasetsLoaded != null)
-                {
-                    DatasetsLoaded(this, null);
-                }
+                DatasetsLoaded?.Invoke(this, null);
             }
             catch (Exception ex)
             {
@@ -334,10 +331,7 @@ namespace BuzzardWPF.Management
 
         }
 
-        public Dictionary<string, bool> TriggerDirectoryContents
-        {
-            get { return mTriggerFolderContents; }
-        }
+        public Dictionary<string, bool> TriggerDirectoryContents => mTriggerFolderContents;
 
         #endregion
 
@@ -475,17 +469,12 @@ namespace BuzzardWPF.Management
         /// </summary>
         public ObservableCollection<BuzzardDataset> Datasets
         {
-            get;
-            private set;
-        }
+            get; }
 
 
         public string FileWatchRoot { get; set; }
 
-        public bool IsLoading
-        {
-            get { return mDatasetsReady == false; }
-        }
+        public bool IsLoading => mDatasetsReady == false;
 
         public Main MainWindow
         {
@@ -504,9 +493,7 @@ namespace BuzzardWPF.Management
 
         public static DatasetManager Manager
         {
-            get;
-            private set;
-        }
+            get; }
 
         public string UserComments { get; set; }
 

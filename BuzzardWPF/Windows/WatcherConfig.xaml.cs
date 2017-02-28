@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows;
@@ -107,10 +106,7 @@ namespace BuzzardWPF.Windows
             }
         }
 
-        public ObservableCollection<string> LCColumnSource
-        {
-            get { return DMS_DataAccessor.Instance.ColumnData; }
-        }
+        public ObservableCollection<string> LCColumnSource => DMS_DataAccessor.Instance.ColumnData;
 
         public string ExperimentName
         {
@@ -203,30 +199,15 @@ namespace BuzzardWPF.Windows
         }
 
 
-        public ObservableCollection<string> OperatorsSource
-        {
-            get { return DMS_DataAccessor.Instance.OperatorData; }
-        }
+        public ObservableCollection<string> OperatorsSource => DMS_DataAccessor.Instance.OperatorData;
 
-        public ObservableCollection<string> InstrumentsSource
-        {
-            get { return DMS_DataAccessor.Instance.InstrumentData; }
-        }
+        public ObservableCollection<string> InstrumentsSource => DMS_DataAccessor.Instance.InstrumentData;
 
-        public ObservableCollection<string> DatasetTypesSource
-        {
-            get { return DMS_DataAccessor.Instance.DatasetTypes; }
-        }
+        public ObservableCollection<string> DatasetTypesSource => DMS_DataAccessor.Instance.DatasetTypes;
 
-        public ObservableCollection<string> SeparationTypeSource
-        {
-            get { return DMS_DataAccessor.Instance.SeparationTypes; }
-        }
+        public ObservableCollection<string> SeparationTypeSource => DMS_DataAccessor.Instance.SeparationTypes;
 
-        public ObservableCollection<string> CartNameListSource
-        {
-            get { return DMS_DataAccessor.Instance.CartNames; }
-        }
+        public ObservableCollection<string> CartNameListSource => DMS_DataAccessor.Instance.CartNames;
 
         public bool IsNotMonitoring
         {
@@ -390,8 +371,7 @@ namespace BuzzardWPF.Windows
 
         private void OnPropertyChanged(string propertyName)
         {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         #endregion

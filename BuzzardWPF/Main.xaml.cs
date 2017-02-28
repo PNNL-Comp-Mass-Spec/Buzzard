@@ -264,10 +264,7 @@ namespace BuzzardWPF
         /// <summary>
         /// Gets or sets whether the system is monitoring or not.
         /// </summary>
-        public bool IsNotMonitoring
-        {
-            get { return !StateSingleton.IsMonitoring; }
-        }
+        public bool IsNotMonitoring => !StateSingleton.IsMonitoring;
 
         /// <summary>
         /// Gets and sets a string containing the last message or error
@@ -480,7 +477,7 @@ namespace BuzzardWPF
             m_counter++;
             var n = m_animationImages.Count;
 
-            // Dont display the turd if the user has that setting turned off.
+            // Don't display the turd if the user has that setting turned off.
             if (!Properties.Settings.Default.TurdAlert)
             {
                 n--;
@@ -552,8 +549,7 @@ namespace BuzzardWPF
 
         private void OnPropertyChanged(string propertyName)
         {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         private void SelectTriggerFileLocation_Click(object sender, RoutedEventArgs e)

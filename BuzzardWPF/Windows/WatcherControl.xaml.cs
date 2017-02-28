@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -178,10 +176,7 @@ namespace BuzzardWPF.Windows
             }
         }
 
-        public bool IsNotMonitoring
-        {
-            get { return !IsWatching; }
-        }
+        public bool IsNotMonitoring => !IsWatching;
 
         public bool MatchFolders
         {
@@ -296,7 +291,7 @@ namespace BuzzardWPF.Windows
 
             try
             {
-                dirname = System.IO.Path.GetDirectoryName(text);
+                dirname = Path.GetDirectoryName(text);
             }
             catch
             {
@@ -548,14 +543,12 @@ namespace BuzzardWPF.Windows
 
         private void OnMonitoringToggled(bool monitoring)
         {
-            if (MonitoringToggled != null)
-                MonitoringToggled(this, new StartStopEventArgs(monitoring));
+            MonitoringToggled?.Invoke(this, new StartStopEventArgs(monitoring));
         }
 
         private void OnPropertyChanged(string propertyName)
         {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
         #endregion
        

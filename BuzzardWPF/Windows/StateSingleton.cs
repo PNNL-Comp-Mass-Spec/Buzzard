@@ -29,10 +29,7 @@ namespace BuzzardWPF.Windows
             set
             {
                 m_isCreatingTriggerFiles = value;
-                if (CreatingTriggerFilesStateChanged != null)
-                {
-                    CreatingTriggerFilesStateChanged(null, null);
-                }
+                CreatingTriggerFilesStateChanged?.Invoke(null, null);
             }
         }
         /// <summary>
@@ -44,20 +41,14 @@ namespace BuzzardWPF.Windows
             set
             {
                 m_isMonitoring = value;
-                if (WatchingStateChanged != null)
-                {
-                    WatchingStateChanged(null, null);
-                }
+                WatchingStateChanged?.Invoke(null, null);
             }
         }
 
         [ObsoleteAttribute("Previously used for debugging")]
         public static void SetState()
         {
-            if (StateChanged != null)
-            {
-                StateChanged(null, null);
-            }
+            StateChanged?.Invoke(null, null);
         }
     }
 }

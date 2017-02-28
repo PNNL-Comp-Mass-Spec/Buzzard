@@ -15,12 +15,9 @@ namespace BuzzardWPF.Windows
 			InitializeComponent();
 		}
 
-		public classExperimentData SelectedExperiment
-		{
-			get { return m_viewer.SelectedExperiment; }
-		}
+		public classExperimentData SelectedExperiment => m_viewer.SelectedExperiment;
 
-		private void Button_Click(object sender, RoutedEventArgs e)
+	    private void Button_Click(object sender, RoutedEventArgs e)
 		{
 			if (SelectedExperiment == null)
 			{

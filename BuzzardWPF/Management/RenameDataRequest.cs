@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using System.Windows;
 using BuzzardLib.Data;
 using BuzzardLib.IO;
 using BuzzardWPF.Windows.Dialogs;
@@ -29,9 +28,7 @@ namespace BuzzardWPF.Management
         /// <summary>
         /// Updated file path
         /// </summary>
-        public string FixedDataPath {
-            get { return mFixedDataPath; }
-        }
+        public string FixedDataPath => mFixedDataPath;
 
         public BuzzardDataset Dataset { get; set; }
 

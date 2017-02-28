@@ -126,35 +126,17 @@ namespace BuzzardWPF.Windows
 
         #region Properties
 
-        public ObservableCollection<string> OperatorsSource
-        {
-            get { return DMS_DataAccessor.Instance.OperatorData; }
-        }
+        public ObservableCollection<string> OperatorsSource => DMS_DataAccessor.Instance.OperatorData;
 
-        public ObservableCollection<string> LCColumnSource
-        {
-            get { return DMS_DataAccessor.Instance.ColumnData; }
-        }
+        public ObservableCollection<string> LCColumnSource => DMS_DataAccessor.Instance.ColumnData;
 
-        public ObservableCollection<string> InstrumentsSource
-        {
-            get { return DMS_DataAccessor.Instance.InstrumentData; }
-        }
+        public ObservableCollection<string> InstrumentsSource => DMS_DataAccessor.Instance.InstrumentData;
 
-        public ObservableCollection<string> DatasetTypesSource
-        {
-            get { return DMS_DataAccessor.Instance.DatasetTypes; }
-        }
+        public ObservableCollection<string> DatasetTypesSource => DMS_DataAccessor.Instance.DatasetTypes;
 
-        public ObservableCollection<string> SeparationTypeSource
-        {
-            get { return DMS_DataAccessor.Instance.SeparationTypes; }
-        }
+        public ObservableCollection<string> SeparationTypeSource => DMS_DataAccessor.Instance.SeparationTypes;
 
-        public ObservableCollection<string> CartNameListSource
-        {
-            get { return DMS_DataAccessor.Instance.CartNames; }
-        }
+        public ObservableCollection<string> CartNameListSource => DMS_DataAccessor.Instance.CartNames;
 
         public ObservableCollection<string> EmslUsageTypesSource
         {
@@ -223,10 +205,7 @@ namespace BuzzardWPF.Windows
             }
         }
 
-        public bool IsNotCreatingTriggerFiles
-        {
-            get { return !IsCreatingTriggerFiles; }
-        }
+        public bool IsNotCreatingTriggerFiles => !IsCreatingTriggerFiles;
 
         public bool ShowGridItemDetail
         {
@@ -257,8 +236,7 @@ namespace BuzzardWPF.Windows
         /// </summary>
         private void ClearAllDatasets_Click(object sender, RoutedEventArgs e)
         {
-            if (Datasets != null)
-                Datasets.Clear();
+            Datasets?.Clear();
         }
 
         /// <summary>
@@ -803,6 +781,7 @@ namespace BuzzardWPF.Windows
         /// Creates the xml trigger file for each dataset but does not save it to disk
         /// </summary>
         /// <param name="selectedDatasets"></param>
+        /// <param name="validDatasets"></param>
         /// <returns>True if no problems, False if a problem with one or more datasets</returns>
         private bool SimulateTriggerCreation(List<BuzzardDataset> selectedDatasets, out List<BuzzardDataset> validDatasets)
         {
@@ -989,8 +968,7 @@ namespace BuzzardWPF.Windows
 
         private void OnPropertyChanged(string propertyName)
         {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 

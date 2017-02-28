@@ -111,14 +111,9 @@ namespace BuzzardWPF.Windows
             }
         }
 
-        public bool IsNotCreatingTriggerFiles
-        {
-            get { return !IsCreatingTriggerFiles; }
-        }
+        public bool IsNotCreatingTriggerFiles => !IsCreatingTriggerFiles;
 
-        public bool IsSafeToSearch {
-            get { return IsNotMonitoring && IsNotCreatingTriggerFiles; }
-        }
+        public bool IsSafeToSearch => IsNotMonitoring && IsNotCreatingTriggerFiles;
 
         public bool IsNotMonitoring
         {
@@ -132,10 +127,8 @@ namespace BuzzardWPF.Windows
             }
         }
 
-        public string SearchButtonText
-        {
-            get { return IsSafeToSearch ? "Search" : "(disabled)"; }           
-        }
+        public string SearchButtonText => IsSafeToSearch ? "Search" : "(disabled)";
+
         #endregion
 
         #region Event Handlers

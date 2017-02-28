@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Controls;
 using System.Windows.Data;
-using BuzzardLib.Searching;
 using BuzzardWPF.Management;
 using LcmsNetDataClasses.Data;
 using LcmsNetDataClasses.Logging;
@@ -195,8 +194,7 @@ namespace BuzzardWPF.Windows
 
         private void OnPropertyChanged(string propertyName)
         {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
         #endregion
 
