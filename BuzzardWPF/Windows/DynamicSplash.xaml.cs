@@ -62,7 +62,7 @@ namespace BuzzardWPF.Windows
 
             var assem = Assembly.GetEntryAssembly();
             var assemName = assem.GetName();
-            var ver = assemName.Version.ToString() + "; " + AppInitializer.PROGRAM_DATE;
+            var ver = assemName.Version + "; " + AppInitializer.PROGRAM_DATE;
 
             Version = ver;
         }
@@ -113,7 +113,7 @@ namespace BuzzardWPF.Windows
             get { return m_logoImageSource; }
             set
             {
-                if (m_logoImageSource != value)
+                if (!Equals(m_logoImageSource, value))
                 {
                     m_logoImageSource = value;
                     OnPropertyChanged("LogoImageSource");

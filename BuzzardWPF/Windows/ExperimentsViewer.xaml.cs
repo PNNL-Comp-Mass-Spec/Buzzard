@@ -44,10 +44,7 @@ namespace BuzzardWPF.Windows
 
             FilterText = string.Empty;
 
-            Action loadExperiments = delegate
-            {
-                LoadExperiments();
-            };
+            Action loadExperiments = LoadExperiments;            
             Dispatcher.BeginInvoke(loadExperiments, DispatcherPriority.Render);
         }
 
