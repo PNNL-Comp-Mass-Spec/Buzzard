@@ -21,15 +21,16 @@ namespace BuzzardWPF.Windows
 
 
         #region Attributes
-        private FilldownBuzzardDataset			m_dataset;
+        private FilldownBuzzardDataset m_dataset;
 
-        private ObservableCollection<string>	m_operatorsSource;
-        private ObservableCollection<string>	m_instrumentsSource;
-        private ObservableCollection<string>	m_datasetTypesSource;
-        private ObservableCollection<string>	m_separationTypeSource;
-        private ObservableCollection<string>	m_cartNameListSource;
-        private ObservableCollection<string>	m_emslUsageTypeSource;
-        private ObservableCollection<string>	m_lcColumnSource;
+        private ObservableCollection<string> m_operatorsSource;
+        private ObservableCollection<string> m_instrumentsSource;
+        private ObservableCollection<string> m_datasetTypesSource;
+        private ObservableCollection<string> m_separationTypeSource;
+        private ObservableCollection<string> m_cartNameListSource;
+        private ObservableCollection<string> m_cartConfigNameListSource;
+        private ObservableCollection<string> m_emslUsageTypeSource;
+        private ObservableCollection<string> m_lcColumnSource;
         #endregion
 
 
@@ -38,18 +39,20 @@ namespace BuzzardWPF.Windows
             InitializeComponent();
             DataContext = this;
 
-            OperatorsSource			= new ObservableCollection<string>();
-            InstrumentSource		= new ObservableCollection<string>();
-            DatasetTypesSource		= new ObservableCollection<string>();
-            SeparationTypeSource	= new ObservableCollection<string>();
+            OperatorsSource = new ObservableCollection<string>();
+            InstrumentSource = new ObservableCollection<string>();
+            DatasetTypesSource = new ObservableCollection<string>();
+            SeparationTypeSource = new ObservableCollection<string>();
 
-            CartNameListSource		= new ObservableCollection<string>();
-            EmslUsageTypeSource		= new ObservableCollection<string>();
-            InterestRatingSource	= DatasetManager.INTEREST_RATINGS_COLLECTION;
-            EMSLProposalIDs			= DMS_DataAccessor.Instance.ProposalIDs;
+            CartNameListSource = new ObservableCollection<string>();
+            CartConfigNameListSource = new ObservableCollection<string>();
+
+            EmslUsageTypeSource = new ObservableCollection<string>();
+            InterestRatingSource = DatasetManager.INTEREST_RATINGS_COLLECTION;
+            EMSLProposalIDs = DMS_DataAccessor.Instance.ProposalIDs;
 
             EMSLProposalUsersSource = new ObservableCollection<classProposalUser>();
-            Dataset					= new FilldownBuzzardDataset(); 
+            Dataset = new FilldownBuzzardDataset(); 
         }
 
 
@@ -192,6 +195,19 @@ namespace BuzzardWPF.Windows
             }
         }
 
+        public ObservableCollection<string> CartConfigNameListSource
+        {
+            get { return m_cartConfigNameListSource; }
+            set
+            {
+                if (m_cartConfigNameListSource != value)
+                {
+                    m_cartConfigNameListSource = value;
+                    OnPropertyChanged("CartConfigNameListSource");
+                }
+            }
+        }
+
         public ObservableCollection<string> EmslUsageTypeSource
         {
             get { return m_emslUsageTypeSource; }
@@ -325,20 +341,20 @@ namespace BuzzardWPF.Windows
                 return;
             }
 
-            Dataset.ShouldUseCart				= shouldWe;
-            Dataset.ShouldUseDatasetType		= shouldWe;
-            Dataset.ShouldUseEMSLProposalID		= shouldWe;
-            Dataset.ShouldUseEMSLUsageType		= shouldWe;
+            Dataset.ShouldUseCart = shouldWe;
+            Dataset.ShouldUseDatasetType = shouldWe;
+            Dataset.ShouldUseEMSLProposalID = shouldWe;
+            Dataset.ShouldUseEMSLUsageType = shouldWe;
 
-            Dataset.ShouldUseInstrumentType		= shouldWe;
-            Dataset.ShouldUseOperator			= shouldWe;
-            Dataset.ShouldUseSeparationType		= shouldWe;
-            Dataset.ShouldUseExperimentName		= shouldWe;
+            Dataset.ShouldUseInstrumentType = shouldWe;
+            Dataset.ShouldUseOperator = shouldWe;
+            Dataset.ShouldUseSeparationType = shouldWe;
+            Dataset.ShouldUseExperimentName = shouldWe;
 
-            Dataset.ShouldUseLCColumn			= shouldWe;
-            Dataset.ShouldUseInterestRating		= shouldWe;
-            Dataset.ShouldUseEMSLProposalUsers	= shouldWe;
-            Dataset.ShouldUseComment            = shouldWe;
+            Dataset.ShouldUseLCColumn = shouldWe;
+            Dataset.ShouldUseInterestRating = shouldWe;
+            Dataset.ShouldUseEMSLProposalUsers = shouldWe;
+            Dataset.ShouldUseComment = shouldWe;
         }
 
         private void OnPropertyChanged(string propertyName)

@@ -428,6 +428,18 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
+                <DataGridTemplateColumn MinWidth="100"
+                                        CanUserSort="True"
+                                        Header="Cart Config"
+                                        SortDirection="Ascending"
+                                        SortMemberPath="CartConfigName">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ComboBox ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=windows:BuzzardGrid}, Path=CartConfigNameListSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=CartConfigName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                
                 <DataGridTextColumn MinWidth="100"
                                     Binding="{Binding InterestRating}"
                                     Header="Interest Rating"

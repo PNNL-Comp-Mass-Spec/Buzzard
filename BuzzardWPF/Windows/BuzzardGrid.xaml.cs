@@ -63,6 +63,7 @@ namespace BuzzardWPF.Windows
                 LCColumn = Properties.Settings.Default.FilldownColumn,
                 Instrument = Properties.Settings.Default.FilldownInstrument,
                 CartName = Properties.Settings.Default.FilldownCart,
+                CartConfigName = Properties.Settings.Default.FilldownCartConfig,
                 InterestRating = Properties.Settings.Default.FilldownInterest,
                 ExperimentName = Properties.Settings.Default.FilldownExperimentName,
                 DMSData =
@@ -85,6 +86,7 @@ namespace BuzzardWPF.Windows
             Properties.Settings.Default.FilldownColumn = m_fillDownDataset.LCColumn;
             Properties.Settings.Default.FilldownInstrument = m_fillDownDataset.Instrument;
             Properties.Settings.Default.FilldownCart = m_fillDownDataset.CartName;
+            Properties.Settings.Default.FilldownCartConfig = m_fillDownDataset.CartConfigName;
             Properties.Settings.Default.FilldownInterest = m_fillDownDataset.InterestRating;
             Properties.Settings.Default.FilldownEMSLUsage = m_fillDownDataset.DMSData.EMSLUsageType;
             Properties.Settings.Default.FilldownEMSLProposal = m_fillDownDataset.DMSData.EMSLProposalID;
@@ -116,6 +118,10 @@ namespace BuzzardWPF.Windows
                     OnPropertyChanged("CartNameListSource");
                     break;
 
+                case "CartConfigNames":
+                    OnPropertyChanged("CartConfigNameListSource");
+                    break;
+
                 case "ColumnData":
                     OnPropertyChanged("LCColumnSource");
                     break;
@@ -137,6 +143,7 @@ namespace BuzzardWPF.Windows
         public ObservableCollection<string> SeparationTypeSource => DMS_DataAccessor.Instance.SeparationTypes;
 
         public ObservableCollection<string> CartNameListSource => DMS_DataAccessor.Instance.CartNames;
+        public ObservableCollection<string> CartConfigNameListSource => DMS_DataAccessor.Instance.CartConfigNames;
 
         public ObservableCollection<string> EmslUsageTypesSource
         {
@@ -522,6 +529,7 @@ namespace BuzzardWPF.Windows
                 DatasetTypesSource = DatasetTypesSource,
                 SeparationTypeSource = SeparationTypeSource,
                 CartNameListSource = CartNameListSource,
+                CartConfigNameListSource = CartConfigNameListSource,
                 EmslUsageTypeSource = EmslUsageTypesSource,
                 LCColumnSource = LCColumnSource
             };
@@ -554,8 +562,10 @@ namespace BuzzardWPF.Windows
             foreach (var dataset in selectedDatasets)
             {
                 if (filldownData.ShouldUseCart)
+                {
                     dataset.CartName = filldownData.CartName;
-
+                    dataset.CartConfigName = filldownData.CartConfigName;
+                }
                 if (filldownData.ShouldUseDatasetType)
                     dataset.DMSData.DatasetType = filldownData.DMSData.DatasetType;
 

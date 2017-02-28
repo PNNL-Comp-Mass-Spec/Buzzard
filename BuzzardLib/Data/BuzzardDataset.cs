@@ -21,6 +21,7 @@ namespace BuzzardLib.Data
         private string m_operator;
         private string m_separationType;
         private string m_cartName;
+        private string m_cartConfigName;
 
         private DMSData m_dmsData;
 
@@ -302,6 +303,19 @@ namespace BuzzardLib.Data
                 {
                     m_cartName = value;
                     OnPropertyChanged("CartName");
+                }
+            }
+        }
+
+        public string CartConfigName
+        {
+            get { return m_cartConfigName; }
+            set
+            {
+                if (m_cartConfigName != value)
+                {
+                    m_cartConfigName = value;
+                    OnPropertyChanged("CartConfigName");
                 }
             }
         }

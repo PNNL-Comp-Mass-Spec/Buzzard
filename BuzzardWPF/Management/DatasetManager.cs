@@ -73,6 +73,8 @@ namespace BuzzardWPF.Management
             Datasets = new ObservableCollection<BuzzardDataset>();
 
             WatcherConfigSelectedCartName = null;
+            WatcherConfigSelectedCartConfigName = null;
+
             WatcherConfigSelectedDatasetType = null;
             WatcherConfigSelectedInstrument = null;
             WatcherConfigSelectedOperator = null;
@@ -774,6 +776,15 @@ namespace BuzzardWPF.Management
         public string WatcherConfigSelectedCartName { get; set; }
 
         /// <summary>
+        /// This item contains a copy of the SelectedCartConfigName value of
+        /// the WatcherConfig tool.
+        /// </summary>
+        /// <remarks>
+        /// WatcherConfig is responsible for setting this value.
+        /// </remarks>
+        public string WatcherConfigSelectedCartConfigName { get; set; }
+
+        /// <summary>
         /// This item contains a copy of the SelectedSeperationType value of
         /// the WatcherConfig tool.
         /// </summary>
@@ -1059,6 +1070,9 @@ namespace BuzzardWPF.Management
 
                 if (string.IsNullOrWhiteSpace(dataset.CartName))
                     dataset.CartName = WatcherConfigSelectedCartName;
+
+                if (string.IsNullOrWhiteSpace(dataset.CartConfigName))
+                    dataset.CartConfigName = WatcherConfigSelectedCartConfigName;
 
                 if (string.IsNullOrWhiteSpace(dataset.SeparationType))
                     dataset.SeparationType = WatcherConfigSelectedSeparationType;

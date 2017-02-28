@@ -28,6 +28,7 @@ namespace BuzzardLib.Data
 
         private string m_userList;
         private string m_cartName;
+        private string m_cartConfigName;
         private string m_comment;
         private int m_mrmFileID;
 
@@ -47,6 +48,7 @@ namespace BuzzardLib.Data
             Batch = -1;
             Block = -1;
             CartName = null;
+            CartConfigName = null;
             Comment = null;
 
             DatasetName = null;
@@ -70,6 +72,7 @@ namespace BuzzardLib.Data
             Batch = other.Batch;
             Block = other.Block;
             CartName = other.CartName;
+            CartConfigName = other.CartConfigName;
             Comment = other.Comment;
 
             DatasetName = other.DatasetName;
@@ -295,6 +298,23 @@ namespace BuzzardLib.Data
                     // This is an editable field even if the DMS Request has been resolved.
                     m_cartName = value;
                     OnPropertyChanged("CartName");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Name of cart configuration for the current cart
+        /// </summary>
+        public string CartConfigName
+        {
+            get { return m_cartConfigName; }
+            set
+            {
+                if (m_cartConfigName != value)
+                {
+                    // This is an editable field even if the DMS Request has been resolved.
+                    m_cartConfigName = value;
+                    OnPropertyChanged("CartConfigName");
                 }
             }
         }

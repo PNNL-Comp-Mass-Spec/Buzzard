@@ -7,6 +7,11 @@
             get;
             set;
         }
+        public string CartConfigName
+        {
+            get;
+            set;
+        }
         public string SeparationType
         {
             get;

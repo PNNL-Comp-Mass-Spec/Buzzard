@@ -45,7 +45,9 @@ namespace BuzzardWPF.Management
             SeparationTypes = new ObservableCollection<string>();
 
             CartNames = new ObservableCollection<string>();
+            CartConfigNames = new ObservableCollection<string>();
             ColumnData = new ObservableCollection<string>();
+
             Experiments = new List<classExperimentData>();
             Datasets = new SortedSet<string>(StringComparer.CurrentCultureIgnoreCase);
 
@@ -147,6 +149,15 @@ namespace BuzzardWPF.Management
                 classApplicationLogger.LogError(0, "Cart names list retrieval returned null.");
             else
                 CartNames = new ObservableCollection<string>(tempCartsList);
+
+            //
+            // Load Cart Config Names
+            //
+            var tempCartConfigNamesList = classSQLiteTools.GetCartConfigNameList(false);
+            if (tempCartConfigNamesList == null)
+                classApplicationLogger.LogError(0, "Cart config names list retrieval returned null.");
+            else
+                CartConfigNames = new ObservableCollection<string>(tempCartConfigNamesList);
 
             //
             // Load column data
@@ -708,6 +719,20 @@ namespace BuzzardWPF.Management
             }
         }
         private ObservableCollection<string> m_cartNames;
+
+        public ObservableCollection<string> CartConfigNames
+        {
+            get { return m_cartConfigNames; }
+            private set
+            {
+                if (m_cartConfigNames != value)
+                {
+                    m_cartConfigNames = value;
+                    OnPropertyChanged("CartConfigNames");
+                }
+            }
+        }
+        private ObservableCollection<string> m_cartConfigNames;
 
         /// <summary>
         /// List of DMS dataset names

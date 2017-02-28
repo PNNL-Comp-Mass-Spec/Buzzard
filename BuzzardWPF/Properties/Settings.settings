@@ -50,6 +50,9 @@
     <Setting Name="WatcherConfig_SelectedCartName" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="WatcherConfig_SelectedCartConfigName" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
     <Setting Name="WatcherConfig_SelectedSeperationType" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>

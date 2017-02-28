@@ -123,6 +123,8 @@ namespace BuzzardLib.IO
                 {"Instrument name", dataset.Instrument},
                 {"Separation Type", dataset.SeparationType},
                 {"LC Cart", dataset.CartName},
+                // Uncomment the following to make "LC Cart Config" a required item
+                // { "LC Cart Config", dataset.CartConfigName},
                 {"LC Column", dataset.LCColumn},
                 {"Operator name", dataset.Operator},
             };
@@ -154,6 +156,7 @@ namespace BuzzardLib.IO
             AddParam(rootElement, "Capture Subfolder", TrimWhitespace(dataset.CaptureSubfolderPath));
             AddParam(rootElement, "Separation Type", TrimWhitespace(dataset.SeparationType));
             AddParam(rootElement, "LC Cart Name", TrimWhitespace(dataset.CartName));
+            AddParam(rootElement, "LC Cart Config", TrimWhitespace(dataset.CartConfigName));
             AddParam(rootElement, "LC Column", TrimWhitespace(dataset.LCColumn));
             AddParam(rootElement, "Wellplate Number", TrimWhitespace(sample.PAL.WellPlate));
             AddParam(rootElement, "Well Number", TrimWhitespace(sample.PAL.Well.ToString(CultureInfo.InvariantCulture)));

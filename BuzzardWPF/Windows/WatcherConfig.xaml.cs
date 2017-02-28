@@ -27,10 +27,11 @@ namespace BuzzardWPF.Windows
         private string m_selectedInstrument;
         private string m_selectedDatasetType;
         private string m_selectedSeparationType;
-                       
+
         private string m_selectedCartName;
+        private string m_selectedCartConfigName;
         private string m_lcColumn;
-                       
+
         private string m_experimentName;
 
         #endregion
@@ -62,29 +63,33 @@ namespace BuzzardWPF.Windows
             // -FCT
             switch (e.PropertyName)
             {
-            case "InstrumentData":
-                OnPropertyChanged("InstrumentsSource");
-                break;
+                case "InstrumentData":
+                    OnPropertyChanged("InstrumentsSource");
+                    break;
 
-            case "OperatorData":
-                OnPropertyChanged("OperatorsSource");
-                break;
+                case "OperatorData":
+                    OnPropertyChanged("OperatorsSource");
+                    break;
 
-            case "DatasetTypes":
-                OnPropertyChanged("DatasetTypesSource");
-                break;
+                case "DatasetTypes":
+                    OnPropertyChanged("DatasetTypesSource");
+                    break;
 
-            case "SeparationTypes":
-                OnPropertyChanged("SeparationTypeSource");
-                break;
+                case "SeparationTypes":
+                    OnPropertyChanged("SeparationTypeSource");
+                    break;
 
-            case "CartNames":
-                OnPropertyChanged("CartNameListSource");
-                break;
+                case "CartNames":
+                    OnPropertyChanged("CartNameListSource");
+                    break;
 
-            case "ColumnData":
-                OnPropertyChanged("LCColumnSource");
-                break;
+                case "CartConfigNames":
+                    OnPropertyChanged("CartConfigNameListSource");
+                    break;
+
+                case "ColumnData":
+                    OnPropertyChanged("LCColumnSource");
+                    break;
             }
         }
         #endregion
@@ -198,6 +203,20 @@ namespace BuzzardWPF.Windows
             }
         }
 
+        public string SelectedCartConfigName
+        {
+            get { return m_selectedCartConfigName; }
+            set
+            {
+                if (m_selectedCartConfigName != value)
+                {
+                    m_selectedCartConfigName = value;
+                    OnPropertyChanged("SelectedCartConfigName");
+                }
+
+                DatasetManager.Manager.WatcherConfigSelectedCartConfigName = value;
+            }
+        }
 
         public ObservableCollection<string> OperatorsSource => DMS_DataAccessor.Instance.OperatorData;
 
@@ -208,6 +227,8 @@ namespace BuzzardWPF.Windows
         public ObservableCollection<string> SeparationTypeSource => DMS_DataAccessor.Instance.SeparationTypes;
 
         public ObservableCollection<string> CartNameListSource => DMS_DataAccessor.Instance.CartNames;
+
+        public ObservableCollection<string> CartConfigNameListSource => DMS_DataAccessor.Instance.CartConfigNames;
 
         public bool IsNotMonitoring
         {
@@ -256,15 +277,16 @@ namespace BuzzardWPF.Windows
         public void MonitoringToggleHandler(object sender, StartStopEventArgs e)
         {
             IsNotMonitoring = !e.Monitoring;
-        }	
+        }
         #endregion
 
 
         #region Methods
-      
+
         public void SaveSettings()
         {
             Settings.Default.WatcherConfig_SelectedCartName = SelectedCartName;
+            Settings.Default.WatcherConfig_SelectedCartConfigName = SelectedCartConfigName;
             Settings.Default.WatcherConfig_SelectedColumnData = SelectedDatasetType;
             Settings.Default.WatcherConfig_SelectedInstrument = SelectedInstrument;
             Settings.Default.WatcherConfig_SelectedOperator = SelectedOperator;
@@ -304,6 +326,11 @@ namespace BuzzardWPF.Windows
                 Settings.Default.WatcherConfig_SelectedCartName,
                 CartNameListSource,
                 "Cart");
+
+            SelectedCartConfigName = CheckSetting(
+                Settings.Default.WatcherConfig_SelectedCartConfigName,
+                CartConfigNameListSource,
+                "CartConfig");
 
             SelectedDatasetType = CheckSetting(
                 Settings.Default.WatcherConfig_SelectedColumnData,
