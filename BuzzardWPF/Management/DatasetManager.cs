@@ -1186,8 +1186,7 @@ namespace BuzzardWPF.Management
 
             if (string.IsNullOrWhiteSpace(LCColumn))
                 missingFields.Add("LC Column");
-
-            if (!DMS_DataAccessor.Instance.ColumnData.Contains(LCColumn))
+            else if (!DMS_DataAccessor.Instance.ColumnData.Contains(LCColumn))
                 missingFields.Add("Invalid LC Column name");
 
             if (string.IsNullOrWhiteSpace(QC_ExperimentName))
