@@ -495,7 +495,7 @@ namespace BuzzardWPF.Windows
 
             if (missingData.Count > 0)
             {
-                var msg = "Could not start the monitor.  One or more key fields is undefined on the configuration tabs: ";
+                var msg = "Could not start the monitor.  One or more key fields is undefined on the Instrument Metadata and/or QC Samples tabs: ";
                 for (var i = 0; i < missingData.Count; i++)
                 {
                     msg += missingData[i];

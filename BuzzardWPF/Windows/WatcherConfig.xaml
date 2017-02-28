@@ -42,8 +42,8 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="290" />
-            <RowDefinition Height="20*" />
+            <RowDefinition Height="305" />
+            <RowDefinition Height="15*" />
         </Grid.RowDefinitions>
         <StackPanel Grid.Column="0" Margin="1,1,4,1">
 
