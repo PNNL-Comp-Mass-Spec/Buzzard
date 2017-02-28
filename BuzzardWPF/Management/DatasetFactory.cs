@@ -32,9 +32,14 @@ namespace BuzzardWPF.Management
             var datasets = new ObservableCollection<BuzzardDataset>();
             for (var i = 0; i < 10; i++)
             {
-                var data = new BuzzardDataset();                
-                data.DMSData.RequestName    = "test" + i;
-                data.DMSData.RequestID      = 0;
+                var data = new BuzzardDataset
+                {
+                    DMSData =
+                    {
+                        RequestName = "test" + i,
+                        RequestID = 0
+                    }
+                };
                 datasets.Add(data);
             }
             return datasets;

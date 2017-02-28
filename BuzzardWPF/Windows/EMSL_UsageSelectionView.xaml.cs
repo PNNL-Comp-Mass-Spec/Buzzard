@@ -21,9 +21,7 @@ namespace BuzzardWPF.Windows
 
 
         #region Attributes
-        // Todo: It might be a good idea to see if we can get this from 
-        //		 the database, or something that isn't hard coded into
-        //		 the application.
+
         private static readonly string[] EMSL_USAGE_TYPES =
         {
             "BROKEN",

@@ -409,7 +409,7 @@ namespace BuzzardWPF.Windows
         /// Renames the data for the selected datasets to replace invalid characters in the name with underscores
         /// </summary>
         /// <param name="renameRequests">List of datasets to rename.</param>
-        /// <param name="startingIndex">The index location of the dataset that will be renamedd on this call of RenameDatasets</param>		
+        /// <param name="startingIndex">The index location of the dataset that will be renamed on this call of RenameDatasets</param>
         /// <param name="informUserOnConflict">Tells us if we should inform the user when we hit a conflict, or do what skipOnConflicts says.</param>
         /// <param name="skipOnConflicts">Tells us if we should overwrite or skip a dataset on a conflict</param>
         private void RenameDatasets(IList<RenameDataRequest> renameRequests, int startingIndex, bool informUserOnConflict, bool skipOnConflicts)
