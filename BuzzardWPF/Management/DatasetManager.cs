@@ -1238,7 +1238,13 @@ namespace BuzzardWPF.Management
                 isArchived = fiDatasetFile.Name.StartsWith("x_", StringComparison.OrdinalIgnoreCase);
 
                 if (isArchived && fiDatasetFile.Name.Length > 2)
-                    return Path.Combine(fiDatasetFile.DirectoryName, fiDatasetFile.Name.Substring(2));
+                {
+                    if (fiDatasetFile.DirectoryName != null)
+                    {
+                        return Path.Combine(fiDatasetFile.DirectoryName, fiDatasetFile.Name.Substring(2));
+                    }
+                    return fiDatasetFile.FullName.Replace("x_","");
+                }
 
                 return fiDatasetFile.FullName;
             }
@@ -1261,8 +1267,13 @@ namespace BuzzardWPF.Management
             isArchived = diDatasetFolder.Name.StartsWith("x_", StringComparison.OrdinalIgnoreCase);
 
             if (isArchived && diDatasetFolder.Name.Length > 2)
-                return Path.Combine(diDatasetFolder.Parent.FullName, diDatasetFolder.Name.Substring(2));
-
+            {
+                if (diDatasetFolder.Parent != null)
+                {
+                    return Path.Combine(diDatasetFolder.Parent.FullName, diDatasetFolder.Name.Substring(2));
+                }
+                return diDatasetFolder.FullName.Replace("x_", "");
+            }
             return diDatasetFolder.FullName;
         }
 
