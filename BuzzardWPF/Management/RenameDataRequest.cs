@@ -9,99 +9,99 @@ using LcmsNetDataClasses.Logging;
 
 namespace BuzzardWPF.Management
 {
-	public class RenameDataRequest
-	{
+    public class RenameDataRequest
+    {
         /// <summary>
         /// File path to fix invalid characters in
         /// </summary>
-		public string SourceDataPath {
-		    get 
+        public string SourceDataPath {
+            get 
             { 
                 return mSourceDataPath; 
             }
-		    set
-		    {
-		        mSourceDataPath = value;
-		        mFixedDataPath = FixFileName(mSourceDataPath);
-		    }
-		}
+            set
+            {
+                mSourceDataPath = value;
+                mFixedDataPath = FixFileName(mSourceDataPath);
+            }
+        }
 
         /// <summary>
         /// Updated file path
         /// </summary>
-	    public string FixedDataPath {
+        public string FixedDataPath {
             get { return mFixedDataPath; }
         }
 
-		public BuzzardDataset Dataset { get; set; }
+        public BuzzardDataset Dataset { get; set; }
 
         protected string mSourceDataPath;
         protected string mFixedDataPath;
 
-	    /// <summary>
+        /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="dataset">Buzzard dataset</param>
-	    public RenameDataRequest(BuzzardDataset dataset)
-	    {
-	        Dataset = dataset;
-	        SourceDataPath = dataset.FilePath;
-	    }
+        public RenameDataRequest(BuzzardDataset dataset)
+        {
+            Dataset = dataset;
+            SourceDataPath = dataset.FilePath;
+        }
 
-	    public void RenameData(ref bool informUser, ref bool skipOnConflict)
-		{
+        public void RenameData(ref bool informUser, ref bool skipOnConflict)
+        {
             if (string.Equals(SourceDataPath, FixedDataPath, StringComparison.CurrentCultureIgnoreCase))
-		    {
+            {
                 // Source and destination are the same; nothing to do
-		        return;
-		    }
+                return;
+            }
 
-	        var hasConflict = HasConflict();
+            var hasConflict = HasConflict();
 
-			if (hasConflict)
-			{
-				if (informUser)
-				{
-					var dialog = new DatasetOverwriteDialog
-					{
+            if (hasConflict)
+            {
+                if (informUser)
+                {
+                    var dialog = new DatasetOverwriteDialog
+                    {
                         FileToRenamePath = SourceDataPath,
                         FileInWayPath = FixedDataPath
-					};
+                    };
 
-					dialog.ShowDialog();
+                    dialog.ShowDialog();
 
-					informUser = !dialog.DoSameToOtherConflicts;
+                    informUser = !dialog.DoSameToOtherConflicts;
                     skipOnConflict = dialog.SkipDatasetRename;
-				}
+                }
 
-				if (skipOnConflict)
-				{
-					classApplicationLogger.LogMessage(
-						0,
-						string.Format("Skipping {0}", SourceDataPath));
-				    return;
-				}
+                if (skipOnConflict)
+                {
+                    classApplicationLogger.LogMessage(
+                        0,
+                        string.Format("Skipping {0}", SourceDataPath));
+                    return;
+                }
    
-			}
-	        
+            }
+            
             if (File.Exists(SourceDataPath))
-	        {
-	            RenameFile();
-	        }
-	        else if (Directory.Exists(SourceDataPath))
-	        {
-	            RenameFolder();
-	        }	        
-	        else
-	        {
+            {
+                RenameFile();
+            }
+            else if (Directory.Exists(SourceDataPath))
+            {
+                RenameFolder();
+            }	        
+            else
+            {
                 // File or folder not found
                 classApplicationLogger.LogError(
                        0,
                        string.Format(
                            "The item must have been renamed since the search was performed.  Cannot find the selected item. {0}.  ",
                            SourceDataPath));
-	        }
-		}
+            }
+        }
 
         private void FinalizeRename()
         {
@@ -183,26 +183,26 @@ namespace BuzzardWPF.Management
             return (hasFile || hasFolder);
         }
 
-	    private void RenameFile()
-	    {
-	        try
-	        {
-	            if (File.Exists(FixedDataPath))
+        private void RenameFile()
+        {
+            try
+            {
+                if (File.Exists(FixedDataPath))
                     File.Delete(FixedDataPath);
 
-	            File.Move(SourceDataPath, FixedDataPath);
-	            Dataset.FilePath = FixedDataPath;
+                File.Move(SourceDataPath, FixedDataPath);
+                Dataset.FilePath = FixedDataPath;
 
-	            FinalizeRename();
-	        }
-	        catch (Exception ex)
-	        {
-	            classApplicationLogger.LogError(
-	                0,
-	                string.Format("Could not rename '{0}' to '{1}'", SourceDataPath, FixedDataPath),
-	                ex);
-	        }
-	    }	    
+                FinalizeRename();
+            }
+            catch (Exception ex)
+            {
+                classApplicationLogger.LogError(
+                    0,
+                    string.Format("Could not rename '{0}' to '{1}'", SourceDataPath, FixedDataPath),
+                    ex);
+            }
+        }	    
 
         private void RenameFolder()
         {
@@ -224,6 +224,6 @@ namespace BuzzardWPF.Management
                     ex);
             }
         }
-	   
-	}
+       
+    }
 }

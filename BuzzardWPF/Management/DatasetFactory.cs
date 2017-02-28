@@ -41,19 +41,19 @@ namespace BuzzardWPF.Management
             return datasets;
         }
 
-		public static BuzzardDataset LoadDataset(string path)
-		{
-			var dataset = new BuzzardDataset
-			{
-				FilePath = path
-			};
+        public static BuzzardDataset LoadDataset(string path)
+        {
+            var dataset = new BuzzardDataset
+            {
+                FilePath = path
+            };
 
-		    dataset.DMSData.DatasetName = TriggerFileTools.GetDatasetNameFromFilePath(path);
-			
-			if (dataset.DMSData.DatasetName.StartsWith("qc_shew", StringComparison.OrdinalIgnoreCase))
-				dataset.IsQC = true;
+            dataset.DMSData.DatasetName = TriggerFileTools.GetDatasetNameFromFilePath(path);
+            
+            if (dataset.DMSData.DatasetName.StartsWith("qc_shew", StringComparison.OrdinalIgnoreCase))
+                dataset.IsQC = true;
 
-			return dataset;
-		}
+            return dataset;
+        }
     }
 }

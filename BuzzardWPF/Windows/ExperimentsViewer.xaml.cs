@@ -11,207 +11,207 @@ using LcmsNetDataClasses;
 
 namespace BuzzardWPF.Windows
 {
-	/// <summary>
-	/// Interaction logic for ExperimentsViewer.xaml
-	/// </summary>
-	public partial class ExperimentsViewer 
-		: UserControl, INotifyPropertyChanged
-	{
-		#region Events
-		public event PropertyChangedEventHandler	PropertyChanged;
-		#endregion
+    /// <summary>
+    /// Interaction logic for ExperimentsViewer.xaml
+    /// </summary>
+    public partial class ExperimentsViewer 
+        : UserControl, INotifyPropertyChanged
+    {
+        #region Events
+        public event PropertyChangedEventHandler	PropertyChanged;
+        #endregion
 
 
-		#region Attributes
-		private string						m_filterText;
-		private classExperimentData			m_selectedExperiment;
+        #region Attributes
+        private string						m_filterText;
+        private classExperimentData			m_selectedExperiment;
 
-		private List<classExperimentData>	m_experimentList;
-		private List<string>				m_experimentNameList;
-		private List<string>				m_organismNameList;
-		private List<string>				m_researcherList;
-		private List<string>				m_reason;
+        private List<classExperimentData>	m_experimentList;
+        private List<string>				m_experimentNameList;
+        private List<string>				m_organismNameList;
+        private List<string>				m_researcherList;
+        private List<string>				m_reason;
 
-		private ObservableCollection<classExperimentData> m_experiments;
-		#endregion
-
-
-		#region Initialization
-		public ExperimentsViewer()
-		{
-			InitializeComponent();
-			DataContext = this;
-
-			FilterText = string.Empty;
-
-			Action loadExperiments = delegate
-			{
-				LoadExperiments();
-			};
-			Dispatcher.BeginInvoke(loadExperiments, DispatcherPriority.Render);
-		}
-
-		private void LoadExperiments()
-		{
-			// Get the list of experiments.
-			// I don't know why I can't just put the entire list
-			// right into an observable collection and throw it
-			// into the Experiments property. What I do know is
-			// that, if we do that at this time, the memory usage
-			// will grow by over a GB, and we'll be waiting forever
-			// for the UI thread to unfreeze. We can throw everything
-			// into Experiments when we run a search, but we can't
-			// do it here.
-			// -FC
-			m_experimentList = DMS_DataAccessor.Instance.Experiments;
-			var stringEqualityDeterminer = new StringComparision();
-
-			// Building lists that we can use to narrow down the
-			// number of experiments to insert into the UI
-			var x = (from classExperimentData exp in m_experimentList
-					 select exp.Researcher.Trim()).Distinct(stringEqualityDeterminer);
-			m_researcherList = new List<string>(x);
-
-			x = (from classExperimentData exp in m_experimentList
-				 select exp.Organism.Trim()).Distinct(stringEqualityDeterminer);
-			m_organismNameList = new List<string>(x);
-
-			x = (from classExperimentData exp in m_experimentList
-				 select exp.Experiment.Trim()).Distinct(stringEqualityDeterminer);
-			m_experimentNameList = new List<string>(x);
-
-			x = (from classExperimentData exp in m_experimentList
-				 select exp.Reason).Distinct(stringEqualityDeterminer);
-			m_reason = new List<string>(x);
-
-			m_experimentNameList.Sort();
-			m_organismNameList.Sort();
-			m_reason.Sort();
-			m_researcherList.Sort();
-		}
-
-		private class StringComparision 
-			: IEqualityComparer<string>
-		{
-			public bool Equals(string x, string y)
-			{
-				bool areTheyEqual;
-
-				if (x == null && y == null)
-					areTheyEqual = true;
-				else if (x == null || y == null)
-					areTheyEqual = false;
-				else
-					areTheyEqual = x.Equals(y, StringComparison.OrdinalIgnoreCase);
-
-				return areTheyEqual;
-			}
-
-			public int GetHashCode(string obj)
-			{
-				if (obj != null)
-					return obj.ToUpper().GetHashCode();
-				
-				throw new Exception();
-			}
-		}
-		#endregion
+        private ObservableCollection<classExperimentData> m_experiments;
+        #endregion
 
 
-		#region Properties
-		public classExperimentData SelectedExperiment
-		{
-			get { return m_selectedExperiment; }
-			set
-			{
-				if (m_selectedExperiment != value)
-				{
-					m_selectedExperiment = value;
-					OnPropertyChanged("SelectedExperiment");
-				}
-			}
-		}
+        #region Initialization
+        public ExperimentsViewer()
+        {
+            InitializeComponent();
+            DataContext = this;
 
-		public string FilterText
-		{
-			get { return m_filterText; }
-			set
-			{
-				if (m_filterText != value)
-				{
-					m_filterText = value;
+            FilterText = string.Empty;
 
-					if (value == null)
-						m_filterText = string.Empty;
+            Action loadExperiments = delegate
+            {
+                LoadExperiments();
+            };
+            Dispatcher.BeginInvoke(loadExperiments, DispatcherPriority.Render);
+        }
 
-					OnPropertyChanged("FilterText");
-				}
-			}
-		}
+        private void LoadExperiments()
+        {
+            // Get the list of experiments.
+            // I don't know why I can't just put the entire list
+            // right into an observable collection and throw it
+            // into the Experiments property. What I do know is
+            // that, if we do that at this time, the memory usage
+            // will grow by over a GB, and we'll be waiting forever
+            // for the UI thread to unfreeze. We can throw everything
+            // into Experiments when we run a search, but we can't
+            // do it here.
+            // -FC
+            m_experimentList = DMS_DataAccessor.Instance.Experiments;
+            var stringEqualityDeterminer = new StringComparision();
 
-		public ObservableCollection<classExperimentData> Experiments
-		{
-			get { return m_experiments; }
-			set
-			{
-				if (m_experiments != value)
-				{
-					m_experiments = value;
-					OnPropertyChanged("Experiments");
-				}
-			}
-		}
-		#endregion
+            // Building lists that we can use to narrow down the
+            // number of experiments to insert into the UI
+            var x = (from classExperimentData exp in m_experimentList
+                     select exp.Researcher.Trim()).Distinct(stringEqualityDeterminer);
+            m_researcherList = new List<string>(x);
+
+            x = (from classExperimentData exp in m_experimentList
+                 select exp.Organism.Trim()).Distinct(stringEqualityDeterminer);
+            m_organismNameList = new List<string>(x);
+
+            x = (from classExperimentData exp in m_experimentList
+                 select exp.Experiment.Trim()).Distinct(stringEqualityDeterminer);
+            m_experimentNameList = new List<string>(x);
+
+            x = (from classExperimentData exp in m_experimentList
+                 select exp.Reason).Distinct(stringEqualityDeterminer);
+            m_reason = new List<string>(x);
+
+            m_experimentNameList.Sort();
+            m_organismNameList.Sort();
+            m_reason.Sort();
+            m_researcherList.Sort();
+        }
+
+        private class StringComparision 
+            : IEqualityComparer<string>
+        {
+            public bool Equals(string x, string y)
+            {
+                bool areTheyEqual;
+
+                if (x == null && y == null)
+                    areTheyEqual = true;
+                else if (x == null || y == null)
+                    areTheyEqual = false;
+                else
+                    areTheyEqual = x.Equals(y, StringComparison.OrdinalIgnoreCase);
+
+                return areTheyEqual;
+            }
+
+            public int GetHashCode(string obj)
+            {
+                if (obj != null)
+                    return obj.ToUpper().GetHashCode();
+                
+                throw new Exception();
+            }
+        }
+        #endregion
 
 
-		#region Event Handlers
-		/// <summary>
-		/// Gives the autofill box a list of times to use as its source based
-		/// on the selected filter to use.
-		/// </summary>
-		private void FilterBox_Populating(object sender, PopulatingEventArgs e)
-		{
-			var filterOption = GetSelectedFilter();
+        #region Properties
+        public classExperimentData SelectedExperiment
+        {
+            get { return m_selectedExperiment; }
+            set
+            {
+                if (m_selectedExperiment != value)
+                {
+                    m_selectedExperiment = value;
+                    OnPropertyChanged("SelectedExperiment");
+                }
+            }
+        }
 
-			switch (filterOption)
-			{
-			case FilterOption.Researcher:
-				m_filterBox.ItemsSource = m_researcherList;
-				break;
+        public string FilterText
+        {
+            get { return m_filterText; }
+            set
+            {
+                if (m_filterText != value)
+                {
+                    m_filterText = value;
 
-			case FilterOption.Experiment:
-				m_filterBox.ItemsSource = m_experimentNameList;
-				break;
+                    if (value == null)
+                        m_filterText = string.Empty;
 
-			case FilterOption.Organism:
-				m_filterBox.ItemsSource = m_organismNameList;
-				break;
+                    OnPropertyChanged("FilterText");
+                }
+            }
+        }
 
-			case FilterOption.Reason:
-				m_filterBox.ItemsSource = m_reason;
-				break;
+        public ObservableCollection<classExperimentData> Experiments
+        {
+            get { return m_experiments; }
+            set
+            {
+                if (m_experiments != value)
+                {
+                    m_experiments = value;
+                    OnPropertyChanged("Experiments");
+                }
+            }
+        }
+        #endregion
 
-			default:
-				m_filterBox.ItemsSource = new string[] { };
-				break;
-			}
 
-			m_filterBox.PopulateComplete();
-		}
+        #region Event Handlers
+        /// <summary>
+        /// Gives the autofill box a list of times to use as its source based
+        /// on the selected filter to use.
+        /// </summary>
+        private void FilterBox_Populating(object sender, PopulatingEventArgs e)
+        {
+            var filterOption = GetSelectedFilter();
 
-		/// <summary>
-		/// Searches for experiments that meet-up to the selected filter and
-		/// filter screen.
-		/// </summary>
-		private void Search_Click(object sender, RoutedEventArgs e)
-		{
-			Experiments = null;
-			var filterOption = GetSelectedFilter();
+            switch (filterOption)
+            {
+            case FilterOption.Researcher:
+                m_filterBox.ItemsSource = m_researcherList;
+                break;
 
-			IEnumerable<classExperimentData> x = null;
+            case FilterOption.Experiment:
+                m_filterBox.ItemsSource = m_experimentNameList;
+                break;
 
-		    try
-		    {
+            case FilterOption.Organism:
+                m_filterBox.ItemsSource = m_organismNameList;
+                break;
+
+            case FilterOption.Reason:
+                m_filterBox.ItemsSource = m_reason;
+                break;
+
+            default:
+                m_filterBox.ItemsSource = new string[] { };
+                break;
+            }
+
+            m_filterBox.PopulateComplete();
+        }
+
+        /// <summary>
+        /// Searches for experiments that meet-up to the selected filter and
+        /// filter screen.
+        /// </summary>
+        private void Search_Click(object sender, RoutedEventArgs e)
+        {
+            Experiments = null;
+            var filterOption = GetSelectedFilter();
+
+            IEnumerable<classExperimentData> x = null;
+
+            try
+            {
                 switch (filterOption)
                 {
                     case FilterOption.Researcher:
@@ -247,71 +247,71 @@ namespace BuzzardWPF.Windows
 
                 var tempRef = new ObservableCollection<classExperimentData>(x);
                 Experiments = tempRef;
-		    }
-		    catch (Exception ex)
-		    {
+            }
+            catch (Exception ex)
+            {
                 // Search error; do not update Experiments              
-		        Console.WriteLine("Error ignored in ExperimentsViewser.Search_Click: " + ex.Message);
-		    }
-		   
-		}
-		#endregion
+                Console.WriteLine("Error ignored in ExperimentsViewser.Search_Click: " + ex.Message);
+            }
+           
+        }
+        #endregion
 
 
-		#region Methods
-		/// <summary>
-		/// Gets the filter that was selected from the drop down box.
-		/// </summary>
-		private FilterOption GetSelectedFilter()
-		{
-			var result = FilterOption.None;
+        #region Methods
+        /// <summary>
+        /// Gets the filter that was selected from the drop down box.
+        /// </summary>
+        private FilterOption GetSelectedFilter()
+        {
+            var result = FilterOption.None;
 
-			var selectedItem = m_comboBox.SelectedItem as ComboBoxItem;
-			if (selectedItem == null)
-				return result;
+            var selectedItem = m_comboBox.SelectedItem as ComboBoxItem;
+            if (selectedItem == null)
+                return result;
 
-			var tag = selectedItem.Tag as string;
+            var tag = selectedItem.Tag as string;
 
-			switch (tag)
-			{
-			case "rs":
-				result = FilterOption.Researcher;
-				break;
+            switch (tag)
+            {
+            case "rs":
+                result = FilterOption.Researcher;
+                break;
 
-			case "ex":
-				result = FilterOption.Experiment;
-				break;
+            case "ex":
+                result = FilterOption.Experiment;
+                break;
 
-			case "or":
-				result = FilterOption.Organism;
-				break;
+            case "or":
+                result = FilterOption.Organism;
+                break;
 
-			case "ra":
-				result = FilterOption.Reason;
-				break;
+            case "ra":
+                result = FilterOption.Reason;
+                break;
 
-			default:
-				result = FilterOption.None;
-				break;
-			}
+            default:
+                result = FilterOption.None;
+                break;
+            }
 
-			return result;
-		}
+            return result;
+        }
 
-		private void OnPropertyChanged(string propertyName)
-		{
-			if (PropertyChanged != null)
-				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-		}
-		#endregion
+        private void OnPropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+        #endregion
 
-		private enum FilterOption
-		{
-			Researcher, 
-			Experiment, 
-			Organism, 
-			Reason, 
-			None
-		}
-	}
+        private enum FilterOption
+        {
+            Researcher, 
+            Experiment, 
+            Organism, 
+            Reason, 
+            None
+        }
+    }
 }
