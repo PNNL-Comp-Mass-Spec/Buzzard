@@ -113,7 +113,7 @@ namespace BuzzardLib.Searching
         }
 
         /// <summary>
-        /// Searches 
+        /// Searches
         /// </summary>
         /// <param name="config"></param>
         public void Search(SearchConfig config)

@@ -13,7 +13,7 @@ namespace BuzzardWPF.Windows
     /// <summary>
     /// Interaction logic for QCView.xaml
     /// </summary>
-    public partial class QCView 
+    public partial class QCView
         : UserControl, IEmslUsvUser
     {
         #region Events
@@ -159,7 +159,7 @@ namespace BuzzardWPF.Windows
         public void MonitoringToggleHandler(object sender, StartStopEventArgs e)
         {
             IsNotMonitoring = !e.Monitoring;
-        }	
+        }   
         #endregion
 
 

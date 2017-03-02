@@ -36,7 +36,7 @@ namespace BuzzardLib.Searching
         /// </summary>
         /// <param name="hostName"></param>
         /// <returns>
-        /// Dictionary where key is the share name and path is the local path to that share. 
+        /// Dictionary where key is the share name and path is the local path to that share.
         /// For example, "ProteomicsData" and "C:\ProteomicsData"
         /// </returns>
         protected Dictionary<string, string> GetWindowsShares(string hostName)
@@ -83,9 +83,9 @@ namespace BuzzardLib.Searching
                 string baseFolderHostName;
                 string baseFolderPathToUse;
 
-                // This dictionary tracks share names where key is the share name and path is the local path to that share. 
+                // This dictionary tracks share names where key is the share name and path is the local path to that share.
                 // For example, "ProteomicsData" and "C:\ProteomicsData"
-                // However, if diBaseFolder points to another computer (e.g. \\VOrbiETD01.bionet\ProteomicsData) then the dictionary 
+                // However, if diBaseFolder points to another computer (e.g. \\VOrbiETD01.bionet\ProteomicsData) then the dictionary
                 // will have a single entry with key "ProteomicsData" and value "ProteomicsData"
                 Dictionary<string, string> localShares;
 
@@ -227,7 +227,7 @@ namespace BuzzardLib.Searching
             }
             catch (Exception ex)
             {
-                classApplicationLogger.LogError(0, "Error looking up local shares", ex);               
+                classApplicationLogger.LogError(0, "Error looking up local shares", ex);
             }
          
 

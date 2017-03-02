@@ -4,14 +4,14 @@ using System.Windows.Data;
 namespace BuzzardLib.Converters
 {
     /// <summary>
-    /// Converts an int64 containing a size in bytes, into a double containing the 
+    /// Converts an int64 containing a size in bytes, into a double containing the
     /// size in KBs. This double is then converted into a string in the form of "[0..9] KB" which is returned.
     /// </summary>
     /// <remarks>
     /// Sizes less than 10 KB will have one digit shown after the decimal point
     /// Sizes less than 2 KB will have two digits shown after the decimal point</remarks>
     [ValueConversion(typeof(string), typeof(long))]
-    public class ByteToKBConverter 
+    public class ByteToKBConverter
         : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

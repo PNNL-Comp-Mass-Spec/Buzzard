@@ -6,7 +6,7 @@ using BuzzardLib.IO;
 namespace BuzzardWPF.Management
 {
     /// <summary>
-    /// Loads data 
+    /// Loads data
     /// </summary>
     public class DatasetFactory
     {

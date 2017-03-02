@@ -328,7 +328,7 @@ namespace BuzzardWPF.Management
             // Set the Last Update time to now to prevent this function from calling UpdateCacheNow repeatedly if the DMS update takes over 30 seconds
             mLastSQLiteUpdate = DateTime.UtcNow;
 
-            UpdateCacheNow("mAutoUpdateTimer_Elapsed");           
+            UpdateCacheNow("mAutoUpdateTimer_Elapsed");
         }
 
         private bool UpdateSQLiteCache()
@@ -756,7 +756,7 @@ namespace BuzzardWPF.Management
         /// List of DMS experiment names
         /// </summary>
         /// <remarks>
-        /// This isn't meant to be bound to directly, which is why it's a 
+        /// This isn't meant to be bound to directly, which is why it's a
         /// list and not an ObservableCollection. Due to the large number
         /// of items this tends to hold, I would advise people to try to
         /// filter it down a bit first before inserting it into an

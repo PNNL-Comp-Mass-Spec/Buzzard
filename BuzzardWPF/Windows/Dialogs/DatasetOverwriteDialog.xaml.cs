@@ -6,7 +6,7 @@ namespace BuzzardWPF.Windows.Dialogs
     /// <summary>
     /// Interaction logic for DatasetOverwriteDialog.xaml
     /// </summary>
-    public partial class DatasetOverwriteDialog 
+    public partial class DatasetOverwriteDialog
         : Window, INotifyPropertyChanged
     {
         #region Events
@@ -15,10 +15,10 @@ namespace BuzzardWPF.Windows.Dialogs
 
 
         #region Attributes
-        private string	m_fileToRenamePath;
-        private string	m_fileInWayPath;
-        private bool	m_doSameToOtherConflicts;
-        private bool	m_skipRename;
+        private string  m_fileToRenamePath;
+        private string  m_fileInWayPath;
+        private bool    m_doSameToOtherConflicts;
+        private bool    m_skipRename;
         #endregion
 
 

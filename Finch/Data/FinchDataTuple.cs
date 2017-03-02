@@ -49,7 +49,7 @@ namespace Finch.Data
         public List<string> YValues {get;set;}
 
         /// <summary>
-        /// Adds the Y data to the arrays. 
+        /// Adds the Y data to the arrays.
         /// </summary>
         /// <typeparam name="U">Type of data to add.</typeparam>
         /// <param name="values">Values to add</param>
@@ -59,7 +59,7 @@ namespace Finch.Data
             SetData<U>(YValues, values, format);
         }
         /// <summary>
-        /// Adds the X data to the arrays. 
+        /// Adds the X data to the arrays.
         /// </summary>
         /// <typeparam name="U">Type of data to add.</typeparam>
         /// <param name="values">Values to add</param>

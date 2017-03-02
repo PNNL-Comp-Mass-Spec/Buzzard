@@ -3,7 +3,7 @@
 namespace BuzzardWPF.Windows
 {
     /// <summary>
-    /// Holds state information 
+    /// Holds state information
     /// </summary>
     public static class StateSingleton
     {
@@ -20,7 +20,7 @@ namespace BuzzardWPF.Windows
         static StateSingleton()
         {
             IsCreatingTriggerFiles = false;
-            IsMonitoring = false;            
+            IsMonitoring = false;
         }
 
         public static bool IsCreatingTriggerFiles
@@ -33,7 +33,7 @@ namespace BuzzardWPF.Windows
             }
         }
         /// <summary>
-        /// Gets or sets whether the system is monitoring 
+        /// Gets or sets whether the system is monitoring
         /// </summary>
         public static bool IsMonitoring
         {

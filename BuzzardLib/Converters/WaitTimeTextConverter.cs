@@ -13,7 +13,7 @@ namespace BuzzardLib.Converters
 
             try
             {
-                var timeLeft = (int)values[0];	// seconds
+                var timeLeft = (int)values[0];  // seconds
                 var status = (DatasetStatus)values[1];
                 var source = (DatasetSource)values[2];
 

@@ -8,10 +8,10 @@ using LcmsNetDataClasses.Data;
 
 namespace BuzzardWPF.Windows
 {
-	public interface I_EMSL_USV_User : INotifyPropertyChanged
-	{
-		string SelectedEMSLUsageType { get; set; }
-		string EMSLProposalID { get; set; }
-		ObservableCollection<classProposalUser> SelectedEMSLProposalUsers { get; set; }
-	}
+    public interface I_EMSL_USV_User : INotifyPropertyChanged
+    {
+        string SelectedEMSLUsageType { get; set; }
+        string EMSLProposalID { get; set; }
+        ObservableCollection<classProposalUser> SelectedEMSLProposalUsers { get; set; }
+    }
 }

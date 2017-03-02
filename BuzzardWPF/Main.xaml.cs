@@ -58,7 +58,7 @@ namespace BuzzardWPF
         private BitmapImage m_CurrentImage;
 
         private string m_triggerFileLocation;
-        private string m_lastUpdated;     
+        private string m_lastUpdated;
 
         #endregion
 
@@ -79,13 +79,13 @@ namespace BuzzardWPF
             StateSingleton.WatchingStateChanged += StateSingleton_WatchingStateChanged;
             // StateSingleton.StateChanged += StateSingleton_StateChanged;
 
-            // This gives the dataset manager a way to talk to the main window 
-            // in case it needs to. One example is adding items to the dataset 
-            // collection. We need to make sure we only change that collection 
-            // from the UI thread, or anything bound to it will throw a fit and 
+            // This gives the dataset manager a way to talk to the main window
+            // in case it needs to. One example is adding items to the dataset
+            // collection. We need to make sure we only change that collection
+            // from the UI thread, or anything bound to it will throw a fit and
             // crash the progam. So, we'll just use the main window's Dispatcher
-            // to make sure changes are done in the correct thread. We could 
-            // just pass the dispatcher along, but this way we can access other 
+            // to make sure changes are done in the correct thread. We could
+            // just pass the dispatcher along, but this way we can access other
             // parts of the main window if they are ever needed in the future.
             // -FCT
             DatasetManager.Manager.MainWindow = this;
@@ -459,7 +459,7 @@ namespace BuzzardWPF
 
         private void m_buzzadier_SearchStopped(object sender, EventArgs e)
         {
-            LastStatusMessage = "";            
+            LastStatusMessage = "";
         }
 
         #endregion

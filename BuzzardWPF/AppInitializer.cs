@@ -61,8 +61,8 @@ namespace BuzzardWPF
             // Add path to executable as a saved setting
             var fi = new FileInfo(Application.ExecutablePath);
             classLCMSSettings.SetParameter("ApplicationPath", fi.DirectoryName);
-
-            //       mform_splashScreen.SetEmulatedLabelVisibility(classLCMSSettings.GetParameter("InstName"), false);            
+;
+            //       mform_splashScreen.SetEmulatedLabelVisibility(classLCMSSettings.GetParameter("InstName"), false);
         }
         #endregion
 
@@ -228,7 +228,7 @@ namespace BuzzardWPF
             const string name = "Buzzard";
             classFileLogging.AppFolder = name;
             
-            classSQLiteTools.Initialize(name);            
+            classSQLiteTools.Initialize(name);
             classSQLiteTools.SetCacheLocation("BuzzardCache.que");
             classSQLiteTools.BuildConnectionString(false);
 
@@ -244,7 +244,7 @@ namespace BuzzardWPF
             classApplicationLogger.LogMessage(0, "[Log]");
 
 
-            // Load settings 
+            // Load settings
             classApplicationLogger.LogMessage(-1, "Loading settings");
 
             LoadSettings();
@@ -299,7 +299,7 @@ namespace BuzzardWPF
             catch (Exception ex)
             {
                 var errorMessage = "Error loading data from DMS!";
-                LogCriticalError(errorMessage, ex);                
+                LogCriticalError(errorMessage, ex);
             }
 
             classApplicationLogger.LogMessage(-1, "Checking For Local Trigger Files");

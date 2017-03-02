@@ -14,9 +14,9 @@ namespace BuzzardWPF.Management
         /// File path to fix invalid characters in
         /// </summary>
         public string SourceDataPath {
-            get 
+            get
             { 
-                return mSourceDataPath; 
+                return mSourceDataPath;
             }
             set
             {
@@ -88,7 +88,7 @@ namespace BuzzardWPF.Management
             else if (Directory.Exists(SourceDataPath))
             {
                 RenameFolder();
-            }	        
+            }           
             else
             {
                 // File or folder not found
@@ -199,7 +199,7 @@ namespace BuzzardWPF.Management
                     string.Format("Could not rename '{0}' to '{1}'", SourceDataPath, FixedDataPath),
                     ex);
             }
-        }	    
+        }       
 
         private void RenameFolder()
         {

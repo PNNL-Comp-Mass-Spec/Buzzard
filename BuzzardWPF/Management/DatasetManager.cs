@@ -709,7 +709,7 @@ namespace BuzzardWPF.Management
 
         #region Watcher Config
         /// <summary>
-        /// This value tells the DatasetManager which LC Column to 
+        /// This value tells the DatasetManager which LC Column to
         /// use for datasets that were found by the File Watcher.
         /// </summary>
         /// <remarks>
@@ -731,7 +731,7 @@ namespace BuzzardWPF.Management
         /// a trigger file for datasets that fail to resulve their
         /// DMS data. This only applies when the reason for the
         /// trigger file creation is due to the count down running
-        /// out. If a user wants to create the trigger file without 
+        /// out. If a user wants to create the trigger file without
         /// DMS data, we won't stop them.
         /// </summary>
         /// <remarks>
@@ -954,7 +954,7 @@ namespace BuzzardWPF.Management
             DatasetSource howWasItFound = DatasetSource.Searcher,
             string oldFullPath = "")
         {
-            // If we're on the wrong thread, then put in 
+            // If we're on the wrong thread, then put in
             // a call to this in the correct thread and exit.
             if (!MainWindow.Dispatcher.CheckAccess())
             {
@@ -1063,7 +1063,7 @@ namespace BuzzardWPF.Management
 
                 // Since this dataset was picked up by the file scanner,
                 // we want to fill this in with information that was set
-                // in the watcher config tool. Yet, we don't want to 
+                // in the watcher config tool. Yet, we don't want to
                 // overwrite something that was set by the user.
                 if (string.IsNullOrWhiteSpace(dataset.Instrument))
                     dataset.Instrument = WatcherConfigSelectedInstrument;
@@ -1197,7 +1197,7 @@ namespace BuzzardWPF.Management
 
         public void UpdateDataset(string path)
         {
-            // If we're on the wrong thread, then put in 
+            // If we're on the wrong thread, then put in
             // a call to this in the correct thread and exit.
             if (!MainWindow.Dispatcher.CheckAccess())
             {

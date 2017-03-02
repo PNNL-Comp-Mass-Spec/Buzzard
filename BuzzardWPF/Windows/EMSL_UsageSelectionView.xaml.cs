@@ -174,7 +174,7 @@ namespace BuzzardWPF.Windows
         #region Methods
         /// <summary>
         /// The control used to select the Proposal Users is from a library of prototype tools
-        /// for WPF, meaning it's not perfect. This tool has a drop-down selection area and 
+        /// for WPF, meaning it's not perfect. This tool has a drop-down selection area and
         /// selection text display area. When the selection is updated through binding, the
         /// text display area isn't automatically updated to display the change in the selection.
         /// This method will cause it to update.

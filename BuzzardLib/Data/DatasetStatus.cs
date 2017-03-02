@@ -18,7 +18,7 @@
         /// </summary>
         FailedNoDmsRequest,
         /// <summary>
-        /// The dataset name matches more than one DMS Request 
+        /// The dataset name matches more than one DMS Request
         /// </summary>
         FailedAmbiguousDmsRequest,
         /// <summary>

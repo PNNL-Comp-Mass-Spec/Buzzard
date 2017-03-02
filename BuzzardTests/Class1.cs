@@ -96,7 +96,7 @@ namespace BuzzardTests
             foreach (string name in m_valids.Values)
             {
                 classDMSData datum  = null;
-                string nname        = Path.GetFileNameWithoutExtension(name); 
+                string nname        = Path.GetFileNameWithoutExtension(name);
                 try
                 {
 

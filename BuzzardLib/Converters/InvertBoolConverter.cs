@@ -5,8 +5,8 @@ using System.Windows.Data;
 namespace BuzzardLib.Converters
 {
     /// <summary>
-    /// This converter is ment to be used for WPF binding between two boolean 
-    /// values, where the value of the source property is the opposite of the 
+    /// This converter is ment to be used for WPF binding between two boolean
+    /// values, where the value of the source property is the opposite of the
     /// value needed by the target property.
     /// </summary>
     /// <remarks>

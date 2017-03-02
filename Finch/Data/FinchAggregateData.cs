@@ -14,7 +14,7 @@ namespace Finch.Data
             DisplayMaps = new List<FinchDisplayMap>();
         }
         /// <summary>
-        /// Gets or sets 
+        /// Gets or sets
         /// </summary>
         public List<FinchComponentData> Components
         {

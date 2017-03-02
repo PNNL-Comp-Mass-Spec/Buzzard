@@ -674,7 +674,7 @@ namespace BuzzardWPF.Windows
         {
 
             /*
-            // If we're on the wrong thread, then put in 
+            // If we're on the wrong thread, then put in
             // a call to this in the correct thread and exit.
             if (!MainWindow.Dispatcher.CheckAccess())
             {

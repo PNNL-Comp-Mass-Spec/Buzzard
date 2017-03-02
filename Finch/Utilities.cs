@@ -202,7 +202,7 @@ namespace Finch
         /// <param name="password">Password.</param>
         /// <param name="domain">Domain.</param>
         /// <param name="throwExceptions">Throws exceptions on error if true.</param>
-        /// <returns>On success a NetworkCredential instance is returned.  If throwExceptions equals 
+        /// <returns>On success a NetworkCredential instance is returned.  If throwExceptions equals
         /// true all exceptions will propogate up the stack, otherwise null is returned.</returns>
         public static NetworkCredential GetCredential(Uri location, string userName,
             SecureString password, string domain, bool throwExceptions = true)

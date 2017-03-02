@@ -12,7 +12,7 @@ namespace BuzzardLib.Data
 
         #region Attributes
         private readonly TrieNode                       m_root;
-        private readonly Dictionary<int, classDMSData>	m_requestIDToDMS;
+        private readonly Dictionary<int, classDMSData>  m_requestIDToDMS;
         private readonly bool m_IgnoreCase;
         #endregion
 

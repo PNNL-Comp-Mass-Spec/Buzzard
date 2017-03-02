@@ -15,7 +15,7 @@ namespace Finch.Data
         {
             Name    = "";
             Status  = "";
-            Error   = null; 
+            Error   = null;
         }
         /// <summary>
         /// Gets or sets the component having an error.

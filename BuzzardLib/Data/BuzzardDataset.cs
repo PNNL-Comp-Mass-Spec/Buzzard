@@ -194,7 +194,7 @@ namespace BuzzardLib.Data
                 if (DMSData.LockData)
                     return DMSStatus.DMSResolved;
                 
-                return DMSStatus.NoDMSRequest;                
+                return DMSStatus.NoDMSRequest;
             }
         }
 
@@ -329,7 +329,7 @@ namespace BuzzardLib.Data
                 {
                     m_dmsData = value;
                     OnPropertyChanged("DMSData");
-                    OnPropertyChanged("DMSStatus");                     
+                    OnPropertyChanged("DMSStatus");
                 }
             }
         }

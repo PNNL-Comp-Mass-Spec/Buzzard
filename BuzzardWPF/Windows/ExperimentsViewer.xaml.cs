@@ -247,7 +247,7 @@ namespace BuzzardWPF.Windows
             }
             catch (Exception ex)
             {
-                // Search error; do not update Experiments              
+                // Search error; do not update Experiments
                 Console.WriteLine("Error ignored in ExperimentsViewser.Search_Click: " + ex.Message);
             }
 

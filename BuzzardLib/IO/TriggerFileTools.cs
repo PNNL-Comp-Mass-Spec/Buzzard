@@ -12,7 +12,7 @@ namespace BuzzardLib.IO
 {
     /// <summary>
     /// This class is a variation of LCMSNetDataClasses.classTriggerFileTools, that has been
-    /// modified to work with datasets that 
+    /// modified to work with datasets that
     /// </summary>
     public class TriggerFileTools
     {
@@ -59,8 +59,8 @@ namespace BuzzardLib.IO
         /// <returns>Trigger file path if success, otherwise null</returns>
         /// <remarks>In the dataset object, DatasetStatus will be set to MissingRequiredInfo if field validation fails</remarks>
         public static string GenerateTriggerFileBuzzard(
-            classSampleData sample, 
-            BuzzardDataset dataset, 
+            classSampleData sample,
+            BuzzardDataset dataset,
             DMSData dmsData,
             string remoteTriggerFolderPath)
         {
@@ -106,7 +106,7 @@ namespace BuzzardLib.IO
             if (dmsData.LockData || string.IsNullOrWhiteSpace(dataset.ExperimentName))
                 experimentName = dmsData.Experiment;
             else
-                experimentName = dataset.ExperimentName;      
+                experimentName = dataset.ExperimentName;
 
             var comment = dmsData.Comment;
 
@@ -212,7 +212,7 @@ namespace BuzzardLib.IO
             AddParam(rootElement, "EMSL Usage Type", usage);
             AddParam(rootElement, "EMSL Users List", userList);
             AddParam(rootElement, "Run Start", sample.LCMethod.ActualStart.ToString("MM/dd/yyyy HH:mm:ss"));
-            AddParam(rootElement, "Run Finish", sample.LCMethod.ActualEnd.ToString("MM/dd/yyyy HH:mm:ss"));            
+            AddParam(rootElement, "Run Finish", sample.LCMethod.ActualEnd.ToString("MM/dd/yyyy HH:mm:ss"));
 
             return mobject_TriggerFileContents;
         }
@@ -250,9 +250,9 @@ namespace BuzzardLib.IO
         /// <param name="dataset">Dataset object</param>
         /// <param name="remoteTriggerFolderPath"></param>
         private static string SaveFile(
-            XmlDocument doc, 
-            classSampleData sample, 
-            BuzzardDataset dataset, 
+            XmlDocument doc,
+            classSampleData sample,
+            BuzzardDataset dataset,
             string remoteTriggerFolderPath)
         {
             var datasetName = sample.DmsData.DatasetName;

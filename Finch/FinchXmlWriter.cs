@@ -116,7 +116,7 @@ namespace Finch
             }
                                    
 
-            return aggregateElement;            
+            return aggregateElement;
         }
 
         #region IFinchWriter Members
@@ -145,7 +145,7 @@ namespace Finch
                             aggregatesElement.AppendChild(singleAggregateElement);
                         }
                     }
-                    fml.AppendChild(aggregatesElement);                   
+                    fml.AppendChild(aggregatesElement);
                     document.AppendChild(fml);
                     document.Save(writer);
                 }

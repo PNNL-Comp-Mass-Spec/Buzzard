@@ -12,7 +12,7 @@ namespace BuzzardWPF.Windows
     /// <summary>
     /// Interaction logic for Filldown.xaml
     /// </summary>
-    public partial class FilldownWindow 
+    public partial class FilldownWindow
         : Window, INotifyPropertyChanged
     {
         #region Events
@@ -52,7 +52,7 @@ namespace BuzzardWPF.Windows
             EMSLProposalIDs = DMS_DataAccessor.Instance.ProposalIDs;
 
             EMSLProposalUsersSource = new ObservableCollection<classProposalUser>();
-            Dataset = new FilldownBuzzardDataset(); 
+            Dataset = new FilldownBuzzardDataset();
         }
 
 

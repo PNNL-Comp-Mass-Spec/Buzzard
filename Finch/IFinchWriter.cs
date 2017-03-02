@@ -10,6 +10,6 @@ namespace Finch
     /// </summary>
     public interface IFinchWriter
     {
-        void WriteAggregates(List<FinchAggregateData> aggregates, string path);        
+        void WriteAggregates(List<FinchAggregateData> aggregates, string path);
     }
 }
