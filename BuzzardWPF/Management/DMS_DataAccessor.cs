@@ -144,7 +144,7 @@ namespace BuzzardWPF.Management
             //
             // Load Cart Names
             //
-            var tempCartsList = classSQLiteTools.GetCartNameList(false);
+            var tempCartsList = classSQLiteTools.GetCartNameList();
             if (tempCartsList == null)
                 classApplicationLogger.LogError(0, "Cart names list retrieval returned null.");
             else
