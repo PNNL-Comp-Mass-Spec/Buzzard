@@ -48,9 +48,6 @@ namespace BuzzardWPF.Windows
             bi.EndInit();
 
             LogoImageSource = bi;
-            //
-            // End set logo image.
-            // 
 
             m_backgroundWorker = new BackgroundWorker();
             m_backgroundWorker.DoWork += BackgroundWorker_DoWork;
