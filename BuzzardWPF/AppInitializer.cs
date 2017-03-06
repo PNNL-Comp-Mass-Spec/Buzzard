@@ -16,6 +16,7 @@ namespace BuzzardWPF
     public static class AppInitializer
     {
         #region "Constants and members"
+
         /// <summary>
         /// Default error level
         /// </summary>
@@ -28,7 +29,8 @@ namespace BuzzardWPF
         /// <remarks>Log levels are 0 to 5, where 0 is most important and 5 is least important</remarks>
         private const int CONST_DEFAULT_MESSAGE_LOG_LEVEL = 5;
 
-        public const string PROGRAM_DATE = "February 28, 2017";
+        public const string PROGRAM_DATE = "March 6, 2017";
+
         #endregion
 
         #region Configuration Loading
