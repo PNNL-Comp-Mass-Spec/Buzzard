@@ -256,15 +256,11 @@ namespace BuzzardWPF
                 app.DynamicSplashScreen.InstrumentName = instName;
             }
 
-            // Set the logging levels
-            if (classLCMSSettings.GetParameter("LoggingErrorLevel") != null)
-            {
-                classApplicationLogger.ErrorLevel = int.Parse(classLCMSSettings.GetParameter("LoggingErrorLevel"));
-            }
-            else
-            {
-                classApplicationLogger.ErrorLevel = CONST_DEFAULT_ERROR_LOG_LEVEL;
-            }
+            // Set the logging levels (0 is most important; 5 is least important)
+            // When logLevel is 0, only critical messages are logged
+            // When logLevel is 5, all messages are logged
+            var logLevel = classLCMSSettings.GetParameter("LoggingErrorLevel", CONST_DEFAULT_ERROR_LOG_LEVEL);
+            classApplicationLogger.ErrorLevel = logLevel;
 
             classApplicationLogger.MessageLevel = CONST_DEFAULT_MESSAGE_LOG_LEVEL;
 
