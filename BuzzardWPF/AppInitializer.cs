@@ -305,7 +305,8 @@ namespace BuzzardWPF
                 //
                 // Check to see if any trigger files need to be copied to the transfer server, and copy if necessary
                 // 
-                if (bool.Parse(classLCMSSettings.GetParameter("CopyTriggerFiles")))
+                var copyTriggerFiles = classLCMSSettings.GetParameter("CopyTriggerFiles", false);
+                if (copyTriggerFiles)
                 {
                     if (LcmsNetDataClasses.Data.classTriggerFileTools.CheckLocalTriggerFiles())
                     {

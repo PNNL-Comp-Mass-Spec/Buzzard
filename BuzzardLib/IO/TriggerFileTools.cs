@@ -64,8 +64,8 @@ namespace BuzzardLib.IO
             DMSData dmsData,
             string remoteTriggerFolderPath)
         {
-            // Exit if trigger file creation disabled
-            if (!bool.Parse(classLCMSSettings.GetParameter("CreateTriggerFiles")))
+            var createTriggerFiles = classLCMSSettings.GetParameter("CreateTriggerFiles", false);
+            if (!createTriggerFiles)
             {
                 var msg = "Generate Trigger File: Sample " + sample.DmsData.DatasetName + ", Trigger file creation disabled";
                 classApplicationLogger.LogMessage(0, msg);
@@ -260,8 +260,8 @@ namespace BuzzardLib.IO
 
             try
             {
-
-                if (bool.Parse(classLCMSSettings.GetParameter("CopyTriggerFiles")))
+                var copyTriggerFiles = classLCMSSettings.GetParameter("CopyTriggerFiles", false);
+                if (copyTriggerFiles)
                 {
                     var remoteFilePath = Path.Combine(remoteTriggerFolderPath, outFileName);
 
