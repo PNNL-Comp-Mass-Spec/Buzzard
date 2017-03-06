@@ -418,7 +418,7 @@ namespace BuzzardWPF.Management
                                 // No match to the folder name
                                 if (ex.SearchDepth >= SEARCH_DEPTH_AMBIGUOUS_MATCH)
                                     throw new DatasetTrieException(ex.Message, ex.SearchDepth, ex.DatasetName, ex);
-                                
+
                                 throw;
                             }
 
@@ -471,7 +471,8 @@ namespace BuzzardWPF.Management
         /// </summary>
         public ObservableCollection<BuzzardDataset> Datasets
         {
-            get; }
+            get;
+        }
 
 
         public string FileWatchRoot { get; set; }
@@ -493,9 +494,7 @@ namespace BuzzardWPF.Management
             }
         }
 
-        public static DatasetManager Manager
-        {
-            get; }
+        public static DatasetManager Manager { get; }
 
         public string UserComments { get; set; }
 
@@ -1256,7 +1255,7 @@ namespace BuzzardWPF.Management
                     {
                         return Path.Combine(fiDatasetFile.DirectoryName, fiDatasetFile.Name.Substring(2));
                     }
-                    return fiDatasetFile.FullName.Replace("x_","");
+                    return fiDatasetFile.FullName.Replace("x_", "");
                 }
 
                 return fiDatasetFile.FullName;

@@ -19,11 +19,13 @@ namespace BuzzardWPF
         /// <summary>
         /// Default error level
         /// </summary>
+        /// <remarks>Log levels are 0 to 5, where 0 is most important and 5 is least important</remarks>
         private const int CONST_DEFAULT_ERROR_LOG_LEVEL = 5;
 
         /// <summary>
         /// Default message level.
         /// </summary>
+        /// <remarks>Log levels are 0 to 5, where 0 is most important and 5 is least important</remarks>
         private const int CONST_DEFAULT_MESSAGE_LOG_LEVEL = 5;
 
         public const string PROGRAM_DATE = "February 28, 2017";
@@ -61,9 +63,9 @@ namespace BuzzardWPF
             // Add path to executable as a saved setting
             var fi = new FileInfo(Application.ExecutablePath);
             classLCMSSettings.SetParameter("ApplicationPath", fi.DirectoryName);
-;
-            //       mform_splashScreen.SetEmulatedLabelVisibility(classLCMSSettings.GetParameter("InstName"), false);
+
         }
+
         #endregion
 
         #region Logging
@@ -251,7 +253,7 @@ namespace BuzzardWPF
 
             var instName = classLCMSSettings.GetParameter("InstName");
             var app = System.Windows.Application.Current as App;
-            if (app != null)
+            if (app != null && instName != null)
             {
                 app.DynamicSplashScreen.InstrumentName = instName;
             }

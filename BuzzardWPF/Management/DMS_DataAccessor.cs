@@ -507,7 +507,7 @@ namespace BuzzardWPF.Management
 
             // We weren't given a PID to filter out the results, so we are returning every user
             // (unless told otherwise).
-            if (proposalID == string.Empty)
+            if (string.IsNullOrWhiteSpace(proposalID))
             {
                 if (returnAllWhenEmpty)
                 {

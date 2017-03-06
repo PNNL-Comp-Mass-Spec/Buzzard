@@ -5,8 +5,8 @@
              x:Class="BuzzardWPF.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
     <Application.Resources>
-        <!-- When the logo is updated, you must also update the ".Save(ms, ImageFormat.Png)" line in DynamicSplash.xaml.cs -->
-        <BitmapImage x:Key="LogoImageSource" UriSource="Resources/logo_2017.png" />
+        <!--  When the logo is updated, you must also update the ".Save(ms, ImageFormat.Png)" line in DynamicSplash.xaml.cs  -->
+        <BitmapImage x:Key="LogoImageSource" UriSource="Resources\logo_2017.png" />
         <BitmapImage x:Key="Monitor" UriSource="Resources\amphitheater-32.png" />
         <BitmapImage x:Key="SearchGreen" UriSource="Resources\amphitheater-32-green.png" />
         <BitmapImage x:Key="Collect" UriSource="Resources\trash-32.png" />
