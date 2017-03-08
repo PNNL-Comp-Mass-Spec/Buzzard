@@ -1,5 +1,8 @@
 Buzzard Change Log
 
+Version 1.7.13.2; March 8, 2017
+	- Fix a FirstChanceException related to binding the splash screen logo at design time
+
 Version 1.7.13.2; March 6, 2017
 	- Fix startup bug while retrieving parameter LoggingErrorLevel
 

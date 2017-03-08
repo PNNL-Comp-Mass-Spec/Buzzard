@@ -27,17 +27,17 @@ namespace BuzzardWPF.Windows
 
 
         #region Constructors
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public DynamicSplash()
         {
             InitializeComponent();
             DataContext = this;
 
             //
-            // I don't know why I need to do this to set the logo image, but
-            // for some reason using a static resource isn't working at run
-            // time. On top of that, using a relative URI wasn't working either.
-            // So I had to settle for a binding.
-            // - FCT
+            // Bind logo_2017 to the image on the splash screen
             // 
             var ms = new MemoryStream();
             Properties.Resources.logo_2017.Save(ms, ImageFormat.Png);
@@ -64,6 +64,9 @@ namespace BuzzardWPF.Windows
             Version = ver;
         }
 
+        /// <summary>
+        /// Destructor
+        /// </summary>
         ~DynamicSplash()
         {
             classApplicationLogger.Message -= ApplicationLogger_ItemLogged;

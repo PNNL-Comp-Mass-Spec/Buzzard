@@ -35,7 +35,13 @@
                 <RowDefinition Height="18*" />
             </Grid.RowDefinitions>
 
-            <Image Margin="0,0,0,0" Source="{Binding Path=LogoImageSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, FallbackValue={StaticResource LogoImageSource}}" />
+            <!-- 
+            We could see logo at design time by adding "FallbackValue={StaticResource LogoImageSource}" to the following <Image /> element
+            However, that leads to a FirstChanceException of type System.IO.IOException with message "Cannot locate resource 'resources/logo_2017.png'."
+            when the Splash Screen is first shown.  Thus, the FallbackValue is removed.  
+            The logo is loaded at runtime via the DynamicSplash constructor
+            -->
+            <Image Margin="0,0,0,0" Source="{Binding Path=LogoImageSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" MinHeight="250" />
             <TextBlock Height="32"
                        FontSize="22"
                        Grid.Row="1"                       
