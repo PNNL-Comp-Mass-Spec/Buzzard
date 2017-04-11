@@ -158,11 +158,6 @@ namespace BuzzardWPF
             LastUpdated = DatasetManager.Manager.LastUpdated;
         }
 
-        private void StateSingleton_StateChanged(object sender, EventArgs e)
-        {
-            m_animationImages = m_imagesEaster;
-        }
-
         private void StateSingleton_WatchingStateChanged(object sender, EventArgs e)
         {
             m_animationTimer.IsEnabled = StateSingleton.IsMonitoring;
