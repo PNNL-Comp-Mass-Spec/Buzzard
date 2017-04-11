@@ -397,13 +397,13 @@ namespace BuzzardWPF.Windows
             //
             // Put in call to start renaming data
             //
-            Action action = delegate
+            void renameDatasets()
             {
                 RenameDatasets(renameRequests, 0, true, false);
-            };
+            }
 
-            Dispatcher.BeginInvoke(action, DispatcherPriority.Normal);
-        }       
+            Dispatcher.BeginInvoke((Action)renameDatasets, DispatcherPriority.Normal);
+        }
 
         /// <summary>
         /// Renames the data for the selected datasets to replace invalid characters in the name with underscores
@@ -426,12 +426,12 @@ namespace BuzzardWPF.Windows
             startingIndex++;
             if (startingIndex < renameRequests.Count)
             {
-                Action action = delegate
+                void renameDatasets()
                 {
                     RenameDatasets(renameRequests, startingIndex, informUserOnConflict, skipOnConflicts);
-                };
+                }
 
-                Dispatcher.BeginInvoke(action, DispatcherPriority.Normal);
+                Dispatcher.BeginInvoke((Action)renameDatasets, DispatcherPriority.Normal);
             }
             else
             {

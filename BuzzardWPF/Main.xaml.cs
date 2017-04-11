@@ -315,12 +315,12 @@ namespace BuzzardWPF
             // Create an action to place the message string into the property that
             // holds the last message. Then place action into a call for the UI
             // thread's dipatcher.
-            Action workAction = delegate
+            void updateLastStatusMsg()
             {
                 LastStatusMessage = args.Message;
-            };
+            }
 
-            Dispatcher.BeginInvoke(workAction, DispatcherPriority.Normal);
+            Dispatcher.BeginInvoke((Action)updateLastStatusMsg, DispatcherPriority.Normal);
         }
 
         private void ApplicationLogger_Message(int messageLevel, classMessageLoggerArgs args)
@@ -328,12 +328,12 @@ namespace BuzzardWPF
             // Create an action to place the message string into the property that
             // holds the last message. Then place action into a call for the UI
             // thread's dipatcher.
-            Action workAction = delegate
+            void updateLastStatusMsg()
             {
                 LastStatusMessage = args.Message;
-            };
+            }
 
-            Dispatcher.BeginInvoke(workAction, DispatcherPriority.Normal);
+            Dispatcher.BeginInvoke((Action)updateLastStatusMsg, DispatcherPriority.Normal);
         }
 
         #region Searching
@@ -375,13 +375,12 @@ namespace BuzzardWPF
 
         private void m_buzzadier_DatasetFound(object sender, DatasetFoundEventArgs e)
         {
-            Action workAction = delegate
+            void addDataset()
             {
                 AddDataset(e.Path, e.CaptureSubfolderPath, e.CurrentSearchConfig);
-            };
+            }
 
-            m_dataGrid.Dispatcher.BeginInvoke(workAction, DispatcherPriority.Normal);
-
+            m_dataGrid.Dispatcher.BeginInvoke((Action)addDataset, DispatcherPriority.Normal);
         }
 
         private void m_buzzadier_ErrorEvent(object sender, BuzzardLib.Searching.ErrorEventArgs e)

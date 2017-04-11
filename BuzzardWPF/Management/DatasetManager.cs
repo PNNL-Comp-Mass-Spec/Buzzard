@@ -957,12 +957,12 @@ namespace BuzzardWPF.Management
             // a call to this in the correct thread and exit.
             if (!MainWindow.Dispatcher.CheckAccess())
             {
-                Action action = delegate
+                void createPendingDataset()
                 {
                     CreatePendingDataset(datasetFileOrFolderPath, captureSubfolderPath, allowFolderMatch, howWasItFound, oldFullPath);
-                };
+                }
 
-                MainWindow.Dispatcher.BeginInvoke(action, DispatcherPriority.Normal);
+                MainWindow.Dispatcher.BeginInvoke((Action)createPendingDataset, DispatcherPriority.Normal);
                 return;
             }
 
@@ -1200,12 +1200,12 @@ namespace BuzzardWPF.Management
             // a call to this in the correct thread and exit.
             if (!MainWindow.Dispatcher.CheckAccess())
             {
-                Action action = delegate
+                void updateDatasetPath()
                 {
                     UpdateDataset(path);
-                };
+                }
 
-                MainWindow.Dispatcher.BeginInvoke(action, DispatcherPriority.Normal);
+                MainWindow.Dispatcher.BeginInvoke((Action)updateDatasetPath, DispatcherPriority.Normal);
                 return;
             }
 
