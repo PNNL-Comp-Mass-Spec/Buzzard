@@ -1,5 +1,10 @@
 Buzzard Change Log
 
+Version 1.7.13.3; April 10, 2017
+	- Require LC Cart Config
+	- Remove USER_Unknown EMSL Usage type
+	- Validate that dataset names are no more than 80 characters long
+
 Version 1.7.13.2; March 8, 2017
 	- Fix a FirstChanceException related to binding the splash screen logo at design time
 
