@@ -128,8 +128,7 @@ namespace BuzzardLib.IO
                 {"Instrument name", dataset.Instrument},
                 {"Separation Type", dataset.SeparationType},
                 {"LC Cart", dataset.CartName},
-                // Uncomment the following to make "LC Cart Config" a required item
-                // { "LC Cart Config", dataset.CartConfigName},
+                {"LC Cart Config", dataset.CartConfigName},
                 {"LC Column", dataset.LCColumn},
                 {"Operator name", dataset.Operator},
             };
@@ -171,13 +170,9 @@ namespace BuzzardLib.IO
             AddParam(rootElement, "Comment", TrimWhitespace(comment));
             AddParam(rootElement, "Interest Rating", TrimWhitespace(dataset.InterestRating));
 
-            // 
-            // BLL: Added to appease the trigger file gods, so that we don't
-            // confuse DMS with EMSL related data when the requests are already fulfilled.
-            // 
-            var usage = "";
-            var userList = "";
-            var proposal = "";
+            var usage = string.Empty;
+            var userList = string.Empty;
+            var proposal = string.Empty;
 
             if (dataset.DMSData.LockData)
             {

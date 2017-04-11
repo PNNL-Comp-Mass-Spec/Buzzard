@@ -1171,6 +1171,9 @@ namespace BuzzardWPF.Management
             if (string.IsNullOrWhiteSpace(WatcherConfigSelectedCartName))
                 missingFields.Add("LC Cart");
 
+            if (string.IsNullOrWhiteSpace(WatcherConfigSelectedCartConfigName))
+                missingFields.Add("LC Cart Config");
+
             if (string.IsNullOrWhiteSpace(WatcherConfigSelectedSeparationType))
                 missingFields.Add("Separation Type");
 
