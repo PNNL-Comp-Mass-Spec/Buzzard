@@ -49,6 +49,13 @@ namespace BuzzardWPF
                 return;
             }
 
+            if (e.Exception.Message.Contains("The dataset is just not available in this trie."))
+            {
+                // Exception is: Could not resolve the dataset name.  The dataset is just not available in this trie.
+                // Ignore it
+                return;
+            }
+
             classApplicationLogger.LogError(0, "Buzzard had an unhandled error.  " + e.Exception.Message, e.Exception);
         }
 
