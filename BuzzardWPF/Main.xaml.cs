@@ -100,10 +100,11 @@ namespace BuzzardWPF
 
             // These values come from table T_EUS_UsageType
             // It is rarely updated, so we're not querying the database every time
+            // Previously used, but deprecated in April 2017 is USER_UNKNOWN
             m_dataGrid.EmslUsageTypesSource =
                 new ObservableCollection<string>
                     (
-                    new[] { "BROKEN", "CAP_DEV", "MAINTENANCE", "USER", "USER_UNKNOWN" }
+                    new[] { "BROKEN", "CAP_DEV", "MAINTENANCE", "USER"}
                     );
 
             m_dataGrid.MainWindow = this;

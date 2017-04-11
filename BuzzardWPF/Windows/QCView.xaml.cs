@@ -29,7 +29,7 @@ namespace BuzzardWPF.Windows
 
             EMSL_UsageSelectors.BoundContainer = this;
 
-            SelectedEMSLUsageType = EMSL_UsageSelectors.UsageTypesSource[4];
+            SelectedEMSLUsageType = EMSL_UsageSelectors.UsageTypesSource[1];
             EMSLProposalID = null;
             ExperimentName = null;
             SelectedEMSLProposalUsers = new ObservableCollection<classProposalUser>();

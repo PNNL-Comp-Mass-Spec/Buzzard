@@ -22,16 +22,18 @@ namespace BuzzardWPF.Windows
 
         #region Attributes
 
+        /// <summary>
+        /// EMSL Usage Types
+        /// </summary>
+        /// <remarks>Previously used, but deprecated in April 2017 is USER_UNKNOWN</remarks>
         private static readonly string[] EMSL_USAGE_TYPES =
         {
             "BROKEN",
             "CAP_DEV",
             "MAINTENANCE",
-            "USER",
-            "USER_UNKNOWN"
+            "USER"
         };
 
-        private static readonly ObservableCollection<string> EMSL_USAGE_TYPES_COLLECTION;
         #endregion
 
 
@@ -41,14 +43,13 @@ namespace BuzzardWPF.Windows
             InitializeComponent();
             DataContext = this;
 
-            UsageTypesSource = EMSL_USAGE_TYPES_COLLECTION;
+            UsageTypesSource = new ObservableCollection<string>(EMSL_USAGE_TYPES);
             AvailablePIDs = DMS_DataAccessor.Instance.ProposalIDs;
 
         }
 
         static EMSL_UsageSelectionView()
         {
-            EMSL_USAGE_TYPES_COLLECTION = new ObservableCollection<string>(EMSL_USAGE_TYPES);
 
             // Assure that the DataAccessor has been initialized
             try
