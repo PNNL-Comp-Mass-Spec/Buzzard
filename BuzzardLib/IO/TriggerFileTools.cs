@@ -22,6 +22,11 @@ namespace BuzzardLib.IO
         /// <remarks>The minimum in DMS is 6 characters, but we're using 8 here to avoid uploading more datasets with 6 or 7 character names</remarks>
         public const int MINIMUM_DATASET_NAME_LENGTH = 8;
 
+        /// <summary>
+        /// Maximum dataset name length (as enforced by stored procedure AddUpdateDataset)
+        /// </summary>
+        public const int MAXIMUM_DATASET_NAME_LENGTH = 80;
+
         private static XmlDocument mobject_TriggerFileContents;
 
         private static readonly Regex mInValidChar = new Regex(@"[^a-z0-9_-]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -429,6 +434,13 @@ namespace BuzzardLib.IO
             {
                 dataset.DatasetStatus = DatasetStatus.MissingRequiredInfo;
                 dataset.TriggerCreationWarning = "Name too short (" + MINIMUM_DATASET_NAME_LENGTH + " char minimum)";
+                return false;
+            }
+
+            if (datasetName.Length > MAXIMUM_DATASET_NAME_LENGTH)
+            {
+                dataset.DatasetStatus = DatasetStatus.MissingRequiredInfo;
+                dataset.TriggerCreationWarning = "Name too long (" + MAXIMUM_DATASET_NAME_LENGTH + " char maximum)";
                 return false;
             }
 

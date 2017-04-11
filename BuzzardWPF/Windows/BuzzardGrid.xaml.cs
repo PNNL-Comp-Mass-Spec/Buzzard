@@ -370,8 +370,10 @@ namespace BuzzardWPF.Windows
                 }
 
                 var currentName = TriggerFileTools.GetDatasetNameFromFilePath(dataset.FilePath);
-               
-                if (TriggerFileTools.NameHasInvalidCharacters(currentName) || currentName.Length < TriggerFileTools.MINIMUM_DATASET_NAME_LENGTH)
+
+                if (TriggerFileTools.NameHasInvalidCharacters(currentName) ||
+                    currentName.Length < TriggerFileTools.MINIMUM_DATASET_NAME_LENGTH ||
+                    currentName.Length > TriggerFileTools.MAXIMUM_DATASET_NAME_LENGTH)
                     datasetsToRename.Add(dataset);
             }
 
