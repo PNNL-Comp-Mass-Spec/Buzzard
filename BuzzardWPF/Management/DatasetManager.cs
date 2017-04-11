@@ -481,7 +481,7 @@ namespace BuzzardWPF.Management
 
         public Main MainWindow
         {
-            get { return mMainWindow; }
+            get => mMainWindow;
             set
             {
                 if (Equals(mMainWindow, value))

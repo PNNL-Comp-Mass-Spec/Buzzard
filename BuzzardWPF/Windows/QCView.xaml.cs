@@ -42,7 +42,7 @@ namespace BuzzardWPF.Windows
         #region Properties
         public string SelectedEMSLUsageType
         {
-            get { return m_selectedEMSLUsageType; }
+            get => m_selectedEMSLUsageType;
             set
             {
                 if (m_selectedEMSLUsageType != value)
@@ -58,7 +58,7 @@ namespace BuzzardWPF.Windows
 
         public string EMSLProposalID
         {
-            get { return m_emslProposalID; }
+            get => m_emslProposalID;
             set
             {
                 if (m_emslProposalID != value)
@@ -74,7 +74,7 @@ namespace BuzzardWPF.Windows
 
         public string ExperimentName
         {
-            get { return m_experimentName; }
+            get => m_experimentName;
             set
             {
                 if (m_experimentName != value)
@@ -90,7 +90,7 @@ namespace BuzzardWPF.Windows
 
         public bool CreateOnDMSFail
         {
-            get { return m_createOnDMSFail; }
+            get => m_createOnDMSFail;
             set
             {
                 if (m_createOnDMSFail != value)
@@ -106,7 +106,7 @@ namespace BuzzardWPF.Windows
 
         public ObservableCollection<classProposalUser> SelectedEMSLProposalUsers
         {
-            get { return m_selectedEMSLProposalUsers; }
+            get => m_selectedEMSLProposalUsers;
             set
             {
                 if (m_selectedEMSLProposalUsers != value)
@@ -124,7 +124,7 @@ namespace BuzzardWPF.Windows
 
         public bool IsNotMonitoring
         {
-            get { return m_IsNotMonitoring; }
+            get => m_IsNotMonitoring;
             private set
             {
                 m_IsNotMonitoring = value;

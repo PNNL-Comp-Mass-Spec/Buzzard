@@ -240,20 +240,19 @@ namespace BuzzardWPF
         /// </summary>
         public BitmapImage CurrentImage
         {
-            get { return m_CurrentImage; }
+            get => m_CurrentImage;
             set
             {
-                if (!Equals(m_CurrentImage, value))
-                {
-                    m_CurrentImage = value;
-                    OnPropertyChanged("CurrentImage");
-                }
+                if (Equals(m_CurrentImage, value))
+                    return;
+                m_CurrentImage = value;
+                OnPropertyChanged("CurrentImage");
             }
         }
 
         public bool DisableBaseFolderValidation
         {
-            get { return m_searchWindow.Config.DisableBaseFolderValidation; }
+            get => m_searchWindow.Config.DisableBaseFolderValidation;
             set
             {
                 m_searchWindow.Config.DisableBaseFolderValidation = value;
@@ -272,20 +271,19 @@ namespace BuzzardWPF
         /// </summary>
         public string LastStatusMessage
         {
-            get { return m_lastStatusMessage; }
+            get => m_lastStatusMessage;
             set
             {
-                if (m_lastStatusMessage != value)
-                {
-                    m_lastStatusMessage = value;
-                    OnPropertyChanged("LastStatusMessage");
-                }
+                if (m_lastStatusMessage == value)
+                    return;
+                m_lastStatusMessage = value;
+                OnPropertyChanged("LastStatusMessage");
             }
         }
 
         public string LastUpdated
         {
-            get { return m_lastUpdated; }
+            get => m_lastUpdated;
             set
             {
                 m_lastUpdated = value;
@@ -295,7 +293,7 @@ namespace BuzzardWPF
 
         public string TriggerFileLocation
         {
-            get { return m_triggerFileLocation; }
+            get => m_triggerFileLocation;
             set
             {
                 if (m_triggerFileLocation != value)
@@ -470,7 +468,7 @@ namespace BuzzardWPF
         /// Will set the CurrentImage value with the next image in the buzzard
         /// animation.
         /// </summary>
-        private void m_timer_Tick(object sender, System.EventArgs e)
+        private void m_timer_Tick(object sender, EventArgs e)
         {
             // Increment the counter and wrap it around if neccessary
             m_counter++;

@@ -98,7 +98,7 @@ namespace BuzzardWPF.Windows
         #region Properties
         public string LCColumn
         {
-            get { return m_lcColumn; }
+            get => m_lcColumn;
             set
             {
                 if (m_lcColumn != value)
@@ -115,7 +115,7 @@ namespace BuzzardWPF.Windows
 
         public string ExperimentName
         {
-            get { return m_experimentName; }
+            get => m_experimentName;
             set
             {
                 if (m_experimentName != value)
@@ -130,7 +130,7 @@ namespace BuzzardWPF.Windows
 
         public string SelectedOperator
         {
-            get { return m_selectedOperator; }
+            get => m_selectedOperator;
             set
             {
                 if (m_selectedOperator != value)
@@ -145,7 +145,7 @@ namespace BuzzardWPF.Windows
 
         public string SelectedInstrument
         {
-            get { return m_selectedInstrument; }
+            get => m_selectedInstrument;
             set
             {
                 if (m_selectedInstrument != value)
@@ -160,7 +160,7 @@ namespace BuzzardWPF.Windows
 
         public string SelectedDatasetType
         {
-            get { return m_selectedDatasetType; }
+            get => m_selectedDatasetType;
             set
             {
                 if (m_selectedDatasetType != value)
@@ -175,7 +175,7 @@ namespace BuzzardWPF.Windows
 
         public string SelectedSeparationType
         {
-            get { return m_selectedSeparationType; }
+            get => m_selectedSeparationType;
             set
             {
                 if (m_selectedSeparationType != value)
@@ -190,7 +190,7 @@ namespace BuzzardWPF.Windows
 
         public string SelectedCartName
         {
-            get { return m_selectedCartName; }
+            get => m_selectedCartName;
             set
             {
                 if (m_selectedCartName != value)
@@ -205,7 +205,7 @@ namespace BuzzardWPF.Windows
 
         public string SelectedCartConfigName
         {
-            get { return m_selectedCartConfigName; }
+            get => m_selectedCartConfigName;
             set
             {
                 if (m_selectedCartConfigName != value)
@@ -232,7 +232,7 @@ namespace BuzzardWPF.Windows
 
         public bool IsNotMonitoring
         {
-            get { return m_IsNotMonitoring; }
+            get => m_IsNotMonitoring;
             private set
             {
                 m_IsNotMonitoring = value;
@@ -408,10 +408,7 @@ namespace BuzzardWPF.Windows
 
         public string UserComments
         {
-            get
-            {
-                return DatasetManager.Manager.UserComments;
-            }
+            get => DatasetManager.Manager.UserComments;
             set
             {
                 DatasetManager.Manager.UserComments = value;
@@ -422,7 +419,7 @@ namespace BuzzardWPF.Windows
 
         public string SelectedEMSLUsageType
         {
-            get { return m_selectedEMSLUsageType; }
+            get => m_selectedEMSLUsageType;
             set
             {
                 if (m_selectedEMSLUsageType != value)
@@ -438,7 +435,7 @@ namespace BuzzardWPF.Windows
 
         public string EMSLProposalID
         {
-            get { return m_emslProposalID; }
+            get => m_emslProposalID;
             set
             {
                 if (m_emslProposalID != value)
@@ -454,7 +451,7 @@ namespace BuzzardWPF.Windows
 
         public ObservableCollection<classProposalUser> SelectedEMSLProposalUsers
         {
-            get { return m_selectedEMSLProposalUsers; }
+            get => m_selectedEMSLProposalUsers;
             set
             {
                 if (m_selectedEMSLProposalUsers != value)
