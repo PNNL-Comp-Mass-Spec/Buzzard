@@ -38,7 +38,7 @@ namespace BuzzardWPF.Windows
 
             //
             // Bind logo_2017 to the image on the splash screen
-            // 
+            //
             var ms = new MemoryStream();
             Properties.Resources.logo_2017.Save(ms, ImageFormat.Png);
             ms.Position = 0;

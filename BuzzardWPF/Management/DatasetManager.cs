@@ -41,7 +41,7 @@ namespace BuzzardWPF.Management
 
         /// <summary>
         /// Trie that holds requested run names from DMS.
-        /// </summary>        
+        /// </summary>
         private readonly DatasetTrie mRequestedRunTrie;
 
         /// <summary>
@@ -934,7 +934,7 @@ namespace BuzzardWPF.Management
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="datasetFileOrFolderPath"></param>
         /// <param name="captureSubfolderPath">Capture subfolder (relative path); typically empty</param>
@@ -976,7 +976,7 @@ namespace BuzzardWPF.Management
 
             //
             // Look for an existing dataset that matches the old name
-            //            
+            //
             if (!string.IsNullOrEmpty(oldFullPath))
             {
                 var fileNameOld = Path.GetFileName(oldFullPath);
@@ -1003,7 +1003,7 @@ namespace BuzzardWPF.Management
             {
                 //
                 // Find if we need to create a new dataset.
-                // 
+                //
                 foreach (var datasetEntry in Datasets)
                 {
                     if (datasetEntry.FilePath.Equals(datasetFileOrFolderPath, StringComparison.OrdinalIgnoreCase) ||
@@ -1054,7 +1054,7 @@ namespace BuzzardWPF.Management
             // was picked up by the watcher. If the watcher
             // picks it up, then we might have to do a bit
             // of a delay before creating the trigger file
-            // 
+            //
             if (howWasItFound == DatasetSource.Watcher)
             {
                 dataset.DatasetSource = howWasItFound;
@@ -1129,7 +1129,7 @@ namespace BuzzardWPF.Management
             //
             // If it wasn't already in the set, then
             // that means that this dataset is brand new
-            // 
+            //
             if (newDatasetFound)
             {
                 if (howWasItFound == DatasetSource.Searcher)

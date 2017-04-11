@@ -90,7 +90,7 @@ namespace BuzzardLib.Data
                     OnPropertyChanged("PulseText");
                 }
             }
-        }        
+        }
 
         public int SecondsTillTriggerCreation
         {
@@ -144,7 +144,7 @@ namespace BuzzardLib.Data
                 }
             }
         }
-        
+
         public string Comment
         {
             get
@@ -193,7 +193,7 @@ namespace BuzzardLib.Data
             {
                 if (DMSData.LockData)
                     return DMSStatus.DMSResolved;
-                
+
                 return DMSStatus.NoDMSRequest;
             }
         }
@@ -451,7 +451,7 @@ namespace BuzzardLib.Data
                 }
             }
         }
-        
+
         /// <summary>
         /// True if the dataset is a single file, otherwise false
         /// </summary>

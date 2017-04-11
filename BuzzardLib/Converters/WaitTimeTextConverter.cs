@@ -70,7 +70,7 @@ namespace BuzzardLib.Converters
                 {
                     return returnValue;
                 }
-                                
+
                 if (source == DatasetSource.Searcher)
                 {
                     returnValue = "Waiting on User";

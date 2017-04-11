@@ -128,7 +128,7 @@ namespace BuzzardLib.Searching
                 {
                     return;
                 }
-                
+
             }
 
             var start = new ParameterizedThreadStart(Search);

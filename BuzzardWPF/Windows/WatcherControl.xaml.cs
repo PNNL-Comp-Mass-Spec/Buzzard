@@ -75,7 +75,7 @@ namespace BuzzardWPF.Windows
             mFileSystemWatcher.Renamed += SystemWatcher_FileRenamed;
             mFileSystemWatcher.Deleted += SystemWatcher_FileDeleted;
             mFileSystemWatcher.Changed += SystemWatcher_Changed;
-           
+
             IsWatching = false;
 
             ResetToDefaults();
@@ -84,7 +84,7 @@ namespace BuzzardWPF.Windows
 
         private void ResetToDefaults()
         {
-            
+
             // Leave this unchanged: m_directoryToWatch;
 
             WatchDepth = SearchConfig.DEFAULT_SEARCH_DEPTH;
@@ -275,7 +275,7 @@ namespace BuzzardWPF.Windows
                 e.FullPath,
                 TriggerFileTools.GetCaptureSubfolderPath(DirectoryToWatch, e.FullPath),
                 allowFolderMatch,
-                DatasetSource.Watcher, 
+                DatasetSource.Watcher,
                 e.OldFullPath);
         }
 
@@ -342,7 +342,7 @@ namespace BuzzardWPF.Windows
                 DirectoryToWatch = mFolderDialog.SelectedPath;
             }
         }
- 
+
         private void MonitorStartStop_Click(object sender, RoutedEventArgs e)
         {
             if (IsWatching)
@@ -363,7 +363,7 @@ namespace BuzzardWPF.Windows
             Settings.Default.Watcher_WatchDir = DirectoryToWatch;
             Settings.Default.Watcher_FileSize = MinimumFileSizeKB;
             Settings.Default.Watcher_MatchFolders = MatchFolders;
-            Settings.Default.WatcherConfig_CreateTriggerOnDMS_Fail = CreateTriggerOnDMSFail;            
+            Settings.Default.WatcherConfig_CreateTriggerOnDMS_Fail = CreateTriggerOnDMSFail;
 
         }
 
@@ -376,7 +376,7 @@ namespace BuzzardWPF.Windows
             MinimumFileSizeKB = Settings.Default.Watcher_FileSize;
             MatchFolders = Settings.Default.Watcher_MatchFolders;
             CreateTriggerOnDMSFail = Settings.Default.WatcherConfig_CreateTriggerOnDMS_Fail;
-            
+
         }
 
         private void ProcessFilePathQueue()
@@ -385,7 +385,7 @@ namespace BuzzardWPF.Windows
                 return;
 
             var lstKeys = mFilePathsToProcess.Keys.ToList();
-            
+
             mFileUpdateHandler.Enabled = false;
             var diBaseFolder = new DirectoryInfo(DirectoryToWatch);
 
@@ -451,14 +451,14 @@ namespace BuzzardWPF.Windows
 
             mFileUpdateHandler.Enabled = false;
 
-            // This may seem a bit strange since I used bindings to 
-            // enable and disable the other controls, but for some 
-            // reason bindings didn't work for doing that to these 
+            // This may seem a bit strange since I used bindings to
+            // enable and disable the other controls, but for some
+            // reason bindings didn't work for doing that to these
             // two controls.
             m_dialogButton.IsEnabled = true;
             m_dropDown.IsEnabled = true;
 
-            OnMonitoringToggled(false);            
+            OnMonitoringToggled(false);
 
             classApplicationLogger.LogMessage(0, "Watcher stopped.");
             classApplicationLogger.LogMessage(0, "Ready.");
@@ -471,10 +471,10 @@ namespace BuzzardWPF.Windows
             if (!diBaseFolder.Exists)
             {
                 ReportError("Could not start the monitor. Fold path not found: " + DirectoryToWatch);
-                
+
                 return;
             }
-            
+
             // Make sure the required metadata has been defined
             var missingData = DatasetManager.Manager.GetMissingRequiredFields();
 
@@ -486,7 +486,7 @@ namespace BuzzardWPF.Windows
                     missingData.Remove(DatasetManager.EXPERIMENT_NAME_DESCRIPTION);
                 }
 
-                if (!DatasetManager.Manager.QC_CreateTriggerOnDMSFail && 
+                if (!DatasetManager.Manager.QC_CreateTriggerOnDMSFail &&
                     missingData.Contains(DatasetManager.QC_EXPERIMENT_NAME_DESCRIPTION))
                 {
                     missingData.Remove(DatasetManager.QC_EXPERIMENT_NAME_DESCRIPTION);
@@ -529,9 +529,9 @@ namespace BuzzardWPF.Windows
 
             mFileUpdateHandler.Enabled = true;
 
-            // This may seem a bit strange since I used bindings to 
-            // enable and disable the other controls, but for some 
-            // reason bindings didn't work for doing that to these 
+            // This may seem a bit strange since I used bindings to
+            // enable and disable the other controls, but for some
+            // reason bindings didn't work for doing that to these
             // two controls.
             m_dialogButton.IsEnabled = false;
             m_dropDown.IsEnabled = false;
@@ -539,7 +539,7 @@ namespace BuzzardWPF.Windows
             OnMonitoringToggled(true);
 
             classApplicationLogger.LogMessage(0, "Watcher is monitoring.");
-        }      
+        }
 
         private void OnMonitoringToggled(bool monitoring)
         {
@@ -551,7 +551,7 @@ namespace BuzzardWPF.Windows
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
         #endregion
-       
+
     }
-  
+
 }

@@ -97,9 +97,9 @@ namespace BuzzardWPF
             var appPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
 
             var path = Path.Combine(appPath, "Buzzard", localPath);
-            // 
+            //
             // See if the logging directory exists
-            // 
+            //
             if (Directory.Exists(path) == false)
             {
                 try
@@ -108,9 +108,9 @@ namespace BuzzardWPF
                 }
                 catch (UnauthorizedAccessException ex)
                 {
-                    // 
+                    //
                     // Not much we can do here...
-                    // 
+                    //
                     var errorMessage = string.Format("Buzzard could not create missing folder {0} required for operation.  Please run application with higher priveleges.  {1}",
                                                                   localPath, ex.Message);
                     LogCriticalError(errorMessage, null);
@@ -121,7 +121,7 @@ namespace BuzzardWPF
         #endregion
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="installerFolderPath"></param>
         /// <returns>
@@ -211,7 +211,7 @@ namespace BuzzardWPF
             {
                 return 0;
             }
-            
+
             int value;
             if (int.TryParse(versionArray[index], out value))
             {
@@ -231,7 +231,7 @@ namespace BuzzardWPF
 
             const string name = "Buzzard";
             classFileLogging.AppFolder = name;
-            
+
             classSQLiteTools.Initialize(name);
             classSQLiteTools.SetCacheLocation("BuzzardCache.que");
             classSQLiteTools.BuildConnectionString(false);
@@ -294,7 +294,7 @@ namespace BuzzardWPF
                 dbTools.ProgressEvent += dbTools_ProgressEvent;
 
                 dbTools.LoadCacheFromDMS();
-               
+
             }
             catch (Exception ex)
             {
@@ -308,7 +308,7 @@ namespace BuzzardWPF
             {
                 //
                 // Check to see if any trigger files need to be copied to the transfer server, and copy if necessary
-                // 
+                //
                 var copyTriggerFiles = classLCMSSettings.GetParameter("CopyTriggerFiles", false);
                 if (copyTriggerFiles)
                 {

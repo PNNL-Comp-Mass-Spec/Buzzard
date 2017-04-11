@@ -25,7 +25,7 @@ namespace BuzzardLib.IO
         private static XmlDocument mobject_TriggerFileContents;
 
         private static readonly Regex mInValidChar = new Regex(@"[^a-z0-9_-]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-        
+
         /// <summary>
         /// Generates the trigger file text, but does not save a file
         /// </summary>
@@ -40,7 +40,7 @@ namespace BuzzardLib.IO
             {
                 return null;
             }
-           
+
             var data = GenerateXmlDoc(sample, dataset, dmsData);
 
             if (dataset.DatasetStatus == DatasetStatus.MissingRequiredInfo)
@@ -86,7 +86,7 @@ namespace BuzzardLib.IO
             // Write the document to the file
             return SaveFile(mobject_TriggerFileContents, sample, dataset, remoteTriggerFolderPath);
         }
-   
+
 
         /// <summary>
         /// Generates the XML-formatted trigger file contents
@@ -95,7 +95,7 @@ namespace BuzzardLib.IO
         /// <param name="dataset">Dataset object</param>
         /// <param name="dmsData"></param>
         /// <returns>XML trigger file document</returns>
-        /// <remarks>In the dataset object, DatasetStatus will be set to MissingRequiredInfo if field validation fails</remarks>        
+        /// <remarks>In the dataset object, DatasetStatus will be set to MissingRequiredInfo if field validation fails</remarks>
         private static XmlDocument GenerateXmlDoc(classSampleData sample, BuzzardDataset dataset, DMSData dmsData)
         {
             // Create and initialize the document
@@ -216,7 +216,7 @@ namespace BuzzardLib.IO
 
             return mobject_TriggerFileContents;
         }
-  
+
         /// <summary>
         /// Adds a trigger file parameter to the XML document defining the file contents
         /// </summary>
@@ -274,7 +274,7 @@ namespace BuzzardLib.IO
                     // File successfully created remotedly, so exit the procedure
                     return remoteFilePath;
                 }
-                
+
                 // Skip remote file creation since CopyTriggerFiles is false
                 var msg = "Generate Trigger File: Sample " + datasetName + ", Remote trigger file copy disabled";
                 classApplicationLogger.LogMessage(0, msg);
@@ -414,7 +414,7 @@ namespace BuzzardLib.IO
                 return string.Empty;
 
             return metadata.Trim();
-        }        
+        }
 
         /// <summary>
         /// Validate that the dataset name is at least 6 characters in length and does not contain spaces
@@ -424,7 +424,7 @@ namespace BuzzardLib.IO
         /// <returns>True if valid, false if problems</returns>
         public static bool ValidateDatasetName(BuzzardDataset dataset, string datasetName)
         {
-            
+
             if (string.IsNullOrWhiteSpace(datasetName) || datasetName.Length < MINIMUM_DATASET_NAME_LENGTH)
             {
                 dataset.DatasetStatus = DatasetStatus.MissingRequiredInfo;

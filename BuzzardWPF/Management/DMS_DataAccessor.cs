@@ -181,7 +181,7 @@ namespace BuzzardWPF.Management
 
             //
             // Load datasets
-            //            
+            //
             var datasetList = classSQLiteTools.GetDatasetList();
             if (datasetList == null)
                 classApplicationLogger.LogError(0, "Dataset list retrieval returned null.");
@@ -288,7 +288,7 @@ namespace BuzzardWPF.Management
             {
                  classApplicationLogger.LogError(0, string.Format("Exception updating the cached DMS data (called from {0}): {1}", callingFunction, ex.Message));
             }
-         
+
         }
 
         #endregion

@@ -344,7 +344,7 @@ namespace BuzzardWPF.Windows
         /// </summary>
         private void FixDatasetNames_Click(object sender, RoutedEventArgs e)
         {
-         
+
             //
             // Get list of selected datasets
             //
@@ -462,7 +462,7 @@ namespace BuzzardWPF.Windows
             //
             // Get the data sets we will be applying the changes
             // to.
-            // 
+            //
             var selectedItems = GetSelectedDatasets();
 
             // If nothing was selected, inform the user and get out
@@ -477,7 +477,7 @@ namespace BuzzardWPF.Windows
             // Launch a viewer of the experimetns to get a
             // data source for what we'll be applying the
             // the selected datasets.
-            // 
+            //
             var dialog = new ExperimentsDialog();
             var keepGoing = dialog.ShowDialog() == true;
 
@@ -498,7 +498,7 @@ namespace BuzzardWPF.Windows
 
             //
             // Apply the experiment data to the datasets
-            // 
+            //
             foreach (var dataset in selectedItems)
             {
                 dataset.ExperimentName = experiment.Experiment;
@@ -507,7 +507,7 @@ namespace BuzzardWPF.Windows
 
             //
             // Let the user know we are done.
-            // 
+            //
             classApplicationLogger.LogMessage(0, "Finished applying experiment data to datasets.");
         }
 
@@ -515,12 +515,12 @@ namespace BuzzardWPF.Windows
         {
             //
             // Get a list of which which Datasets are currently selected
-            // 
+            //
             var selectedDatasets = GetSelectedDatasets();
 
             //
             // Prep the Filldown Window for use.
-            // 
+            //
             m_filldownWindow = new FilldownWindow
             {
                 Dataset = m_fillDownDataset,
@@ -537,7 +537,7 @@ namespace BuzzardWPF.Windows
 
             //
             // Get user input from the Filldown Window
-            // 
+            //
             var stopDoingThis = m_filldownWindow.ShowDialog() != true;
 
             if (stopDoingThis)
@@ -582,7 +582,7 @@ namespace BuzzardWPF.Windows
                     dataset.ExperimentName = filldownData.ExperimentName;
 
                 if (filldownData.ShouldUseLCColumn)
-                {                    
+                {
                     dataset.LCColumn = filldownData.LCColumn;
                 }
 
@@ -617,7 +617,7 @@ namespace BuzzardWPF.Windows
         /// Abort for the Trigger Creation Thread.
         /// </summary>
         private void AbortTriggerThread()
-        {           
+        {
             mAbortTriggerCreationNow = true;
             IsCreatingTriggerFiles = false;
         }
@@ -636,7 +636,7 @@ namespace BuzzardWPF.Windows
             //
             // Find Datasets that the user has selected for
             // Trigger file creation.
-            // 
+            //
             var selectedItems = GetSelectedDatasets();
             if (selectedItems.Count == 0)
                 return;
@@ -694,7 +694,7 @@ namespace BuzzardWPF.Windows
                 // From the list of selected Datasets, find
                 // the Datasets that didn't get their DMSData
                 // from DMS. Then try to resolve it.
-                // 
+                //
                 var needsDmsResolved = from BuzzardDataset dataset in selectedDatasets
                                        where !dataset.DMSData.LockData
                                        select dataset;

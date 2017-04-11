@@ -233,7 +233,7 @@ namespace BuzzardWPF
 
 
         #region Properties
-        
+
         /// <summary>
         /// Gets or sets the image source containing the current image (not Image)
         /// of the buzzard animation.
@@ -292,7 +292,7 @@ namespace BuzzardWPF
                 OnPropertyChanged("LastUpdated");
             }
         }
-    
+
         public string TriggerFileLocation
         {
             get { return m_triggerFileLocation; }
@@ -424,7 +424,7 @@ namespace BuzzardWPF
                 classApplicationLogger.LogMessage(
                     0,
                     string.Format("Data source: '{0}' is already present.", datasetFileOrFolderPath));
-                
+
                 DatasetManager.Manager.UpdateDataset(datasetFileOrFolderPath);
                 return;
             }
@@ -453,7 +453,7 @@ namespace BuzzardWPF
         }
 
         private void m_buzzadier_SearchStarted(object sender, EventArgs e)
-        {            
+        {
             LastStatusMessage = "Searching for instrument data";
         }
 
