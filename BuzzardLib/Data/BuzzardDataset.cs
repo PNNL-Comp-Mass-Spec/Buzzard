@@ -368,7 +368,7 @@ namespace BuzzardLib.Data
         /// </remarks>
         public DatasetStatus DatasetStatus
         {
-            get { return m_status; }
+            get => m_status;
             set
             {
                 if (m_status == value) return;
@@ -380,10 +380,10 @@ namespace BuzzardLib.Data
 
         public string TriggerCreationWarning
         {
-            get { return m_TriggerCreationWarning; }
+            get => m_TriggerCreationWarning;
             set
             {
-                if (String.CompareOrdinal(m_TriggerCreationWarning, value) == 0) return;
+                if (string.CompareOrdinal(m_TriggerCreationWarning, value) == 0) return;
                 m_TriggerCreationWarning = value;
 
                 OnPropertyChanged("TriggerCreationWarning");
@@ -546,8 +546,7 @@ namespace BuzzardLib.Data
 
         protected void OnPropertyChanged(string propertyName)
         {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
 
@@ -600,18 +599,13 @@ namespace BuzzardLib.Data
         /// </remarks>
         public bool ShouldIgnore
         {
-            get
-            {
-                return m_mboolShouldIgnore;
-            }
+            get => m_mboolShouldIgnore;
             set
             {
                 if (m_mboolShouldIgnore == value) return;
                 m_mboolShouldIgnore = value;
-                if (IgnoreChanged != null)
-                {
-                    IgnoreChanged(this, null);
-                }
+
+                IgnoreChanged?.Invoke(this, null);
             }
         }
 
@@ -645,10 +639,7 @@ namespace BuzzardLib.Data
                 if (value.CompareTo(m_lastWrite) != 0)
                 {
                     m_lastWrite = value;
-                    if (LastWriteChanged != null)
-                    {
-                        LastWriteChanged(this, null);
-                    }
+                    LastWriteChanged?.Invoke(this, null);
                 }
             }
         }

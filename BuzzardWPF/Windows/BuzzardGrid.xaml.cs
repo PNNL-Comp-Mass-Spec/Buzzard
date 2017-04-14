@@ -236,7 +236,7 @@ namespace BuzzardWPF.Windows
 
         public bool IsCreatingTriggerFiles
         {
-            get { return StateSingleton.IsCreatingTriggerFiles; }
+            get => StateSingleton.IsCreatingTriggerFiles;
             private set
             {
                 if (StateSingleton.IsCreatingTriggerFiles == value) return;

@@ -614,7 +614,7 @@ namespace BuzzardWPF.Management
 
         public float DataRefreshIntervalHours
         {
-            get { return mDataRefreshIntervalHours; }
+            get => mDataRefreshIntervalHours;
             set
             {
                 if (value < 0.5)
