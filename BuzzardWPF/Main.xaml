@@ -1,22 +1,23 @@
-﻿<Window xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Height="800"
-        MinWidth="785"
-        MinHeight="550"
-        mc:Ignorable="d"
-        Icon="Resources/IconImage.ico"
-        SnapsToDevicePixels="True"
-        Title="Buzzard"
-        UseLayoutRounding="True"
-        Width="1200"
-        WindowStartupLocation="CenterScreen"
-        x:Class="BuzzardWPF.Main"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:converters="clr-namespace:BuzzardLib.Converters;assembly=BuzzardLib"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:my="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Input.Toolkit"
-        xmlns:windows="clr-namespace:BuzzardWPF.Windows"
-        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit">
+﻿<Window
+    x:Class="BuzzardWPF.Main"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:BuzzardLib.Converters;assembly=BuzzardLib"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:my="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Input.Toolkit"
+    xmlns:windows="clr-namespace:BuzzardWPF.Windows"
+    xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+    Title="Buzzard"
+    Width="1200"
+    Height="800"
+    MinWidth="785"
+    MinHeight="550"
+    Icon="Resources/IconImage.ico"
+    SnapsToDevicePixels="True"
+    UseLayoutRounding="True"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
 
     <!--  Resources  -->
     <Window.Resources>
@@ -32,13 +33,14 @@
             <Setter Property="FontFamily" Value="Calibri" />
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="HorizontalAlignment" Value="Center" />
-            <Setter Property="Margin" Value="20 10" />
+            <Setter Property="Margin" Value="20,10" />
         </Style>
         <BitmapImage x:Key="BuzzardSource" UriSource="Resources\Buzzards.png" />
 
-        <converters:BoolToObjectConverter x:Key="MontitorButtonContentConverter"
-                                          FalseContent="Monitor"
-                                          TrueContent="Stop" />
+        <converters:BoolToObjectConverter
+            x:Key="MontitorButtonContentConverter"
+            FalseContent="Monitor"
+            TrueContent="Stop" />
         <converters:InvertBoolConverter x:Key="InvertBoolConverter" />
 
         <Style TargetType="TextBlock">
@@ -65,35 +67,38 @@
             <RowDefinition Height="32" />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
-            <Label Height="64"
-                   HorizontalContentAlignment="Center"
-                   BorderBrush="Transparent"
-                   BorderThickness="0"
-                   Focusable="False"
-                   FontSize="32"
-                   Foreground="LightGray"
-                   Margin="2">
+            <Label
+                Height="64"
+                Margin="2"
+                HorizontalContentAlignment="Center"
+                BorderBrush="Transparent"
+                BorderThickness="0"
+                Focusable="False"
+                FontSize="32"
+                Foreground="LightGray">
                 <Label.Background>
-                    <VisualBrush TileMode="Tile"
-                                 Viewport="0,0,310,64"
-                                 ViewportUnits="Absolute">
+                    <VisualBrush
+                        TileMode="Tile"
+                        Viewport="0,0,310,64"
+                        ViewportUnits="Absolute">
                         <VisualBrush.Visual>
                             <Image OpacityMask="Black" Source="{Binding Path=CurrentImage, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                         </VisualBrush.Visual>
                     </VisualBrush>
                 </Label.Background>
             </Label>
-            <Label Height="64"
-                   HorizontalContentAlignment="Center"
-                   BorderBrush="Transparent"
-                   BorderThickness="0"
-                   Focusable="False"
-                   FontFamily="Showcard Gothic"
-                   FontSize="32"
-                   FontWeight="Bold"
-                   Foreground="LightGray"
-                   Margin="2"
-                   RenderTransformOrigin="0.5,0.5">
+            <Label
+                Height="64"
+                Margin="2"
+                HorizontalContentAlignment="Center"
+                BorderBrush="Transparent"
+                BorderThickness="0"
+                Focusable="False"
+                FontFamily="Showcard Gothic"
+                FontSize="32"
+                FontWeight="Bold"
+                Foreground="LightGray"
+                RenderTransformOrigin="0.5,0.5">
                 <Label.OpacityMask>
                     <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
                         <GradientStop Offset="0.24" Color="Black" />
@@ -113,44 +118,42 @@
             </Label>
         </Grid>
 
-        <Grid VerticalAlignment="Stretch" Grid.Row="1">
+        <Grid Grid.Row="1" VerticalAlignment="Stretch">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto" MinHeight="250" />
                 <RowDefinition Height="3" />
                 <RowDefinition Height="6*" />
             </Grid.RowDefinitions>
 
-            <TabControl FontSize="24"
-                        Grid.Row="0"
-                        Margin="5,5,5,5"
-                        TabStripPlacement="Left">
+            <TabControl
+                Grid.Row="0"
+                Margin="5,5,5,5"
+                FontSize="24"
+                TabStripPlacement="Left">
                 <TabControl.Background>
-                    <ImageBrush AlignmentX="Left"
-                                AlignmentY="Bottom"
-                                ImageSource="{Binding Path=Buzzard,
-                                                      Mode=OneWay,
-                                                      UpdateSourceTrigger=PropertyChanged,
-                                                      FallbackValue={StaticResource Buzzard}}"
-                                Stretch="None" />
+                    <ImageBrush
+                        AlignmentX="Left"
+                        AlignmentY="Bottom"
+                        ImageSource="{Binding Path=Buzzard, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, FallbackValue={StaticResource Buzzard}}"
+                        Stretch="None" />
 
                 </TabControl.Background>
                 <TabItem Height="64" Style="{DynamicResource ResourceKey=SimpleTabItem}">
                     <TabItem.Header>
                         <DockPanel>
-                            <Image DockPanel.Dock="Left"
-                                   Margin="5"
-                                   Source="{Binding Path=Monitor,
-                                                    Mode=OneWay,
-                                                    UpdateSourceTrigger=PropertyChanged,
-                                                    FallbackValue={StaticResource SearchKey}}"
-                                   Stretch="None" />
+                            <Image
+                                Margin="5"
+                                DockPanel.Dock="Left"
+                                Source="{Binding Path=Monitor, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, FallbackValue={StaticResource SearchKey}}"
+                                Stretch="None" />
                             <Label VerticalContentAlignment="Center" FontFamily="Arial">Search</Label>
                         </DockPanel>
                     </TabItem.Header>
                     <TabControl>
-                        <TabItem FontFamily="Calibri"
-                                 Header="Search"
-                                 Padding="5">
+                        <TabItem
+                            Padding="5"
+                            FontFamily="Calibri"
+                            Header="Search">
                             <windows:SearchConfigView x:Name="m_searchWindow" />
                         </TabItem>
                     </TabControl>
@@ -158,31 +161,32 @@
                 <TabItem Height="64" Style="{DynamicResource ResourceKey=SimpleTabItem}">
                     <TabItem.Header>
                         <DockPanel>
-                            <Image DockPanel.Dock="Left"
-                                   Margin="5"
-                                   Source="{Binding Path=Monitor,
-                                                    Mode=OneWay,
-                                                    UpdateSourceTrigger=PropertyChanged,
-                                                    FallbackValue={StaticResource Collect}}"
-                                   Stretch="None" />
+                            <Image
+                                Margin="5"
+                                DockPanel.Dock="Left"
+                                Source="{Binding Path=Monitor, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, FallbackValue={StaticResource Collect}}"
+                                Stretch="None" />
                             <Label VerticalContentAlignment="Center" FontFamily="Arial">Monitor</Label>
                         </DockPanel>
                     </TabItem.Header>
                     <TabControl TabStripPlacement="Top">
-                        <TabItem FontFamily="Calibri"
-                                 FontSize="14"
-                                 Header="Monitor"
-                                 Padding="5">
+                        <TabItem
+                            Padding="5"
+                            FontFamily="Calibri"
+                            FontSize="14"
+                            Header="Monitor">
                             <windows:WatcherControl x:Name="m_scanWindow" />
                         </TabItem>
-                        <TabItem FontFamily="Calibri"
-                                 Header="Instrument Metadata"
-                                 Padding="5">
+                        <TabItem
+                            Padding="5"
+                            FontFamily="Calibri"
+                            Header="Instrument Metadata">
                             <windows:WatcherConfig x:Name="m_scanConfigWindow" />
                         </TabItem>
-                        <TabItem FontFamily="Calibri"
-                                 Header="QC Samples"
-                                 Padding="5">
+                        <TabItem
+                            Padding="5"
+                            FontFamily="Calibri"
+                            Header="QC Samples">
                             <windows:QCView x:Name="m_qcConfigWindow" />
                         </TabItem>
                     </TabControl>
@@ -190,20 +194,19 @@
                 <TabItem Height="64" Style="{DynamicResource ResourceKey=SimpleTabItem}">
                     <TabItem.Header>
                         <DockPanel>
-                            <Image DockPanel.Dock="Left"
-                                   Margin="5"
-                                   Source="{Binding Path=Monitor,
-                                                    Mode=OneWay,
-                                                    UpdateSourceTrigger=PropertyChanged,
-                                                    FallbackValue={StaticResource Tools}}"
-                                   Stretch="None" />
+                            <Image
+                                Margin="5"
+                                DockPanel.Dock="Left"
+                                Source="{Binding Path=Monitor, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, FallbackValue={StaticResource Tools}}"
+                                Stretch="None" />
                             <Label VerticalContentAlignment="Center" FontFamily="Arial">Configure</Label>
                         </DockPanel>
                     </TabItem.Header>
                     <TabControl>
-                        <TabItem FontFamily="Calibri"
-                                 Header="Trigger Files"
-                                 Padding="5">
+                        <TabItem
+                            Padding="5"
+                            FontFamily="Calibri"
+                            Header="Trigger Files">
                             <Grid Margin="0,0,0.2,0.4">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
@@ -219,110 +222,117 @@
                                     <RowDefinition Height="40" />
                                     <RowDefinition Height="40" />
                                 </Grid.RowDefinitions>
-                                <TextBlock Grid.Column="0"
-                                           Grid.Row="0"
-                                           Margin="20,11,20.2,11"
-                                           Style="{StaticResource TextBlockStyle}"
-                                           Text="Remote Folder Location" />
+                                <TextBlock
+                                    Grid.Row="0"
+                                    Grid.Column="0"
+                                    Margin="20,11,20.2,11"
+                                    Style="{StaticResource TextBlockStyle}"
+                                    Text="Remote Folder Location" />
 
-                                <TextBox x:Name="TxtRemoteFolderLocation"
-                                         Grid.Column="1"
-                                         Height="32"
-                                         Grid.Row="0"
-                                         IsEnabled="False"
-                                         Margin="9.8,4,5.2,4"
-                                         Style="{StaticResource TextBoxStyle}"
-                                         Text="{Binding Path=TriggerFileLocation,
-                                                        Mode=TwoWay,
-                                                        UpdateSourceTrigger=LostFocus}" />
+                                <TextBox
+                                    x:Name="TxtRemoteFolderLocation"
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    Height="32"
+                                    Margin="9.8,4,5.2,4"
+                                    IsEnabled="False"
+                                    Style="{StaticResource TextBoxStyle}"
+                                    Text="{Binding Path=TriggerFileLocation, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
 
-                                <Button Grid.Column="2"
-                                        VerticalAlignment="Center"
-                                        Click="UseDefaultTriggerFileLocation_Click"
-                                        Content="Use default"
-                                        Grid.Row="0"
-                                        HorizontalAlignment="Center"
-                                        Style="{StaticResource SimpleButtonStyle}"
-                                        Width="160" />
+                                <Button
+                                    Grid.Row="0"
+                                    Grid.Column="2"
+                                    Width="160"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Click="UseDefaultTriggerFileLocation_Click"
+                                    Content="Use default"
+                                    Style="{StaticResource SimpleButtonStyle}" />
 
-                                <Button Grid.Column="3"
-                                        VerticalAlignment="Center"
-                                        Click="SelectTriggerFileLocation_Click"
-                                        Content="Select folder ..."
-                                        Grid.Row="0"
-                                        HorizontalAlignment="Center"
-                                        Style="{StaticResource SimpleButtonStyle}"
-                                        Width="160" />
+                                <Button
+                                    Grid.Row="0"
+                                    Grid.Column="3"
+                                    Width="160"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Click="SelectTriggerFileLocation_Click"
+                                    Content="Select folder ..."
+                                    Style="{StaticResource SimpleButtonStyle}" />
 
-                                <Label Grid.RowSpan="3"
-                                       Grid.Column="1"
-                                       Content="{Binding LastUpdated,
-                                                         FallbackValue='DMS Cache Last Update Time'}"
-                                       Foreground="Gray"
-                                       Grid.Row="1"
-                                       Margin="9.8,10" />
+                                <Label
+                                    Grid.Row="1"
+                                    Grid.RowSpan="3"
+                                    Grid.Column="1"
+                                    Margin="9.8,10"
+                                    Content="{Binding LastUpdated, FallbackValue='DMS Cache Last Update Time'}"
+                                    Foreground="Gray" />
 
-                                <Button x:Name="CmdUseTestFolder"
-                                        Grid.Column="2"
-                                        VerticalAlignment="Center"
-                                        Click="UseTestFolder_Click"
-                                        Content="Use test folder"
-                                        Grid.Row="1"
-                                        HorizontalAlignment="Center"
-                                        Style="{StaticResource SimpleButtonStyle}"
-                                        Width="160" />
+                                <Button
+                                    x:Name="CmdUseTestFolder"
+                                    Grid.Row="1"
+                                    Grid.Column="2"
+                                    Width="160"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Click="UseTestFolder_Click"
+                                    Content="Use test folder"
+                                    Style="{StaticResource SimpleButtonStyle}" />
 
-                                <Button Grid.Column="3"
-                                        VerticalAlignment="Center"
-                                        Click="ForceDmsReload_Click"
-                                        Content="Reload DMS cache"
-                                        Grid.Row="1"
-                                        HorizontalAlignment="Center"
-                                        Style="{StaticResource SimpleButtonStyle}"
-                                        Width="160" />
+                                <Button
+                                    Grid.Row="1"
+                                    Grid.Column="3"
+                                    Width="160"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Click="ForceDmsReload_Click"
+                                    Content="Reload DMS cache"
+                                    Style="{StaticResource SimpleButtonStyle}" />
 
 
-                                <CheckBox Grid.Column="2"
-                                          Grid.ColumnSpan="2"
-                                          VerticalAlignment="Center"
-                                          Content="Disable base folder validation (manual search)"
-                                          FontSize="15"
-                                          Grid.Row="2"
-                                          IsChecked="{Binding Path=DisableBaseFolderValidation,
-                                                              Mode=TwoWay,
-                                                              UpdateSourceTrigger=PropertyChanged}"
-                                          IsEnabled="{Binding Path=IsNotMonitoring}"
-                                          Margin="15,10,15,5" />
+                                <CheckBox
+                                    Grid.Row="2"
+                                    Grid.Column="2"
+                                    Grid.ColumnSpan="2"
+                                    Margin="15,10,15,5"
+                                    VerticalAlignment="Center"
+                                    Content="Disable base folder validation (manual search)"
+                                    FontSize="15"
+                                    IsChecked="{Binding Path=DisableBaseFolderValidation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    IsEnabled="{Binding Path=IsNotMonitoring}" />
 
-                                <Label Grid.Column="0"
-                                       VerticalAlignment="Center"
-                                       Content="Log Folder Location"
-                                       Grid.Row="4"
-                                       HorizontalAlignment="Center"
-                                       Margin="1,1" />
-                                <TextBox Grid.Column="1"
-                                         VerticalAlignment="Center"
-                                         Grid.Row="4"
-                                         HorizontalAlignment="Left"
-                                         IsReadOnly="true"
-                                         Margin="9.8,9,0,9"
-                                         Text="%appdata%\Buzzard\Log"
-                                         Width="480" />
+                                <Label
+                                    Grid.Row="4"
+                                    Grid.Column="0"
+                                    Margin="1,1"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Content="Log Folder Location" />
+                                <TextBox
+                                    Grid.Row="4"
+                                    Grid.Column="1"
+                                    Width="480"
+                                    Margin="9.8,9,0,9"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    IsReadOnly="true"
+                                    Text="%appdata%\Buzzard\Log" />
                             </Grid>
                         </TabItem>
                     </TabControl>
                 </TabItem>
             </TabControl>
-            <GridSplitter Height="3"
-                          Background="Gray"
-                          Grid.Row="1"
-                          HorizontalAlignment="Stretch" />
+            <GridSplitter
+                Grid.Row="1"
+                Height="3"
+                HorizontalAlignment="Stretch"
+                Background="Gray" />
             <windows:BuzzardGrid x:Name="m_dataGrid" Grid.Row="2" />
         </Grid>
 
-        <StatusBar Height="32"
-                   Grid.Row="2"
-                   Name="m_statusBar">
+        <StatusBar
+            Name="m_statusBar"
+            Grid.Row="2"
+            Height="32">
             <Label Content="{Binding Path=LastStatusMessage, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
         </StatusBar>
     </Grid>

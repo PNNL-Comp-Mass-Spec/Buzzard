@@ -1,30 +1,32 @@
-﻿<Window xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Height="520"
-        Background="{x:Null}"
-        ResizeMode="CanMinimize"
-        ShowInTaskbar="True"
-        SnapsToDevicePixels="True"
-        Title="DynamicSplash"
-        Topmost="False"
-        UseLayoutRounding="True"
-        Width="809"
-        WindowStartupLocation="CenterScreen"
-        WindowStyle="None"
-        x:Class="BuzzardWPF.Windows.DynamicSplash"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+﻿<Window
+    x:Class="BuzzardWPF.Windows.DynamicSplash"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="DynamicSplash"
+    Width="809"
+    Height="520"
+    Background="{x:Null}"
+    ResizeMode="CanMinimize"
+    ShowInTaskbar="True"
+    SnapsToDevicePixels="True"
+    Topmost="False"
+    UseLayoutRounding="True"
+    WindowStartupLocation="CenterScreen"
+    WindowStyle="None">
 
     <Window.Resources>
         <Style x:Key="TextBlockStyle" TargetType="TextBlock">
             <Setter Property="FontFamily" Value="Calibri" />
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="HorizontalAlignment" Value="Center" />
-            <Setter Property="Margin" Value="20 10" />
+            <Setter Property="Margin" Value="20,10" />
         </Style>
     </Window.Resources>
 
-    <Border Background="White"
-            BorderBrush="Maroon"
-            BorderThickness="10">
+    <Border
+        Background="White"
+        BorderBrush="Maroon"
+        BorderThickness="10">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto" />
@@ -35,70 +37,72 @@
                 <RowDefinition Height="18*" />
             </Grid.RowDefinitions>
 
-            <!-- 
+            <!--
             We could see logo at design time by adding "FallbackValue={StaticResource LogoImageSource}" to the following <Image /> element
             However, that leads to a FirstChanceException of type System.IO.IOException with message "Cannot locate resource 'resources/logo_2017.png'."
-            when the Splash Screen is first shown.  Thus, the FallbackValue is removed.  
+            when the Splash Screen is first shown.  Thus, the FallbackValue is removed.
             The logo is loaded at runtime via the DynamicSplash constructor
             -->
-            <Image Margin="0,0,0,0" Source="{Binding Path=LogoImageSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" MinHeight="250" />
-            <TextBlock Height="32"
-                       FontSize="22"
-                       Grid.Row="1"                       
-                       Style="{StaticResource TextBlockStyle}"
-                       TextAlignment="Center"
-                       Width="431">
+            <Image
+                MinHeight="250"
+                Margin="0,0,0,0"
+                Source="{Binding Path=LogoImageSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBlock
+                Grid.Row="1"
+                Width="431"
+                Height="32"
+                FontSize="22"
+                Style="{StaticResource TextBlockStyle}"
+                TextAlignment="Center">
                 <Run Text="Version: " />
                 <Run Text="{Binding Path=Version, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
             </TextBlock>
 
-            <TextBlock Height="32"
-                       FontSize="22"
-                       Foreground="#006600"
-                       Grid.Row="2"
-                       Style="{StaticResource TextBlockStyle}"
-                       TextAlignment="Center"
-                       Width="431">
+            <TextBlock
+                Grid.Row="2"
+                Width="431"
+                Height="32"
+                FontSize="22"
+                Foreground="#006600"
+                Style="{StaticResource TextBlockStyle}"
+                TextAlignment="Center">
                 <Run Text="Instrument: " />
                 <Run Text="{Binding Path=InstrumentName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
             </TextBlock>
 
-            <TextBlock Height="44"
-                       MaxWidth="350"
-                       FontSize="12"
-                       Grid.Row="3"
-                       Margin="233,9.6,233.8,9.6"
-                       Style="{StaticResource TextBlockStyle}"
-                       TextWrapping="WrapWithOverflow"
-                       Width="322">
+            <TextBlock
+                Grid.Row="3"
+                Width="322"
+                Height="44"
+                MaxWidth="350"
+                Margin="233,9.6,233.8,9.6"
+                FontSize="12"
+                Style="{StaticResource TextBlockStyle}"
+                TextWrapping="WrapWithOverflow">
                 Matthew Monroe, Danny Orton, Brian LaMarche, Tom Metz, Gary Kiebel, Ron Moore, Francisco Chavez, Gordon Anderson, and Richard Smith
             </TextBlock>
 
-            <TextBlock Height="31"
-                       VerticalAlignment="Bottom"
-                       FontSize="14"
-                       FontWeight="Bold"
-                       Grid.Row="4"
-                       Margin="10,0,9.8,2.6"
-                       Style="{StaticResource TextBlockStyle}"
-                       Text="{Binding Path=LastLoggedItem,
-                                      Mode=OneWay,
-                                      UpdateSourceTrigger=PropertyChanged,
-                                      FallbackValue='Log messages'}"
-                       TextAlignment="Center"
-                       TextWrapping="WrapWithOverflow"
-                       Width="769" />
-            <TextBlock VerticalAlignment="Top"
-                       FontSize="12"
-                       Grid.Row="5"
-                       HorizontalAlignment="Center"
-                       IsEnabled="False"
-                       Margin="0,2.4,0,0"
-                       Text="{Binding Path=LogFilePath,
-                                      Mode=OneWay,
-                                      UpdateSourceTrigger=PropertyChanged,
-                                      FallbackValue='Log file path'}"
-                       TextWrapping="Wrap" />
+            <TextBlock
+                Grid.Row="4"
+                Width="769"
+                Height="31"
+                Margin="10,0,9.8,2.6"
+                VerticalAlignment="Bottom"
+                FontSize="14"
+                FontWeight="Bold"
+                Style="{StaticResource TextBlockStyle}"
+                Text="{Binding Path=LastLoggedItem, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='Log messages'}"
+                TextAlignment="Center"
+                TextWrapping="WrapWithOverflow" />
+            <TextBlock
+                Grid.Row="5"
+                Margin="0,2.4,0,0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Top"
+                FontSize="12"
+                IsEnabled="False"
+                Text="{Binding Path=LogFilePath, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='Log file path'}"
+                TextWrapping="Wrap" />
         </Grid>
     </Border>
 </Window>
