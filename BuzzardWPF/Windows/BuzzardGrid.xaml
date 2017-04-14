@@ -417,22 +417,24 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn MinWidth="100"
-                                        CanUserSort="True"
-                                        Header="Cart"
-                                        SortDirection="Ascending"
-                                        SortMemberPath="CartName">
+                <DataGridTextColumn
+                    Binding="{Binding CartName}"
+                    Header="Cart"
+                    IsReadOnly="True" />
+                <!--
+                <DataGridTemplateColumn
+                    MinWidth="100"
+                    CanUserSort="True"
+                    Header="Cart"
+                    SortDirection="Ascending"
+                    SortMemberPath="CartName">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <ComboBox ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=windows:BuzzardGrid}, Path=CartNameListSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=CartName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn MinWidth="100"
-                                        CanUserSort="True"
-                                        Header="Cart Config"
-                                        SortDirection="Ascending"
-                                        SortMemberPath="CartConfigName">
+                -->
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <ComboBox ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=windows:BuzzardGrid}, Path=CartConfigNameListSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=CartConfigName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />

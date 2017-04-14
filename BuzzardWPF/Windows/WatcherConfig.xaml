@@ -94,7 +94,7 @@
                                FontWeight="Regular"
                                Grid.Row="0"
                                Style="{StaticResource TextBlockStyle}"
-                               Text="Cart Name:" />
+                               Text="LC Cart:" />
 
                     <ComboBox Grid.Column="1"
                               FontWeight="Regular"
@@ -111,7 +111,7 @@
                                FontWeight="Regular"
                                Grid.Row="1"
                                Style="{StaticResource TextBlockStyle}"
-                               Text="Cart Configuration:" />
+                               Text="LC Cart Configuration:" />
                     <ComboBox Grid.Column="1"
                               FontWeight="Regular"
                               Grid.Row="1"

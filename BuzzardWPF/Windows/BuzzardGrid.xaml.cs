@@ -561,6 +561,11 @@ namespace BuzzardWPF.Windows
             // Any changes that were selected in the Filldown
             // Window are passed on to the selected Datasets.
 
+            if (filldownData.ShouldUseCart)
+            {
+                DatasetManager.Manager.WatcherConfigSelectedCartName = filldownData.CartName;
+            }
+
             foreach (var dataset in selectedDatasets)
             {
                 if (filldownData.ShouldUseCart)

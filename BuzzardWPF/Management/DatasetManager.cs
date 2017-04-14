@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
@@ -13,13 +15,14 @@ using LcmsNetDataClasses;
 using LcmsNetDataClasses.Data;
 using LcmsNetDataClasses.Logging;
 using LcmsNetDmsTools;
+using LcmsNetSDK;
 
 namespace BuzzardWPF.Management
 {
     /// <summary>
     /// Manages a list of datasets
     /// </summary>
-    public class DatasetManager
+    public class DatasetManager : INotifyPropertyChangedExt
     {
         public const string PREVIEW_TRIGGERFILE_FLAG = "Nonexistent_Fake_TriggerFile.xmL";
         public const string EXPERIMENT_NAME_DESCRIPTION = "Experiment";
@@ -30,6 +33,14 @@ namespace BuzzardWPF.Management
         /// Fired when datasets are loaded.
         /// </summary>
         public event EventHandler DatasetsLoaded;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public virtual void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         #endregion
 
         #region Attributes
@@ -765,6 +776,8 @@ namespace BuzzardWPF.Management
         /// </remarks>
         public string WatcherConfigSelectedInstrument { get; set; }
 
+        private string m_WatcherConfigSelectedCartName;
+
         /// <summary>
         /// This item contains a copy of the SelectedCartName value of
         /// the WatcherConfig tool.
@@ -772,7 +785,13 @@ namespace BuzzardWPF.Management
         /// <remarks>
         /// WatcherConfig is responsible for setting this value.
         /// </remarks>
-        public string WatcherConfigSelectedCartName { get; set; }
+        public string WatcherConfigSelectedCartName {
+            get { return m_WatcherConfigSelectedCartName; }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref m_WatcherConfigSelectedCartName, value);
+            }
+        }
 
         /// <summary>
         /// This item contains a copy of the SelectedCartConfigName value of
@@ -1291,7 +1310,6 @@ namespace BuzzardWPF.Management
             }
             return diDatasetFolder.FullName;
         }
-
 
     }
 }
