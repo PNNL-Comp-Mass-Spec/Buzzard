@@ -30,7 +30,7 @@ namespace BuzzardWPF
         /// <remarks>Log levels are 0 to 5, where 0 is most important and 5 is least important</remarks>
         private const int CONST_DEFAULT_MESSAGE_LOG_LEVEL = 5;
 
-        public const string PROGRAM_DATE = "April 13, 2017";
+        public const string PROGRAM_DATE = "April 14, 2017";
 
         #endregion
 
@@ -83,6 +83,7 @@ namespace BuzzardWPF
         #endregion
 
         #region Logging
+
         /// <summary>
         /// Logs the software version number
         /// </summary>
@@ -91,6 +92,7 @@ namespace BuzzardWPF
             var information = SystemInformationReporter.BuildApplicationInformation();
             classApplicationLogger.LogMessage(0, information);
         }
+
         /// <summary>
         /// Logs the machine information
         /// </summary>

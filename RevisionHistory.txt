@@ -1,5 +1,8 @@
 Buzzard Change Log
 
+Version 1.7.13.4; April 14, 2017
+	- On program start, update TriggerFileFolder to the default path if the value persisted to disk is blank
+
 Version 1.7.13.4; April 13, 2017
 	- Filter LC Cart Config lists based on the selected cart
 	- Do not allow setting cart on a per-dataset basis
