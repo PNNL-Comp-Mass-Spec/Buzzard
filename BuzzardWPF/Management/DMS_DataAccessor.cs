@@ -145,7 +145,7 @@ namespace BuzzardWPF.Management
             //
             var tempCartsList = classSQLiteTools.GetCartNameList();
             if (tempCartsList == null)
-                classApplicationLogger.LogError(0, "Cart names list retrieval returned null.");
+                classApplicationLogger.LogError(0, "LC Cart names list retrieval returned null.");
             else
                 CartNames = new ObservableCollection<string>(tempCartsList);
 
@@ -154,7 +154,7 @@ namespace BuzzardWPF.Management
             //
             var tempCartConfigNamesList = classSQLiteTools.GetCartConfigNameList(false);
             if (tempCartConfigNamesList == null)
-                classApplicationLogger.LogError(0, "Cart config names list retrieval returned null.");
+                classApplicationLogger.LogError(0, "LC Cart config names list retrieval returned null.");
             else
                 CartConfigNames = new ObservableCollection<string>(tempCartConfigNamesList);
 
@@ -285,7 +285,7 @@ namespace BuzzardWPF.Management
             }
             catch (Exception ex)
             {
-                 classApplicationLogger.LogError(0, string.Format("Exception updating the cached DMS data (called from {0}): {1}", callingFunction, ex.Message));
+                classApplicationLogger.LogError(0, string.Format("Exception updating the cached DMS data (called from {0}): {1}", callingFunction, ex.Message));
             }
 
         }
@@ -295,7 +295,6 @@ namespace BuzzardWPF.Management
         public static DMS_DataAccessor Instance
         {
             get;
-            private set;
         }
 
         #region Member Variables
@@ -546,9 +545,9 @@ namespace BuzzardWPF.Management
 
                     // Get the users based on the given UIDs.
                     var singleProposalUsers = from classProposalUser user in m_proposalUsers
-                                        where hashedUIDs.Contains(user.UserID)
-                                        orderby user.UserName
-                                        select user;
+                                              where hashedUIDs.Contains(user.UserID)
+                                              orderby user.UserName
+                                              select user;
 
                     // Create the user collection and set it for future use.
                     newUserCollection = new ObservableCollection<classProposalUser>(singleProposalUsers);
@@ -575,6 +574,9 @@ namespace BuzzardWPF.Management
         }
         private readonly Dictionary<string, ObservableCollection<classProposalUser>> m_proposalUserCollections;
 
+        /// <summary>
+        /// Proposal IDs
+        /// </summary>
         public ObservableCollection<string> ProposalIDs
         {
             get;
@@ -612,6 +614,9 @@ namespace BuzzardWPF.Management
 
         #region Properties
 
+        /// <summary>
+        /// DMS data refresh interval, in hours
+        /// </summary>
         public float DataRefreshIntervalHours
         {
             get => mDataRefreshIntervalHours;
@@ -682,6 +687,9 @@ namespace BuzzardWPF.Management
         }
         private ObservableCollection<string> m_operatorData;
 
+        /// <summary>
+        /// Dataset types
+        /// </summary>
         public ObservableCollection<string> DatasetTypes
         {
             get { return m_datasetTypes; }
@@ -696,6 +704,9 @@ namespace BuzzardWPF.Management
         }
         private ObservableCollection<string> m_datasetTypes;
 
+        /// <summary>
+        /// Separation types
+        /// </summary>
         public ObservableCollection<string> SeparationTypes
         {
             get { return m_separationTypes; }
@@ -710,6 +721,9 @@ namespace BuzzardWPF.Management
         }
         private ObservableCollection<string> m_separationTypes;
 
+        /// <summary>
+        /// Cart names
+        /// </summary>
         public ObservableCollection<string> CartNames
         {
             get { return m_cartNames; }
@@ -724,6 +738,9 @@ namespace BuzzardWPF.Management
         }
         private ObservableCollection<string> m_cartNames;
 
+        /// <summary>
+        /// Cart config names
+        /// </summary>
         public ObservableCollection<string> CartConfigNames
         {
             get { return m_cartConfigNames; }

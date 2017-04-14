@@ -48,6 +48,7 @@ namespace BuzzardWPF.Windows
         public BuzzardGrid()
         {
             InitializeComponent();
+
             DataContext = this;
 
             EmslUsageTypesSource = new ObservableCollection<string>();
@@ -341,8 +342,8 @@ namespace BuzzardWPF.Windows
                             if (dataset.NotOnlyDatasource)
                             {
                                 var otherSets = (from BuzzardDataset ds in Datasets
-                                                where ds.DMSData.DatasetName.Equals(dataset.DMSData.DatasetName, StringComparison.OrdinalIgnoreCase)
-                                                select ds).ToList();
+                                                 where ds.DMSData.DatasetName.Equals(dataset.DMSData.DatasetName, StringComparison.OrdinalIgnoreCase)
+                                                 select ds).ToList();
 
                                 if (otherSets.Count < 2)
                                     foreach (var ds in otherSets)

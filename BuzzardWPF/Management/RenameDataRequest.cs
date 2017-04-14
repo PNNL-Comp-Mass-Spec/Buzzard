@@ -15,7 +15,7 @@ namespace BuzzardWPF.Management
         /// </summary>
         public string SourceDataPath {
             get
-            { 
+            {
                 return mSourceDataPath;
             }
             set
@@ -78,9 +78,9 @@ namespace BuzzardWPF.Management
                         string.Format("Skipping {0}", SourceDataPath));
                     return;
                 }
-   
+
             }
-            
+
             if (File.Exists(SourceDataPath))
             {
                 RenameFile();
@@ -88,7 +88,7 @@ namespace BuzzardWPF.Management
             else if (Directory.Exists(SourceDataPath))
             {
                 RenameFolder();
-            }           
+            }
             else
             {
                 // File or folder not found
@@ -199,7 +199,7 @@ namespace BuzzardWPF.Management
                     string.Format("Could not rename '{0}' to '{1}'", SourceDataPath, FixedDataPath),
                     ex);
             }
-        }       
+        }
 
         private void RenameFolder()
         {
@@ -221,6 +221,6 @@ namespace BuzzardWPF.Management
                     ex);
             }
         }
-       
+
     }
 }

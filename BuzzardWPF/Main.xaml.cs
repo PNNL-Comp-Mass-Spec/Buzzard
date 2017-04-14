@@ -549,7 +549,7 @@ namespace BuzzardWPF
         {
             var eResult =
                 MessageBox.Show(
-                    "This path should nearly always be \\\\proto-5\\BionetXfer\\Run_Complete_Trigger; only change this if you are debugging the software.  Continue?",
+                    @"This path should nearly always be \\proto-5\BionetXfer\Run_Complete_Trigger; only change this if you are debugging the software.  Continue?",
                     "Warning", MessageBoxButton.YesNoCancel, MessageBoxImage.Exclamation, MessageBoxResult.Cancel);
 
             if (eResult != MessageBoxResult.Yes)
