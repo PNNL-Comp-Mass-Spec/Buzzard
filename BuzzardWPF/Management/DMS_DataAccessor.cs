@@ -582,12 +582,18 @@ namespace BuzzardWPF.Management
             private set;
         }
 
-        public ObservableCollection<classProposalUser> FindSavedEMSLProposalUsers(string proposalID, StringCollection keys)
+        /// <summary>
+        /// Search cached EUS proposal users for each user ID in keys
+        /// </summary>
+        /// <param name="proposalID"></param>
+        /// <param name="keys"></param>
+        /// <returns>Observable collection of matched users</returns>
+        public ObservableCollection<classProposalUser> FindSavedEMSLProposalUsers(string proposalID, List<string> keys)
         {
             if (string.IsNullOrWhiteSpace(proposalID) || keys == null || keys.Count == 0)
                 return new ObservableCollection<classProposalUser>();
 
-            // We wont return this collection because this collection is supposed to be
+            // We won't return this collection because this collection is supposed to be
             // inmutable and the items this method was designed for will be altering their
             // collections.
             var allOfProposal_sUsers = GetProposalUsers(proposalID);
@@ -599,8 +605,7 @@ namespace BuzzardWPF.Management
                                 where keys.Contains(u.UserID.ToString())
                                 select u;
 
-            var result =
-                new ObservableCollection<classProposalUser>(selectedUsers);
+            var result = new ObservableCollection<classProposalUser>(selectedUsers);
             return result;
         }
 

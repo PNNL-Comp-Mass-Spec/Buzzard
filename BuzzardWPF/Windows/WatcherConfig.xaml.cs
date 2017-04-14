@@ -237,6 +237,7 @@ namespace BuzzardWPF.Windows
             {
                 if (m_selectedCartConfigName != value)
                 {
+
                     m_selectedCartConfigName = value;
                     OnPropertyChanged("SelectedCartConfigName");
                 }
@@ -342,9 +343,8 @@ namespace BuzzardWPF.Windows
             SelectedEMSLUsageType = Settings.Default.Watcher_EMSL_UsageType;
             EMSLProposalID = Settings.Default.Watcher_EMSL_ProposalID;
 
-            var selectedUsers = Settings.Default.Watcher_EMSL_Users;
-            SelectedEMSLProposalUsers =
-                DMS_DataAccessor.Instance.FindSavedEMSLProposalUsers(EMSLProposalID, selectedUsers);
+            var selectedUsers = Settings.Default.Watcher_EMSL_Users.Cast<string>().ToList();
+            SelectedEMSLProposalUsers = DMS_DataAccessor.Instance.FindSavedEMSLProposalUsers(EMSLProposalID, selectedUsers);
 
             UserComments = Settings.Default.WatcherConfig_UserComment;
 
