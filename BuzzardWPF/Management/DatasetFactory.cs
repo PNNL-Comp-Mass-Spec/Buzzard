@@ -10,38 +10,10 @@ namespace BuzzardWPF.Management
     /// </summary>
     public class DatasetFactory
     {
+        [Obsolete("Unused")]
         public static ObservableCollection<BuzzardDataset> LoadDatasetData(string path)
         {
             var datasets = new ObservableCollection<BuzzardDataset>();
-            switch (path)
-            {
-                case "":
-                case null:
-                    //datasets = LoadDummyDatasetData();
-                    break;
-                default:
-
-                    break;
-            }
-
-            return datasets;
-        }
-
-        private static ObservableCollection<BuzzardDataset> LoadDummyDatasetData()
-        {
-            var datasets = new ObservableCollection<BuzzardDataset>();
-            for (var i = 0; i < 10; i++)
-            {
-                var data = new BuzzardDataset
-                {
-                    DMSData =
-                    {
-                        RequestName = "test" + i,
-                        RequestID = 0
-                    }
-                };
-                datasets.Add(data);
-            }
             return datasets;
         }
 
