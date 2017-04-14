@@ -99,6 +99,7 @@ namespace BuzzardWPF
             var systemInformation = SystemInformationReporter.BuildSystemInformation();
             classApplicationLogger.LogMessage(0, systemInformation);
         }
+
         /// <summary>
         /// Creates the path required for local operation.
         /// </summary>
@@ -109,25 +110,26 @@ namespace BuzzardWPF
             var appPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
 
             var path = Path.Combine(appPath, "Buzzard", localPath);
+
             //
             // See if the logging directory exists
             //
-            if (Directory.Exists(path) == false)
+            if (Directory.Exists(path)) return;
+
+            try
             {
-                try
-                {
-                    Directory.CreateDirectory(path);
-                }
-                catch (UnauthorizedAccessException ex)
-                {
-                    //
-                    // Not much we can do here...
-                    //
-                    var errorMessage = string.Format("Buzzard could not create missing folder {0} required for operation.  Please run application with higher priveleges.  {1}",
-                                                                  localPath, ex.Message);
-                    LogCriticalError(errorMessage, null);
-                    Application.Exit();
-                }
+                Directory.CreateDirectory(path);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                //
+                // Not much we can do here...
+                //
+                var errorMessage = string.Format("Buzzard could not create missing folder {0} required for operation. " +
+                                                 "Please update directory permissions or run Buzzard as an administrator: {1}",
+                                                 localPath, ex.Message);
+                LogCriticalError(errorMessage, null);
+                Application.Exit();
             }
         }
         #endregion
@@ -224,8 +226,7 @@ namespace BuzzardWPF
                 return 0;
             }
 
-            int value;
-            if (int.TryParse(versionArray[index], out value))
+            if (int.TryParse(versionArray[index], out var value))
             {
                 return value;
             }
