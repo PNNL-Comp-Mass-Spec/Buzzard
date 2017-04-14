@@ -1,5 +1,9 @@
 Buzzard Change Log
 
+Version 1.7.13.4; April 13, 2017
+	- Filter LC Cart Config lists based on the selected cart
+	- Do not allow setting cart on a per-dataset basis
+
 Version 1.7.13.3; April 10, 2017
 	- Require LC Cart Config
 	- Remove USER_Unknown EMSL Usage type
