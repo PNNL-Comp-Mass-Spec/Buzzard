@@ -28,7 +28,6 @@ namespace BuzzardWPF.Windows
         private ObservableCollection<string> m_datasetTypesSource;
         private ObservableCollection<string> m_separationTypeSource;
         private ObservableCollection<string> m_cartNameListSource;
-        private ObservableCollection<string> m_cartConfigNameListSource;
         private ObservableCollection<string> m_emslUsageTypeSource;
         private ObservableCollection<string> m_lcColumnSource;
         #endregion
@@ -195,18 +194,11 @@ namespace BuzzardWPF.Windows
             }
         }
 
-        public ObservableCollection<string> CartConfigNameListSource
-        {
-            get { return m_cartConfigNameListSource; }
-            set
-            {
-                if (m_cartConfigNameListSource != value)
-                {
-                    m_cartConfigNameListSource = value;
-                    OnPropertyChanged("CartConfigNameListSource");
-                }
-            }
-        }
+        /// <summary>
+        /// List of cart config names associated with the current cart
+        /// </summary>
+        /// <remarks>Updated via CartNameList_OnSelectionChanged</remarks>
+        public ObservableCollection<string> CartConfigNameListSource { get; }
 
         public ObservableCollection<string> EmslUsageTypeSource
         {
@@ -361,6 +353,30 @@ namespace BuzzardWPF.Windows
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+        #endregion
+
+        #region Events
+        private void CartNameList_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems == null || e.AddedItems.Count == 0)
+                return;
+
+            var cartName = (string)e.AddedItems[0];
+
+            if (string.IsNullOrEmpty(cartName))
+                return;
+
+            // Update the allowable CartConfig names
+            CartConfigNameListSource.Clear();
+
+            var cartConfigNames = CartConfigFilter.GetCartConfigNamesForCart(cartName);
+            foreach (var item in cartConfigNames)
+            {
+                CartConfigNameListSource.Add(item);
+            }
+
+        }
+
         #endregion
     }
 }

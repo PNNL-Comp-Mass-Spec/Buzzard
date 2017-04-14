@@ -1,6 +1,8 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using BuzzardLib.Searching;
@@ -36,12 +38,13 @@ namespace BuzzardWPF.Windows
 
         #endregion
 
-
         #region Initialization
         public WatcherConfig()
         {
             InitializeComponent();
             DataContext = this;
+
+            DatasetManager.Manager.PropertyChanged += Manager_PropertyChanged;
 
             DMS_DataAccessor.Instance.PropertyChanged += DMSDataManager_PropertyChanged;
 
@@ -52,6 +55,8 @@ namespace BuzzardWPF.Windows
             m_IsNotMonitoring = true;
 
             EMSL_DataSelector.BoundContainer = this;
+
+            CartConfigNameListSource = new ObservableCollection<string>();
         }
 
         void DMSDataManager_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -92,6 +97,16 @@ namespace BuzzardWPF.Windows
                     break;
             }
         }
+
+
+        private void Manager_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName != nameof(DatasetManager.WatcherConfigSelectedCartName))
+                return;
+
+           SelectedCartName = DatasetManager.Manager.WatcherConfigSelectedCartName;
+        }
+
         #endregion
 
 
@@ -195,6 +210,18 @@ namespace BuzzardWPF.Windows
             {
                 if (m_selectedCartName != value)
                 {
+                    if (!string.IsNullOrEmpty(value))
+                    {
+                        // Update the allowable CartConfig names
+                        CartConfigNameListSource.Clear();
+
+                        var cartConfigNames = CartConfigFilter.GetCartConfigNamesForCart(value);
+                        foreach (var item in cartConfigNames)
+                        {
+                            CartConfigNameListSource.Add(item);
+                        }
+                    }
+
                     m_selectedCartName = value;
                     OnPropertyChanged("SelectedCartName");
                 }
@@ -228,7 +255,11 @@ namespace BuzzardWPF.Windows
 
         public ObservableCollection<string> CartNameListSource => DMS_DataAccessor.Instance.CartNames;
 
-        public ObservableCollection<string> CartConfigNameListSource => DMS_DataAccessor.Instance.CartConfigNames;
+        /// <summary>
+        /// List of cart config names associated with the current cart
+        /// </summary>
+        /// <remarks>Updated via the SelectedCartName setter</remarks>
+        public ObservableCollection<string> CartConfigNameListSource { get; }
 
         public bool IsNotMonitoring
         {

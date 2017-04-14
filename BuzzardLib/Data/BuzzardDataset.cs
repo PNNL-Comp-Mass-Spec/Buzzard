@@ -56,6 +56,8 @@ namespace BuzzardLib.Data
         private ObservableCollection<classProposalUser> m_emslProposalUsers;
         private string m_interestRating;
 
+        private bool m_CartConfigStatus;
+
         #endregion
 
         #region Initialization
@@ -76,7 +78,6 @@ namespace BuzzardLib.Data
             IsFile = true;
         }
         #endregion
-
 
         #region UI data place holders
         public bool PulseText
@@ -118,6 +119,8 @@ namespace BuzzardLib.Data
             }
         }
         #endregion
+
+        #region Datagrid Properties
 
         public ObservableCollection<classProposalUser> EMSLProposalUsers
         {
@@ -303,6 +306,8 @@ namespace BuzzardLib.Data
                 {
                     m_cartName = value;
                     OnPropertyChanged("CartName");
+
+                    ValidateCartConfig();
                 }
             }
         }
@@ -316,6 +321,8 @@ namespace BuzzardLib.Data
                 {
                     m_cartConfigName = value;
                     OnPropertyChanged("CartConfigName");
+
+                    ValidateCartConfig();
                 }
             }
         }
@@ -380,6 +387,30 @@ namespace BuzzardLib.Data
                 m_TriggerCreationWarning = value;
 
                 OnPropertyChanged("TriggerCreationWarning");
+            }
+        }
+
+        #endregion
+
+        public bool CartConfigStatus
+        {
+            get => m_CartConfigStatus;
+            set
+            {
+                if (m_CartConfigStatus == value) return;
+                m_CartConfigStatus = value;
+
+                OnPropertyChanged("CartConfigStatus");
+            }
+        }
+
+        private void ValidateCartConfig()
+        {
+            if (m_cartConfigName != null)
+            {
+                CartConfigStatus = !string.IsNullOrEmpty(m_cartName) &&
+                                        !m_cartConfigName.StartsWith("Unknown", StringComparison.OrdinalIgnoreCase) &&
+                                        !m_cartConfigName.StartsWith(m_cartName, StringComparison.OrdinalIgnoreCase);
             }
         }
 

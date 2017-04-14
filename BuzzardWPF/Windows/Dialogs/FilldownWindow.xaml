@@ -228,7 +228,7 @@
                                               Mode=TwoWay,
                                               UpdateSourceTrigger=PropertyChanged}" />
             <Label Grid.Column="1"
-                   Content="Cart"
+                   Content="LC Cart"
                    Grid.Row="5" />
             <ComboBox x:Name="m_cartNameList"
                       Grid.Column="2"
@@ -237,13 +237,14 @@
                                             Mode=OneWay,
                                             UpdateSourceTrigger=PropertyChanged}"
                       Margin="2"
+                      SelectionChanged="CartNameList_OnSelectionChanged"
                       SelectedValue="{Binding Path=Dataset.CartName,
                                               Mode=TwoWay,
                                               UpdateSourceTrigger=PropertyChanged}" />
 
             <!--  Cart Config  -->
             <Label Grid.Column="1"
-                   Content="Cart Config"
+                   Content="LC Cart Config"
                    Grid.Row="6" />
             <ComboBox x:Name="m_cartConfigNameList"
                       Grid.Column="2"

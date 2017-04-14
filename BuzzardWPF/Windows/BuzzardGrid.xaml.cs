@@ -74,7 +74,11 @@ namespace BuzzardWPF.Windows
                 }
             };
 
+            CartConfigNameListSource = new ObservableCollection<string>();
+
             DMS_DataAccessor.Instance.PropertyChanged += DMSDataManager_PropertyChanged;
+
+            DatasetManager.Manager.PropertyChanged += Manager_PropertyChanged;
         }
 
         public void SaveSettings()
@@ -92,6 +96,32 @@ namespace BuzzardWPF.Windows
             Properties.Settings.Default.FilldownEMSLProposal = m_fillDownDataset.DMSData.EMSLProposalID;
             Properties.Settings.Default.FilldownExperimentName = m_fillDownDataset.ExperimentName;
             Properties.Settings.Default.Save();
+        }
+
+        private void Manager_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName != nameof(DatasetManager.WatcherConfigSelectedCartName))
+                return;
+
+            var cartName = DatasetManager.Manager.WatcherConfigSelectedCartName;
+
+            if (string.IsNullOrEmpty(cartName))
+                return;
+
+            // Update the allowable CartConfig names
+            CartConfigNameListSource.Clear();
+
+            var cartConfigNames = CartConfigFilter.GetCartConfigNamesForCart(cartName);
+            foreach (var item in cartConfigNames)
+            {
+                CartConfigNameListSource.Add(item);
+            }
+
+            // Update the Cart name for datasets already in the grid
+            foreach (var dataset in Datasets)
+            {
+                dataset.CartName = cartName;
+            }
         }
 
         void DMSDataManager_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -143,7 +173,12 @@ namespace BuzzardWPF.Windows
         public ObservableCollection<string> SeparationTypeSource => DMS_DataAccessor.Instance.SeparationTypes;
 
         public ObservableCollection<string> CartNameListSource => DMS_DataAccessor.Instance.CartNames;
-        public ObservableCollection<string> CartConfigNameListSource => DMS_DataAccessor.Instance.CartConfigNames;
+
+        /// <summary>
+        /// List of cart config names associated with the current cart
+        /// </summary>
+        /// <remarks>Updated via Manager_PropertyChanged</remarks>
+        public ObservableCollection<string> CartConfigNameListSource { get; }
 
         public ObservableCollection<string> EmslUsageTypesSource
         {
@@ -531,7 +566,6 @@ namespace BuzzardWPF.Windows
                 DatasetTypesSource = DatasetTypesSource,
                 SeparationTypeSource = SeparationTypeSource,
                 CartNameListSource = CartNameListSource,
-                CartConfigNameListSource = CartConfigNameListSource,
                 EmslUsageTypeSource = EmslUsageTypesSource,
                 LCColumnSource = LCColumnSource
             };

@@ -435,9 +435,25 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 -->
+                <DataGridTemplateColumn
+                    MinWidth="100"
+                    CanUserSort="True"
+                    Header="LC Cart Config"
+                    SortDirection="Ascending"
+                    SortMemberPath="CartConfigName">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <ComboBox ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=windows:BuzzardGrid}, Path=CartConfigNameListSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=CartConfigName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <ComboBox ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=windows:BuzzardGrid}, Path=CartConfigNameListSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=CartConfigName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" >
+                                <ComboBox.Style>
+                                    <Style TargetType="ComboBox">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Path=CartConfigStatus }" Value="True" >
+                                                <Setter Property="Background" Value="HotPink" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ComboBox.Style>
+                            </ComboBox>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

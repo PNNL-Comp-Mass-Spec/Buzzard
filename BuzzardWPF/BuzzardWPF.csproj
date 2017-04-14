@@ -167,6 +167,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Management\CartConfigFilter.cs" />
     <Compile Include="Management\DatasetFactory.cs" />
     <Compile Include="Management\DatasetManager.cs" />
     <Compile Include="Management\DMSConfig.cs" />
