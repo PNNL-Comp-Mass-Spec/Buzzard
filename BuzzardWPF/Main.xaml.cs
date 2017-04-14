@@ -27,6 +27,8 @@ namespace BuzzardWPF
 
         private const int DMS_UPDATE_INTERVAL_MINUTES = 10;
 
+        public const string DEFAULT_TRIGGER_FOLDER_PATH = @"\\proto-5\BionetXfer\Run_Complete_Trigger";
+
         #endregion
 
         #region Events
@@ -549,7 +551,7 @@ namespace BuzzardWPF
         {
             var eResult =
                 MessageBox.Show(
-                    @"This path should nearly always be \\proto-5\BionetXfer\Run_Complete_Trigger; only change this if you are debugging the software.  Continue?",
+                    @"This path should nearly always be " + DEFAULT_TRIGGER_FOLDER_PATH + "; only change this if you are debugging the software.  Continue?",
                     "Warning", MessageBoxButton.YesNoCancel, MessageBoxImage.Exclamation, MessageBoxResult.Cancel);
 
             if (eResult != MessageBoxResult.Yes)
@@ -571,7 +573,7 @@ namespace BuzzardWPF
 
         private void UseDefaultTriggerFileLocation_Click(object sender, RoutedEventArgs e)
         {
-            UpdateTriggerFolderPath(@"\\proto-5\BionetXfer\Run_Complete_Trigger");
+            UpdateTriggerFolderPath(DEFAULT_TRIGGER_FOLDER_PATH);
             TxtRemoteFolderLocation.IsEnabled = false;
         }
 

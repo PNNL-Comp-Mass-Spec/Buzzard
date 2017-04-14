@@ -41,6 +41,10 @@ namespace BuzzardWPF
         /// <returns>An object that holds the application settings.</returns>
         static void LoadSettings()
         {
+            // Note that settings are persisted in file user.config in a randomly named folder below %userprofile%\appdata\local
+            // For example:
+            // C:\Users\username\appdata\local\PNNL\BuzzardWPF.exe_Url_yufs4k44bouk50s0nygwhsc1xpnayiku\1.7.13.4\user.config
+
             // Possibly upgrade the settings from a previous version
             if (Properties.Settings.Default.UpgradeSettings)
             {
@@ -57,8 +61,15 @@ namespace BuzzardWPF
             {
                 var propertyName = currProperty.Name;
                 var propertyValue = string.Empty;
+
                 if (Properties.Settings.Default[propertyName] != null)
                     propertyValue = Properties.Settings.Default[propertyName].ToString();
+
+                if (propertyName == classLCMSSettings.PARAM_TRIGGERFILEFOLDER && string.IsNullOrWhiteSpace(propertyValue))
+                {
+                    propertyValue = Main.DEFAULT_TRIGGER_FOLDER_PATH;
+                    Properties.Settings.Default[propertyName] = propertyValue;
+                }
 
                 classLCMSSettings.SetParameter(propertyName, propertyValue);
             }
