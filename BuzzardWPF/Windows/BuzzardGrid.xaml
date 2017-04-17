@@ -230,17 +230,14 @@
             ItemsSource="{Binding Source={StaticResource MyItemsViewSource}}"
             RowDetailsTemplate="{StaticResource RowDetailsTemplate}"
             RowDetailsVisibilityMode="{Binding Path=ShowGridItemDetail, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ShowRowDetailsConverter}}"
-            RowStyle="{StaticResource DataGridRowStyle}">
+            RowStyle="{StaticResource DataGridRowStyle}"
+            FrozenColumnCount="2">
 
             <DataGrid.Columns>
                 <!--  Dataset Information  -->
                 <DataGridTextColumn
                     Binding="{Binding Path=DMSData.RequestID}"
                     Header="Request ID"
-                    IsReadOnly="True" />
-                <DataGridTextColumn
-                    Binding="{Binding Path=DMSData.RequestName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource RequestNameConverter}}"
-                    Header="Request Name"
                     IsReadOnly="True" />
                 <DataGridTemplateColumn
                     CanUserSort="True"
@@ -256,6 +253,10 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
+                <DataGridTextColumn
+                    Binding="{Binding Path=DMSData.RequestName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource RequestNameConverter}}"
+                    Header="Request Name"
+                    IsReadOnly="True" />
 
                 <DataGridTextColumn
                     Width="100"
