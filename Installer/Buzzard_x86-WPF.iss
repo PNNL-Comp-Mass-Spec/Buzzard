@@ -51,15 +51,10 @@ Source: "bin\Release\LcmsNetDmsTools.dll";                    DestDir: "{app}"; 
 Source: "bin\Release\LcmsNetSDK.dll";                         DestDir: "{app}";             Flags: ignoreversion
 Source: "bin\Release\LcmsNetSQLiteTools.dll";                 DestDir: "{app}";             Flags: ignoreversion
 Source: "bin\Release\System.Data.SQLite.DLL";                 DestDir: "{app}";             Flags: ignoreversion  
-Source: "bin\Release\System.Data.SQLite.xml";                 DestDir: "{app}";             Flags: ignoreversion  
 Source: "bin\Release\System.Windows.Controls.Input.Toolkit.dll";    DestDir: "{app}";       Flags: ignoreversion 
 Source: "bin\Release\System.Windows.Controls.Layout.Toolkit.dll";   DestDir: "{app}";       Flags: ignoreversion 
 Source: "bin\Release\Ookii.Dialogs.Wpf.dll";                  DestDir: "{app}";             Flags: ignoreversion 
 Source: "bin\Release\WPFToolkit.dll";                         DestDir: "{app}";             Flags: ignoreversion   
-Source: "bin\Release\Xceed.Wpf.AvalonDock.dll";               DestDir: "{app}";             Flags: ignoreversion   
-Source: "bin\Release\Xceed.Wpf.AvalonDock.Themes.Aero.dll";   DestDir: "{app}";             Flags: ignoreversion   
-Source: "bin\Release\Xceed.Wpf.AvalonDock.Themes.Metro.dll";  DestDir: "{app}";             Flags: ignoreversion   
-Source: "bin\Release\Xceed.Wpf.AvalonDock.Themes.VS2010.dll"; DestDir: "{app}";             Flags: ignoreversion   
 Source: "bin\Release\Xceed.Wpf.DataGrid.dll";                 DestDir: "{app}";             Flags: ignoreversion   
 Source: "bin\Release\Xceed.Wpf.Toolkit.dll";                  DestDir: "{app}";             Flags: ignoreversion
 Source: "bin\Release\x86\Sqlite.Interop.DLL";                 DestDir: "{app}\x86";         Flags: ignoreversion  
