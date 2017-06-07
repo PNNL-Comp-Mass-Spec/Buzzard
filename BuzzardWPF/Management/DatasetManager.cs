@@ -153,25 +153,15 @@ namespace BuzzardWPF.Management
 
             try
             {
-
-                var query = new classSampleQueryData
-                {
-                    UnassignedOnly = true,
-                    RequestName = "",
-                    Cart = "",
-                    BatchID = "",
-                    Block = "",
-                    MaxRequestNum = "1000000",
-                    MinRequestNum = "0",
-                    Wellplate = ""
-                };
-                query.BuildSqlString();
+                // Insantiate classSampleQueryData using default filters (essentially no filters)
+                // Only active requested runs are retrieved
+                var queryData = new classSampleQueryData();
 
                 // Load the samples (essentially requested runs) from DMS
                 var dbTools = new classDBTools();
 
                 currentTask = "Retrieving samples (requested runs) from DMS";
-                var samples = dbTools.GetSamplesFromDMS(query);
+                var samples = dbTools.GetRequestedRunsFromDMS(queryData);
 
                 currentTask = "Populating mRequestedRunTrie";
                 lock (mRequestedRunTrie)
