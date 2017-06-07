@@ -10,7 +10,6 @@ using System.Windows;
 using System.Windows.Threading;
 using BuzzardLib.Data;
 using BuzzardLib.IO;
-using BuzzardLib.LcmsNetTemp;
 using LcmsNetDataClasses;
 using LcmsNetDataClasses.Data;
 using LcmsNetDataClasses.Logging;

@@ -32,7 +32,7 @@ namespace BuzzardWPF.Windows
 
         #region Attributes
 
-        private FilldownWindow m_filldownWindow;
+        private Dialogs.FilldownWindow m_filldownWindow;
         private readonly FilldownBuzzardDataset m_fillDownDataset;
 
         private ObservableCollection<BuzzardDataset> m_datasets;
@@ -559,7 +559,7 @@ namespace BuzzardWPF.Windows
             //
             // Prep the Filldown Window for use.
             //
-            m_filldownWindow = new FilldownWindow
+            m_filldownWindow = new Dialogs.FilldownWindow
             {
                 Dataset = m_fillDownDataset,
                 OperatorsSource = OperatorsSource,

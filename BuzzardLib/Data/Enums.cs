@@ -1,4 +1,4 @@
-﻿namespace BuzzardLib.LcmsNetTemp
+﻿namespace BuzzardLib.Data
 {
     public enum TriggerFileStatus
     {

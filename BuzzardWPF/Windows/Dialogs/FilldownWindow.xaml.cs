@@ -7,7 +7,7 @@ using BuzzardWPF.Management;
 using LcmsNetDataClasses.Data;
 using LcmsNetDataClasses.Logging;
 
-namespace BuzzardWPF.Windows
+namespace BuzzardWPF.Windows.Dialogs
 {
     /// <summary>
     /// Interaction logic for Filldown.xaml
