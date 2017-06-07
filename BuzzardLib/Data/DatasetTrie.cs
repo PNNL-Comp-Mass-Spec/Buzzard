@@ -65,7 +65,7 @@ namespace BuzzardLib.Data
         /// <param name="data">Data to add at leaf</param>
         private void AddData(TrieNode node, string datasetName, classDMSData data)
         {
-          
+
             if (string.IsNullOrWhiteSpace(datasetName))
             {
                 node.DmsData = data;
@@ -91,7 +91,7 @@ namespace BuzzardLib.Data
 
             if (!m_requestIDToDMS.ContainsKey(data.RequestID))
                 m_requestIDToDMS.Add(data.RequestID, null);
-            
+
             m_requestIDToDMS[data.RequestID] = data;
         }
 
@@ -119,7 +119,7 @@ namespace BuzzardLib.Data
                 // Dataset names were stored lowercase; must convert to lowercase when calling FindData
                 return FindData(m_root, datasetName.ToLower(), datasetName, 0);
             }
-            
+
             return FindData(m_root, datasetName, string.Copy(datasetName), 0);
         }
 

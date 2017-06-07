@@ -1,6 +1,10 @@
 Buzzard Change Log
 
-Version 1.7.13.4; April 14, 2017
+Version 1.7.13.6; June 6, 2017
+	- In the main window, when scrolling horizontally the first column is now always visible
+	- Updated LcmsNetDmsTools.dll and LcmsNetSdk.dll that remove the default maximum RequestID value of 1,000,000
+
+Version 1.7.13.5; April 14, 2017
 	- On program start, update TriggerFileFolder to the default path if the value persisted to disk is blank
 
 Version 1.7.13.4; April 13, 2017

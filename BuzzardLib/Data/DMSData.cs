@@ -5,7 +5,7 @@ using LcmsNetDataClasses;
 namespace BuzzardLib.Data
 {
     /// <summary>
-    /// 
+    /// Information about a new dataset, including requested run info
     /// </summary>
     public class DMSData
         : INotifyPropertyChanged
