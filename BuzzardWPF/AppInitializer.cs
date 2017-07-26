@@ -144,7 +144,11 @@ namespace BuzzardWPF
         /// True if a new version exists and the user launched the installer
         /// In that case, this program will exit, thus allowing the installer to complete successfully
         /// </returns>
+#if DotNET4
+        private static bool CheckForNewVersion(string installerFolderPath = @"\\proto-5\BionetSoftware\Buzzard\DotNet4.0_XP")
+#else
         private static bool CheckForNewVersion(string installerFolderPath = @"\\proto-5\BionetSoftware\Buzzard")
+#endif
         {
             try
             {
