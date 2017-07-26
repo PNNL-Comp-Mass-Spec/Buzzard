@@ -46,15 +46,6 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
   <PropertyGroup>
     <StartupObject>BuzzardWPF.App</StartupObject>
   </PropertyGroup>
@@ -69,27 +60,16 @@
     <Prefer32Bit>false</Prefer32Bit>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <OutputPath>bin\x86\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <Optimize>false</Optimize>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <DebugSymbols>true</DebugSymbols>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="LcmsNetDmsTools, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="LcmsNetDmsTools">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\LcmsNetDmsTools.dll</HintPath>
     </Reference>
-    <Reference Include="LcmsNetSdk, Version=3.4.17.0, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="LcmsNetSdk">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\LcmsNetSdk.dll</HintPath>
     </Reference>
-    <Reference Include="LcmsNetSQLiteTools, Version=3.1.5917.23577, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="LcmsNetSQLiteTools">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\LcmsNetSQLiteTools.dll</HintPath>
     </Reference>
