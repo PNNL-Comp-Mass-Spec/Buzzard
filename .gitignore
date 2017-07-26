@@ -1,3 +1,4 @@
 /Installer/Output
 /packages
 *.user
+/Installer/Output_DotNET4/

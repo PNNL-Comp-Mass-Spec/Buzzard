@@ -1,5 +1,8 @@
 Buzzard Change Log
 
+Version 1.7.13.7; July 26, 2017
+	- Add .NET 4.0 projects and installer
+
 Version 1.7.13.6; June 6, 2017
 	- In the main window, when scrolling horizontally the first column is now always visible
 	- Updated LcmsNetDmsTools.dll and LcmsNetSdk.dll that remove the default maximum RequestID value of 1,000,000
