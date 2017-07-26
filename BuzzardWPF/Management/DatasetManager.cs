@@ -35,10 +35,17 @@ namespace BuzzardWPF.Management
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+#if DotNET4
+        public virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+#else
         public virtual void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+#endif
 
         #endregion
 
@@ -153,7 +160,7 @@ namespace BuzzardWPF.Management
 
             try
             {
-                // Insantiate classSampleQueryData using default filters (essentially no filters)
+                // Instantiate classSampleQueryData using default filters (essentially no filters)
                 // Only active requested runs are retrieved
                 var queryData = new classSampleQueryData();
 
@@ -778,7 +785,11 @@ namespace BuzzardWPF.Management
             get { return m_WatcherConfigSelectedCartName; }
             set
             {
+#if DotNET4
+                this.RaiseAndSetIfChanged(ref m_WatcherConfigSelectedCartName, value, nameof(WatcherConfigSelectedCartName));
+#else
                 this.RaiseAndSetIfChanged(ref m_WatcherConfigSelectedCartName, value);
+#endif
             }
         }
 
