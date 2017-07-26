@@ -360,6 +360,9 @@
   <PropertyGroup>
     <PostBuildEvent>xcopy "$(ProjectDir)\Resources\PrismDMS.config" "$(TargetDir)\" /Y /D /F
 
+xcopy "$(ProjectDir)\..\BuzzardLib\app_DotNET4.config" "$(TargetDir)\BuzzardLib.dll.config" /Y /F
+xcopy "$(ProjectDir)\app_DotNET4.config" "$(TargetDir)\BuzzardWPF.exe.config" /Y /F
+
 rem Remove the Extended WPF Toolkit AvalonDock dlls and folders - using powershell for flexibility
 powershell.exe -NonInteractive -Command "&amp; { cd \"$(TargetDir)\\" ; ForEach ($file in (Get-ChildItem *.AvalonDock.* -Recurse)) { $dirName = $file.DirectoryName ; Remove-Item $file.FullName ; If ((Measure-Object -InputObject (Get-ChildItem $dirName\*)).Count -eq 0) { Remove-Item $dirName -Recurse }}}"
 </PostBuildEvent>
