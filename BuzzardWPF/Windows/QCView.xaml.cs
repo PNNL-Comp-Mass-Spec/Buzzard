@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
@@ -186,7 +187,12 @@ namespace BuzzardWPF.Windows
             SelectedEMSLUsageType = Settings.Default.QC_SelectedUsageType;
             CreateOnDMSFail = Settings.Default.QC_CreateTriggerOnDMS_Fail;
 
-            var selectedUsers = Settings.Default.QC_EMSL_Users.Cast<string>().ToList();
+            List<string> selectedUsers;
+            if (Settings.Default.QC_EMSL_Users == null)
+                selectedUsers = new List<string>();
+            else
+                selectedUsers = Settings.Default.QC_EMSL_Users.Cast<string>().ToList();
+
             SelectedEMSLProposalUsers = DMS_DataAccessor.Instance.FindSavedEMSLProposalUsers(EMSLProposalID, selectedUsers);
         }
 

@@ -343,7 +343,12 @@ namespace BuzzardWPF.Windows
             SelectedEMSLUsageType = Settings.Default.Watcher_EMSL_UsageType;
             EMSLProposalID = Settings.Default.Watcher_EMSL_ProposalID;
 
-            var selectedUsers = Settings.Default.Watcher_EMSL_Users.Cast<string>().ToList();
+            List<string> selectedUsers;
+            if (Settings.Default.Watcher_EMSL_Users == null)
+                selectedUsers = new List<string>();
+            else
+                selectedUsers = Settings.Default.Watcher_EMSL_Users.Cast<string>().ToList();
+
             SelectedEMSLProposalUsers = DMS_DataAccessor.Instance.FindSavedEMSLProposalUsers(EMSLProposalID, selectedUsers);
 
             UserComments = Settings.Default.WatcherConfig_UserComment;
