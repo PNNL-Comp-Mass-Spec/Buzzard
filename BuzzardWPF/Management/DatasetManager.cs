@@ -4,6 +4,9 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+#if !DotNET4
+using System.Runtime.CompilerServices;
+#endif
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
