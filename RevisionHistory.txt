@@ -1,5 +1,8 @@
 Buzzard Change Log
 
+Version 1.7.13.8; July 27, 2017
+	- Updated LcmsNet DLLs that fix a .NET 4.0 compatibility bug
+
 Version 1.7.13.7; July 26, 2017
 	- Add .NET 4.0 projects and installer
 
