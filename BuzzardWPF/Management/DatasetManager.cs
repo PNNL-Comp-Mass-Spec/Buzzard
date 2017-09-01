@@ -895,6 +895,7 @@ namespace BuzzardWPF.Management
         /// file, then the dataset will be returned. If no dataset is found, then
         /// a null value will be returned.
         /// </summary>
+        [Obsolete("Unused")]
         private BuzzardDataset FindDataset(string fullPath)
         {
             if (string.IsNullOrWhiteSpace(fullPath))

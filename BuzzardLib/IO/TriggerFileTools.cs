@@ -223,7 +223,7 @@ namespace BuzzardLib.IO
         /// <param name="Parent">Parent element to add the parameter to</param>
         /// <param name="paramName">Name of the parameter to add</param>
         /// <param name="paramValue">Value of the parameter</param>
-        private static void AddParam(XmlElement Parent, string paramName, string paramValue)
+        private static void AddParam(XmlNode Parent, string paramName, string paramValue)
         {
             try
             {
@@ -395,9 +395,9 @@ namespace BuzzardLib.IO
         {
             var datasetName = sample.DmsData.DatasetName;
             var outFileName =
-                string.Format("{0}_{1}_{2}{3}",
+                string.Format("{0}_{1:MM.dd.yyyy_hh.mm.ss}_{2}{3}",
                                     dataset.CartName,
-                                    sample.LCMethod.Start.ToString("MM.dd.yyyy_hh.mm.ss"),
+                                    sample.LCMethod.Start,
                                     datasetName,
                                     extension);
             return outFileName;
