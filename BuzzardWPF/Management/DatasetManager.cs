@@ -274,8 +274,20 @@ namespace BuzzardWPF.Management
             };
 
             var fiDatasetFile = new FileInfo(dataset.FilePath);
-            sample.LCMethod.ActualStart = fiDatasetFile.CreationTime;
-            sample.LCMethod.SetStartTime(fiDatasetFile.CreationTime);
+
+
+            if (fiDatasetFile.CreationTime < fiDatasetFile.LastWriteTime)
+            {
+                sample.LCMethod.ActualStart = fiDatasetFile.CreationTime;
+            }
+            else
+            {
+                // Creation time is later than the last write time
+                // The file was likely moved or copied from the original directory
+                sample.LCMethod.ActualStart = fiDatasetFile.LastWriteTime;
+            }
+
+            sample.LCMethod.SetStartTime(sample.LCMethod.ActualStart);
             sample.LCMethod.ActualEnd = fiDatasetFile.LastWriteTime;
             sample.DmsData.DatasetName = dataset.DMSData.DatasetName;
 
