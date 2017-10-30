@@ -2,3 +2,4 @@
 /packages
 *.user
 /Installer/Output_DotNET4/
+**/.vs/
