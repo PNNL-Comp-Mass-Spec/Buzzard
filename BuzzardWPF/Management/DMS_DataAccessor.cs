@@ -37,7 +37,6 @@ namespace BuzzardWPF.Management
             m_proposalUserCollections = new Dictionary<string, ObservableCollection<classProposalUser>>();
             LoadProposalUsers();
 
-
             InstrumentData = new ObservableCollection<string>();
             OperatorData = new ObservableCollection<string>();
             DatasetTypes = new ObservableCollection<string>();
@@ -439,7 +438,6 @@ namespace BuzzardWPF.Management
             try
             {
 
-
                 m_pidIndexedCrossReferenceList =
                         new Dictionary<string, List<classUserIDPIDCrossReferenceEntry>>();
 
@@ -798,7 +796,6 @@ namespace BuzzardWPF.Management
         private List<classExperimentData> m_experiments;
 
         #endregion
-
 
         private void OnPropertyChanged(string propertyName)
         {

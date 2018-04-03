@@ -15,7 +15,6 @@ namespace BuzzardWPF.Windows
         public event PropertyChangedEventHandler PropertyChanged;
         #endregion
 
-
         #region Attributes
         private string m_pathName;
         private bool m_itemFound;
@@ -27,7 +26,6 @@ namespace BuzzardWPF.Windows
         private int m_folderCount;
         #endregion
 
-
         #region Initialization
         public FileFolderInfoViewer()
         {
@@ -35,7 +33,6 @@ namespace BuzzardWPF.Windows
             DataContext = this;
         }
         #endregion
-
 
         #region Properties
         public int FileCount
@@ -148,7 +145,6 @@ namespace BuzzardWPF.Windows
             }
         }
         #endregion
-
 
         #region Methods
         private void UpdateViewsPage()

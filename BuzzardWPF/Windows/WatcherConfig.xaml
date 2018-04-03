@@ -153,7 +153,6 @@
                         Style="{StaticResource TextBlockStyle}"
                         Text="LC Column:" />
 
-
                     <Grid Grid.Row="4" Grid.Column="1">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="2*" />

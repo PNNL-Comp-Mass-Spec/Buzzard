@@ -18,7 +18,6 @@
         private bool m_shouldUseComment;
         #endregion
 
-
         #region Initialize
         public FilldownBuzzardDataset()
         {
@@ -38,7 +37,6 @@
             ShouldUseComment = true;
         }
         #endregion
-
 
         #region Properties
         public bool ShouldUseLCColumn

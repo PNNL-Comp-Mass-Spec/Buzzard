@@ -82,7 +82,6 @@ namespace BuzzardLib.Searching
             }
         }
 
-
         /// <summary>
         /// Gets or sets the file extension to look for.
         /// </summary>
@@ -145,8 +144,8 @@ namespace BuzzardLib.Searching
                     OnPropertyChanged("SearchDepth");
                 }
             }
-        }                
-        
+        }
+
         /// <summary>
         /// Gets or sets the start of the search range
         /// </summary>
@@ -162,7 +161,7 @@ namespace BuzzardLib.Searching
                 }
             }
         }
-        
+
         /// <summary>
         /// Gets or sets the end of the search range
         /// </summary>
@@ -178,7 +177,7 @@ namespace BuzzardLib.Searching
                 }
             }
         }
-        
+
         public bool MatchFolders
         {
             get { return mMatchFolders; }
@@ -191,7 +190,7 @@ namespace BuzzardLib.Searching
                 }
             }
         }
-        
+
         public int MinimumSizeKB
         {
             get { return mMinimumSizeKB; }

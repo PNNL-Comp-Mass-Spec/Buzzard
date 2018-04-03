@@ -65,7 +65,6 @@ namespace BuzzardLib.Converters
                         break;
                 }
 
-
                 if (!string.IsNullOrWhiteSpace(returnValue))
                 {
                     return returnValue;

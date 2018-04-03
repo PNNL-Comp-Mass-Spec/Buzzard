@@ -21,7 +21,6 @@ namespace BuzzardLib.Converters
         private object m_nullContent;
         #endregion
 
-
         #region Constructors
         public BoolToObjectConverter()
         {
@@ -30,7 +29,6 @@ namespace BuzzardLib.Converters
             NullContent = "Null";
         }
         #endregion
-
 
         #region Properties
         /// <summary>
@@ -63,7 +61,6 @@ namespace BuzzardLib.Converters
             set { m_nullContent = value; }
         }
         #endregion
-
 
         #region IValueConverter Members
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

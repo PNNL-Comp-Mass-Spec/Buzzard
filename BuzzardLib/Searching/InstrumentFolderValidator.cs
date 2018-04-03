@@ -32,7 +32,7 @@ namespace BuzzardLib.Searching
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="hostName"></param>
         /// <returns>
@@ -50,7 +50,7 @@ namespace BuzzardLib.Searching
                     var share = shareObject as ManagementObject;
                     if (share == null)
                         continue;
-                    
+
                     var shareName = share["Name"].ToString();
                     var sharePath = share["Path"].ToString();
                     // var shareCaption = share["Caption"].ToString();
@@ -73,7 +73,6 @@ namespace BuzzardLib.Searching
         {
             const string GENERIC_REMOTE_COMPUTER = "RemoteComputer";
             const string REMOTE_COMPUTER_PREFIX = @"\\" + GENERIC_REMOTE_COMPUTER + @"\";
-
 
             expectedBaseFolderPath = string.Empty;
             ErrorMessage = string.Empty;
@@ -99,7 +98,7 @@ namespace BuzzardLib.Searching
                     localShares = new Dictionary<string, string>();
 
                     var pathParts = baseFolderPath.Substring(2).Split('\\');
-                    
+
                     if (pathParts.Length < 2)
                     {
                         // Invalid base folder path; cannot validate
@@ -133,7 +132,7 @@ namespace BuzzardLib.Searching
 
                 // Keys in the dictionary are the share name; values are additional subfolders to append to the share name
                 // Typically the key will be a single name, e.g. ProteomicsData, and the value will be empty
-                
+
                 // But, we also support the share path being "UserData\Nikola\AMOLF"
                 // In this case the key in this dictionary is "UserData" and the value is "Nikola\AMOLF"
 
@@ -146,7 +145,7 @@ namespace BuzzardLib.Searching
                     // The host name tracked by DMS might have periods in it; use Split() to account for that
 
                     var instrumentHostInDMS = instrument.Value.HostName.Split('.').FirstOrDefault();
-                    
+
                     if (string.Equals(baseFolderHostName, instrumentHostInDMS, StringComparison.CurrentCultureIgnoreCase))
                     {
                         // Host names match
@@ -166,7 +165,7 @@ namespace BuzzardLib.Searching
                         {
                             sharePathsInDMS.Add(shareName, sharePath);
                         }
-                        
+
                     }
                 }
 
@@ -214,13 +213,10 @@ namespace BuzzardLib.Searching
                                              expectedBaseFolderPath.Substring(REMOTE_COMPUTER_PREFIX.Length);
                 }
 
-
                 ErrorMessage = "Base folder not valid for this instrument; " + diBaseFolder.FullName + " " +
                                "does not match the expected base folder of " +
                                expectedBaseFolderPath +
                                " -- dataset upload will fail; search aborted";
-
-                
 
                 return false;
 
@@ -229,7 +225,6 @@ namespace BuzzardLib.Searching
             {
                 classApplicationLogger.LogError(0, "Error looking up local shares", ex);
             }
-         
 
             return false;
         }

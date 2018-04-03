@@ -74,7 +74,6 @@
 
         <converters:RedudantRequestBackgroundConverter x:Key="RedundantBackgroundConverter" />
 
-
         <DataTemplate x:Key="EMSLUserTemplate" DataType="dmsData:classProposalUser">
             <TextBlock Margin="2,2,6,2" Text="{Binding Path=UserName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
         </DataTemplate>

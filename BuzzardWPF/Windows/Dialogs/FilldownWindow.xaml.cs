@@ -19,7 +19,6 @@ namespace BuzzardWPF.Windows.Dialogs
         public event PropertyChangedEventHandler PropertyChanged;
         #endregion
 
-
         #region Attributes
         private FilldownBuzzardDataset m_dataset;
 
@@ -31,7 +30,6 @@ namespace BuzzardWPF.Windows.Dialogs
         private ObservableCollection<string> m_emslUsageTypeSource;
         private ObservableCollection<string> m_lcColumnSource;
         #endregion
-
 
         public FilldownWindow()
         {
@@ -53,7 +51,6 @@ namespace BuzzardWPF.Windows.Dialogs
             EMSLProposalUsersSource = new ObservableCollection<classProposalUser>();
             Dataset = new FilldownBuzzardDataset();
         }
-
 
         #region Properties
         public ObservableCollection<string> EMSLProposalIDs
@@ -242,7 +239,6 @@ namespace BuzzardWPF.Windows.Dialogs
         private ObservableCollection<classProposalUser> m_EMSLProposalUsersSource;
         #endregion
 
-
         #region Event Handlers
         private void DatasetPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -309,7 +305,6 @@ namespace BuzzardWPF.Windows.Dialogs
         }
 
         #endregion
-
 
         #region Methods
         private void FillInEMSLProposalStuff()

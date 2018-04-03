@@ -23,7 +23,6 @@ namespace BuzzardWPF.Windows
         public event PropertyChangedEventHandler PropertyChanged;
         #endregion
 
-
         #region Attributes
         private string m_selectedOperator;
         private string m_selectedInstrument;
@@ -98,7 +97,6 @@ namespace BuzzardWPF.Windows
             }
         }
 
-
         private void Manager_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName != nameof(DatasetManager.WatcherConfigSelectedCartName))
@@ -108,7 +106,6 @@ namespace BuzzardWPF.Windows
         }
 
         #endregion
-
 
         #region Properties
         public string LCColumn
@@ -275,7 +272,6 @@ namespace BuzzardWPF.Windows
 
         #endregion
 
-
         #region Event Handlers
 
         private void LCColumnSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -311,7 +307,6 @@ namespace BuzzardWPF.Windows
             IsNotMonitoring = !e.Monitoring;
         }
         #endregion
-
 
         #region Methods
 
@@ -451,7 +446,6 @@ namespace BuzzardWPF.Windows
                 OnPropertyChanged("UserComments");
             }
         }
-
 
         public string SelectedEMSLUsageType
         {

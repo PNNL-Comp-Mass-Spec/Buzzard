@@ -64,13 +64,11 @@ namespace BuzzardWPF
 
         #endregion
 
-
         #region Initialize
 
         public Main()
         {
             InitializeComponent();
-
 
             DataContext = this;
             m_cacheLoadingSync = new object();
@@ -131,7 +129,6 @@ namespace BuzzardWPF
             m_dmsCheckTimer.Tick += DMSCheckTimer_Tick;
             m_dmsCheckTimer.IsEnabled = true;
 
-
             m_searchWindow.SearchStart += m_searchWindow_SearchStart;
             RegisterSearcher(new FileSearchBuzzardier(DMS_DataAccessor.Instance.InstrumentDetails));
 
@@ -188,7 +185,6 @@ namespace BuzzardWPF
                 Properties.Resources.buzzards5,
             };
 
-
             var bitmapsEaster = new Collection<Bitmap>
             {
                 Properties.Resources.buzzardsz,
@@ -228,7 +224,6 @@ namespace BuzzardWPF
         }
 
         #endregion
-
 
         #region Properties
 
@@ -458,7 +453,6 @@ namespace BuzzardWPF
         }
 
         #endregion
-
 
         #region Event Handlers
 

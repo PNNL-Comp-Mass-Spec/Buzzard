@@ -19,7 +19,6 @@ namespace BuzzardWPF.Windows
         public event PropertyChangedEventHandler PropertyChanged;
         #endregion
 
-
         #region Attributes
 
         /// <summary>
@@ -35,7 +34,6 @@ namespace BuzzardWPF.Windows
         };
 
         #endregion
-
 
         #region Constructors
         public EMSL_UsageSelectionView()
@@ -63,7 +61,6 @@ namespace BuzzardWPF.Windows
         }
         #endregion
 
-
         #region Properties
         public IEmslUsvUser BoundContainer
         {
@@ -75,10 +72,8 @@ namespace BuzzardWPF.Windows
                     if (m_boundContainer != null)
                         m_boundContainer.PropertyChanged -= BoundContainer_PropertyChanged;
 
-
                     m_boundContainer = value;
                     OnPropertyChanged("BoundContainer");
-
 
                     if (m_boundContainer != null)
                     {
@@ -91,7 +86,6 @@ namespace BuzzardWPF.Windows
             }
         }
         private IEmslUsvUser m_boundContainer;
-
 
         public ObservableCollection<string> UsageTypesSource
         {
@@ -137,7 +131,6 @@ namespace BuzzardWPF.Windows
 
         #endregion
 
-
         #region Event Handlers
         private void BoundContainer_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -170,7 +163,6 @@ namespace BuzzardWPF.Windows
         }
 
         #endregion
-
 
         #region Methods
         /// <summary>

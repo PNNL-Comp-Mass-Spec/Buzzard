@@ -34,7 +34,7 @@ namespace BuzzardLib.Converters
 
             if (value.ToString() == TOP_DIRECTORY)
                 option = SearchOption.TopDirectoryOnly;
-            
+
             return option;
         }
 

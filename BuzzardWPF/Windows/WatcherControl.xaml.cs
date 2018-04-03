@@ -97,7 +97,6 @@ namespace BuzzardWPF.Windows
 
         #endregion
 
-
         #region Properties
         public bool CreateTriggerOnDMSFail
         {
@@ -237,7 +236,6 @@ namespace BuzzardWPF.Windows
 
         #endregion
 
-
         #region Event Handlers
 
         void SystemWatcher_Changed(object sender, FileSystemEventArgs e)
@@ -330,7 +328,6 @@ namespace BuzzardWPF.Windows
             ResetToDefaults();
         }
 
-
         private void SelectDirectory_Click(object sender, RoutedEventArgs e)
         {
             mFolderDialog.SelectedPath = DirectoryToWatch;
@@ -351,7 +348,6 @@ namespace BuzzardWPF.Windows
                 StartWatching();
         }
         #endregion
-
 
         #region Methods
 

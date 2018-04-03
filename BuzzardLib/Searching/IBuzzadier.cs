@@ -11,7 +11,7 @@ namespace BuzzardLib.Searching
         /// Fired when a dataset is found.
         /// </summary>
         event EventHandler<DatasetFoundEventArgs> DatasetFound;
-        
+
         /// <summary>
         /// Fired when a search was completed.
         /// </summary>

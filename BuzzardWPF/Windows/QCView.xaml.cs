@@ -22,7 +22,6 @@ namespace BuzzardWPF.Windows
         public event PropertyChangedEventHandler PropertyChanged;
         #endregion
 
-
         #region Initialize
         public QCView()
         {
@@ -39,7 +38,6 @@ namespace BuzzardWPF.Windows
             m_IsNotMonitoring = true;
         }
         #endregion
-
 
         #region Properties
         public string SelectedEMSLUsageType
@@ -137,7 +135,6 @@ namespace BuzzardWPF.Windows
 
         #endregion
 
-
         #region Event Handlers
         /// <summary>
         /// The brings up a dialog window that lets the user choose
@@ -163,7 +160,6 @@ namespace BuzzardWPF.Windows
             IsNotMonitoring = !e.Monitoring;
         }   
         #endregion
-
 
         #region Methods
         public void SaveSettings()

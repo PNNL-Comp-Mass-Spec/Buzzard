@@ -378,7 +378,6 @@ namespace BuzzardWPF
                 classFileLogging.LogMessage(0, new classMessageLoggerArgs("---------------------------------------"));
             }
 
-
             return openMainWindow;
         }
 

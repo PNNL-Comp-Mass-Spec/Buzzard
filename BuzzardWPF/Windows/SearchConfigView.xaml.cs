@@ -28,7 +28,6 @@ namespace BuzzardWPF.Windows
         public event EventHandler<SearchEventArgs> SearchStart;
         #endregion
 
-
         #region Attributes
 
         private bool mIncludeArchivedItems;
@@ -38,7 +37,7 @@ namespace BuzzardWPF.Windows
         /// Configuration for searching for files.
         /// </summary>
         private SearchConfig mConfig;
-    
+
         readonly Ookii.Dialogs.Wpf.VistaFolderBrowserDialog m_folderDialog;
 
         #endregion
@@ -66,7 +65,6 @@ namespace BuzzardWPF.Windows
 
             IsNotMonitoring = true;
         }
-
 
         #region Properties
 
@@ -260,7 +258,6 @@ namespace BuzzardWPF.Windows
 
         #endregion
 
-
         #region Methods
         public void SaveSettings()
         {
@@ -311,6 +308,5 @@ namespace BuzzardWPF.Windows
         }
         #endregion
 
-      
     }
 }

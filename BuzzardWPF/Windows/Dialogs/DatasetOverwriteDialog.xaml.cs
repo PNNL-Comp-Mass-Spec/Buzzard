@@ -13,14 +13,12 @@ namespace BuzzardWPF.Windows.Dialogs
         public event PropertyChangedEventHandler PropertyChanged;
         #endregion
 
-
         #region Attributes
         private string  m_fileToRenamePath;
         private string  m_fileInWayPath;
         private bool    m_doSameToOtherConflicts;
         private bool    m_skipRename;
         #endregion
-
 
         #region Initialize
         public DatasetOverwriteDialog()
@@ -34,7 +32,6 @@ namespace BuzzardWPF.Windows.Dialogs
             SkipDatasetRename = false;
         }
         #endregion
-
 
         #region Properties
         public string FileToRenamePath
@@ -94,7 +91,6 @@ namespace BuzzardWPF.Windows.Dialogs
         }
         #endregion
 
-
         #region Event Handlers
         private void Replace_Click(object sender, RoutedEventArgs e)
         {
@@ -108,7 +104,6 @@ namespace BuzzardWPF.Windows.Dialogs
             DialogResult = true;
         }
         #endregion
-
 
         #region Methods
         private void OnPropertyChanged(string propertyName)

@@ -58,7 +58,7 @@ namespace BuzzardLib.Searching
         /// <summary>
         /// Thread for searching.
         /// </summary>
-        /// 
+        ///
         private Thread m_thread;
         /// <summary>
         /// Flag inidicating whether to search
@@ -198,7 +198,7 @@ namespace BuzzardLib.Searching
 
                 if (!string.IsNullOrWhiteSpace(config.FolderNameFilter))
                     folderNameFilterLCase = config.FolderNameFilter.ToLower();
-                
+
                 // Breadth first search across directories as to make it fast and responsive to a listening UI
                 var m_paths = new Queue<string>();
                 m_paths.Enqueue(diBaseFolder.FullName);

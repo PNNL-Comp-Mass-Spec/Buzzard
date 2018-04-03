@@ -109,7 +109,6 @@ namespace BuzzardWPF.Management
             INTEREST_RATINGS_COLLECTION = new ObservableCollection<string>(INTEREST_RATING_ARRAY);
         }
 
-
         #region Loading Data
 
         /// <summary>
@@ -241,7 +240,6 @@ namespace BuzzardWPF.Management
         }
         #endregion
 
-
         #region Trigger Files
 
         /// <summary>
@@ -274,7 +272,6 @@ namespace BuzzardWPF.Management
             };
 
             var fiDatasetFile = new FileInfo(dataset.FilePath);
-
 
             if (fiDatasetFile.CreationTime < fiDatasetFile.LastWriteTime)
             {
@@ -357,7 +354,6 @@ namespace BuzzardWPF.Management
         public Dictionary<string, bool> TriggerDirectoryContents => mTriggerFolderContents;
 
         #endregion
-
 
         #region DMS Resolving
         /// <summary>
@@ -484,7 +480,6 @@ namespace BuzzardWPF.Management
         }
         #endregion
 
-
         #region Properties
 
         /// <summary>
@@ -494,7 +489,6 @@ namespace BuzzardWPF.Management
         {
             get;
         }
-
 
         public string FileWatchRoot { get; set; }
 
@@ -536,7 +530,6 @@ namespace BuzzardWPF.Management
             mScannedDatasetTimer.Start();
         }
 
-
         /// <summary>
         /// This will keep the UI components of the Datasets that are found by the scanner up to date.
         /// </summary>
@@ -544,7 +537,6 @@ namespace BuzzardWPF.Management
         {
             try
             {
-
 
                 // Find the datasets that have source data found by the
                 // file watcher.
@@ -851,7 +843,6 @@ namespace BuzzardWPF.Management
 
         #endregion
 
-
         #region Quality Control (QC)
         public string EMSL_Usage { get; set; }
         public string EMSL_ProposalID { get; set; }
@@ -937,7 +928,6 @@ namespace BuzzardWPF.Management
             return result;
         }
         #endregion
-
 
         private void AddTriggerFiles(DirectoryInfo diTriggerFolder, bool inSuccessFolder)
         {
@@ -1081,7 +1071,6 @@ namespace BuzzardWPF.Management
                 newDatasetFound = true;
             }
 
-
             //
             // We don't really care if a dataset was found
             // while doing a search, but we do care if it
@@ -1092,7 +1081,6 @@ namespace BuzzardWPF.Management
             if (howWasItFound == DatasetSource.Watcher)
             {
                 dataset.DatasetSource = howWasItFound;
-
 
                 // Since this dataset was picked up by the file scanner,
                 // we want to fill this in with information that was set
@@ -1121,7 +1109,6 @@ namespace BuzzardWPF.Management
 
                 if (string.IsNullOrWhiteSpace(dataset.LCColumn))
                     dataset.LCColumn = LCColumn;
-
 
                 string emslUsageType;
                 string emslProposalId;
@@ -1159,7 +1146,6 @@ namespace BuzzardWPF.Management
                 }
             }
 
-
             //
             // If it wasn't already in the set, then
             // that means that this dataset is brand new
@@ -1190,7 +1176,6 @@ namespace BuzzardWPF.Management
                     0,
                     string.Format("Data source: '{0}' found.", datasetFileOrFolderPath));
             }
-
 
             Manager.ResolveDms(dataset, newDatasetFound);
         }
@@ -1257,7 +1242,6 @@ namespace BuzzardWPF.Management
                     break;
                 }
             }
-
 
         }
 

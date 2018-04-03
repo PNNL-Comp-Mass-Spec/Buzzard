@@ -29,7 +29,6 @@ namespace BuzzardWPF.Windows
         public event PropertyChangedEventHandler PropertyChanged;
         #endregion
 
-
         #region Attributes
 
         private Dialogs.FilldownWindow m_filldownWindow;
@@ -42,7 +41,6 @@ namespace BuzzardWPF.Windows
         private bool mAbortTriggerCreationNow;
 
         #endregion
-
 
         #region Initialize
         public BuzzardGrid()
@@ -160,7 +158,6 @@ namespace BuzzardWPF.Windows
         }
         #endregion
 
-
         #region Properties
 
         public ObservableCollection<string> OperatorsSource => DMS_DataAccessor.Instance.OperatorData;
@@ -267,7 +264,6 @@ namespace BuzzardWPF.Windows
 
         #endregion
 
-
         #region Event Handlers
         private void InvertShowDetails_Click(object sender, RoutedEventArgs e)
         {
@@ -373,7 +369,6 @@ namespace BuzzardWPF.Windows
                 Datasets.Remove(dataset);
             }
         }
-
 
         /// <summary>
         /// Renames the specified datasets to remove invalid characters
@@ -510,7 +505,6 @@ namespace BuzzardWPF.Windows
                 return;
             }
 
-
             //
             // Launch a viewer of the experimetns to get a
             // data source for what we'll be applying the
@@ -542,7 +536,6 @@ namespace BuzzardWPF.Windows
                 dataset.ExperimentName = experiment.Experiment;
             }
 
-
             //
             // Let the user know we are done.
             //
@@ -571,7 +564,6 @@ namespace BuzzardWPF.Windows
                 LCColumnSource = LCColumnSource
             };
 
-
             //
             // Get user input from the Filldown Window
             //
@@ -591,7 +583,6 @@ namespace BuzzardWPF.Windows
             }
 
             SaveSettings();
-
 
             // Any changes that were selected in the Filldown
             // Window are passed on to the selected Datasets.
@@ -651,7 +642,6 @@ namespace BuzzardWPF.Windows
             }
         }
         #endregion
-
 
         #region Trigger
 

@@ -21,7 +21,6 @@ namespace BuzzardWPF.Windows
         public event PropertyChangedEventHandler PropertyChanged;
         #endregion
 
-
         #region Attributes
         private string m_filterText;
         private classExperimentData m_selectedExperiment;
@@ -34,7 +33,6 @@ namespace BuzzardWPF.Windows
 
         private ObservableCollection<classExperimentData> m_experiments;
         #endregion
-
 
         #region Initialization
         public ExperimentsViewer()
@@ -114,7 +112,6 @@ namespace BuzzardWPF.Windows
         }
         #endregion
 
-
         #region Properties
         public classExperimentData SelectedExperiment
         {
@@ -159,7 +156,6 @@ namespace BuzzardWPF.Windows
             }
         }
         #endregion
-
 
         #region Event Handlers
         /// <summary>

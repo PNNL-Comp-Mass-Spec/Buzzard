@@ -548,7 +548,6 @@ namespace BuzzardLib.Data
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-
         #region Members blindly brought over from classDataset
 
         #region Events
@@ -569,7 +568,6 @@ namespace BuzzardLib.Data
         public event EventHandler IgnoreChanged;
         #endregion
 
-
         #region Attributes
         /// <summary>
         /// Last time that the file was written to.
@@ -587,7 +585,6 @@ namespace BuzzardLib.Data
         /// </remarks>
         private bool m_mboolShouldIgnore;
         #endregion
-
 
         #region Properties
         /// <summary>

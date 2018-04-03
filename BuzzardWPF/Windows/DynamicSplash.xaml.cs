@@ -19,12 +19,10 @@ namespace BuzzardWPF.Windows
         public event PropertyChangedEventHandler PropertyChanged;
         #endregion
 
-
         #region Attributes
         private BackgroundWorker m_backgroundWorker;
         private bool m_openMainWindow;
         #endregion
-
 
         #region Constructors
 
@@ -77,7 +75,6 @@ namespace BuzzardWPF.Windows
             m_backgroundWorker = null;
         }
         #endregion
-
 
         #region Properties
         public string LastLoggedItem
@@ -151,7 +148,6 @@ namespace BuzzardWPF.Windows
         private string m_instrumentName;
         #endregion
 
-
         #region Event Handlers
         void ApplicationLogger_ItemLogged(int messageLevel, classMessageLoggerArgs args)
         {
@@ -161,8 +157,8 @@ namespace BuzzardWPF.Windows
         void ApplicationLogger_LogFilePathDefined(classMessageLoggerArgs args)
         {
             LogFilePath = "Log file: " + args.Message;
-        }   
-   
+        }
+
         void BackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             m_openMainWindow = AppInitializer.InitializeApplication();
@@ -187,7 +183,6 @@ namespace BuzzardWPF.Windows
             Close();
         }
         #endregion
-
 
         #region Methods
         public void InitializeInBackground()
