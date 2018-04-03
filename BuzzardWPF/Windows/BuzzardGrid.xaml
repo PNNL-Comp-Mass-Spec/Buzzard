@@ -6,7 +6,7 @@
     xmlns:converters="clr-namespace:BuzzardLib.Converters;assembly=BuzzardLib"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:data="clr-namespace:BuzzardLib.Data;assembly=BuzzardLib"
-    xmlns:dmsData="clr-namespace:LcmsNetDataClasses.Data;assembly=LcmsNetSdk"
+    xmlns:dmsData="clr-namespace:LcmsNetSDK.Data;assembly=LcmsNetSdk"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:windows="clr-namespace:BuzzardWPF.Windows"
     d:DesignHeight="267"
@@ -74,7 +74,7 @@
 
         <converters:RedudantRequestBackgroundConverter x:Key="RedundantBackgroundConverter" />
 
-        <DataTemplate x:Key="EMSLUserTemplate" DataType="dmsData:classProposalUser">
+        <DataTemplate x:Key="EMSLUserTemplate" DataType="dmsData:ProposalUser">
             <TextBlock Margin="2,2,6,2" Text="{Binding Path=UserName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
         </DataTemplate>
 

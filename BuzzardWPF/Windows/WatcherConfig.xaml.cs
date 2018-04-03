@@ -8,8 +8,8 @@ using System.Windows.Controls;
 using BuzzardLib.Searching;
 using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
-using LcmsNetDataClasses.Data;
-using LcmsNetDataClasses.Logging;
+using LcmsNetSDK.Data;
+using LcmsNetSDK.Logging;
 
 namespace BuzzardWPF.Windows
 {
@@ -48,7 +48,7 @@ namespace BuzzardWPF.Windows
             DMS_DataAccessor.Instance.PropertyChanged += DMSDataManager_PropertyChanged;
 
             EMSLProposalID = null;
-            SelectedEMSLProposalUsers = new ObservableCollection<classProposalUser>();
+            SelectedEMSLProposalUsers = new ObservableCollection<ProposalUser>();
             SelectedEMSLUsageType = null;
 
             m_IsNotMonitoring = true;
@@ -415,7 +415,7 @@ namespace BuzzardWPF.Windows
                 // and return something that will make sure
                 // the UI doesn't select anything for this
                 // setting.
-                classApplicationLogger.LogError(
+                ApplicationLogger.LogError(
                     0,
                     string.Format(
                         "{2} {0}{1}",
@@ -479,7 +479,7 @@ namespace BuzzardWPF.Windows
         }
         private string m_emslProposalID;
 
-        public ObservableCollection<classProposalUser> SelectedEMSLProposalUsers
+        public ObservableCollection<ProposalUser> SelectedEMSLProposalUsers
         {
             get => m_selectedEMSLProposalUsers;
             set
@@ -494,7 +494,7 @@ namespace BuzzardWPF.Windows
                 DatasetManager.Manager.Watcher_SelectedProposalUsers = value;
             }
         }
-        private ObservableCollection<classProposalUser> m_selectedEMSLProposalUsers;
+        private ObservableCollection<ProposalUser> m_selectedEMSLProposalUsers;
 
         #endregion
 

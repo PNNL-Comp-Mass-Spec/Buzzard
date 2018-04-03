@@ -12,11 +12,10 @@ using System.Windows;
 using System.Windows.Threading;
 using BuzzardLib.Data;
 using BuzzardLib.IO;
-using LcmsNetDataClasses;
-using LcmsNetDataClasses.Data;
-using LcmsNetDataClasses.Logging;
 using LcmsNetDmsTools;
 using LcmsNetSDK;
+using LcmsNetSDK.Data;
+using LcmsNetSDK.Logging;
 
 namespace BuzzardWPF.Management
 {
@@ -151,8 +150,8 @@ namespace BuzzardWPF.Management
             // Create a new threaded load.
             var start = new ThreadStart(LoadThread);
             mDmsLoadThread = new Thread(start);
-            mDmsLoadThread.Start();
             mDatasetsReady = false;
+            mDmsLoadThread.Start();
         }
 
         private void LoadThread()
@@ -161,12 +160,12 @@ namespace BuzzardWPF.Management
 
             try
             {
-                // Instantiate classSampleQueryData using default filters (essentially no filters)
+                // Instantiate SampleQueryData using default filters (essentially no filters)
                 // Only active requested runs are retrieved
-                var queryData = new classSampleQueryData();
+                var queryData = new SampleQueryData();
 
                 // Load the samples (essentially requested runs) from DMS
-                var dbTools = new classDBTools();
+                var dbTools = new DMSDBTools();
 
                 currentTask = "Retrieving samples (requested runs) from DMS";
                 var samples = dbTools.GetRequestedRunsFromDMS(queryData);
@@ -186,7 +185,7 @@ namespace BuzzardWPF.Management
                 // trigger files that were sent.
 
                 currentTask = "Examine the trigger file folder";
-                var triggerFileDestination = classLCMSSettings.GetParameter("TriggerFileFolder");
+                var triggerFileDestination = LCMSSettings.GetParameter("TriggerFileFolder");
 
                 if (mTriggerFolderContents == null)
                 {
@@ -266,9 +265,9 @@ namespace BuzzardWPF.Management
                 return null;
             }
 
-            var sample = new classSampleData
+            var sample = new SampleData
             {
-                LCMethod = new LcmsNetDataClasses.Method.classLCMethod()
+                LCMethod = new LcmsNetSDK.Method.LCMethod()
             };
 
             var fiDatasetFile = new FileInfo(dataset.FilePath);
@@ -303,7 +302,7 @@ namespace BuzzardWPF.Management
                     return null;
                 }
 
-                if (!TriggerFileTools.ValidateDatasetName(dataset, dataset.Name))
+                if (!BuzzardTriggerFileTools.ValidateDatasetName(dataset, dataset.Name))
                 {
                     return null;
                 }
@@ -314,7 +313,7 @@ namespace BuzzardWPF.Management
                           dataset.DatasetStatus == DatasetStatus.ValidatingStable))
                         dataset.DatasetStatus = DatasetStatus.Pending;
 
-                    var triggerXML = TriggerFileTools.CreateTriggerString(sample, dataset, dataset.DMSData);
+                    var triggerXML = BuzzardTriggerFileTools.CreateTriggerString(sample, dataset, dataset.DMSData);
 
                     if (dataset.DatasetStatus == DatasetStatus.MissingRequiredInfo)
                         return null;
@@ -322,13 +321,13 @@ namespace BuzzardWPF.Management
                     return PREVIEW_TRIGGERFILE_FLAG;
                 }
 
-                classApplicationLogger.LogMessage(0, string.Format("Creating Trigger File: {0} for {1}", DateTime.Now, dataset.Name));
-                var triggerFilePath = TriggerFileTools.GenerateTriggerFileBuzzard(sample, dataset, dataset.DMSData, Manager.TriggerFileLocation);
+                ApplicationLogger.LogMessage(0, string.Format("Creating Trigger File: {0} for {1}", DateTime.Now, dataset.Name));
+                var triggerFilePath = BuzzardTriggerFileTools.GenerateTriggerFileBuzzard(sample, dataset, dataset.DMSData, Manager.TriggerFileLocation);
 
                 if (string.IsNullOrEmpty(triggerFilePath))
                     return null;
 
-                classApplicationLogger.LogMessage(0, string.Format("Saved Trigger File: {0} for {1}", DateTime.Now, dataset.Name));
+                ApplicationLogger.LogMessage(0, string.Format("Saved Trigger File: {0} for {1}", DateTime.Now, dataset.Name));
                 dataset.DatasetStatus = DatasetStatus.TriggerFileSent;
                 dataset.TriggerCreationWarning = string.Empty;
 
@@ -410,7 +409,7 @@ namespace BuzzardWPF.Management
                 var fileName = Path.GetFileNameWithoutExtension(fiDataset.Name);
                 datasetName = fileName;
 
-                classDMSData data = null;
+                DMSData data = null;
 
                 lock (mRequestedRunTrie)
                 {
@@ -446,7 +445,7 @@ namespace BuzzardWPF.Management
                 }
 
                 // Match found
-                dataset.DMSData = new DMSData(data, dataset.FilePath);
+                dataset.DMSData = data.CloneLockedWithPath(dataset.FilePath);
                 dataset.DMSDataLastUpdate = DateTime.UtcNow;
 
             }
@@ -638,7 +637,7 @@ namespace BuzzardWPF.Management
                         if (string.IsNullOrWhiteSpace(datasetName))
                             datasetName = "??";
 
-                        classApplicationLogger.LogError(
+                        ApplicationLogger.LogError(
                         0,
                         "Exception in ScannedDatasetTimer_Tick for dataset " + datasetName, ex);
                     }
@@ -647,7 +646,7 @@ namespace BuzzardWPF.Management
             }
             catch (Exception ex)
             {
-                classApplicationLogger.LogError(
+                ApplicationLogger.LogError(
                        0,
                        "Exception in ScannedDatasetTimer_Tick (general)", ex);
             }
@@ -695,7 +694,7 @@ namespace BuzzardWPF.Management
                 if (string.IsNullOrWhiteSpace(datasetName))
                     datasetName = "??";
 
-                classApplicationLogger.LogError(
+                ApplicationLogger.LogError(
                 0,
                 "Exception in CreateTriggerFileForDataset for dataset " + datasetName, ex);
             }
@@ -839,7 +838,7 @@ namespace BuzzardWPF.Management
 
         public string Watcher_EMSL_Usage { get; set; }
         public string Watcher_EMSL_ProposalID { get; set; }
-        public IEnumerable<classProposalUser> Watcher_SelectedProposalUsers { get; set; }
+        public IEnumerable<ProposalUser> Watcher_SelectedProposalUsers { get; set; }
 
         #endregion
 
@@ -849,7 +848,7 @@ namespace BuzzardWPF.Management
         public string QC_ExperimentName { get; set; }
         public bool QC_CreateTriggerOnDMSFail { get; set; }
 
-        public IEnumerable<classProposalUser> QC_SelectedProposalUsers { get; set; }
+        public IEnumerable<ProposalUser> QC_SelectedProposalUsers { get; set; }
         #endregion
 
         #region Dataset RunTime Updates
@@ -1066,7 +1065,7 @@ namespace BuzzardWPF.Management
                 dataset.CaptureSubfolderPath = captureSubfolderPath;
                 dataset.Comment = Manager.UserComments;
 
-                TriggerFileTools.ValidateDatasetName(dataset, dataset.DMSData.DatasetName);
+                BuzzardTriggerFileTools.ValidateDatasetName(dataset, dataset.DMSData.DatasetName);
 
                 newDatasetFound = true;
             }
@@ -1112,7 +1111,7 @@ namespace BuzzardWPF.Management
 
                 string emslUsageType;
                 string emslProposalId;
-                IEnumerable<classProposalUser> emslProposalUsers;
+                IEnumerable<ProposalUser> emslProposalUsers;
 
                 // QC data from the QC panel will override
                 // any previous data for given properties
@@ -1137,12 +1136,12 @@ namespace BuzzardWPF.Management
                     dataset.DMSData.EMSLUsageType.Equals("USER", StringComparison.OrdinalIgnoreCase))
                 {
                     dataset.DMSData.EMSLProposalID = emslProposalId;
-                    dataset.EMSLProposalUsers = new ObservableCollection<classProposalUser>(emslProposalUsers);
+                    dataset.EMSLProposalUsers = new ObservableCollection<ProposalUser>(emslProposalUsers);
                 }
                 else
                 {
                     dataset.DMSData.EMSLProposalID = null;
-                    dataset.EMSLProposalUsers = new ObservableCollection<classProposalUser>();
+                    dataset.EMSLProposalUsers = new ObservableCollection<ProposalUser>();
                 }
             }
 
@@ -1172,7 +1171,7 @@ namespace BuzzardWPF.Management
 
                 Datasets.Add(dataset);
 
-                classApplicationLogger.LogMessage(
+                ApplicationLogger.LogMessage(
                     0,
                     string.Format("Data source: '{0}' found.", datasetFileOrFolderPath));
             }
@@ -1252,7 +1251,7 @@ namespace BuzzardWPF.Management
 
             if (string.IsNullOrWhiteSpace(path))
             {
-                classApplicationLogger.LogError(0, "No data path was given for the create new Dataset request.");
+                ApplicationLogger.LogError(0, "No data path was given for the create new Dataset request.");
                 return string.Empty;
             }
 
@@ -1261,7 +1260,7 @@ namespace BuzzardWPF.Management
             // Check for a file named simple "x_"
             if (string.Equals(Path.GetFileNameWithoutExtension(fiDatasetFile.Name), "x_", StringComparison.OrdinalIgnoreCase))
             {
-                classApplicationLogger.LogMessage(0, "Skipping file with 2 character name of x_, " + fiDatasetFile.Name);
+                ApplicationLogger.LogMessage(0, "Skipping file with 2 character name of x_, " + fiDatasetFile.Name);
                 return string.Empty;
             }
 

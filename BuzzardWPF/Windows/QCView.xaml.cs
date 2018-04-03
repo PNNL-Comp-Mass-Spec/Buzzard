@@ -8,7 +8,7 @@ using System.Windows.Controls;
 using BuzzardLib.Searching;
 using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
-using LcmsNetDataClasses.Data;
+using LcmsNetSDK.Data;
 
 namespace BuzzardWPF.Windows
 {
@@ -33,7 +33,7 @@ namespace BuzzardWPF.Windows
             SelectedEMSLUsageType = EMSL_UsageSelectors.UsageTypesSource[1];
             EMSLProposalID = null;
             ExperimentName = null;
-            SelectedEMSLProposalUsers = new ObservableCollection<classProposalUser>();
+            SelectedEMSLProposalUsers = new ObservableCollection<ProposalUser>();
 
             m_IsNotMonitoring = true;
         }
@@ -104,7 +104,7 @@ namespace BuzzardWPF.Windows
         }
         private bool m_createOnDMSFail;
 
-        public ObservableCollection<classProposalUser> SelectedEMSLProposalUsers
+        public ObservableCollection<ProposalUser> SelectedEMSLProposalUsers
         {
             get => m_selectedEMSLProposalUsers;
             set
@@ -120,7 +120,7 @@ namespace BuzzardWPF.Windows
                 DatasetManager.Manager.QC_SelectedProposalUsers = value;
             }
         }
-        private ObservableCollection<classProposalUser> m_selectedEMSLProposalUsers;
+        private ObservableCollection<ProposalUser> m_selectedEMSLProposalUsers;
 
         public bool IsNotMonitoring
         {
@@ -158,7 +158,7 @@ namespace BuzzardWPF.Windows
         public void MonitoringToggleHandler(object sender, StartStopEventArgs e)
         {
             IsNotMonitoring = !e.Monitoring;
-        }   
+        }
         #endregion
 
         #region Methods

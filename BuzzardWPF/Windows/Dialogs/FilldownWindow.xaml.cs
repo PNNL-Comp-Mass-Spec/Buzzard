@@ -4,8 +4,8 @@ using System.Windows;
 using System.Windows.Controls;
 using BuzzardLib.Data;
 using BuzzardWPF.Management;
-using LcmsNetDataClasses.Data;
-using LcmsNetDataClasses.Logging;
+using LcmsNetSDK.Data;
+using LcmsNetSDK.Logging;
 
 namespace BuzzardWPF.Windows.Dialogs
 {
@@ -48,7 +48,7 @@ namespace BuzzardWPF.Windows.Dialogs
             InterestRatingSource = DatasetManager.INTEREST_RATINGS_COLLECTION;
             EMSLProposalIDs = DMS_DataAccessor.Instance.ProposalIDs;
 
-            EMSLProposalUsersSource = new ObservableCollection<classProposalUser>();
+            EMSLProposalUsersSource = new ObservableCollection<ProposalUser>();
             Dataset = new FilldownBuzzardDataset();
         }
 
@@ -224,7 +224,7 @@ namespace BuzzardWPF.Windows.Dialogs
         }
         private ObservableCollection<string> m_interestRatingSource;
 
-        public ObservableCollection<classProposalUser> EMSLProposalUsersSource
+        public ObservableCollection<ProposalUser> EMSLProposalUsersSource
         {
             get { return m_EMSLProposalUsersSource; }
             set
@@ -236,7 +236,7 @@ namespace BuzzardWPF.Windows.Dialogs
                 }
             }
         }
-        private ObservableCollection<classProposalUser> m_EMSLProposalUsersSource;
+        private ObservableCollection<ProposalUser> m_EMSLProposalUsersSource;
         #endregion
 
         #region Event Handlers
@@ -324,7 +324,7 @@ namespace BuzzardWPF.Windows.Dialogs
         {
             if (Dataset == null)
             {
-                classApplicationLogger.LogError(0, "Filldown Dataset is missing from Filldown Window.");
+                ApplicationLogger.LogError(0, "Filldown Dataset is missing from Filldown Window.");
                 return;
             }
 

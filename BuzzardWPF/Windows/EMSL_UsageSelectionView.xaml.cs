@@ -4,8 +4,8 @@ using System.ComponentModel;
 using System.Windows.Controls;
 using System.Windows.Data;
 using BuzzardWPF.Management;
-using LcmsNetDataClasses.Data;
-using LcmsNetDataClasses.Logging;
+using LcmsNetSDK.Data;
+using LcmsNetSDK.Logging;
 
 namespace BuzzardWPF.Windows
 {
@@ -115,7 +115,7 @@ namespace BuzzardWPF.Windows
         }
         private ObservableCollection<string> m_availablePIDs;
 
-        public ObservableCollection<classProposalUser> ProposalUsers
+        public ObservableCollection<ProposalUser> ProposalUsers
         {
             get { return m_ProposalUsers; }
             set
@@ -127,7 +127,7 @@ namespace BuzzardWPF.Windows
                 }
             }
         }
-        private ObservableCollection<classProposalUser> m_ProposalUsers;
+        private ObservableCollection<ProposalUser> m_ProposalUsers;
 
         #endregion
 
@@ -147,7 +147,7 @@ namespace BuzzardWPF.Windows
         {
             if (BoundContainer == null)
             {
-                classApplicationLogger.LogError(
+                ApplicationLogger.LogError(
                     0,
                     "EMSL Usage Selection View has no bound container to pass selected Proposal ID values to.");
                 PID_Selector.SelectedIndex = -1;

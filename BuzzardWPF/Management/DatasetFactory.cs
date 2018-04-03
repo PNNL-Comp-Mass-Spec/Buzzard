@@ -23,7 +23,7 @@ namespace BuzzardWPF.Management
             {
                 FilePath = path,
                 CartName = DatasetManager.Manager.WatcherConfigSelectedCartName,
-                DMSData = {DatasetName = TriggerFileTools.GetDatasetNameFromFilePath(path)}
+                DMSData = {DatasetName = BuzzardTriggerFileTools.GetDatasetNameFromFilePath(path)}
             };
 
             if (dataset.DMSData.DatasetName.StartsWith("qc_shew", StringComparison.OrdinalIgnoreCase) ||

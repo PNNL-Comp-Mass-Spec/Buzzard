@@ -12,7 +12,9 @@ using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
 using BuzzardLib.Searching;
 using BuzzardWPF.Windows;
-using LcmsNetDataClasses.Logging;
+using LcmsNetDmsTools;
+using LcmsNetSDK.Logging;
+using LcmsNetSQLiteTools;
 
 namespace BuzzardWPF
 {
@@ -95,8 +97,8 @@ namespace BuzzardWPF
             Closed += Main_Closed;
             Loaded += Main_Loaded;
 
-            classApplicationLogger.Message += ApplicationLogger_Message;
-            classApplicationLogger.Error += ApplicationLogger_Error;
+            ApplicationLogger.Message += ApplicationLogger_Message;
+            ApplicationLogger.Error += ApplicationLogger_Error;
 
             // These values come from table T_EUS_UsageType
             // It is rarely updated, so we're not querying the database every time
@@ -143,7 +145,7 @@ namespace BuzzardWPF
 
             LoadImages();
             LastUpdated = DatasetManager.Manager.LastUpdated;
-            classApplicationLogger.LogMessage(0, "Ready");
+            ApplicationLogger.LogMessage(0, "Ready");
 
             if (Environment.MachineName.ToLower() == "monroe3")
                 CmdUseTestFolder.Visibility = Visibility.Visible;
@@ -301,7 +303,7 @@ namespace BuzzardWPF
 
         #endregion
 
-        private void ApplicationLogger_Error(int errorLevel, classErrorLoggerArgs args)
+        private void ApplicationLogger_Error(int errorLevel, ErrorLoggerArgs args)
         {
             // Create an action to place the message string into the property that
             // holds the last message. Then place action into a call for the UI
@@ -314,7 +316,7 @@ namespace BuzzardWPF
             Dispatcher.BeginInvoke((Action)updateLastStatusMsg, DispatcherPriority.Normal);
         }
 
-        private void ApplicationLogger_Message(int messageLevel, classMessageLoggerArgs args)
+        private void ApplicationLogger_Message(int messageLevel, MessageLoggerArgs args)
         {
             // Create an action to place the message string into the property that
             // holds the last message. Then place action into a call for the UI
@@ -389,7 +391,7 @@ namespace BuzzardWPF
             if (string.IsNullOrWhiteSpace(datasetFileOrFolderPath))
             {
                 // There's nothing to create a dataset from
-                classApplicationLogger.LogError(
+                ApplicationLogger.LogError(
                     0,
                     "No path was given for found datasource. Can not create Dataset.");
                 return;
@@ -411,7 +413,7 @@ namespace BuzzardWPF
             // The dataset is already there, make sure the file size and modification date properties are up-to-date
             if (alreadyPresent)
             {
-                classApplicationLogger.LogMessage(
+                ApplicationLogger.LogMessage(
                     0,
                     string.Format("Data source: '{0}' is already present.", datasetFileOrFolderPath));
 
@@ -484,17 +486,17 @@ namespace BuzzardWPF
         /// </summary>
         private void Main_Closed(object sender, EventArgs e)
         {
-            classApplicationLogger.LogMessage(0, "Main Window closed.");
+            ApplicationLogger.LogMessage(0, "Main Window closed.");
 
             // Save settings
-            classApplicationLogger.LogMessage(0, "Starting to save settings to config.");
+            ApplicationLogger.LogMessage(0, "Starting to save settings to config.");
             m_scanConfigWindow.SaveSettings();
             Settings.Default.TriggerFileFolder = TriggerFileLocation;
             m_scanWindow.SaveSettings();
             m_searchWindow.SaveSettings();
             m_qcConfigWindow.SaveSettings();
             Settings.Default.Save();
-            classApplicationLogger.LogMessage(0, "Settings saved to config.");
+            ApplicationLogger.LogMessage(0, "Settings saved to config.");
         }
 
         /// <summary>
@@ -512,13 +514,13 @@ namespace BuzzardWPF
                 //// -FCT
                 //BuzzardWPF.Properties.Settings.Default.Reset();
 
-                classApplicationLogger.LogMessage(0, "Loading settings from config.");
+                ApplicationLogger.LogMessage(0, "Loading settings from config.");
                 m_scanConfigWindow.LoadSettings();
                 UpdateTriggerFolderPath(Settings.Default.TriggerFileFolder);
                 m_scanWindow.LoadSettings();
                 m_searchWindow.LoadSettings();
                 m_qcConfigWindow.LoadSettings();
-                classApplicationLogger.LogMessage(0, "Finished loading settings from config.");
+                ApplicationLogger.LogMessage(0, "Finished loading settings from config.");
 
                 m_firstTimeLoading = false;
             }
@@ -611,5 +613,9 @@ namespace BuzzardWPF
             SetTriggerFolderToTestPath();
         }
 
+        private void Main_OnClosed(object sender, EventArgs e)
+        {
+            AppInitializer.CleanupApplication();
+        }
     }
 }

@@ -10,7 +10,7 @@ using BuzzardLib.IO;
 using BuzzardLib.Searching;
 using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
-using LcmsNetDataClasses.Logging;
+using LcmsNetSDK.Logging;
 
 namespace BuzzardWPF.Windows
 {
@@ -271,7 +271,7 @@ namespace BuzzardWPF.Windows
             // File was renamed, either update an existing dataset, or add a new one
             DatasetManager.Manager.CreatePendingDataset(
                 e.FullPath,
-                TriggerFileTools.GetCaptureSubfolderPath(DirectoryToWatch, e.FullPath),
+                BuzzardTriggerFileTools.GetCaptureSubfolderPath(DirectoryToWatch, e.FullPath),
                 allowFolderMatch,
                 DatasetSource.Watcher,
                 e.OldFullPath);
@@ -407,14 +407,14 @@ namespace BuzzardWPF.Windows
                     var fiDatasetFile = new FileInfo(fullFilePath);
                     if (fiDatasetFile.Exists)
                     {
-                        parentFolderPath = TriggerFileTools.GetCaptureSubfolderPath(diBaseFolder, fiDatasetFile);
+                        parentFolderPath = BuzzardTriggerFileTools.GetCaptureSubfolderPath(diBaseFolder, fiDatasetFile);
                     }
                     else
                     {
                         var diDatasetFolder = new DirectoryInfo(fullFilePath);
                         if (diDatasetFolder.Exists)
                         {
-                            parentFolderPath = TriggerFileTools.GetCaptureSubfolderPath(diBaseFolder, diDatasetFolder);
+                            parentFolderPath = BuzzardTriggerFileTools.GetCaptureSubfolderPath(diBaseFolder, diDatasetFolder);
                         }
                         else
                         {
@@ -433,7 +433,7 @@ namespace BuzzardWPF.Windows
 
         private void ReportError(string errorMsg)
         {
-            classApplicationLogger.LogError(
+            ApplicationLogger.LogError(
                 0,
                 errorMsg);
 
@@ -456,8 +456,8 @@ namespace BuzzardWPF.Windows
 
             OnMonitoringToggled(false);
 
-            classApplicationLogger.LogMessage(0, "Watcher stopped.");
-            classApplicationLogger.LogMessage(0, "Ready.");
+            ApplicationLogger.LogMessage(0, "Watcher stopped.");
+            ApplicationLogger.LogMessage(0, "Ready.");
         }
 
         private void StartWatching()
@@ -534,7 +534,7 @@ namespace BuzzardWPF.Windows
 
             OnMonitoringToggled(true);
 
-            classApplicationLogger.LogMessage(0, "Watcher is monitoring.");
+            ApplicationLogger.LogMessage(0, "Watcher is monitoring.");
         }
 
         private void OnMonitoringToggled(bool monitoring)

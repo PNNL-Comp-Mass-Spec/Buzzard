@@ -6,10 +6,9 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using BuzzardWPF.Management;
-using LcmsNetDataClasses;
-using LcmsNetDataClasses.Logging;
 using LcmsNetDmsTools;
 using LcmsNetSDK;
+using LcmsNetSDK.Logging;
 using LcmsNetSQLiteTools;
 
 namespace BuzzardWPF
@@ -31,6 +30,9 @@ namespace BuzzardWPF
         private const int CONST_DEFAULT_MESSAGE_LOG_LEVEL = 5;
 
         public const string PROGRAM_DATE = "September 1, 2017";
+
+        private static DMSDBTools dmsDbToolsInstance;
+        private static readonly SQLiteTools sqliteToolsInstance = SQLiteTools.GetInstance();
 
         #endregion
 
@@ -65,18 +67,18 @@ namespace BuzzardWPF
                 if (Properties.Settings.Default[propertyName] != null)
                     propertyValue = Properties.Settings.Default[propertyName].ToString();
 
-                if (propertyName == classLCMSSettings.PARAM_TRIGGERFILEFOLDER && string.IsNullOrWhiteSpace(propertyValue))
+                if (propertyName == LCMSSettings.PARAM_TRIGGERFILEFOLDER && string.IsNullOrWhiteSpace(propertyValue))
                 {
                     propertyValue = Main.DEFAULT_TRIGGER_FOLDER_PATH;
                     Properties.Settings.Default[propertyName] = propertyValue;
                 }
 
-                classLCMSSettings.SetParameter(propertyName, propertyValue);
+                LCMSSettings.SetParameter(propertyName, propertyValue);
             }
 
             // Add path to executable as a saved setting
             var fi = new FileInfo(Application.ExecutablePath);
-            classLCMSSettings.SetParameter("ApplicationPath", fi.DirectoryName);
+            LCMSSettings.SetParameter("ApplicationPath", fi.DirectoryName);
 
         }
 
@@ -90,7 +92,7 @@ namespace BuzzardWPF
         public static void LogVersionNumbers()
         {
             var information = SystemInformationReporter.BuildApplicationInformation();
-            classApplicationLogger.LogMessage(0, information);
+            ApplicationLogger.LogMessage(0, information);
         }
 
         /// <summary>
@@ -99,7 +101,7 @@ namespace BuzzardWPF
         public static void LogMachineInformation()
         {
             var systemInformation = SystemInformationReporter.BuildSystemInformation();
-            classApplicationLogger.LogMessage(0, systemInformation);
+            ApplicationLogger.LogMessage(0, systemInformation);
         }
 
         /// <summary>
@@ -219,7 +221,7 @@ namespace BuzzardWPF
             }
             catch (Exception ex)
             {
-                classApplicationLogger.LogMessage(0, "Error checking for a new version: " + ex.Message);
+                ApplicationLogger.LogMessage(0, "Error checking for a new version: " + ex.Message);
                 System.Threading.Thread.Sleep(750);
                 return false;
             }
@@ -249,30 +251,29 @@ namespace BuzzardWPF
             CreatePath("Log");
 
             const string name = "Buzzard";
-            classFileLogging.AppFolder = name;
+            FileLogging.AppFolder = name;
 
-            classSQLiteTools.Initialize(name);
-            classSQLiteTools.SetCacheLocation("BuzzardCache.que");
-            classSQLiteTools.BuildConnectionString(false);
+            SQLiteTools.Initialize(name);
+            SQLiteTools.SetCacheLocation("BuzzardCache.que");
+            SQLiteTools.BuildConnectionString(false);
 
             //Application.EnableVisualStyles();
             //Application.SetCompatibleTextRenderingDefault(false);
 
             // Before we do anything, let's initialize the file logging capability.
-            classApplicationLogger.Error += classFileLogging.LogError;
-            classApplicationLogger.Message += classFileLogging.LogMessage;
+            ApplicationLogger.Error += FileLogging.LogError;
+            ApplicationLogger.Message += FileLogging.LogMessage;
 
             LogVersionNumbers();
             LogMachineInformation();
-            classApplicationLogger.LogMessage(0, "[Log]");
-
+            ApplicationLogger.LogMessage(0, "[Log]");
 
             // Load settings
-            classApplicationLogger.LogMessage(-1, "Loading settings");
+            ApplicationLogger.LogMessage(-1, "Loading settings");
 
             LoadSettings();
 
-            var instName = classLCMSSettings.GetParameter("InstName");
+            var instName = LCMSSettings.GetParameter("InstName");
             var app = System.Windows.Application.Current as App;
             if (app != null && instName != null)
             {
@@ -282,27 +283,27 @@ namespace BuzzardWPF
             // Set the logging levels (0 is most important; 5 is least important)
             // When logLevel is 0, only critical messages are logged
             // When logLevel is 5, all messages are logged
-            var logLevel = classLCMSSettings.GetParameter("LoggingErrorLevel", CONST_DEFAULT_ERROR_LOG_LEVEL);
-            classApplicationLogger.ErrorLevel = logLevel;
+            var logLevel = LCMSSettings.GetParameter("LoggingErrorLevel", CONST_DEFAULT_ERROR_LOG_LEVEL);
+            ApplicationLogger.ErrorLevel = logLevel;
 
-            classApplicationLogger.MessageLevel = CONST_DEFAULT_MESSAGE_LOG_LEVEL;
+            ApplicationLogger.MessageLevel = CONST_DEFAULT_MESSAGE_LOG_LEVEL;
 
-            classApplicationLogger.LogMessage(-1, "Checking for a new version");
+            ApplicationLogger.LogMessage(-1, "Checking for a new version");
 
             var newVersionInstalling = CheckForNewVersion();
             if (newVersionInstalling)
             {
-                classApplicationLogger.LogMessage(-1, "Closing since new version is installing");
+                ApplicationLogger.LogMessage(-1, "Closing since new version is installing");
                 // Return false, meaning do not show the main window
                 return false;
             }
 
-            classApplicationLogger.LogMessage(-1, "Loading DMS data");
+            ApplicationLogger.LogMessage(-1, "Loading DMS data");
 
             try
             {
                 // Load active experiments (created/used in the last 18 months), daasets, instruments, etc.
-                var dbTools = new classDBTools
+                dmsDbToolsInstance = new DMSDBTools
                 {
                     LoadExperiments = true,
                     LoadDatasets = true,
@@ -310,9 +311,9 @@ namespace BuzzardWPF
                     RecentDatasetsMonthsToLoad = DMS_DataAccessor.RECENT_DATASET_MONTHS
                 };
 
-                dbTools.ProgressEvent += dbTools_ProgressEvent;
+                dmsDbToolsInstance.ProgressEvent += dbTools_ProgressEvent;
 
-                dbTools.LoadCacheFromDMS();
+                dmsDbToolsInstance.LoadCacheFromDMS();
 
             }
             catch (Exception ex)
@@ -321,20 +322,20 @@ namespace BuzzardWPF
                 LogCriticalError(errorMessage, ex);
             }
 
-            classApplicationLogger.LogMessage(-1, "Checking For Local Trigger Files");
+            ApplicationLogger.LogMessage(-1, "Checking For Local Trigger Files");
 
             try
             {
                 //
                 // Check to see if any trigger files need to be copied to the transfer server, and copy if necessary
                 //
-                var copyTriggerFiles = classLCMSSettings.GetParameter("CopyTriggerFiles", false);
+                var copyTriggerFiles = LCMSSettings.GetParameter("CopyTriggerFiles", false);
                 if (copyTriggerFiles)
                 {
-                    if (LcmsNetDataClasses.Data.classTriggerFileTools.CheckLocalTriggerFiles())
+                    if (LcmsNetSDK.Data.TriggerFileTools.CheckLocalTriggerFiles())
                     {
-                        classApplicationLogger.LogMessage(-1, "Copying trigger files to DMS");
-                        LcmsNetDataClasses.Data.classTriggerFileTools.MoveLocalTriggerFiles();
+                        ApplicationLogger.LogMessage(-1, "Copying trigger files to DMS");
+                        LcmsNetSDK.Data.TriggerFileTools.MoveLocalTriggerFiles();
                     }
                 }
             }
@@ -344,7 +345,7 @@ namespace BuzzardWPF
                 LogCriticalError(errorMessage, ex);
             }
 
-            classApplicationLogger.LogMessage(-1, "Training the last of the buzzards...Loading DMS Cache");
+            ApplicationLogger.LogMessage(-1, "Training the last of the buzzards...Loading DMS Cache");
 
             try
             {
@@ -359,31 +360,37 @@ namespace BuzzardWPF
             }
             catch (Exception ex)
             {
-                classFileLogging.LogError(0, new classErrorLoggerArgs("Error loading data from DMS at program startup", ex));
+                FileLogging.LogError(0, new ErrorLoggerArgs("Error loading data from DMS at program startup", ex));
             }
             finally
             {
-                //Properties.Settings.Default.InstName                = classLCMSSettings.GetParameter("InstName");
-                //Properties.Settings.Default.Operator                = classLCMSSettings.GetParameter("Operator");
-                //Properties.Settings.Default.CacheFileName           = classLCMSSettings.GetParameter("CacheFileName");
-                //Properties.Settings.Default.SeparationType          = classLCMSSettings.GetParameter("SeparationType");
-                //Properties.Settings.Default.AutoMonitor             = Convert.ToBoolean(classLCMSSettings.GetParameter("AutoMonitor"));
-                //Properties.Settings.Default.Duration                = Convert.ToInt32(classLCMSSettings.GetParameter("Duration"));
-                //Properties.Settings.Default.WatchExtension          = classLCMSSettings.GetParameter("WatchExtension");
-                //Properties.Settings.Default.WatchDirectory          = classLCMSSettings.GetParameter("WatchDirectory");
-                //Properties.Settings.Default.SearchType              = classLCMSSettings.GetParameter("SearchType");
+                //Properties.Settings.Default.InstName                = LCMSSettings.GetParameter("InstName");
+                //Properties.Settings.Default.Operator                = LCMSSettings.GetParameter("Operator");
+                //Properties.Settings.Default.CacheFileName           = LCMSSettings.GetParameter("CacheFileName");
+                //Properties.Settings.Default.SeparationType          = LCMSSettings.GetParameter("SeparationType");
+                //Properties.Settings.Default.AutoMonitor             = Convert.ToBoolean(LCMSSettings.GetParameter("AutoMonitor"));
+                //Properties.Settings.Default.Duration                = Convert.ToInt32(LCMSSettings.GetParameter("Duration"));
+                //Properties.Settings.Default.WatchExtension          = LCMSSettings.GetParameter("WatchExtension");
+                //Properties.Settings.Default.WatchDirectory          = LCMSSettings.GetParameter("WatchDirectory");
+                //Properties.Settings.Default.SearchType              = LCMSSettings.GetParameter("SearchType");
 
                 Properties.Settings.Default.Save();
 
-                classFileLogging.LogMessage(0, new classMessageLoggerArgs("---------------------------------------"));
+                FileLogging.LogMessage(0, new MessageLoggerArgs("---------------------------------------"));
             }
 
             return openMainWindow;
         }
 
+        public static void CleanupApplication()
+        {
+            dmsDbToolsInstance.Dispose();
+            sqliteToolsInstance.Dispose();
+        }
+
         static void dbTools_ProgressEvent(object sender, ProgressEventArgs e)
         {
-            classApplicationLogger.LogMessage(-1, "Loading DMS data: " + e.CurrentTask);
+            ApplicationLogger.LogMessage(-1, "Loading DMS data: " + e.CurrentTask);
         }
 
         private static void LaunchTheInstaller(FileInfo fiInstaller)
@@ -408,7 +415,7 @@ namespace BuzzardWPF
             }
             catch (Exception ex)
             {
-                classApplicationLogger.LogMessage(0, "Error launching the installer for the new version (" + localInstallerPath + "): " + ex.Message);
+                ApplicationLogger.LogMessage(0, "Error launching the installer for the new version (" + localInstallerPath + "): " + ex.Message);
                 System.Threading.Thread.Sleep(750);
             }
 
@@ -419,10 +426,10 @@ namespace BuzzardWPF
             var exceptionMessage = string.Empty;
 
             if (ex == null)
-                classFileLogging.LogError(0, new classErrorLoggerArgs(errorMessage));
+                FileLogging.LogError(0, new ErrorLoggerArgs(errorMessage));
             else
             {
-                classFileLogging.LogError(0, new classErrorLoggerArgs(errorMessage, ex));
+                FileLogging.LogError(0, new ErrorLoggerArgs(errorMessage, ex));
                 exceptionMessage = ex.Message;
             }
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
 using BuzzardWPF.Windows;
-using LcmsNetDataClasses.Logging;
+using LcmsNetSDK.Logging;
 
 namespace BuzzardWPF
 {
@@ -30,7 +30,7 @@ namespace BuzzardWPF
 
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
-            classApplicationLogger.LogError(0, "Buzzard had an unhandled error.  " + e.Exception.Message, e.Exception);
+            ApplicationLogger.LogError(0, "Buzzard had an unhandled error.  " + e.Exception.Message, e.Exception);
         }
 
         private void CurrentDomain_FirstChanceException(object sender, System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs e)
@@ -56,7 +56,7 @@ namespace BuzzardWPF
                 return;
             }
 
-            classApplicationLogger.LogError(0, "Buzzard had an unhandled error.  " + e.Exception.Message, e.Exception);
+            ApplicationLogger.LogError(0, "Buzzard had an unhandled error.  " + e.Exception.Message, e.Exception);
         }
 
     }

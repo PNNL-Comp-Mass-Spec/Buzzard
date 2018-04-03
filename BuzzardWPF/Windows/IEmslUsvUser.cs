@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using LcmsNetDataClasses.Data;
+using LcmsNetSDK.Data;
 
 namespace BuzzardWPF.Windows
 {
@@ -8,6 +8,6 @@ namespace BuzzardWPF.Windows
     {
         string SelectedEMSLUsageType { get; set; }
         string EMSLProposalID { get; set; }
-        ObservableCollection<classProposalUser> SelectedEMSLProposalUsers { get; set; }
+        ObservableCollection<ProposalUser> SelectedEMSLProposalUsers { get; set; }
     }
 }

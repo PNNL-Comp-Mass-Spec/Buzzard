@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using LcmsNetDataClasses;
+using LcmsNetSDK.Data;
 
 namespace BuzzardLib.Data
 {
@@ -12,7 +12,7 @@ namespace BuzzardLib.Data
 
         #region Attributes
         private readonly TrieNode                       m_root;
-        private readonly Dictionary<int, classDMSData>  m_requestIDToDMS;
+        private readonly Dictionary<int, DMSData>  m_requestIDToDMS;
         private readonly bool m_IgnoreCase;
         #endregion
 
@@ -24,14 +24,14 @@ namespace BuzzardLib.Data
         public DatasetTrie(bool ignoreCase)
         {
             m_root = new TrieNode();
-            m_requestIDToDMS = new Dictionary<int, classDMSData>();
+            m_requestIDToDMS = new Dictionary<int, DMSData>();
             m_IgnoreCase = ignoreCase;
         }
         /// <summary>
         /// Adds data to the trie.
         /// </summary>
         /// <param name="data"></param>
-        public void AddData(classDMSData data)
+        public void AddData(DMSData data)
         {
             if (m_IgnoreCase)
             {
@@ -63,7 +63,7 @@ namespace BuzzardLib.Data
         /// <param name="node">Node to add to.</param>
         /// <param name="datasetName">Dataset name to add</param>
         /// <param name="data">Data to add at leaf</param>
-        private void AddData(TrieNode node, string datasetName, classDMSData data)
+        private void AddData(TrieNode node, string datasetName, DMSData data)
         {
 
             if (string.IsNullOrWhiteSpace(datasetName))
@@ -98,7 +98,7 @@ namespace BuzzardLib.Data
         /// <summary>
         /// Finds the dataset data that for the given request key
         /// </summary>
-        public classDMSData FindData(int requestID)
+        public DMSData FindData(int requestID)
         {
             if (!m_requestIDToDMS.ContainsKey(requestID))
                 throw new DatasetTrieException("Could not resolve the Request ID. The dataset is just not available.");
@@ -112,7 +112,7 @@ namespace BuzzardLib.Data
         /// <exception cref="DatasetTrieException">Thrown if the dataset name does not exist in the trie, or if the dataset name cannot resolve the data.</exception>
         /// <param name="datasetName">Name of the dataset to search with.</param>
         /// <returns>DMS Data if it exists.  Exceptions are thrown if the dataset does not.</returns>
-        public classDMSData FindData(string datasetName)
+        public DMSData FindData(string datasetName)
         {
             if (m_IgnoreCase)
             {
@@ -123,7 +123,7 @@ namespace BuzzardLib.Data
             return FindData(m_root, datasetName, string.Copy(datasetName), 0);
         }
 
-        private classDMSData FindData(TrieNode node, string datasetNamePart, string fullDatasetName, int searchDepth)
+        private DMSData FindData(TrieNode node, string datasetNamePart, string fullDatasetName, int searchDepth)
         {
             if (string.IsNullOrWhiteSpace(datasetNamePart))
             {
@@ -165,7 +165,7 @@ namespace BuzzardLib.Data
             DmsData = null;
             Edges = new Dictionary<char, TrieNode>();
         }
-        public classDMSData DmsData
+        public DMSData DmsData
         {
             get;
             set;

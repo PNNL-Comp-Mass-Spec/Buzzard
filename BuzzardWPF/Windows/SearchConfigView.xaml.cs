@@ -9,7 +9,7 @@ using System.Windows.Controls;
 using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
 using BuzzardLib.Searching;
-using LcmsNetDataClasses.Logging;
+using LcmsNetSDK.Logging;
 
 namespace BuzzardWPF.Windows
 {
@@ -152,7 +152,7 @@ namespace BuzzardWPF.Windows
             }
             catch (Exception ex)
             {
-                classApplicationLogger.LogError(0, "Could not open an Explorer window to that path.", ex);
+                ApplicationLogger.LogError(0, "Could not open an Explorer window to that path.", ex);
             }
         }
 

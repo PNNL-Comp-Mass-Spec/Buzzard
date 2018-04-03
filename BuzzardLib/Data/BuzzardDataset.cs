@@ -2,7 +2,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
-using LcmsNetDataClasses.Data;
+using LcmsNetSDK.Data;
 
 namespace BuzzardLib.Data
 {
@@ -52,7 +52,7 @@ namespace BuzzardLib.Data
         private double m_waitTimePercentage;
 
         private bool m_PulseText;
-        private ObservableCollection<classProposalUser> m_emslProposalUsers;
+        private ObservableCollection<ProposalUser> m_emslProposalUsers;
         private string m_interestRating;
 
         private bool m_CartConfigStatus;
@@ -72,7 +72,7 @@ namespace BuzzardLib.Data
             WaitTimePercentage = 0;
             SecondsTillTriggerCreation = -1;
             InterestRating = "Unreviewed";
-            EMSLProposalUsers = new ObservableCollection<classProposalUser>();
+            EMSLProposalUsers = new ObservableCollection<ProposalUser>();
 
             IsFile = true;
         }
@@ -121,7 +121,7 @@ namespace BuzzardLib.Data
 
         #region Datagrid Properties
 
-        public ObservableCollection<classProposalUser> EMSLProposalUsers
+        public ObservableCollection<ProposalUser> EMSLProposalUsers
         {
             get { return m_emslProposalUsers; }
             set

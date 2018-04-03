@@ -4,7 +4,7 @@ using System.Text;
 using BuzzardLib.Data;
 using BuzzardLib.IO;
 using BuzzardWPF.Windows.Dialogs;
-using LcmsNetDataClasses.Logging;
+using LcmsNetSDK.Logging;
 
 namespace BuzzardWPF.Management
 {
@@ -73,7 +73,7 @@ namespace BuzzardWPF.Management
 
                 if (skipOnConflict)
                 {
-                    classApplicationLogger.LogMessage(
+                    ApplicationLogger.LogMessage(
                         0,
                         string.Format("Skipping {0}", SourceDataPath));
                     return;
@@ -92,7 +92,7 @@ namespace BuzzardWPF.Management
             else
             {
                 // File or folder not found
-                classApplicationLogger.LogError(
+                ApplicationLogger.LogError(
                        0,
                        string.Format(
                            "The item must have been renamed since the search was performed.  Cannot find the selected item. {0}.  ",
@@ -111,7 +111,7 @@ namespace BuzzardWPF.Management
             Dataset.DatasetStatus = DatasetStatus.Pending;
             Dataset.TriggerCreationWarning = "Fixed name";
 
-            classApplicationLogger.LogMessage(
+            ApplicationLogger.LogMessage(
                 0,
                 string.Format("Renamed '{0}' to '{1}'", SourceDataPath, FixedDataPath));
         }
@@ -127,7 +127,7 @@ namespace BuzzardWPF.Management
 
             var hasArchivePrefix = fiFile.Name.StartsWith("x_", StringComparison.OrdinalIgnoreCase);
 
-            var datasetName = TriggerFileTools.GetDatasetNameFromFilePath(fiFile.Name);
+            var datasetName = BuzzardTriggerFileTools.GetDatasetNameFromFilePath(fiFile.Name);
 
             var fixedName = FixName(sourceDataPath, datasetName);
 
@@ -151,7 +151,7 @@ namespace BuzzardWPF.Management
             // If it is invalid, replace with an underscore
             foreach (var letter in datasetName)
             {
-                if (TriggerFileTools.NameHasInvalidCharacters(letter.ToString()))
+                if (BuzzardTriggerFileTools.NameHasInvalidCharacters(letter.ToString()))
                     fixedName.Append('_');
                 else
                 {
@@ -159,7 +159,7 @@ namespace BuzzardWPF.Management
                 }
             }
 
-            if (fixedName.Length < TriggerFileTools.MINIMUM_DATASET_NAME_LENGTH)
+            if (fixedName.Length < BuzzardTriggerFileTools.MINIMUM_DATASET_NAME_LENGTH)
             {
                 // Add a datestamp
                 var fiSourceFile = new FileInfo(sourceDataPath);
@@ -194,7 +194,7 @@ namespace BuzzardWPF.Management
             }
             catch (Exception ex)
             {
-                classApplicationLogger.LogError(
+                ApplicationLogger.LogError(
                     0,
                     string.Format("Could not rename '{0}' to '{1}'", SourceDataPath, FixedDataPath),
                     ex);
@@ -215,7 +215,7 @@ namespace BuzzardWPF.Management
             }
             catch (Exception ex)
             {
-                classApplicationLogger.LogError(
+                ApplicationLogger.LogError(
                     0,
                     string.Format("Could not rename '{0}' to '{1}'", SourceDataPath, FixedDataPath),
                     ex);

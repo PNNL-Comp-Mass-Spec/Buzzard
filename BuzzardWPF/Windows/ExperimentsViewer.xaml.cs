@@ -7,7 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using BuzzardWPF.Management;
-using LcmsNetDataClasses;
+using LcmsNetSDK.Data;
 
 namespace BuzzardWPF.Windows
 {
@@ -23,15 +23,15 @@ namespace BuzzardWPF.Windows
 
         #region Attributes
         private string m_filterText;
-        private classExperimentData m_selectedExperiment;
+        private ExperimentData m_selectedExperiment;
 
-        private List<classExperimentData> m_experimentList;
+        private List<ExperimentData> m_experimentList;
         private List<string> m_experimentNameList;
         private List<string> m_organismNameList;
         private List<string> m_researcherList;
         private List<string> m_reason;
 
-        private ObservableCollection<classExperimentData> m_experiments;
+        private ObservableCollection<ExperimentData> m_experiments;
         #endregion
 
         #region Initialization
@@ -63,19 +63,19 @@ namespace BuzzardWPF.Windows
 
             // Building lists that we can use to narrow down the
             // number of experiments to insert into the UI
-            var x = (from classExperimentData exp in m_experimentList
+            var x = (from ExperimentData exp in m_experimentList
                      select exp.Researcher.Trim()).Distinct(stringEqualityDeterminer);
             m_researcherList = new List<string>(x);
 
-            x = (from classExperimentData exp in m_experimentList
+            x = (from ExperimentData exp in m_experimentList
                  select exp.Organism.Trim()).Distinct(stringEqualityDeterminer);
             m_organismNameList = new List<string>(x);
 
-            x = (from classExperimentData exp in m_experimentList
+            x = (from ExperimentData exp in m_experimentList
                  select exp.Experiment.Trim()).Distinct(stringEqualityDeterminer);
             m_experimentNameList = new List<string>(x);
 
-            x = (from classExperimentData exp in m_experimentList
+            x = (from ExperimentData exp in m_experimentList
                  select exp.Reason).Distinct(stringEqualityDeterminer);
             m_reason = new List<string>(x);
 
@@ -113,7 +113,7 @@ namespace BuzzardWPF.Windows
         #endregion
 
         #region Properties
-        public classExperimentData SelectedExperiment
+        public ExperimentData SelectedExperiment
         {
             get { return m_selectedExperiment; }
             set
@@ -143,7 +143,7 @@ namespace BuzzardWPF.Windows
             }
         }
 
-        public ObservableCollection<classExperimentData> Experiments
+        public ObservableCollection<ExperimentData> Experiments
         {
             get { return m_experiments; }
             set
@@ -201,32 +201,32 @@ namespace BuzzardWPF.Windows
             Experiments = null;
             var filterOption = GetSelectedFilter();
 
-            IEnumerable<classExperimentData> x = null;
+            IEnumerable<ExperimentData> x = null;
 
             try
             {
                 switch (filterOption)
                 {
                     case FilterOption.Researcher:
-                        x = from classExperimentData exp in m_experimentList
+                        x = from ExperimentData exp in m_experimentList
                             where exp.Researcher.StartsWith(FilterText, StringComparison.OrdinalIgnoreCase)
                             select exp;
                         break;
 
                     case FilterOption.Experiment:
-                        x = from classExperimentData exp in m_experimentList
+                        x = from ExperimentData exp in m_experimentList
                             where exp.Experiment.StartsWith(FilterText, StringComparison.OrdinalIgnoreCase)
                             select exp;
                         break;
 
                     case FilterOption.Organism:
-                        x = from classExperimentData exp in m_experimentList
+                        x = from ExperimentData exp in m_experimentList
                             where exp.Organism.StartsWith(FilterText, StringComparison.OrdinalIgnoreCase)
                             select exp;
                         break;
 
                     case FilterOption.Reason:
-                        x = from classExperimentData exp in m_experimentList
+                        x = from ExperimentData exp in m_experimentList
                             where exp.Reason != null && exp.Reason.StartsWith(FilterText, StringComparison.OrdinalIgnoreCase)
                             select exp;
                         break;
@@ -238,7 +238,7 @@ namespace BuzzardWPF.Windows
                 if (x == null)
                     return;
 
-                var tempRef = new ObservableCollection<classExperimentData>(x);
+                var tempRef = new ObservableCollection<ExperimentData>(x);
                 Experiments = tempRef;
             }
             catch (Exception ex)
@@ -249,7 +249,6 @@ namespace BuzzardWPF.Windows
 
         }
         #endregion
-
 
         #region Methods
         /// <summary>

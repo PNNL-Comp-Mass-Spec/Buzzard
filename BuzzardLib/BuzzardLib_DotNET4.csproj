@@ -71,11 +71,10 @@
     <Compile Include="Data\DatasetStatus.cs" />
     <Compile Include="Data\DatasetTrie.cs" />
     <Compile Include="Data\DatasetTrieException.cs" />
-    <Compile Include="Data\DMSData.cs" />
     <Compile Include="Data\Enums.cs" />
     <Compile Include="Data\FilldownBuzzardDataset.cs" />
+    <Compile Include="IO\BuzzardTriggerFileTools.cs" />
     <Compile Include="IO\ManifestWriter.cs" />
-    <Compile Include="IO\TriggerFileTools.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Searching\ErrorEventArgs.cs" />
     <Compile Include="Searching\InstrumentFolderValidator.cs" />

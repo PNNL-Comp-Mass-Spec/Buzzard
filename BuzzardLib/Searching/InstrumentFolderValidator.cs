@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Management;
-using LcmsNetDataClasses;
-using LcmsNetDataClasses.Logging;
+using LcmsNetSDK.Data;
+using LcmsNetSDK.Logging;
 
 namespace BuzzardLib.Searching
 {
@@ -12,7 +12,7 @@ namespace BuzzardLib.Searching
     {
         #region "Member Variables"
 
-        private readonly Dictionary<string, classInstrumentInfo> mInstrumentInfo;
+        private readonly Dictionary<string, InstrumentInfo> mInstrumentInfo;
 
         #endregion
 
@@ -25,7 +25,7 @@ namespace BuzzardLib.Searching
         /// <summary>
         /// Constructor
         /// </summary>
-        public InstrumentFolderValidator(Dictionary<string, classInstrumentInfo> instrumentInfo)
+        public InstrumentFolderValidator(Dictionary<string, InstrumentInfo> instrumentInfo)
         {
             mInstrumentInfo = instrumentInfo;
             ErrorMessage = string.Empty;
@@ -223,7 +223,7 @@ namespace BuzzardLib.Searching
             }
             catch (Exception ex)
             {
-                classApplicationLogger.LogError(0, "Error looking up local shares", ex);
+                ApplicationLogger.LogError(0, "Error looking up local shares", ex);
             }
 
             return false;

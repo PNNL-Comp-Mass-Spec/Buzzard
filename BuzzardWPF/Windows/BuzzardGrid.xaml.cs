@@ -14,8 +14,8 @@ using System.Windows.Threading;
 using BuzzardLib.Data;
 using BuzzardLib.IO;
 using BuzzardWPF.Management;
-using LcmsNetDataClasses.Data;
-using LcmsNetDataClasses.Logging;
+using LcmsNetSDK.Data;
+using LcmsNetSDK.Logging;
 
 namespace BuzzardWPF.Windows
 {
@@ -393,31 +393,31 @@ namespace BuzzardWPF.Windows
                 // Check that the dataset has a path to get data from.
                 if (string.IsNullOrEmpty(dataset.FilePath))
                 {
-                    classApplicationLogger.LogError(
+                    ApplicationLogger.LogError(
                         0,
                         string.Format("Dataset {0} has no associated data.", dataset.DMSData.DatasetName));
 
                     continue;
                 }
 
-                var currentName = TriggerFileTools.GetDatasetNameFromFilePath(dataset.FilePath);
+                var currentName = BuzzardTriggerFileTools.GetDatasetNameFromFilePath(dataset.FilePath);
 
-                if (TriggerFileTools.NameHasInvalidCharacters(currentName) ||
-                    currentName.Length < TriggerFileTools.MINIMUM_DATASET_NAME_LENGTH ||
-                    currentName.Length > TriggerFileTools.MAXIMUM_DATASET_NAME_LENGTH)
+                if (BuzzardTriggerFileTools.NameHasInvalidCharacters(currentName) ||
+                    currentName.Length < BuzzardTriggerFileTools.MINIMUM_DATASET_NAME_LENGTH ||
+                    currentName.Length > BuzzardTriggerFileTools.MAXIMUM_DATASET_NAME_LENGTH)
                     datasetsToRename.Add(dataset);
             }
 
             // If there's nothing to process, then exit
             if (datasetsToRename.Count == 0)
             {
-                classApplicationLogger.LogMessage(
+                ApplicationLogger.LogMessage(
                     0,
                     "No datasets have invalid characters in their name or are too short; nothing to rename");
                 return;
             }
 
-            classApplicationLogger.LogMessage(
+            ApplicationLogger.LogMessage(
                 0,
                 "Starting dataset renames to remove invalid characters or lengthen dataset names");
 
@@ -468,7 +468,7 @@ namespace BuzzardWPF.Windows
             }
             else
             {
-                classApplicationLogger.LogMessage(
+                ApplicationLogger.LogMessage(
                     0,
                     "Finished renaming datasets to remove invalid characters");
             }
@@ -501,12 +501,12 @@ namespace BuzzardWPF.Windows
             // If nothing was selected, inform the user and get out
             if (selectedItems == null || selectedItems.Count == 0)
             {
-                classApplicationLogger.LogMessage(0, "No datasets were selected.");
+                ApplicationLogger.LogMessage(0, "No datasets were selected.");
                 return;
             }
 
             //
-            // Launch a viewer of the experimetns to get a
+            // Launch a viewer of the experiments to get a
             // data source for what we'll be applying the
             // the selected datasets.
             //
@@ -524,7 +524,7 @@ namespace BuzzardWPF.Windows
             // Make sure the user did selected a data source
             if (experiment == null)
             {
-                classApplicationLogger.LogMessage(0, "No experiment was selected.");
+                ApplicationLogger.LogMessage(0, "No experiment was selected.");
                 return;
             }
 
@@ -539,7 +539,7 @@ namespace BuzzardWPF.Windows
             //
             // Let the user know we are done.
             //
-            classApplicationLogger.LogMessage(0, "Finished applying experiment data to datasets.");
+            ApplicationLogger.LogMessage(0, "Finished applying experiment data to datasets.");
         }
 
         private void OpenFilldown_Click(object sender, RoutedEventArgs e)
@@ -638,7 +638,7 @@ namespace BuzzardWPF.Windows
 
                 if (filldownData.ShouldUseEMSLProposalUsers)
                     dataset.EMSLProposalUsers =
-                        new ObservableCollection<classProposalUser>(filldownData.EMSLProposalUsers);
+                        new ObservableCollection<ProposalUser>(filldownData.EMSLProposalUsers);
             }
         }
         #endregion
@@ -782,14 +782,14 @@ namespace BuzzardWPF.Windows
 
                 }
 
-                classApplicationLogger.LogMessage(
+                ApplicationLogger.LogMessage(
                     0,
                     "Finished executing create trigger files command.");
 
             }
             catch (Exception ex)
             {
-                classApplicationLogger.LogError(
+                ApplicationLogger.LogError(
                     0,
                     "Exception creating trigger files for the selected datasets", ex);
 
@@ -925,7 +925,7 @@ namespace BuzzardWPF.Windows
             var startTime = DateTime.UtcNow;
             var nextLogTime = startTime.AddSeconds(2);
             var baseMessage = "Verifying dataset files are unchanged for " + SECONDS_TO_WAIT + " seconds";
-            classApplicationLogger.LogMessage(0, baseMessage);
+            ApplicationLogger.LogMessage(0, baseMessage);
 
             while (DateTime.UtcNow.Subtract(startTime).TotalSeconds < SECONDS_TO_WAIT)
             {
@@ -934,7 +934,7 @@ namespace BuzzardWPF.Windows
                 if (mAbortTriggerCreationNow)
                 {
                     MarkAborted(selectedDatasets);
-                    classApplicationLogger.LogMessage(0, "Aborted verification of stable dataset files");
+                    ApplicationLogger.LogMessage(0, "Aborted verification of stable dataset files");
                     return stableDatasets;
                 }
 
@@ -942,7 +942,7 @@ namespace BuzzardWPF.Windows
                 {
                     nextLogTime = nextLogTime.AddSeconds(2);
                     var secondsRemaining = (int)(Math.Round(SECONDS_TO_WAIT - DateTime.UtcNow.Subtract(startTime).TotalSeconds));
-                    classApplicationLogger.LogMessage(0, baseMessage + "; " + secondsRemaining + " seconds remain");
+                    ApplicationLogger.LogMessage(0, baseMessage + "; " + secondsRemaining + " seconds remain");
                 }
             }
 

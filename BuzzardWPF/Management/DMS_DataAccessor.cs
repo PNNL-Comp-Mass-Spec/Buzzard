@@ -4,10 +4,9 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
-using LcmsNetDataClasses;
-using LcmsNetDataClasses.Data;
-using LcmsNetDataClasses.Logging;
 using LcmsNetDmsTools;
+using LcmsNetSDK.Data;
+using LcmsNetSDK.Logging;
 using LcmsNetSQLiteTools;
 
 namespace BuzzardWPF.Management
@@ -34,7 +33,7 @@ namespace BuzzardWPF.Management
         /// </summary>
         private DMS_DataAccessor()
         {
-            m_proposalUserCollections = new Dictionary<string, ObservableCollection<classProposalUser>>();
+            m_proposalUserCollections = new Dictionary<string, ObservableCollection<ProposalUser>>();
             LoadProposalUsers();
 
             InstrumentData = new ObservableCollection<string>();
@@ -46,7 +45,7 @@ namespace BuzzardWPF.Management
             CartConfigNames = new ObservableCollection<string>();
             ColumnData = new ObservableCollection<string>();
 
-            Experiments = new List<classExperimentData>();
+            Experiments = new List<ExperimentData>();
             Datasets = new SortedSet<string>(StringComparer.CurrentCultureIgnoreCase);
 
             mLastSQLiteUpdate = DateTime.UtcNow;
@@ -83,23 +82,23 @@ namespace BuzzardWPF.Management
             //
             // Load Instrument Data
             //
-            var tempInstrumentData = classSQLiteTools.GetInstrumentList(false);
+            var tempInstrumentData = SQLiteTools.GetInstrumentList(false);
             if (tempInstrumentData == null)
             {
-                classApplicationLogger.LogError(0, "Instrument list retrieval returned null.");
+                ApplicationLogger.LogError(0, "Instrument list retrieval returned null.");
                 InstrumentData = new ObservableCollection<string>();
             }
             else
             {
                 if (tempInstrumentData.Count == 0)
-                    classApplicationLogger.LogError(0, "No instruments found.");
+                    ApplicationLogger.LogError(0, "No instruments found.");
             }
 
             if (tempInstrumentData != null && tempInstrumentData.Count != 0)
             {
                 InstrumentData = new ObservableCollection<string>(tempInstrumentData.Select(instDatum => instDatum.DMSName));
 
-                var instrumentDetails = new Dictionary<string, classInstrumentInfo>();
+                var instrumentDetails = new Dictionary<string, InstrumentInfo>();
 
                 foreach (var instrument in tempInstrumentData)
                 {
@@ -115,54 +114,54 @@ namespace BuzzardWPF.Management
             //
             // Load Operator Data
             //
-            var tempUserList = classSQLiteTools.GetUserList(false);
+            var tempUserList = SQLiteTools.GetUserList(false);
             if (tempUserList == null)
-                classApplicationLogger.LogError(0, "User retrieval returned null.");
+                ApplicationLogger.LogError(0, "User retrieval returned null.");
             else
                 OperatorData = new ObservableCollection<string>(tempUserList.Select(userDatum => userDatum.UserName));
 
             //
             // Load Dataset Types
             //
-            var tempDatasetTypesList = classSQLiteTools.GetDatasetTypeList(false);
+            var tempDatasetTypesList = SQLiteTools.GetDatasetTypeList(false);
             if (tempDatasetTypesList == null)
-                classApplicationLogger.LogError(0, "Dataset Types retrieval returned null.");
+                ApplicationLogger.LogError(0, "Dataset Types retrieval returned null.");
             else
                 DatasetTypes = new ObservableCollection<string>(tempDatasetTypesList);
 
             //
             // Load Separation Types
             //
-            var tempSeparationTypesList = classSQLiteTools.GetSepTypeList(false);
+            var tempSeparationTypesList = SQLiteTools.GetSepTypeList(false);
             if (tempSeparationTypesList == null)
-                classApplicationLogger.LogError(0, "Separation types retrieval returned null.");
+                ApplicationLogger.LogError(0, "Separation types retrieval returned null.");
             else
                 SeparationTypes = new ObservableCollection<string>(tempSeparationTypesList);
 
             //
             // Load Cart Names
             //
-            var tempCartsList = classSQLiteTools.GetCartNameList();
+            var tempCartsList = SQLiteTools.GetCartNameList();
             if (tempCartsList == null)
-                classApplicationLogger.LogError(0, "LC Cart names list retrieval returned null.");
+                ApplicationLogger.LogError(0, "LC Cart names list retrieval returned null.");
             else
                 CartNames = new ObservableCollection<string>(tempCartsList);
 
             //
             // Load Cart Config Names
             //
-            var tempCartConfigNamesList = classSQLiteTools.GetCartConfigNameList(false);
+            var tempCartConfigNamesList = SQLiteTools.GetCartConfigNameList(false);
             if (tempCartConfigNamesList == null)
-                classApplicationLogger.LogError(0, "LC Cart config names list retrieval returned null.");
+                ApplicationLogger.LogError(0, "LC Cart config names list retrieval returned null.");
             else
                 CartConfigNames = new ObservableCollection<string>(tempCartConfigNamesList);
 
             //
             // Load column data
             //
-            var tempColumnData = classSQLiteTools.GetColumnList(false);
+            var tempColumnData = SQLiteTools.GetColumnList(false);
             if (tempColumnData == null)
-                classApplicationLogger.LogError(0, "Column data list retrieval returned null.");
+                ApplicationLogger.LogError(0, "Column data list retrieval returned null.");
             else
             {
                 ColumnData = new ObservableCollection<string>(tempColumnData);
@@ -171,18 +170,18 @@ namespace BuzzardWPF.Management
             //
             // Load Experiments
             //
-            var experimentList = classSQLiteTools.GetExperimentList();
+            var experimentList = SQLiteTools.GetExperimentList();
             if (experimentList == null)
-                classApplicationLogger.LogError(0, "Experiment list retrieval returned null.");
+                ApplicationLogger.LogError(0, "Experiment list retrieval returned null.");
             else
                 Experiments = experimentList;
 
             //
             // Load datasets
             //
-            var datasetList = classSQLiteTools.GetDatasetList();
+            var datasetList = SQLiteTools.GetDatasetList();
             if (datasetList == null)
-                classApplicationLogger.LogError(0, "Dataset list retrieval returned null.");
+                ApplicationLogger.LogError(0, "Dataset list retrieval returned null.");
             else
             {
                 var datasetSortedSet = new SortedSet<string>(StringComparer.CurrentCultureIgnoreCase);
@@ -284,7 +283,7 @@ namespace BuzzardWPF.Management
             }
             catch (Exception ex)
             {
-                classApplicationLogger.LogError(0, string.Format("Exception updating the cached DMS data (called from {0}): {1}", callingFunction, ex.Message));
+                ApplicationLogger.LogError(0, string.Format("Exception updating the cached DMS data (called from {0}): {1}", callingFunction, ex.Message));
             }
 
         }
@@ -333,7 +332,7 @@ namespace BuzzardWPF.Management
             try
             {
                 // Load active experiments (created/used in the last 18 months), daasets, instruments, etc.
-                var dbTools = new classDBTools
+                var dbTools = new DMSDBTools
                 {
                     LoadExperiments = true,
                     LoadDatasets = true,
@@ -347,7 +346,7 @@ namespace BuzzardWPF.Management
             }
             catch (Exception ex)
             {
-                classApplicationLogger.LogError(0, "Error updating the SQLite cache file", ex);
+                ApplicationLogger.LogError(0, "Error updating the SQLite cache file", ex);
                 return false;
             }
         }
@@ -368,9 +367,9 @@ namespace BuzzardWPF.Management
         /// This is necessary because some users are defined in EUS with the same name but different EUS user IDs
         /// </remarks>
         private void AddUserToProposalIdMap(
-            IDictionary<string, classUserIDPIDCrossReferenceEntry> proposalUserToIdMap,
+            IDictionary<string, UserIDPIDCrossReferenceEntry> proposalUserToIdMap,
             string userName,
-            classUserIDPIDCrossReferenceEntry user,
+            UserIDPIDCrossReferenceEntry user,
             int uniqueifier)
         {
             if (proposalUserToIdMap.ContainsKey(userName))
@@ -385,8 +384,8 @@ namespace BuzzardWPF.Management
         /// <param name="proposalUsers"></param>
         /// <param name="userIDtoNameMap"></param>
         /// <returns></returns>
-        private List<classUserIDPIDCrossReferenceEntry> GetSortedUsers(
-            List<classUserIDPIDCrossReferenceEntry> proposalUsers,
+        private List<UserIDPIDCrossReferenceEntry> GetSortedUsers(
+            List<UserIDPIDCrossReferenceEntry> proposalUsers,
             IDictionary<int, string> userIDtoNameMap)
         {
             if (proposalUsers.Count < 2)
@@ -394,7 +393,7 @@ namespace BuzzardWPF.Management
                 return proposalUsers;
             }
 
-            var proposalUserToIDMap = new Dictionary<string, classUserIDPIDCrossReferenceEntry>();
+            var proposalUserToIDMap = new Dictionary<string, UserIDPIDCrossReferenceEntry>();
             var uniqueifier = 0;
 
             foreach (var user in proposalUsers)
@@ -413,7 +412,7 @@ namespace BuzzardWPF.Management
                 }
                 catch (Exception ex)
                 {
-                    classApplicationLogger.LogError(
+                    ApplicationLogger.LogError(
                        0,
                        string.Format(
                            "Exception in GetSortedUsers; skipping user {0} for proposal {1}: {2}",
@@ -439,17 +438,17 @@ namespace BuzzardWPF.Management
             {
 
                 m_pidIndexedCrossReferenceList =
-                        new Dictionary<string, List<classUserIDPIDCrossReferenceEntry>>();
+                        new Dictionary<string, List<UserIDPIDCrossReferenceEntry>>();
 
-                List<classProposalUser> eusUsers;
+                List<ProposalUser> eusUsers;
 
                 // Keys in this dictionary are proposal numbers; values are the users for that proposal
-                Dictionary<string, List<classUserIDPIDCrossReferenceEntry>> proposalUserMapping;
+                Dictionary<string, List<UserIDPIDCrossReferenceEntry>> proposalUserMapping;
 
-                classSQLiteTools.GetProposalUsers(out eusUsers, out proposalUserMapping);
+                SQLiteTools.GetProposalUsers(out eusUsers, out proposalUserMapping);
 
                 if (eusUsers.Count == 0)
-                    classApplicationLogger.LogError(0, "No Proposal Users found");
+                    ApplicationLogger.LogError(0, "No Proposal Users found");
 
                 var userIDtoNameMap = new Dictionary<int, string>();
                 foreach (var user in eusUsers)
@@ -460,7 +459,7 @@ namespace BuzzardWPF.Management
                 foreach (var items in proposalUserMapping)
                 {
                     if (items.Value.Count == 0)
-                        classApplicationLogger.LogError(0, string.Format("EUS Proposal {0} has no users.", items.Key));
+                        ApplicationLogger.LogError(0, string.Format("EUS Proposal {0} has no users.", items.Key));
 
                     // Store the users for this proposal sorted by user last name
                     var sortedProposalUsers = GetSortedUsers(items.Value, userIDtoNameMap);
@@ -477,17 +476,17 @@ namespace BuzzardWPF.Management
             }
             catch (Exception ex)
             {
-                classApplicationLogger.LogError(0, "Exception in LoadProposalUsers: " + ex.Message);
+                ApplicationLogger.LogError(0, "Exception in LoadProposalUsers: " + ex.Message);
             }
         }
 
-        private List<classProposalUser> m_proposalUsers;
-        private Dictionary<string, List<classUserIDPIDCrossReferenceEntry>> m_pidIndexedCrossReferenceList;
+        private List<ProposalUser> m_proposalUsers;
+        private Dictionary<string, List<UserIDPIDCrossReferenceEntry>> m_pidIndexedCrossReferenceList;
 
         /// <summary>
         /// Gets an ObservableCollection of ProposalUsers that are involved with the given PID.
         /// </summary>
-        public ObservableCollection<classProposalUser> GetProposalUsers(string proposalID, bool returnAllWhenEmpty = false)
+        public ObservableCollection<ProposalUser> GetProposalUsers(string proposalID, bool returnAllWhenEmpty = false)
         {
             if (string.IsNullOrWhiteSpace(proposalID))
                 proposalID = string.Empty;
@@ -499,7 +498,7 @@ namespace BuzzardWPF.Management
                 return m_proposalUserCollections[proposalID];
             }
 
-            ObservableCollection<classProposalUser> newUserCollection;
+            ObservableCollection<ProposalUser> newUserCollection;
 
             // We weren't given a PID to filter out the results, so we are returning every user
             // (unless told otherwise).
@@ -508,11 +507,11 @@ namespace BuzzardWPF.Management
                 if (returnAllWhenEmpty)
                 {
                     var query = (from item in m_proposalUsers orderby item.UserName select item);
-                    newUserCollection = new ObservableCollection<classProposalUser>(query);
+                    newUserCollection = new ObservableCollection<ProposalUser>(query);
                 }
                 else
                 {
-                    return new ObservableCollection<classProposalUser>();
+                    return new ObservableCollection<ProposalUser>();
                 }
             }
             else if (m_pidIndexedCrossReferenceList.ContainsKey(proposalID))
@@ -525,30 +524,30 @@ namespace BuzzardWPF.Management
                 // is going wrong in the code.
                 if (crossReferenceList.Count == 0)
                 {
-                    classApplicationLogger.LogError(
+                    ApplicationLogger.LogError(
                         0,
                         string.Format(
                             "Requested Proposal ID '{0}' has no users. Returning empty collection of Proposal Users.",
                             proposalID));
 
-                    newUserCollection = new ObservableCollection<classProposalUser>();
+                    newUserCollection = new ObservableCollection<ProposalUser>();
                 }
                 else
                 {
                     // The dictionary has already grouped the cross references by PID, so we just need
                     // to get the UIDs that are in that group.
-                    var uIDs = from classUserIDPIDCrossReferenceEntry xRef in crossReferenceList
+                    var uIDs = from UserIDPIDCrossReferenceEntry xRef in crossReferenceList
                                select xRef.UserID;
                     var hashedUIDs = new HashSet<int>(uIDs);
 
                     // Get the users based on the given UIDs.
-                    var singleProposalUsers = from classProposalUser user in m_proposalUsers
+                    var singleProposalUsers = from ProposalUser user in m_proposalUsers
                                               where hashedUIDs.Contains(user.UserID)
                                               orderby user.UserName
                                               select user;
 
                     // Create the user collection and set it for future use.
-                    newUserCollection = new ObservableCollection<classProposalUser>(singleProposalUsers);
+                    newUserCollection = new ObservableCollection<ProposalUser>(singleProposalUsers);
                 }
             }
             // The given PID wasn't in our cross reference list, log the error
@@ -556,21 +555,21 @@ namespace BuzzardWPF.Management
             // this into the dictionary of user collections.
             else
             {
-                classApplicationLogger.LogMessage(
+                ApplicationLogger.LogMessage(
                     0,
                     string.Format(
                         "Requested Proposal ID '{0}' was not found. Returning empty collection of Proposal Users.",
                         proposalID));
 
                 // Return the collection before we can insert it into the dictionary.
-                return new ObservableCollection<classProposalUser>();
+                return new ObservableCollection<ProposalUser>();
             }
 
             m_proposalUserCollections.Add(proposalID, newUserCollection);
 
             return m_proposalUserCollections[proposalID];
         }
-        private readonly Dictionary<string, ObservableCollection<classProposalUser>> m_proposalUserCollections;
+        private readonly Dictionary<string, ObservableCollection<ProposalUser>> m_proposalUserCollections;
 
         /// <summary>
         /// Proposal IDs
@@ -587,10 +586,10 @@ namespace BuzzardWPF.Management
         /// <param name="proposalID"></param>
         /// <param name="keys"></param>
         /// <returns>Observable collection of matched users</returns>
-        public ObservableCollection<classProposalUser> FindSavedEMSLProposalUsers(string proposalID, List<string> keys)
+        public ObservableCollection<ProposalUser> FindSavedEMSLProposalUsers(string proposalID, List<string> keys)
         {
             if (string.IsNullOrWhiteSpace(proposalID) || keys == null || keys.Count == 0)
-                return new ObservableCollection<classProposalUser>();
+                return new ObservableCollection<ProposalUser>();
 
             // We won't return this collection because this collection is supposed to be
             // inmutable and the items this method was designed for will be altering their
@@ -598,13 +597,13 @@ namespace BuzzardWPF.Management
             var allOfProposal_sUsers = GetProposalUsers(proposalID);
 
             if (allOfProposal_sUsers == null || allOfProposal_sUsers.Count == 0)
-                return new ObservableCollection<classProposalUser>();
+                return new ObservableCollection<ProposalUser>();
 
-            var selectedUsers = from classProposalUser u in allOfProposal_sUsers
+            var selectedUsers = from ProposalUser u in allOfProposal_sUsers
                                 where keys.Contains(u.UserID.ToString())
                                 select u;
 
-            var result = new ObservableCollection<classProposalUser>(selectedUsers);
+            var result = new ObservableCollection<ProposalUser>(selectedUsers);
             return result;
         }
 
@@ -666,7 +665,7 @@ namespace BuzzardWPF.Management
         /// Instrument details (Name, status, source hostname, source share name, capture method
         /// </summary>
         /// <remarks>Key is instrument name, value is the details</remarks>
-        public Dictionary<string, classInstrumentInfo> InstrumentDetails { get; private set; }
+        public Dictionary<string, InstrumentInfo> InstrumentDetails { get; private set; }
 
         /// <summary>
         /// This is a list of the names of the cart Operators.
@@ -781,7 +780,7 @@ namespace BuzzardWPF.Management
         /// filter it down a bit first before inserting it into an
         /// ObservableCollection for binding.
         /// </remarks>
-        public List<classExperimentData> Experiments
+        public List<ExperimentData> Experiments
         {
             get { return m_experiments; }
             set
@@ -793,7 +792,7 @@ namespace BuzzardWPF.Management
                 }
             }
         }
-        private List<classExperimentData> m_experiments;
+        private List<ExperimentData> m_experiments;
 
         #endregion
 

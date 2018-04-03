@@ -4,8 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using BuzzardLib.IO;
-using LcmsNetDataClasses;
-using LcmsNetDataClasses.Logging;
+using LcmsNetSDK.Data;
+using LcmsNetSDK.Logging;
 
 namespace BuzzardLib.Searching
 {
@@ -65,7 +65,7 @@ namespace BuzzardLib.Searching
         /// </summary>
         private volatile bool m_keepSearching;
 
-        private readonly Dictionary<string, classInstrumentInfo> mInstrumentInfo;
+        private readonly Dictionary<string, InstrumentInfo> mInstrumentInfo;
 
         #endregion
 
@@ -74,7 +74,7 @@ namespace BuzzardLib.Searching
         /// <summary>
         ///  Constructor
         /// </summary>
-        public FileSearchBuzzardier(Dictionary<string, classInstrumentInfo> instrumentInfo)
+        public FileSearchBuzzardier(Dictionary<string, InstrumentInfo> instrumentInfo)
         {
             mInstrumentInfo = instrumentInfo;
         }
@@ -277,7 +277,7 @@ namespace BuzzardLib.Searching
                                 datasetSizeKB = (datasetFile.Length / 1024.0);
                                 creationDate = datasetFile.CreationTime;
                                 lastWriteDate = datasetFile.LastAccessTime;
-                                parentFolderPath = TriggerFileTools.GetCaptureSubfolderPath(diBaseFolder,
+                                parentFolderPath = BuzzardTriggerFileTools.GetCaptureSubfolderPath(diBaseFolder,
                                                                                                 datasetFile);
                             }
                             else
@@ -288,7 +288,7 @@ namespace BuzzardLib.Searching
                                         .Sum(file => file.Length / 1024.0);
                                 creationDate = datasetFolder.CreationTime;
                                 lastWriteDate = datasetFolder.LastAccessTime;
-                                parentFolderPath = TriggerFileTools.GetCaptureSubfolderPath(diBaseFolder,
+                                parentFolderPath = BuzzardTriggerFileTools.GetCaptureSubfolderPath(diBaseFolder,
                                                                                                 datasetFolder);
                             }
 
@@ -335,9 +335,9 @@ namespace BuzzardLib.Searching
         private void ReportError(string errorMessage, Exception ex = null)
         {
             if (ex == null)
-                classApplicationLogger.LogError(0, errorMessage);
+                ApplicationLogger.LogError(0, errorMessage);
             else
-                classApplicationLogger.LogError(0, errorMessage, ex);
+                ApplicationLogger.LogError(0, errorMessage, ex);
 
             ErrorEvent?.Invoke(this, new ErrorEventArgs(errorMessage));
         }

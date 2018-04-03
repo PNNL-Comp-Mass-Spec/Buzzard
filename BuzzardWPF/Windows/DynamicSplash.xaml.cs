@@ -5,7 +5,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using LcmsNetDataClasses.Logging;
+using LcmsNetSDK.Logging;
 
 namespace BuzzardWPF.Windows
 {
@@ -51,9 +51,9 @@ namespace BuzzardWPF.Windows
             m_backgroundWorker.DoWork += BackgroundWorker_DoWork;
             m_backgroundWorker.RunWorkerCompleted += BackgroundWorker_RunWorkerCompleted;
 
-            classApplicationLogger.Message += ApplicationLogger_ItemLogged;
-            classApplicationLogger.Error += ApplicationLogger_ItemLogged;
-            classFileLogging.LogFilePathDefined += ApplicationLogger_LogFilePathDefined;
+            ApplicationLogger.Message += ApplicationLogger_ItemLogged;
+            ApplicationLogger.Error += ApplicationLogger_ItemLogged;
+            FileLogging.LogFilePathDefined += ApplicationLogger_LogFilePathDefined;
 
             var assem = Assembly.GetEntryAssembly();
             var assemName = assem.GetName();
@@ -67,8 +67,8 @@ namespace BuzzardWPF.Windows
         /// </summary>
         ~DynamicSplash()
         {
-            classApplicationLogger.Message -= ApplicationLogger_ItemLogged;
-            classApplicationLogger.Error -= ApplicationLogger_ItemLogged;
+            ApplicationLogger.Message -= ApplicationLogger_ItemLogged;
+            ApplicationLogger.Error -= ApplicationLogger_ItemLogged;
 
             m_backgroundWorker.DoWork -= BackgroundWorker_DoWork;
             m_backgroundWorker.RunWorkerCompleted -= BackgroundWorker_RunWorkerCompleted;
@@ -149,12 +149,12 @@ namespace BuzzardWPF.Windows
         #endregion
 
         #region Event Handlers
-        void ApplicationLogger_ItemLogged(int messageLevel, classMessageLoggerArgs args)
+        void ApplicationLogger_ItemLogged(int messageLevel, MessageLoggerArgs args)
         {
             LastLoggedItem = args.Message;
         }
 
-        void ApplicationLogger_LogFilePathDefined(classMessageLoggerArgs args)
+        void ApplicationLogger_LogFilePathDefined(MessageLoggerArgs args)
         {
             LogFilePath = "Log file: " + args.Message;
         }
@@ -176,7 +176,7 @@ namespace BuzzardWPF.Windows
                 }
                 catch (Exception ex)
                 {
-                    classApplicationLogger.LogError(0, "Buzzard quit unexpectedly. " + ex.Message, ex);
+                    ApplicationLogger.LogError(0, "Buzzard quit unexpectedly. " + ex.Message, ex);
                 }
             }
 

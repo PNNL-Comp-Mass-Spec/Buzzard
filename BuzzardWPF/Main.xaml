@@ -17,7 +17,8 @@
     SnapsToDevicePixels="True"
     UseLayoutRounding="True"
     WindowStartupLocation="CenterScreen"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    Closed="Main_OnClosed">
 
     <!--  Resources  -->
     <Window.Resources>
