@@ -5,9 +5,8 @@
     xmlns:converters="clr-namespace:BuzzardLib.Converters;assembly=BuzzardLib"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:my="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Input.Toolkit"
     xmlns:windows="clr-namespace:BuzzardWPF.Windows"
-    xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+    xmlns:buzzardWpf="clr-namespace:BuzzardWPF"
     Title="Buzzard"
     Width="1200"
     Height="800"
@@ -18,6 +17,7 @@
     UseLayoutRounding="True"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance {x:Type buzzardWpf:Main}, IsDesignTimeCreatable=True}"
     Closed="Main_OnClosed">
 
     <!--  Resources  -->
@@ -135,7 +135,7 @@
                     <ImageBrush
                         AlignmentX="Left"
                         AlignmentY="Bottom"
-                        ImageSource="{Binding Path=Buzzard, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, FallbackValue={StaticResource Buzzard}}"
+                        ImageSource="{StaticResource Buzzard}"
                         Stretch="None" />
 
                 </TabControl.Background>
@@ -145,7 +145,7 @@
                             <Image
                                 Margin="5"
                                 DockPanel.Dock="Left"
-                                Source="{Binding Path=Monitor, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, FallbackValue={StaticResource SearchKey}}"
+                                Source="{StaticResource SearchKey}"
                                 Stretch="None" />
                             <Label VerticalContentAlignment="Center" FontFamily="Arial">Search</Label>
                         </DockPanel>
@@ -165,7 +165,7 @@
                             <Image
                                 Margin="5"
                                 DockPanel.Dock="Left"
-                                Source="{Binding Path=Monitor, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, FallbackValue={StaticResource Collect}}"
+                                Source="{StaticResource Collect}"
                                 Stretch="None" />
                             <Label VerticalContentAlignment="Center" FontFamily="Arial">Monitor</Label>
                         </DockPanel>
@@ -198,7 +198,7 @@
                             <Image
                                 Margin="5"
                                 DockPanel.Dock="Left"
-                                Source="{Binding Path=Monitor, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, FallbackValue={StaticResource Tools}}"
+                                Source="{StaticResource Tools}"
                                 Stretch="None" />
                             <Label VerticalContentAlignment="Center" FontFamily="Arial">Configure</Label>
                         </DockPanel>

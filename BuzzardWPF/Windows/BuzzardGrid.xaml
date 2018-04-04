@@ -12,7 +12,8 @@
     d:DesignHeight="267"
     d:DesignWidth="749.4"
     Background="{x:Null}"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance {x:Type windows:BuzzardGrid}, IsDesignTimeCreatable=True}">
     <UserControl.Resources>
         <converters:BooleanToDataGridVisibilityModeConverter x:Key="boolConverter" />
         <converters:ByteToKBConverter x:Key="FileSizeConverter" />

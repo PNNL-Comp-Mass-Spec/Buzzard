@@ -13,7 +13,8 @@
     MinHeight="200"
     d:DesignHeight="200"
     d:DesignWidth="800"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance {x:Type windows:SearchConfigView}, IsDesignTimeCreatable=True}">
     <Grid Margin="0,0,0,0.2">
         <Grid.RowDefinitions>
             <RowDefinition Height="40" />
@@ -234,7 +235,7 @@
                     Height="25"
                     Margin="5"
                     DockPanel.Dock="Left"
-                    Source="{Binding Path=Monitor, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, FallbackValue={StaticResource SearchGreen}}" />
+                    Source="{StaticResource SearchGreen}" />
             </DockPanel>
         </Button>
 

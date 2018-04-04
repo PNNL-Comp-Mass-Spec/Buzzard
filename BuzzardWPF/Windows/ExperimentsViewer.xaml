@@ -5,10 +5,12 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:tk="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Input.Toolkit"
+    xmlns:windows="clr-namespace:BuzzardWPF.Windows"
     d:DesignHeight="300"
     d:DesignWidth="800"
     Background="{x:Null}"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance {x:Type windows:ExperimentsViewer}, IsDesignTimeCreatable=True}">
     <UserControl.Resources>
         <Style TargetType="DataGridCell">
             <Style.Triggers>

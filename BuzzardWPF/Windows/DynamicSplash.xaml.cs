@@ -34,19 +34,6 @@ namespace BuzzardWPF.Windows
             InitializeComponent();
             DataContext = this;
 
-            //
-            // Bind logo_2017 to the image on the splash screen
-            //
-            var ms = new MemoryStream();
-            Properties.Resources.logo_2017.Save(ms, ImageFormat.Png);
-            ms.Position = 0;
-            var bi = new BitmapImage();
-            bi.BeginInit();
-            bi.StreamSource = ms;
-            bi.EndInit();
-
-            LogoImageSource = bi;
-
             m_backgroundWorker = new BackgroundWorker();
             m_backgroundWorker.DoWork += BackgroundWorker_DoWork;
             m_backgroundWorker.RunWorkerCompleted += BackgroundWorker_RunWorkerCompleted;
@@ -104,20 +91,6 @@ namespace BuzzardWPF.Windows
             }
         }
         private string m_logFilePath;
-
-        public BitmapImage LogoImageSource
-        {
-            get { return m_logoImageSource; }
-            set
-            {
-                if (!Equals(m_logoImageSource, value))
-                {
-                    m_logoImageSource = value;
-                    OnPropertyChanged("LogoImageSource");
-                }
-            }
-        }
-        private BitmapImage m_logoImageSource;
 
         public string Version
         {

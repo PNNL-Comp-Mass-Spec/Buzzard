@@ -2,7 +2,10 @@
     x:Class="BuzzardWPF.Windows.Dialogs.FilldownWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+    xmlns:dialogs="clr-namespace:BuzzardWPF.Windows.Dialogs"
     Title="Dataset Filldown"
     Width="475"
     Height="648.179"
@@ -15,7 +18,9 @@
     Topmost="True"
     UseLayoutRounding="True"
     WindowStartupLocation="CenterScreen"
-    WindowStyle="ToolWindow">
+    WindowStyle="ToolWindow"
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance {x:Type dialogs:FilldownWindow}, IsDesignTimeCreatable=True}">
     <Window.Resources>
         <Style x:Key="ButtonStyle" TargetType="ButtonBase">
             <Setter Property="MinHeight" Value="28" />
@@ -23,7 +28,7 @@
             <Setter Property="Margin" Value="2" />
         </Style>
 
-        <Style BasedOn="{StaticResource ButtonStyle}" TargetType="ToggleButton">
+        <Style x:Key="ToggleButtonStyle" BasedOn="{StaticResource ButtonStyle}" TargetType="ToggleButton">
             <Setter Property="Content" Value="Use" />
             <Setter Property="Background" Value="White" />
             <Setter Property="Foreground" Value="LightGray" />

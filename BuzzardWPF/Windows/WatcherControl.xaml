@@ -15,7 +15,8 @@
     d:DesignHeight="200"
     d:DesignWidth="800"
     Background="{x:Null}"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance {x:Type windows:WatcherControl}, IsDesignTimeCreatable=True}">
     <UserControl.Resources>
         <converters:BoolToObjectConverter
             x:Key="MonitorButtonContentConverter"
@@ -81,7 +82,7 @@
             FontSize="16"
             IsEnabled="{Binding Path=IsNotMonitoring}"
             Populating="AutoFillDirectorySelector_Populating"
-            Text="{Binding Path=DirectoryToWatch, Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, UpdateSourceTrigger=PropertyChanged}" />
+            Text="{Binding Path=DirectoryToWatch, Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type windows:WatcherControl}}, UpdateSourceTrigger=PropertyChanged}" />
 
         <Button
             x:Name="m_dialogButton"
@@ -114,7 +115,7 @@
             VerticalContentAlignment="Center"
             IsEnabled="{Binding Path=IsNotMonitoring}"
             ItemsSource="{Binding Source={StaticResource SearchTypeSource}}"
-            SelectedItem="{Binding Path=WatchDepth, Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, UpdateSourceTrigger=PropertyChanged}" />
+            SelectedItem="{Binding Path=WatchDepth, Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type windows:WatcherControl}}, UpdateSourceTrigger=PropertyChanged}" />
 
         <Button
             x:Name="m_ResetToDefaults"
@@ -147,7 +148,7 @@
             VerticalContentAlignment="Center"
             FontSize="15"
             IsEnabled="{Binding Path=IsNotMonitoring}"
-            Text="{Binding Path=Extension, Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, UpdateSourceTrigger=PropertyChanged}" />
+            Text="{Binding Path=Extension, Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type windows:WatcherControl}}, UpdateSourceTrigger=PropertyChanged}" />
 
         <CheckBox
             Grid.Row="2"
@@ -181,7 +182,7 @@
             IsEnabled="{Binding Path=IsNotMonitoring}"
             Maximum="2000000"
             Minimum="5"
-            Value="{Binding Path=MinimumFileSize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
+            Value="{Binding Path=MinimumFileSizeKB, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType={x:Type windows:WatcherControl}}}" />
 
         <Button
             x:Name="m_monitor"
@@ -209,7 +210,7 @@
                     Height="25"
                     Margin="5"
                     DockPanel.Dock="Left"
-                    Source="{Binding Path=Monitor, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, FallbackValue={StaticResource Monitor}}" />
+                    Source="{StaticResource Monitor}" />
             </DockPanel>
         </Button>
 
@@ -235,7 +236,7 @@
             IsEnabled="{Binding Path=IsNotMonitoring}"
             Maximum="600"
             Minimum="1"
-            Value="{Binding Path=WaitTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
+            Value="{Binding Path=WaitTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType={x:Type windows:WatcherControl}}}" />
 
         <CheckBox
             Grid.Row="4"
