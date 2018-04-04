@@ -1,10 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{F15FF76F-39B6-46DE-A7B8-2633AC36DC6E}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -14,28 +13,7 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <OldToolsVersion>3.5</OldToolsVersion>
-    <UpgradeBackupLocation />
-    <TargetFrameworkProfile />
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>BuzzardWPF.App</StartupObject>
@@ -49,28 +27,36 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\DotNET4\Debug\</OutputPath>
     <BaseIntermediateOutputPath>obj\DotNET4</BaseIntermediateOutputPath>
-    <DefineConstants>TRACE;DEBUG;DotNET4</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;DotNET4</DefineConstants>
+    <Optimize>false</Optimize>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+    <WarningLevel>4</WarningLevel>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>Resources\IconImage.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="LcmsNetDmsTools">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\DotNET4\LcmsNetDmsTools.dll</HintPath>
     </Reference>
     <Reference Include="LcmsNetSdk">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\DotNET4\LcmsNetSdk.dll</HintPath>
     </Reference>
     <Reference Include="LcmsNetSQLiteTools">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\DotNET4\LcmsNetSQLiteTools.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -247,99 +233,46 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <None Include="app.config">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </None>
     <AppDesigner Include="Properties\" />
+    <None Include="app_DotNET4.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-      <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
+  <PropertyGroup>
+    <AppConfig>app_DotNET4.config</AppConfig>
+  </PropertyGroup>
   <ItemGroup>
     <Resource Include="Resources\buzzards.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\buzzards1.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\buzzards2.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\buzzards3.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\buzzards4.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\buzzards5.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\buzzard.jpg" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\logo.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\IconImage.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\amphitheater-32.png" />
     <Resource Include="Resources\search-3-32.png" />
     <Resource Include="Resources\trash-32.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\amphitheater-32-green.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\tool-box-32.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\trigger.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\filldown.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\movedataset.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\experiments.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\buzzardsz.png" />
     <Resource Include="Resources\buzzardsz1.png" />
     <Resource Include="Resources\buzzardsz2.png" />
     <Resource Include="Resources\buzzardsz3.png" />
     <Resource Include="Resources\buzzardsz4.png" />
     <Resource Include="Resources\buzzardsz5.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\abort-32.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\logo_2017.png" />
+    <Resource Include="Resources\logo_2017.png" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Extended.Wpf.Toolkit">
@@ -365,18 +298,8 @@
   <PropertyGroup>
     <PostBuildEvent>xcopy "$(ProjectDir)\Resources\PrismDMS.config" "$(TargetDir)\" /Y /D /F
 
-xcopy "$(ProjectDir)\..\BuzzardLib\app_DotNET4.config" "$(TargetDir)\BuzzardLib.dll.config" /Y /F
-xcopy "$(ProjectDir)\app_DotNET4.config" "$(TargetDir)\BuzzardWPF.exe.config" /Y /F
-
 rem Remove the Extended WPF Toolkit AvalonDock dlls and folders - using powershell for flexibility
 powershell.exe -NonInteractive -Command "&amp; { cd \"$(TargetDir)\\" ; ForEach ($file in (Get-ChildItem *.AvalonDock.* -Recurse)) { $dirName = $file.DirectoryName ; Remove-Item $file.FullName ; If ((Measure-Object -InputObject (Get-ChildItem $dirName\*)).Count -eq 0) { Remove-Item $dirName -Recurse }}}"
 </PostBuildEvent>
   </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>
