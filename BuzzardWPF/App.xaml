@@ -2,6 +2,7 @@
              DispatcherUnhandledException="Application_DispatcherUnhandledException"
              ShutdownMode="OnMainWindowClose"
              Startup="Application_Startup"
+             Exit="Application_Exit"
              x:Class="BuzzardWPF.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
     <Application.Resources>

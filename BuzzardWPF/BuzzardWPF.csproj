@@ -90,6 +90,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="DynamicSplashScreenWindow.xaml.cs">
+      <DependentUpon>DynamicSplashScreenWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Management\CartConfigFilter.cs" />
     <Compile Include="Management\DatasetFactory.cs" />
     <Compile Include="Management\DatasetManager.cs" />
@@ -109,9 +112,6 @@
     </Compile>
     <Compile Include="Windows\DMSConfigView.xaml.cs">
       <DependentUpon>DMSConfigView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Windows\DynamicSplash.xaml.cs">
-      <DependentUpon>DynamicSplash.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\EMSL_UsageSelectionView.xaml.cs">
       <DependentUpon>EMSL_UsageSelectionView.xaml</DependentUpon>
@@ -142,6 +142,10 @@
     <Compile Include="Windows\WatcherControl.xaml.cs">
       <DependentUpon>WatcherControl.xaml</DependentUpon>
     </Compile>
+    <Page Include="DynamicSplashScreenWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Windows\BuzzardDatasetDetail.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -169,10 +173,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\DMSConfigView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Windows\DynamicSplash.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

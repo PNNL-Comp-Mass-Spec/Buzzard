@@ -244,7 +244,7 @@ namespace BuzzardWPF
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
-        public static bool InitializeApplication()
+        public static bool InitializeApplication(Action<string> instrumentNameAction = null)
         {
             var openMainWindow = false;
 
@@ -274,10 +274,9 @@ namespace BuzzardWPF
             LoadSettings();
 
             var instName = LCMSSettings.GetParameter("InstName");
-            var app = System.Windows.Application.Current as App;
-            if (app != null && instName != null)
+            if (instName != null)
             {
-                app.DynamicSplashScreen.InstrumentName = instName;
+                instrumentNameAction?.Invoke(instName);
             }
 
             // Set the logging levels (0 is most important; 5 is least important)
