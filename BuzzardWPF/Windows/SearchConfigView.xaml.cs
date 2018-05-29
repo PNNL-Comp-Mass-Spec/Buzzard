@@ -10,6 +10,7 @@ using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
 using BuzzardLib.Searching;
 using LcmsNetSDK.Logging;
+using ReactiveUI;
 
 namespace BuzzardWPF.Windows
 {
@@ -54,7 +55,7 @@ namespace BuzzardWPF.Windows
             mConfig = new SearchConfig();
 
             // Combo box for the search types.
-            var options = new ObservableCollection<SearchOption>
+            var options = new ReactiveList<SearchOption>
             {
                 SearchOption.AllDirectories,
                 SearchOption.TopDirectoryOnly

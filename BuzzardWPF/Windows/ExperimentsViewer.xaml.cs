@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Threading;
 using BuzzardWPF.Management;
 using LcmsNetSDK.Data;
+using ReactiveUI;
 
 namespace BuzzardWPF.Windows
 {
@@ -31,7 +32,7 @@ namespace BuzzardWPF.Windows
         private List<string> m_researcherList;
         private List<string> m_reason;
 
-        private ObservableCollection<ExperimentData> m_experiments;
+        private ReactiveList<ExperimentData> m_experiments;
         #endregion
 
         #region Initialization
@@ -143,7 +144,7 @@ namespace BuzzardWPF.Windows
             }
         }
 
-        public ObservableCollection<ExperimentData> Experiments
+        public ReactiveList<ExperimentData> Experiments
         {
             get { return m_experiments; }
             set
@@ -238,7 +239,7 @@ namespace BuzzardWPF.Windows
                 if (x == null)
                     return;
 
-                var tempRef = new ObservableCollection<ExperimentData>(x);
+                var tempRef = new ReactiveList<ExperimentData>(x);
                 Experiments = tempRef;
             }
             catch (Exception ex)

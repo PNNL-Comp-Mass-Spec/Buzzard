@@ -10,6 +10,7 @@ using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
 using LcmsNetSDK.Data;
 using LcmsNetSDK.Logging;
+using ReactiveUI;
 
 namespace BuzzardWPF.Windows
 {
@@ -48,14 +49,14 @@ namespace BuzzardWPF.Windows
             DMS_DataAccessor.Instance.PropertyChanged += DMSDataManager_PropertyChanged;
 
             EMSLProposalID = null;
-            SelectedEMSLProposalUsers = new ObservableCollection<ProposalUser>();
+            SelectedEMSLProposalUsers = new ReactiveList<ProposalUser>();
             SelectedEMSLUsageType = null;
 
             m_IsNotMonitoring = true;
 
             EMSL_DataSelector.BoundContainer = this;
 
-            CartConfigNameListSource = new ObservableCollection<string>();
+            CartConfigNameListSource = new ReactiveList<string>();
         }
 
         void DMSDataManager_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -123,7 +124,7 @@ namespace BuzzardWPF.Windows
             }
         }
 
-        public ObservableCollection<string> LCColumnSource => DMS_DataAccessor.Instance.ColumnData;
+        public ReactiveList<string> LCColumnSource => DMS_DataAccessor.Instance.ColumnData;
 
         public string ExperimentName
         {
@@ -243,21 +244,21 @@ namespace BuzzardWPF.Windows
             }
         }
 
-        public ObservableCollection<string> OperatorsSource => DMS_DataAccessor.Instance.OperatorData;
+        public ReactiveList<string> OperatorsSource => DMS_DataAccessor.Instance.OperatorData;
 
-        public ObservableCollection<string> InstrumentsSource => DMS_DataAccessor.Instance.InstrumentData;
+        public ReactiveList<string> InstrumentsSource => DMS_DataAccessor.Instance.InstrumentData;
 
-        public ObservableCollection<string> DatasetTypesSource => DMS_DataAccessor.Instance.DatasetTypes;
+        public ReactiveList<string> DatasetTypesSource => DMS_DataAccessor.Instance.DatasetTypes;
 
-        public ObservableCollection<string> SeparationTypeSource => DMS_DataAccessor.Instance.SeparationTypes;
+        public ReactiveList<string> SeparationTypeSource => DMS_DataAccessor.Instance.SeparationTypes;
 
-        public ObservableCollection<string> CartNameListSource => DMS_DataAccessor.Instance.CartNames;
+        public ReactiveList<string> CartNameListSource => DMS_DataAccessor.Instance.CartNames;
 
         /// <summary>
         /// List of cart config names associated with the current cart
         /// </summary>
         /// <remarks>Updated via the SelectedCartName setter</remarks>
-        public ObservableCollection<string> CartConfigNameListSource { get; }
+        public ReactiveList<string> CartConfigNameListSource { get; }
 
         public bool IsNotMonitoring
         {
@@ -398,7 +399,7 @@ namespace BuzzardWPF.Windows
         /// A setting can become invalid when it's removed as an option from the
         /// database.
         /// </remarks>
-        private string CheckSetting(string setting, ObservableCollection<string> options, string errorIntro)
+        private string CheckSetting(string setting, ReactiveList<string> options, string errorIntro)
         {
             var s = " was not found when restoring settings for the File Watcher Configuration.";
 
@@ -479,7 +480,7 @@ namespace BuzzardWPF.Windows
         }
         private string m_emslProposalID;
 
-        public ObservableCollection<ProposalUser> SelectedEMSLProposalUsers
+        public ReactiveList<ProposalUser> SelectedEMSLProposalUsers
         {
             get => m_selectedEMSLProposalUsers;
             set
@@ -494,7 +495,7 @@ namespace BuzzardWPF.Windows
                 DatasetManager.Manager.Watcher_SelectedProposalUsers = value;
             }
         }
-        private ObservableCollection<ProposalUser> m_selectedEMSLProposalUsers;
+        private ReactiveList<ProposalUser> m_selectedEMSLProposalUsers;
 
         #endregion
 

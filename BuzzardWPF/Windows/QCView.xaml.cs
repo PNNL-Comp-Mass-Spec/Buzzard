@@ -9,6 +9,7 @@ using BuzzardLib.Searching;
 using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
 using LcmsNetSDK.Data;
+using ReactiveUI;
 
 namespace BuzzardWPF.Windows
 {
@@ -33,7 +34,7 @@ namespace BuzzardWPF.Windows
             SelectedEMSLUsageType = EMSL_UsageSelectors.UsageTypesSource[1];
             EMSLProposalID = null;
             ExperimentName = null;
-            SelectedEMSLProposalUsers = new ObservableCollection<ProposalUser>();
+            SelectedEMSLProposalUsers = new ReactiveList<ProposalUser>();
 
             m_IsNotMonitoring = true;
         }
@@ -104,7 +105,7 @@ namespace BuzzardWPF.Windows
         }
         private bool m_createOnDMSFail;
 
-        public ObservableCollection<ProposalUser> SelectedEMSLProposalUsers
+        public ReactiveList<ProposalUser> SelectedEMSLProposalUsers
         {
             get => m_selectedEMSLProposalUsers;
             set
@@ -120,7 +121,7 @@ namespace BuzzardWPF.Windows
                 DatasetManager.Manager.QC_SelectedProposalUsers = value;
             }
         }
-        private ObservableCollection<ProposalUser> m_selectedEMSLProposalUsers;
+        private ReactiveList<ProposalUser> m_selectedEMSLProposalUsers;
 
         public bool IsNotMonitoring
         {

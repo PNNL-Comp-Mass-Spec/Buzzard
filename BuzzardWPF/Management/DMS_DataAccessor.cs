@@ -8,6 +8,7 @@ using LcmsNetDmsTools;
 using LcmsNetSDK.Data;
 using LcmsNetSDK.Logging;
 using LcmsNetSQLiteTools;
+using ReactiveUI;
 
 namespace BuzzardWPF.Management
 {
@@ -33,17 +34,17 @@ namespace BuzzardWPF.Management
         /// </summary>
         private DMS_DataAccessor()
         {
-            m_proposalUserCollections = new Dictionary<string, ObservableCollection<ProposalUser>>();
+            m_proposalUserCollections = new Dictionary<string, ReactiveList<ProposalUser>>();
             LoadProposalUsers();
 
-            InstrumentData = new ObservableCollection<string>();
-            OperatorData = new ObservableCollection<string>();
-            DatasetTypes = new ObservableCollection<string>();
-            SeparationTypes = new ObservableCollection<string>();
+            InstrumentData = new ReactiveList<string>();
+            OperatorData = new ReactiveList<string>();
+            DatasetTypes = new ReactiveList<string>();
+            SeparationTypes = new ReactiveList<string>();
 
-            CartNames = new ObservableCollection<string>();
-            CartConfigNames = new ObservableCollection<string>();
-            ColumnData = new ObservableCollection<string>();
+            CartNames = new ReactiveList<string>();
+            CartConfigNames = new ReactiveList<string>();
+            ColumnData = new ReactiveList<string>();
 
             Experiments = new List<ExperimentData>();
             Datasets = new SortedSet<string>(StringComparer.CurrentCultureIgnoreCase);
@@ -86,7 +87,7 @@ namespace BuzzardWPF.Management
             if (tempInstrumentData == null)
             {
                 ApplicationLogger.LogError(0, "Instrument list retrieval returned null.");
-                InstrumentData = new ObservableCollection<string>();
+                InstrumentData = new ReactiveList<string>();
             }
             else
             {
@@ -96,7 +97,7 @@ namespace BuzzardWPF.Management
 
             if (tempInstrumentData != null && tempInstrumentData.Count != 0)
             {
-                InstrumentData = new ObservableCollection<string>(tempInstrumentData.Select(instDatum => instDatum.DMSName));
+                InstrumentData = new ReactiveList<string>(tempInstrumentData.Select(instDatum => instDatum.DMSName));
 
                 var instrumentDetails = new Dictionary<string, InstrumentInfo>();
 
@@ -118,7 +119,7 @@ namespace BuzzardWPF.Management
             if (tempUserList == null)
                 ApplicationLogger.LogError(0, "User retrieval returned null.");
             else
-                OperatorData = new ObservableCollection<string>(tempUserList.Select(userDatum => userDatum.UserName));
+                OperatorData = new ReactiveList<string>(tempUserList.Select(userDatum => userDatum.UserName));
 
             //
             // Load Dataset Types
@@ -127,7 +128,7 @@ namespace BuzzardWPF.Management
             if (tempDatasetTypesList == null)
                 ApplicationLogger.LogError(0, "Dataset Types retrieval returned null.");
             else
-                DatasetTypes = new ObservableCollection<string>(tempDatasetTypesList);
+                DatasetTypes = new ReactiveList<string>(tempDatasetTypesList);
 
             //
             // Load Separation Types
@@ -136,7 +137,7 @@ namespace BuzzardWPF.Management
             if (tempSeparationTypesList == null)
                 ApplicationLogger.LogError(0, "Separation types retrieval returned null.");
             else
-                SeparationTypes = new ObservableCollection<string>(tempSeparationTypesList);
+                SeparationTypes = new ReactiveList<string>(tempSeparationTypesList);
 
             //
             // Load Cart Names
@@ -145,7 +146,7 @@ namespace BuzzardWPF.Management
             if (tempCartsList == null)
                 ApplicationLogger.LogError(0, "LC Cart names list retrieval returned null.");
             else
-                CartNames = new ObservableCollection<string>(tempCartsList);
+                CartNames = new ReactiveList<string>(tempCartsList);
 
             //
             // Load Cart Config Names
@@ -154,7 +155,7 @@ namespace BuzzardWPF.Management
             if (tempCartConfigNamesList == null)
                 ApplicationLogger.LogError(0, "LC Cart config names list retrieval returned null.");
             else
-                CartConfigNames = new ObservableCollection<string>(tempCartConfigNamesList);
+                CartConfigNames = new ReactiveList<string>(tempCartConfigNamesList);
 
             //
             // Load column data
@@ -164,7 +165,7 @@ namespace BuzzardWPF.Management
                 ApplicationLogger.LogError(0, "Column data list retrieval returned null.");
             else
             {
-                ColumnData = new ObservableCollection<string>(tempColumnData);
+                ColumnData = new ReactiveList<string>(tempColumnData);
             }
 
             //
@@ -471,7 +472,7 @@ namespace BuzzardWPF.Management
 
                 m_proposalUsers = eusUsers;
 
-                ProposalIDs = new ObservableCollection<string>(m_pidIndexedCrossReferenceList.Keys);
+                ProposalIDs = new ReactiveList<string>(m_pidIndexedCrossReferenceList.Keys);
 
             }
             catch (Exception ex)
@@ -484,9 +485,9 @@ namespace BuzzardWPF.Management
         private Dictionary<string, List<UserIDPIDCrossReferenceEntry>> m_pidIndexedCrossReferenceList;
 
         /// <summary>
-        /// Gets an ObservableCollection of ProposalUsers that are involved with the given PID.
+        /// Gets an ReactiveList of ProposalUsers that are involved with the given PID.
         /// </summary>
-        public ObservableCollection<ProposalUser> GetProposalUsers(string proposalID, bool returnAllWhenEmpty = false)
+        public ReactiveList<ProposalUser> GetProposalUsers(string proposalID, bool returnAllWhenEmpty = false)
         {
             if (string.IsNullOrWhiteSpace(proposalID))
                 proposalID = string.Empty;
@@ -498,7 +499,7 @@ namespace BuzzardWPF.Management
                 return m_proposalUserCollections[proposalID];
             }
 
-            ObservableCollection<ProposalUser> newUserCollection;
+            ReactiveList<ProposalUser> newUserCollection;
 
             // We weren't given a PID to filter out the results, so we are returning every user
             // (unless told otherwise).
@@ -507,11 +508,11 @@ namespace BuzzardWPF.Management
                 if (returnAllWhenEmpty)
                 {
                     var query = (from item in m_proposalUsers orderby item.UserName select item);
-                    newUserCollection = new ObservableCollection<ProposalUser>(query);
+                    newUserCollection = new ReactiveList<ProposalUser>(query);
                 }
                 else
                 {
-                    return new ObservableCollection<ProposalUser>();
+                    return new ReactiveList<ProposalUser>();
                 }
             }
             else if (m_pidIndexedCrossReferenceList.ContainsKey(proposalID))
@@ -530,7 +531,7 @@ namespace BuzzardWPF.Management
                             "Requested Proposal ID '{0}' has no users. Returning empty collection of Proposal Users.",
                             proposalID));
 
-                    newUserCollection = new ObservableCollection<ProposalUser>();
+                    newUserCollection = new ReactiveList<ProposalUser>();
                 }
                 else
                 {
@@ -547,7 +548,7 @@ namespace BuzzardWPF.Management
                                               select user;
 
                     // Create the user collection and set it for future use.
-                    newUserCollection = new ObservableCollection<ProposalUser>(singleProposalUsers);
+                    newUserCollection = new ReactiveList<ProposalUser>(singleProposalUsers);
                 }
             }
             // The given PID wasn't in our cross reference list, log the error
@@ -562,19 +563,19 @@ namespace BuzzardWPF.Management
                         proposalID));
 
                 // Return the collection before we can insert it into the dictionary.
-                return new ObservableCollection<ProposalUser>();
+                return new ReactiveList<ProposalUser>();
             }
 
             m_proposalUserCollections.Add(proposalID, newUserCollection);
 
             return m_proposalUserCollections[proposalID];
         }
-        private readonly Dictionary<string, ObservableCollection<ProposalUser>> m_proposalUserCollections;
+        private readonly Dictionary<string, ReactiveList<ProposalUser>> m_proposalUserCollections;
 
         /// <summary>
         /// Proposal IDs
         /// </summary>
-        public ObservableCollection<string> ProposalIDs
+        public ReactiveList<string> ProposalIDs
         {
             get;
             private set;
@@ -586,10 +587,10 @@ namespace BuzzardWPF.Management
         /// <param name="proposalID"></param>
         /// <param name="keys"></param>
         /// <returns>Observable collection of matched users</returns>
-        public ObservableCollection<ProposalUser> FindSavedEMSLProposalUsers(string proposalID, List<string> keys)
+        public ReactiveList<ProposalUser> FindSavedEMSLProposalUsers(string proposalID, List<string> keys)
         {
             if (string.IsNullOrWhiteSpace(proposalID) || keys == null || keys.Count == 0)
-                return new ObservableCollection<ProposalUser>();
+                return new ReactiveList<ProposalUser>();
 
             // We won't return this collection because this collection is supposed to be
             // inmutable and the items this method was designed for will be altering their
@@ -597,13 +598,13 @@ namespace BuzzardWPF.Management
             var allOfProposal_sUsers = GetProposalUsers(proposalID);
 
             if (allOfProposal_sUsers == null || allOfProposal_sUsers.Count == 0)
-                return new ObservableCollection<ProposalUser>();
+                return new ReactiveList<ProposalUser>();
 
             var selectedUsers = from ProposalUser u in allOfProposal_sUsers
                                 where keys.Contains(u.UserID.ToString())
                                 select u;
 
-            var result = new ObservableCollection<ProposalUser>(selectedUsers);
+            var result = new ReactiveList<ProposalUser>(selectedUsers);
             return result;
         }
 
@@ -630,7 +631,7 @@ namespace BuzzardWPF.Management
         /// <summary>
         /// List of DMS LC column names
         /// </summary>
-        public ObservableCollection<string> ColumnData
+        public ReactiveList<string> ColumnData
         {
             get { return m_ColumnData; }
             private set
@@ -642,12 +643,12 @@ namespace BuzzardWPF.Management
                 }
             }
         }
-        private ObservableCollection<string> m_ColumnData;
+        private ReactiveList<string> m_ColumnData;
 
         /// <summary>
         /// List of the DMS instrument names
         /// </summary>
-        public ObservableCollection<string> InstrumentData
+        public ReactiveList<string> InstrumentData
         {
             get { return m_instrumentData; }
             private set
@@ -659,7 +660,7 @@ namespace BuzzardWPF.Management
                 }
             }
         }
-        private ObservableCollection<string> m_instrumentData;
+        private ReactiveList<string> m_instrumentData;
 
         /// <summary>
         /// Instrument details (Name, status, source hostname, source share name, capture method
@@ -670,7 +671,7 @@ namespace BuzzardWPF.Management
         /// <summary>
         /// This is a list of the names of the cart Operators.
         /// </summary>
-        public ObservableCollection<string> OperatorData
+        public ReactiveList<string> OperatorData
         {
             get { return m_operatorData; }
             private set
@@ -682,12 +683,12 @@ namespace BuzzardWPF.Management
                 }
             }
         }
-        private ObservableCollection<string> m_operatorData;
+        private ReactiveList<string> m_operatorData;
 
         /// <summary>
         /// Dataset types
         /// </summary>
-        public ObservableCollection<string> DatasetTypes
+        public ReactiveList<string> DatasetTypes
         {
             get { return m_datasetTypes; }
             private set
@@ -699,12 +700,12 @@ namespace BuzzardWPF.Management
                 }
             }
         }
-        private ObservableCollection<string> m_datasetTypes;
+        private ReactiveList<string> m_datasetTypes;
 
         /// <summary>
         /// Separation types
         /// </summary>
-        public ObservableCollection<string> SeparationTypes
+        public ReactiveList<string> SeparationTypes
         {
             get { return m_separationTypes; }
             private set
@@ -716,12 +717,12 @@ namespace BuzzardWPF.Management
                 }
             }
         }
-        private ObservableCollection<string> m_separationTypes;
+        private ReactiveList<string> m_separationTypes;
 
         /// <summary>
         /// Cart names
         /// </summary>
-        public ObservableCollection<string> CartNames
+        public ReactiveList<string> CartNames
         {
             get { return m_cartNames; }
             private set
@@ -733,12 +734,12 @@ namespace BuzzardWPF.Management
                 }
             }
         }
-        private ObservableCollection<string> m_cartNames;
+        private ReactiveList<string> m_cartNames;
 
         /// <summary>
         /// Cart config names
         /// </summary>
-        public ObservableCollection<string> CartConfigNames
+        public ReactiveList<string> CartConfigNames
         {
             get { return m_cartConfigNames; }
             private set
@@ -750,7 +751,7 @@ namespace BuzzardWPF.Management
                 }
             }
         }
-        private ObservableCollection<string> m_cartConfigNames;
+        private ReactiveList<string> m_cartConfigNames;
 
         /// <summary>
         /// List of DMS dataset names
@@ -775,10 +776,10 @@ namespace BuzzardWPF.Management
         /// </summary>
         /// <remarks>
         /// This isn't meant to be bound to directly, which is why it's a
-        /// list and not an ObservableCollection. Due to the large number
+        /// list and not an ReactiveList. Due to the large number
         /// of items this tends to hold, I would advise people to try to
         /// filter it down a bit first before inserting it into an
-        /// ObservableCollection for binding.
+        /// ReactiveList for binding.
         /// </remarks>
         public List<ExperimentData> Experiments
         {

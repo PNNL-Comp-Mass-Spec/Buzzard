@@ -6,6 +6,7 @@ using System.Windows.Data;
 using BuzzardWPF.Management;
 using LcmsNetSDK.Data;
 using LcmsNetSDK.Logging;
+using ReactiveUI;
 
 namespace BuzzardWPF.Windows
 {
@@ -41,7 +42,7 @@ namespace BuzzardWPF.Windows
             InitializeComponent();
             DataContext = this;
 
-            UsageTypesSource = new ObservableCollection<string>(EMSL_USAGE_TYPES);
+            UsageTypesSource = new ReactiveList<string>(EMSL_USAGE_TYPES);
             AvailablePIDs = DMS_DataAccessor.Instance.ProposalIDs;
 
         }
@@ -87,7 +88,7 @@ namespace BuzzardWPF.Windows
         }
         private IEmslUsvUser m_boundContainer;
 
-        public ObservableCollection<string> UsageTypesSource
+        public ReactiveList<string> UsageTypesSource
         {
             get { return m_usageTypesSource; }
             set
@@ -99,9 +100,9 @@ namespace BuzzardWPF.Windows
                 }
             }
         }
-        private ObservableCollection<string> m_usageTypesSource;
+        private ReactiveList<string> m_usageTypesSource;
 
-        public ObservableCollection<string> AvailablePIDs
+        public ReactiveList<string> AvailablePIDs
         {
             get { return m_availablePIDs; }
             set
@@ -113,9 +114,9 @@ namespace BuzzardWPF.Windows
                 }
             }
         }
-        private ObservableCollection<string> m_availablePIDs;
+        private ReactiveList<string> m_availablePIDs;
 
-        public ObservableCollection<ProposalUser> ProposalUsers
+        public ReactiveList<ProposalUser> ProposalUsers
         {
             get { return m_ProposalUsers; }
             set
@@ -127,7 +128,7 @@ namespace BuzzardWPF.Windows
                 }
             }
         }
-        private ObservableCollection<ProposalUser> m_ProposalUsers;
+        private ReactiveList<ProposalUser> m_ProposalUsers;
 
         #endregion
 

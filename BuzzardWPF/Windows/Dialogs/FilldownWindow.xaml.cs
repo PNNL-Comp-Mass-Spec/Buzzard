@@ -6,6 +6,7 @@ using BuzzardLib.Data;
 using BuzzardWPF.Management;
 using LcmsNetSDK.Data;
 using LcmsNetSDK.Logging;
+using ReactiveUI;
 
 namespace BuzzardWPF.Windows.Dialogs
 {
@@ -22,13 +23,13 @@ namespace BuzzardWPF.Windows.Dialogs
         #region Attributes
         private FilldownBuzzardDataset m_dataset;
 
-        private ObservableCollection<string> m_operatorsSource;
-        private ObservableCollection<string> m_instrumentsSource;
-        private ObservableCollection<string> m_datasetTypesSource;
-        private ObservableCollection<string> m_separationTypeSource;
-        private ObservableCollection<string> m_cartNameListSource;
-        private ObservableCollection<string> m_emslUsageTypeSource;
-        private ObservableCollection<string> m_lcColumnSource;
+        private ReactiveList<string> m_operatorsSource;
+        private ReactiveList<string> m_instrumentsSource;
+        private ReactiveList<string> m_datasetTypesSource;
+        private ReactiveList<string> m_separationTypeSource;
+        private ReactiveList<string> m_cartNameListSource;
+        private ReactiveList<string> m_emslUsageTypeSource;
+        private ReactiveList<string> m_lcColumnSource;
         #endregion
 
         public FilldownWindow()
@@ -36,24 +37,24 @@ namespace BuzzardWPF.Windows.Dialogs
             InitializeComponent();
             DataContext = this;
 
-            OperatorsSource = new ObservableCollection<string>();
-            InstrumentSource = new ObservableCollection<string>();
-            DatasetTypesSource = new ObservableCollection<string>();
-            SeparationTypeSource = new ObservableCollection<string>();
+            OperatorsSource = new ReactiveList<string>();
+            InstrumentSource = new ReactiveList<string>();
+            DatasetTypesSource = new ReactiveList<string>();
+            SeparationTypeSource = new ReactiveList<string>();
 
-            CartNameListSource = new ObservableCollection<string>();
-            CartConfigNameListSource = new ObservableCollection<string>();
+            CartNameListSource = new ReactiveList<string>();
+            CartConfigNameListSource = new ReactiveList<string>();
 
-            EmslUsageTypeSource = new ObservableCollection<string>();
+            EmslUsageTypeSource = new ReactiveList<string>();
             InterestRatingSource = DatasetManager.INTEREST_RATINGS_COLLECTION;
             EMSLProposalIDs = DMS_DataAccessor.Instance.ProposalIDs;
 
-            EMSLProposalUsersSource = new ObservableCollection<ProposalUser>();
+            EMSLProposalUsersSource = new ReactiveList<ProposalUser>();
             Dataset = new FilldownBuzzardDataset();
         }
 
         #region Properties
-        public ObservableCollection<string> EMSLProposalIDs
+        public ReactiveList<string> EMSLProposalIDs
         {
             get { return m_emslProposalIDs; }
             set
@@ -65,9 +66,9 @@ namespace BuzzardWPF.Windows.Dialogs
                 }
             }
         }
-        private ObservableCollection<string> m_emslProposalIDs;
+        private ReactiveList<string> m_emslProposalIDs;
 
-        public ObservableCollection<string> LCColumnSource
+        public ReactiveList<string> LCColumnSource
         {
             get { return m_lcColumnSource; }
             set
@@ -126,7 +127,7 @@ namespace BuzzardWPF.Windows.Dialogs
         }
         private DMSData m_datasetDMS;
 
-        public ObservableCollection<string> OperatorsSource
+        public ReactiveList<string> OperatorsSource
         {
             get { return m_operatorsSource; }
             set
@@ -139,7 +140,7 @@ namespace BuzzardWPF.Windows.Dialogs
             }
         }
 
-        public ObservableCollection<string> InstrumentSource
+        public ReactiveList<string> InstrumentSource
         {
             get { return m_instrumentsSource; }
             set
@@ -152,7 +153,7 @@ namespace BuzzardWPF.Windows.Dialogs
             }
         }
 
-        public ObservableCollection<string> DatasetTypesSource
+        public ReactiveList<string> DatasetTypesSource
         {
             get { return m_datasetTypesSource; }
             set
@@ -165,7 +166,7 @@ namespace BuzzardWPF.Windows.Dialogs
             }
         }
 
-        public ObservableCollection<string> SeparationTypeSource
+        public ReactiveList<string> SeparationTypeSource
         {
             get { return m_separationTypeSource; }
             set
@@ -178,7 +179,7 @@ namespace BuzzardWPF.Windows.Dialogs
             }
         }
 
-        public ObservableCollection<string> CartNameListSource
+        public ReactiveList<string> CartNameListSource
         {
             get { return m_cartNameListSource; }
             set
@@ -195,9 +196,9 @@ namespace BuzzardWPF.Windows.Dialogs
         /// List of cart config names associated with the current cart
         /// </summary>
         /// <remarks>Updated via CartNameList_OnSelectionChanged</remarks>
-        public ObservableCollection<string> CartConfigNameListSource { get; }
+        public ReactiveList<string> CartConfigNameListSource { get; }
 
-        public ObservableCollection<string> EmslUsageTypeSource
+        public ReactiveList<string> EmslUsageTypeSource
         {
             get { return m_emslUsageTypeSource; }
             set
@@ -210,7 +211,7 @@ namespace BuzzardWPF.Windows.Dialogs
             }
         }
 
-        public ObservableCollection<string> InterestRatingSource
+        public ReactiveList<string> InterestRatingSource
         {
             get { return m_interestRatingSource; }
             set
@@ -222,9 +223,9 @@ namespace BuzzardWPF.Windows.Dialogs
                 }
             }
         }
-        private ObservableCollection<string> m_interestRatingSource;
+        private ReactiveList<string> m_interestRatingSource;
 
-        public ObservableCollection<ProposalUser> EMSLProposalUsersSource
+        public ReactiveList<ProposalUser> EMSLProposalUsersSource
         {
             get { return m_EMSLProposalUsersSource; }
             set
@@ -236,7 +237,7 @@ namespace BuzzardWPF.Windows.Dialogs
                 }
             }
         }
-        private ObservableCollection<ProposalUser> m_EMSLProposalUsersSource;
+        private ReactiveList<ProposalUser> m_EMSLProposalUsersSource;
         #endregion
 
         #region Event Handlers

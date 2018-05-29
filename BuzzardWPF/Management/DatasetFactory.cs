@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using BuzzardLib.Data;
 using BuzzardLib.IO;
+using ReactiveUI;
 
 namespace BuzzardWPF.Management
 {
@@ -11,9 +12,9 @@ namespace BuzzardWPF.Management
     public class DatasetFactory
     {
         [Obsolete("Unused")]
-        public static ObservableCollection<BuzzardDataset> LoadDatasetData(string path)
+        public static ReactiveList<BuzzardDataset> LoadDatasetData(string path)
         {
-            var datasets = new ObservableCollection<BuzzardDataset>();
+            var datasets = new ReactiveList<BuzzardDataset>();
             return datasets;
         }
 

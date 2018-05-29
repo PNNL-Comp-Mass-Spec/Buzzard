@@ -16,6 +16,7 @@ using BuzzardLib.IO;
 using BuzzardWPF.Management;
 using LcmsNetSDK.Data;
 using LcmsNetSDK.Logging;
+using ReactiveUI;
 
 namespace BuzzardWPF.Windows
 {
@@ -34,8 +35,8 @@ namespace BuzzardWPF.Windows
         private Dialogs.FilldownWindow m_filldownWindow;
         private readonly FilldownBuzzardDataset m_fillDownDataset;
 
-        private ObservableCollection<BuzzardDataset> m_datasets;
-        private ObservableCollection<string> m_emslUseageTypesSource;
+        private ReactiveList<BuzzardDataset> m_datasets;
+        private ReactiveList<string> m_emslUseageTypesSource;
 
         private bool m_showGridItemDetail;
         private bool mAbortTriggerCreationNow;
@@ -49,7 +50,7 @@ namespace BuzzardWPF.Windows
 
             DataContext = this;
 
-            EmslUsageTypesSource = new ObservableCollection<string>();
+            EmslUsageTypesSource = new ReactiveList<string>();
 
             ShowGridItemDetail = false;
 
@@ -73,7 +74,7 @@ namespace BuzzardWPF.Windows
                 }
             };
 
-            CartConfigNameListSource = new ObservableCollection<string>();
+            CartConfigNameListSource = new ReactiveList<string>();
 
             DMS_DataAccessor.Instance.PropertyChanged += DMSDataManager_PropertyChanged;
 
@@ -160,25 +161,25 @@ namespace BuzzardWPF.Windows
 
         #region Properties
 
-        public ObservableCollection<string> OperatorsSource => DMS_DataAccessor.Instance.OperatorData;
+        public ReactiveList<string> OperatorsSource => DMS_DataAccessor.Instance.OperatorData;
 
-        public ObservableCollection<string> LCColumnSource => DMS_DataAccessor.Instance.ColumnData;
+        public ReactiveList<string> LCColumnSource => DMS_DataAccessor.Instance.ColumnData;
 
-        public ObservableCollection<string> InstrumentsSource => DMS_DataAccessor.Instance.InstrumentData;
+        public ReactiveList<string> InstrumentsSource => DMS_DataAccessor.Instance.InstrumentData;
 
-        public ObservableCollection<string> DatasetTypesSource => DMS_DataAccessor.Instance.DatasetTypes;
+        public ReactiveList<string> DatasetTypesSource => DMS_DataAccessor.Instance.DatasetTypes;
 
-        public ObservableCollection<string> SeparationTypeSource => DMS_DataAccessor.Instance.SeparationTypes;
+        public ReactiveList<string> SeparationTypeSource => DMS_DataAccessor.Instance.SeparationTypes;
 
-        public ObservableCollection<string> CartNameListSource => DMS_DataAccessor.Instance.CartNames;
+        public ReactiveList<string> CartNameListSource => DMS_DataAccessor.Instance.CartNames;
 
         /// <summary>
         /// List of cart config names associated with the current cart
         /// </summary>
         /// <remarks>Updated via Manager_PropertyChanged</remarks>
-        public ObservableCollection<string> CartConfigNameListSource { get; }
+        public ReactiveList<string> CartConfigNameListSource { get; }
 
-        public ObservableCollection<string> EmslUsageTypesSource
+        public ReactiveList<string> EmslUsageTypesSource
         {
             get { return m_emslUseageTypesSource; }
             set
@@ -191,7 +192,7 @@ namespace BuzzardWPF.Windows
             }
         }
 
-        public ObservableCollection<BuzzardDataset> Datasets
+        public ReactiveList<BuzzardDataset> Datasets
         {
             get { return m_datasets; }
             set
@@ -638,7 +639,7 @@ namespace BuzzardWPF.Windows
 
                 if (filldownData.ShouldUseEMSLProposalUsers)
                     dataset.EMSLProposalUsers =
-                        new ObservableCollection<ProposalUser>(filldownData.EMSLProposalUsers);
+                        new ReactiveList<ProposalUser>(filldownData.EMSLProposalUsers);
             }
         }
         #endregion

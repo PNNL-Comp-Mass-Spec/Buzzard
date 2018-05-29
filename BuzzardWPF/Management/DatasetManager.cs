@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-#if !DotNET4
-using System.Runtime.CompilerServices;
-#endif
 using System.Threading;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Threading;
 using BuzzardLib.Data;
 using BuzzardLib.IO;
@@ -16,13 +13,14 @@ using LcmsNetDmsTools;
 using LcmsNetSDK;
 using LcmsNetSDK.Data;
 using LcmsNetSDK.Logging;
+using ReactiveUI;
 
 namespace BuzzardWPF.Management
 {
     /// <summary>
     /// Manages a list of datasets
     /// </summary>
-    public class DatasetManager : INotifyPropertyChangedExt
+    public class DatasetManager : ReactiveObject
     {
         public const string PREVIEW_TRIGGERFILE_FLAG = "Nonexistent_Fake_TriggerFile.xmL";
         public const string EXPERIMENT_NAME_DESCRIPTION = "Experiment";
@@ -33,20 +31,6 @@ namespace BuzzardWPF.Management
         /// Fired when datasets are loaded.
         /// </summary>
         public event EventHandler DatasetsLoaded;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-#if DotNET4
-        public virtual void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-#else
-        public virtual void OnPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-#endif
 
         #endregion
 
@@ -77,7 +61,9 @@ namespace BuzzardWPF.Management
         private DispatcherTimer mScannedDatasetTimer;
 
         private static readonly string[] INTEREST_RATING_ARRAY = { "Unreviewed", "Not Released", "Released", "Rerun (Good Data)", "Rerun (Superseded)" };
-        public static readonly ObservableCollection<string> INTEREST_RATINGS_COLLECTION;
+        public static readonly ReactiveList<string> INTEREST_RATINGS_COLLECTION;
+
+        private readonly object lockDatasets = new object();
 
         #endregion
 
@@ -88,7 +74,7 @@ namespace BuzzardWPF.Management
         {
             mRequestedRunTrie = new DatasetTrie();
             mDatasetsReady = false;
-            Datasets = new ObservableCollection<BuzzardDataset>();
+            Datasets = new ReactiveList<BuzzardDataset>();
 
             WatcherConfigSelectedCartName = null;
             WatcherConfigSelectedCartConfigName = null;
@@ -100,12 +86,13 @@ namespace BuzzardWPF.Management
             TriggerFileCreationWaitTime = 5;
             MinimumFileSizeKB = 100;
 
+            BindingOperations.EnableCollectionSynchronization(Datasets, lockDatasets);
         }
 
         static DatasetManager()
         {
             Manager = new DatasetManager();
-            INTEREST_RATINGS_COLLECTION = new ObservableCollection<string>(INTEREST_RATING_ARRAY);
+            INTEREST_RATINGS_COLLECTION = new ReactiveList<string>(INTEREST_RATING_ARRAY);
         }
 
         #region Loading Data
@@ -484,7 +471,7 @@ namespace BuzzardWPF.Management
         /// <summary>
         /// Instrument data files / folders that are candidate datasets
         /// </summary>
-        public ObservableCollection<BuzzardDataset> Datasets
+        public ReactiveList<BuzzardDataset> Datasets
         {
             get;
         }
@@ -536,7 +523,6 @@ namespace BuzzardWPF.Management
         {
             try
             {
-
                 // Find the datasets that have source data found by the
                 // file watcher.
                 var query = (from BuzzardDataset ds in Datasets
@@ -788,14 +774,7 @@ namespace BuzzardWPF.Management
         /// </remarks>
         public string WatcherConfigSelectedCartName {
             get { return m_WatcherConfigSelectedCartName; }
-            set
-            {
-#if DotNET4
-                this.RaiseAndSetIfChanged(ref m_WatcherConfigSelectedCartName, value, nameof(WatcherConfigSelectedCartName));
-#else
-                this.RaiseAndSetIfChanged(ref m_WatcherConfigSelectedCartName, value);
-#endif
-            }
+            set { this.RaiseAndSetIfChanged(ref m_WatcherConfigSelectedCartName, value); }
         }
 
         /// <summary>
@@ -1136,12 +1115,12 @@ namespace BuzzardWPF.Management
                     dataset.DMSData.EMSLUsageType.Equals("USER", StringComparison.OrdinalIgnoreCase))
                 {
                     dataset.DMSData.EMSLProposalID = emslProposalId;
-                    dataset.EMSLProposalUsers = new ObservableCollection<ProposalUser>(emslProposalUsers);
+                    dataset.EMSLProposalUsers = new ReactiveList<ProposalUser>(emslProposalUsers);
                 }
                 else
                 {
                     dataset.DMSData.EMSLProposalID = null;
-                    dataset.EMSLProposalUsers = new ObservableCollection<ProposalUser>();
+                    dataset.EMSLProposalUsers = new ReactiveList<ProposalUser>();
                 }
             }
 

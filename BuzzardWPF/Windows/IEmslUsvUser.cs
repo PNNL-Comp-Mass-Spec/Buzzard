@@ -1,6 +1,6 @@
-﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using LcmsNetSDK.Data;
+using ReactiveUI;
 
 namespace BuzzardWPF.Windows
 {
@@ -8,6 +8,6 @@ namespace BuzzardWPF.Windows
     {
         string SelectedEMSLUsageType { get; set; }
         string EMSLProposalID { get; set; }
-        ObservableCollection<ProposalUser> SelectedEMSLProposalUsers { get; set; }
+        ReactiveList<ProposalUser> SelectedEMSLProposalUsers { get; set; }
     }
 }

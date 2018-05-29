@@ -15,6 +15,7 @@ using BuzzardWPF.Windows;
 using LcmsNetDmsTools;
 using LcmsNetSDK.Logging;
 using LcmsNetSQLiteTools;
+using ReactiveUI;
 
 namespace BuzzardWPF
 {
@@ -104,7 +105,7 @@ namespace BuzzardWPF
             // It is rarely updated, so we're not querying the database every time
             // Previously used, but deprecated in April 2017 is USER_UNKNOWN
             m_dataGrid.EmslUsageTypesSource =
-                new ObservableCollection<string>
+                new ReactiveList<string>
                     (
                     new[] { "BROKEN", "CAP_DEV", "MAINTENANCE", "USER"}
                     );
