@@ -99,9 +99,6 @@
     <Compile Include="Management\DMSConfig.cs" />
     <Compile Include="Management\DMS_DataAccessor.cs" />
     <Compile Include="Management\RenameDataRequest.cs" />
-    <Compile Include="Windows\BuzzardDatasetDetail.xaml.cs">
-      <DependentUpon>BuzzardDatasetDetail.xaml</DependentUpon>
-    </Compile>
     <Compile Include="AppInitializer.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Windows\BuzzardGrid.xaml.cs">
@@ -109,9 +106,6 @@
     </Compile>
     <Compile Include="Windows\Dialogs\DatasetOverwriteDialog.xaml.cs">
       <DependentUpon>DatasetOverwriteDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Windows\DMSConfigView.xaml.cs">
-      <DependentUpon>DMSConfigView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\EMSL_UsageSelectionView.xaml.cs">
       <DependentUpon>EMSL_UsageSelectionView.xaml</DependentUpon>
@@ -146,10 +140,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Windows\BuzzardDatasetDetail.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Main.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -169,10 +159,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Windows\Dialogs\DatasetOverwriteDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Windows\DMSConfigView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
