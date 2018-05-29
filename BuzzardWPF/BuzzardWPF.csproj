@@ -122,14 +122,14 @@
     <Compile Include="Windows\Dialogs\FilldownWindow.xaml.cs">
       <DependentUpon>FilldownWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows\IEmslUsvUser.cs" />
+    <Compile Include="IEmslUsvUser.cs" />
     <Compile Include="Windows\QCView.xaml.cs">
       <DependentUpon>QCView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\SearchConfigView.xaml.cs">
       <DependentUpon>SearchConfigView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows\StateSingleton.cs" />
+    <Compile Include="StateSingleton.cs" />
     <Compile Include="Windows\WatcherConfig.xaml.cs">
       <DependentUpon>WatcherConfig.xaml</DependentUpon>
     </Compile>

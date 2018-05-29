@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BuzzardWPF.Windows
+namespace BuzzardWPF
 {
     /// <summary>
     /// Holds state information
@@ -10,7 +10,7 @@ namespace BuzzardWPF.Windows
         public static event EventHandler CreatingTriggerFilesStateChanged;
         public static event EventHandler WatchingStateChanged;
 
-        [ObsoleteAttribute("Previously used for debugging")]
+        [Obsolete("Previously used for debugging")]
         public static event EventHandler StateChanged;
 
         private static bool m_isCreatingTriggerFiles;
@@ -45,7 +45,7 @@ namespace BuzzardWPF.Windows
             }
         }
 
-        [ObsoleteAttribute("Previously used for debugging")]
+        [Obsolete("Previously used for debugging")]
         public static void SetState()
         {
             StateChanged?.Invoke(null, null);
