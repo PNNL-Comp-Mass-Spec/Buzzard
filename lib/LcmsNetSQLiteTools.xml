@@ -60,7 +60,7 @@
         </member>
         <member name="M:LcmsNetSQLiteTools.SQLiteTools.GetConnection(System.String)">
             <summary>
-            Get a SQLiteConnection, but lim
+            Get a SQLiteConnection, but limit how often we open a new connection
             </summary>
             <param name="connString"></param>
             <returns></returns>
@@ -155,6 +155,15 @@
             <param name="rowCount">Number of rows in the table</param>
             <param name="getRowCount">If false, row count is skipped</param>
             <returns>TRUE if table found; FALSE if not found or error</returns>
+        </member>
+        <member name="M:LcmsNetSQLiteTools.SQLiteTools.TableColumnNamesMatched(System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            Check if the table has the correct column count and names
+            </summary>
+            <param name="tableName"></param>
+            <param name="connStr"></param>
+            <param name="fieldNames"></param>
+            <returns></returns>
         </member>
         <member name="M:LcmsNetSQLiteTools.SQLiteTools.SavePropertiesToCache(System.Collections.Generic.IList{LcmsNetSDK.ICacheInterface},System.String,System.String,System.Boolean)">
             <summary>

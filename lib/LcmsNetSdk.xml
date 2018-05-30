@@ -320,6 +320,12 @@
             Batch number for blocking/randomizing
             </summary>
         </member>
+        <member name="M:LcmsNetSDK.Data.DMSData.LoadPropertyValues(System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            Loads the class properties from a string dictionary
+            </summary>
+            <param name="propValues">String dictionary containing property names and values</param>
+        </member>
         <member name="P:LcmsNetSDK.Data.IDMSValidator.DMSValidatorControl">
             <summary>
             The Type of a classDMSBaseControl derived control for DMS information for a single sample.
