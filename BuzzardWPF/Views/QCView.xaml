@@ -56,7 +56,7 @@
             Grid.Row="0"
             Grid.Column="0"
             Margin="1,1,4,1">
-            <views:EmslUsageSelectionView x:Name="EMSL_UsageSelectors" DataContext="{Binding EmslUsageSelectionVm}" IsEnabled="{Binding Path=DataContext.IsNotMonitoring, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:QCView}}}" />
+            <views:EmslUsageSelectionView DataContext="{Binding EmslUsageSelectionVm}" IsEnabled="{Binding Path=DataContext.IsNotMonitoring, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:QCView}}}" />
 
             <GroupBox Header="Experiments">
                 <Grid>

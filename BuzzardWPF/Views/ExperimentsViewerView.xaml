@@ -47,7 +47,6 @@
             Text="Search for..." />
 
         <ComboBox
-            x:Name="m_comboBox"
             Grid.Row="0"
             Grid.Column="1"
             MinWidth="95"
@@ -66,7 +65,6 @@
             Text="Starting with..." />
 
         <tk:AutoCompleteBox
-            x:Name="m_filterBox"
             Grid.Row="0"
             Grid.Column="3"
             Margin="2,1,6,2"

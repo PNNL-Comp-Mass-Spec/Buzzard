@@ -37,7 +37,6 @@
         </Grid.RowDefinitions>
 
         <views:ExperimentsViewerView
-            x:Name="m_viewer"
             Grid.Row="0"
             Grid.Column="0"
             Grid.ColumnSpan="3" />

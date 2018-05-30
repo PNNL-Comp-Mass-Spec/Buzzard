@@ -35,15 +35,6 @@
             <Setter Property="MinWidth" Value="95" />
             <Setter Property="FontSize" Value="16" />
         </Style>
-
-        <ObjectDataProvider
-            x:Key="SearchTypeSource"
-            MethodName="GetValues"
-            ObjectType="{x:Type sys:Enum}">
-            <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="sysIO:SearchOption" />
-            </ObjectDataProvider.MethodParameters>
-        </ObjectDataProvider>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -72,7 +63,6 @@
             FontSize="16" />
 
         <toolKit:AutoCompleteBox
-            x:Name="m_autoFillDirectorySelector"
             Grid.Row="0"
             Grid.Column="1"
             Grid.ColumnSpan="3"
@@ -86,7 +76,6 @@
             Text="{Binding Path=DirectoryToWatch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
         <Button
-            x:Name="m_dialogButton"
             Grid.Row="0"
             Grid.Column="4"
             Margin="5,4,0,4"
@@ -98,7 +87,6 @@
             Style="{StaticResource SimpleButtonStyle}" />
 
         <Label
-            x:Name="m_searchOptionLabel"
             Grid.Row="1"
             Grid.Column="0"
             Margin="0,4"
@@ -108,18 +96,16 @@
             FontSize="16" />
 
         <ComboBox
-            x:Name="m_dropDown"
             Grid.Row="1"
             Grid.Column="1"
             Grid.ColumnSpan="2"
             Margin="5"
             VerticalContentAlignment="Center"
             IsEnabled="{Binding Path=IsNotMonitoring}"
-            ItemsSource="{Binding Source={StaticResource SearchTypeSource}}"
+            ItemsSource="{Binding SearchDepthOptions}"
             SelectedItem="{Binding Path=WatchDepth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
         <Button
-            x:Name="m_ResetToDefaults"
             Grid.Row="1"
             Grid.Column="4"
             Margin="5,5,0,5"
@@ -131,7 +117,6 @@
             Style="{StaticResource SimpleButtonStyle}" />
 
         <Label
-            x:Name="m_extensionLabel"
             Grid.Row="2"
             Grid.Column="0"
             Margin="0,4"
@@ -170,7 +155,6 @@
             FontSize="16" />
 
         <xctk:IntegerUpDown
-            x:Name="m_MinimumFileSize"
             Grid.Row="3"
             Grid.Column="1"
             MinHeight="32"
@@ -186,7 +170,6 @@
             Value="{Binding Path=MinimumFileSizeKB, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
         <Button
-            x:Name="m_monitor"
             Grid.Row="3"
             Grid.RowSpan="2"
             Grid.Column="4"
@@ -200,7 +183,6 @@
             Style="{StaticResource SimpleButtonStyle}">
             <DockPanel Width="128" Height="45">
                 <Label
-                    x:Name="MonitorButtonText"
                     Width="90"
                     VerticalContentAlignment="Center"
                     Content="{Binding Path=IsWatching, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource MonitorButtonContentConverter}}"

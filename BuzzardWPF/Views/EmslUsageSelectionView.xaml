@@ -100,7 +100,6 @@
                         </TextBox.RenderTransform>
                     </TextBox>
                     <ComboBox
-                        x:Name="PID_Selector"
                         Grid.Row="0"
                         Grid.Column="1"
                         Margin="0,3,3.4,3"

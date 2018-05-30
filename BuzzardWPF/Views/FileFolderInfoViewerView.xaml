@@ -27,7 +27,7 @@
             <ContentPresenter Name="PART_SelectedContentHost" ContentSource="SelectedContent" />
         </ControlTemplate>
     </UserControl.Resources>
-    <TabControl x:Name="m_tabControl" Template="{StaticResource TabControlTemplate}" SelectedIndex="{Binding SelectedTabIndex}">
+    <TabControl Template="{StaticResource TabControlTemplate}" SelectedIndex="{Binding SelectedTabIndex}">
         <TabItem Header="No Item">
             <Grid>
                 <Grid.RowDefinitions>

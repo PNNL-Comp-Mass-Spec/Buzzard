@@ -347,7 +347,7 @@
                                         </MultiBinding>
                                     </TextBlock.Text>
                                     <TextBlock.Foreground>
-                                        <SolidColorBrush x:Name="ForegroundBrush" Color="Black" />
+                                        <SolidColorBrush Color="Black" />
                                     </TextBlock.Foreground>
                                 </TextBlock>
                             </Grid>

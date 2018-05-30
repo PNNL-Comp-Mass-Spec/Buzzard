@@ -128,7 +128,6 @@
                 Grid.Column="1"
                 Content="Operator" />
             <ComboBox
-                x:Name="m_operators"
                 Grid.Row="0"
                 Grid.Column="2"
                 Margin="2"
@@ -145,7 +144,6 @@
                 Grid.Column="1"
                 Content="Dataset Type" />
             <ComboBox
-                x:Name="m_datasetTypes"
                 Grid.Row="1"
                 Grid.Column="2"
                 Margin="2"
@@ -162,7 +160,6 @@
                 Grid.Column="1"
                 Content="Separation Type" />
             <ComboBox
-                x:Name="m_separationType"
                 Grid.Row="2"
                 Grid.Column="2"
                 Margin="2"
@@ -186,13 +183,11 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBox
-                    x:Name="m_LCColumn"
                     Grid.Column="0"
                     Margin="2"
                     Text="{Binding Path=Dataset.LCColumn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 <ComboBox
-                    x:Name="LCColumnSelector"
                     Grid.Column="1"
                     Margin="2"
                     ItemsSource="{Binding Path=LCColumnSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
@@ -210,7 +205,6 @@
                 Grid.Column="1"
                 Content="Instrument Name" />
             <ComboBox
-                x:Name="m_instruments"
                 Grid.Row="4"
                 Grid.Column="2"
                 Margin="2"
@@ -227,7 +221,6 @@
                 Grid.Column="1"
                 Content="LC Cart" />
             <ComboBox
-                x:Name="m_cartNameList"
                 Grid.Row="5"
                 Grid.Column="2"
                 Margin="2"
@@ -240,7 +233,6 @@
                 Grid.Column="1"
                 Content="LC Cart Config" />
             <ComboBox
-                x:Name="m_cartConfigNameList"
                 Grid.Row="6"
                 Grid.Column="2"
                 Margin="2"
@@ -273,7 +265,6 @@
                 Grid.Column="1"
                 Content="EMSL Usage Type" />
             <ComboBox
-                x:Name="m_emslUsageType"
                 Grid.Row="8"
                 Grid.Column="2"
                 Margin="2"
@@ -296,13 +287,11 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBox
-                    x:Name="m_emslProposalID"
                     Grid.Column="0"
                     Margin="2"
                     Text="{Binding Path=Dataset.DMSData.EMSLProposalID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 <ComboBox
-                    x:Name="ProposalIDSelector"
                     Grid.Column="1"
                     Margin="2"
                     ItemsSource="{Binding Path=EMSLProposalIDs, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
@@ -320,7 +309,6 @@
                 Grid.Column="1"
                 Content="EMSL Proposal Users:" />
             <xctk:CheckComboBox
-                x:Name="PUserSelector"
                 Grid.Row="10"
                 Grid.Column="2"
                 Margin="2"

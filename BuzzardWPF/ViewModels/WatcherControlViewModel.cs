@@ -54,6 +54,13 @@ namespace BuzzardWPF.ViewModels
 
             //this.EMSL_DataSelector.BoundContainer = this;
 
+            // Combo box for the search types.
+            SearchDepthOptions = new ReactiveList<SearchOption>
+            {
+                SearchOption.AllDirectories,
+                SearchOption.TopDirectoryOnly
+            };
+
             mFilePathsToProcess = new ConcurrentDictionary<string, DateTime>();
 
             mFileUpdateHandler = new Timer(FileUpdateHandler_Tick, this, Timeout.Infinite, Timeout.Infinite);
@@ -96,6 +103,8 @@ namespace BuzzardWPF.ViewModels
         public ReactiveCommand<Unit, Unit> SelectDirectoryCommand { get; }
         public ReactiveCommand<Unit, Unit> ResetToDefaultsCommand { get; }
         public ReactiveCommand<Unit, Unit> MonitorStartStopCommand { get; }
+
+        public IReadOnlyReactiveList<SearchOption> SearchDepthOptions { get; }
 
         public bool CreateTriggerOnDMSFail
         {

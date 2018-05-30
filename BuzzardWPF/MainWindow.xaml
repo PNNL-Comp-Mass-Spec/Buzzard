@@ -156,7 +156,7 @@
                             Padding="5"
                             FontFamily="Calibri"
                             Header="Search">
-                            <views:SearchConfigView x:Name="m_searchWindow" DataContext="{Binding SearchConfigVm}" />
+                            <views:SearchConfigView DataContext="{Binding SearchConfigVm}" />
                         </TabItem>
                     </TabControl>
                 </TabItem>
@@ -177,19 +177,19 @@
                             FontFamily="Calibri"
                             FontSize="14"
                             Header="Monitor">
-                            <views:WatcherControlView x:Name="m_scanWindow" DataContext="{Binding WatcherControlVm}" />
+                            <views:WatcherControlView DataContext="{Binding WatcherControlVm}" />
                         </TabItem>
                         <TabItem
                             Padding="5"
                             FontFamily="Calibri"
                             Header="Instrument Metadata">
-                            <views:WatcherConfigView x:Name="m_scanConfigWindow" DataContext="{Binding WatcherConfigVm}" />
+                            <views:WatcherConfigView DataContext="{Binding WatcherConfigVm}" />
                         </TabItem>
                         <TabItem
                             Padding="5"
                             FontFamily="Calibri"
                             Header="QC Samples">
-                            <views:QCView x:Name="m_qcConfigWindow" DataContext="{Binding QCVm}" />
+                            <views:QCView DataContext="{Binding QCVm}" />
                         </TabItem>
                     </TabControl>
                 </TabItem>
@@ -232,7 +232,6 @@
                                     Text="Remote Folder Location" />
 
                                 <TextBox
-                                    x:Name="TxtRemoteFolderLocation"
                                     Grid.Row="0"
                                     Grid.Column="1"
                                     Height="32"
@@ -270,7 +269,6 @@
                                     Foreground="Gray" />
 
                                 <Button
-                                    x:Name="CmdUseTestFolder"
                                     Grid.Row="1"
                                     Grid.Column="2"
                                     Width="160"
@@ -328,7 +326,7 @@
                 Height="3"
                 HorizontalAlignment="Stretch"
                 Background="Gray" />
-            <views:BuzzardGridView x:Name="m_dataGrid" DataContext="{Binding BuzzardGridVm}" Grid.Row="2" />
+            <views:BuzzardGridView DataContext="{Binding BuzzardGridVm}" Grid.Row="2" />
         </Grid>
 
         <StatusBar

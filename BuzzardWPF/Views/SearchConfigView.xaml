@@ -31,7 +31,6 @@
         </Grid.ColumnDefinitions>
 
         <Label
-            x:Name="m_directoryPathLabel"
             Grid.Row="0"
             Grid.Column="0"
             MinWidth="32"
@@ -42,7 +41,6 @@
             FontSize="16" />
 
         <my:AutoCompleteBox
-            x:Name="m_directoryPath"
             Grid.Row="0"
             Grid.Column="1"
             Grid.ColumnSpan="2"
@@ -61,7 +59,6 @@
             </my:AutoCompleteBox.ContextMenu>
         </my:AutoCompleteBox>
         <Label
-            x:Name="m_FolderNameFilter_Label"
             Grid.Row="0"
             Grid.Column="3"
             Margin="5"
@@ -70,7 +67,6 @@
             Content="Folder filter:"
             FontSize="16" />
         <TextBox
-            x:Name="m_FolderNameFilter"
             Grid.Row="0"
             Grid.Column="4"
             MinHeight="32"
@@ -81,7 +77,6 @@
             Text="{Binding Config.FolderNameFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
         <Button
-            x:Name="m_buttonBrowseForPath"
             Grid.Row="0"
             Grid.Column="5"
             VerticalAlignment="Center"
@@ -91,7 +86,6 @@
             Style="{StaticResource SimpleButtonStyle}" />
 
         <Label
-            x:Name="m_SearchDepthLabel"
             Grid.Row="1"
             Grid.Column="0"
             HorizontalAlignment="Left"
@@ -100,7 +94,6 @@
             FontSize="16" />
 
         <ComboBox
-            x:Name="m_SearchDepth"
             Grid.Row="1"
             Grid.Column="1"
             Grid.ColumnSpan="2"
@@ -109,7 +102,6 @@
             ItemsSource="{Binding SearchDepthOptions}"
             SelectedItem="{Binding Path=Config.SearchDepth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         <Label
-            x:Name="m_NameFilter_Label"
             Grid.Row="1"
             Grid.Column="3"
             Margin="5"
@@ -119,7 +111,6 @@
             FontSize="16" />
 
         <TextBox
-            x:Name="m_NameFilter"
             Grid.Row="1"
             Grid.Column="4"
             MinHeight="32"
@@ -130,7 +121,6 @@
             Text="{Binding Config.FilenameFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
         <Button
-            x:Name="m_ResetToDefaults"
             Grid.Row="1"
             Grid.Column="5"
             Margin="5,5,0,5"
@@ -141,7 +131,6 @@
             Style="{StaticResource SimpleButtonStyle}" />
 
         <Label
-            x:Name="m_extensionLabel"
             Grid.Row="2"
             Grid.Column="0"
             HorizontalAlignment="Left"
@@ -150,7 +139,6 @@
             FontSize="16" />
 
         <TextBox
-            x:Name="m_extension"
             Grid.Row="2"
             Grid.Column="1"
             MinHeight="32"
@@ -171,7 +159,6 @@
             IsChecked="{Binding Path=IncludeArchivedItems, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
         <Label
-            x:Name="m_minimumSizeLabel"
             Grid.Row="3"
             Grid.Column="0"
             HorizontalAlignment="Left"
@@ -180,7 +167,6 @@
             FontSize="16" />
 
         <xctk:IntegerUpDown
-            x:Name="m_minimumSizeKB"
             Grid.Row="3"
             Grid.Column="1"
             MinHeight="32"
@@ -208,7 +194,6 @@
             IsChecked="{Binding Path=Config.MatchFolders, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
         <Button
-            x:Name="m_stopSearch"
             Grid.Row="2"
             Grid.Column="5"
             Margin="6,0,6,5"
@@ -219,7 +204,6 @@
             Content ="Stop Search" />
 
         <Button
-            x:Name="m_search"
             Grid.Row="3"
             Grid.RowSpan="2"
             Grid.Column="5"
@@ -258,7 +242,6 @@
             IsEnabled="True" />
 
         <xctk:DateTimePicker
-            x:Name="m_dateFrom"
             Grid.Row="4"
             Grid.Column="1"
             MinHeight="32"
@@ -281,7 +264,6 @@
             IsEnabled="True" />
 
         <xctk:DateTimePicker
-            x:Name="m_dateTo"
             Grid.Row="4"
             Grid.Column="3"
             MinHeight="32"
@@ -295,7 +277,6 @@
             Value="{Binding Path=Config.EndDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
         <Button
-            x:Name="m_ResetDateRange"
             Grid.Row="4"
             Grid.Column="4"
             Width="65"
