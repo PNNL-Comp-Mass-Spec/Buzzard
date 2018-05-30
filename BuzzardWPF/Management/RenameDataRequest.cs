@@ -3,7 +3,8 @@ using System.IO;
 using System.Text;
 using BuzzardLib.Data;
 using BuzzardLib.IO;
-using BuzzardWPF.Windows.Dialogs;
+using BuzzardWPF.ViewModels;
+using BuzzardWPF.Views;
 using LcmsNetSDK.Logging;
 
 namespace BuzzardWPF.Management
@@ -59,16 +60,20 @@ namespace BuzzardWPF.Management
             {
                 if (informUser)
                 {
-                    var dialog = new DatasetOverwriteDialog
+                    var dialogVm = new DatasetOverwriteDialogViewModel
                     {
                         FileToRenamePath = SourceDataPath,
                         FileInWayPath = FixedDataPath
                     };
+                    var dialog = new DatasetOverwriteDialogWindow
+                    {
+                        DataContext = dialogVm
+                    };
 
                     dialog.ShowDialog();
 
-                    informUser = !dialog.DoSameToOtherConflicts;
-                    skipOnConflict = dialog.SkipDatasetRename;
+                    informUser = !dialogVm.DoSameToOtherConflicts;
+                    skipOnConflict = dialogVm.SkipDatasetRename;
                 }
 
                 if (skipOnConflict)

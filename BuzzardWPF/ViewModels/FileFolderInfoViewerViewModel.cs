@@ -1,20 +1,11 @@
 ﻿using System;
-using System.ComponentModel;
 using System.IO;
-using System.Windows.Controls;
+using ReactiveUI;
 
-namespace BuzzardWPF.Windows
+namespace BuzzardWPF.ViewModels
 {
-    /// <summary>
-    /// Interaction logic for FileFolderInfoViewer.xaml
-    /// </summary>
-    public partial class FileFolderInfoViewer
-        : UserControl, INotifyPropertyChanged
+    public class FileFolderInfoViewerViewModel : ReactiveObject
     {
-        #region Events
-        public event PropertyChangedEventHandler PropertyChanged;
-        #endregion
-
         #region Attributes
         private string m_pathName;
         private bool m_itemFound;
@@ -24,13 +15,13 @@ namespace BuzzardWPF.Windows
         private bool m_isFile;
         private int m_fileCount;
         private int m_folderCount;
+        private int selectedTabIndex = 0;
+
         #endregion
 
         #region Initialization
-        public FileFolderInfoViewer()
+        public FileFolderInfoViewerViewModel()
         {
-            InitializeComponent();
-            DataContext = this;
         }
         #endregion
 
@@ -38,27 +29,13 @@ namespace BuzzardWPF.Windows
         public int FileCount
         {
             get { return m_fileCount; }
-            set
-            {
-                if (m_fileCount != value)
-                {
-                    m_fileCount = value;
-                    OnPropertyChanged("FileCount");
-                }
-            }
+            set { this.RaiseAndSetIfChanged(ref m_fileCount, value); }
         }
 
         public int FolderCount
         {
             get { return m_folderCount; }
-            set
-            {
-                if (m_folderCount != value)
-                {
-                    m_folderCount = value;
-                    OnPropertyChanged("FolderCount");
-                }
-            }
+            set { this.RaiseAndSetIfChanged(ref m_folderCount, value); }
         }
 
         public bool IsFile
@@ -66,11 +43,10 @@ namespace BuzzardWPF.Windows
             get { return m_isFile; }
             private set
             {
-                if (m_isFile != value)
+                var oldValue = m_isFile;
+                this.RaiseAndSetIfChanged(ref m_isFile, value);
+                if (oldValue != value)
                 {
-                    m_isFile = value;
-                    OnPropertyChanged("IsFile");
-
                     UpdateViewsPage();
                 }
             }
@@ -79,40 +55,19 @@ namespace BuzzardWPF.Windows
         public long SizeBytes
         {
             get { return m_sizeBytes; }
-            private set
-            {
-                if (m_sizeBytes != value)
-                {
-                    m_sizeBytes = value;
-                    OnPropertyChanged("SizeBytes");
-                }
-            }
+            private set { this.RaiseAndSetIfChanged(ref m_sizeBytes, value); }
         }
 
         public DateTime CreationDate
         {
             get { return m_creationDate; }
-            private set
-            {
-                if (m_creationDate != value)
-                {
-                    m_creationDate = value;
-                    OnPropertyChanged("CreationDate");
-                }
-            }
+            private set { this.RaiseAndSetIfChanged(ref m_creationDate, value); }
         }
 
         public DateTime LastModifiedDate
         {
             get { return m_lastModifiedDate; }
-            private set
-            {
-                if (m_lastModifiedDate != value)
-                {
-                    m_lastModifiedDate = value;
-                    OnPropertyChanged("LastModifiedDate");
-                }
-            }
+            private set { this.RaiseAndSetIfChanged(ref m_lastModifiedDate, value); }
         }
 
         public bool ItemFound
@@ -120,11 +75,10 @@ namespace BuzzardWPF.Windows
             get { return m_itemFound; }
             private set
             {
-                if (m_itemFound != value)
+                var oldValue = m_itemFound;
+                this.RaiseAndSetIfChanged(ref m_itemFound, value);
+                if (oldValue != value)
                 {
-                    m_itemFound = value;
-                    OnPropertyChanged("ItemFound");
-
                     UpdateViewsPage();
                 }
             }
@@ -135,26 +89,32 @@ namespace BuzzardWPF.Windows
             get { return m_pathName; }
             set
             {
-                if (m_pathName != value)
+                var oldValue = m_pathName;
+                this.RaiseAndSetIfChanged(ref m_pathName, value);
+                if (oldValue != value)
                 {
-                    m_pathName = value;
-                    OnPropertyChanged("PathName");
-
                     GetPathInfo();
                 }
             }
         }
+
+        public int SelectedTabIndex
+        {
+            get => selectedTabIndex;
+            set => this.RaiseAndSetIfChanged(ref selectedTabIndex, value);
+        }
+
         #endregion
 
         #region Methods
         private void UpdateViewsPage()
         {
             if (!ItemFound)
-                m_tabControl.SelectedIndex = 0;
+                SelectedTabIndex = 0;
             else if (IsFile)
-                m_tabControl.SelectedIndex = 1;
+                SelectedTabIndex = 1;
             else
-                m_tabControl.SelectedIndex = 2;
+                SelectedTabIndex = 2;
         }
 
         private void GetPathInfo()
@@ -242,11 +202,6 @@ namespace BuzzardWPF.Windows
                 // Ignore errors here
             }
 
-        }
-
-        private void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
         #endregion
     }

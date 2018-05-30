@@ -1,25 +1,18 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
 using System.ComponentModel;
-using System.Windows;
-using System.Windows.Controls;
+using System.Reactive;
+using System.Reactive.Linq;
 using BuzzardLib.Data;
 using BuzzardWPF.Management;
+using BuzzardWPF.Views;
 using LcmsNetSDK.Data;
 using LcmsNetSDK.Logging;
 using ReactiveUI;
 
-namespace BuzzardWPF.Windows.Dialogs
+namespace BuzzardWPF.ViewModels
 {
-    /// <summary>
-    /// Interaction logic for Filldown.xaml
-    /// </summary>
-    public partial class FilldownWindow
-        : Window, INotifyPropertyChanged
+    public class FillDownWindowViewModel : ReactiveObject
     {
-        #region Events
-        public event PropertyChangedEventHandler PropertyChanged;
-        #endregion
-
         #region Attributes
         private FilldownBuzzardDataset m_dataset;
 
@@ -30,13 +23,16 @@ namespace BuzzardWPF.Windows.Dialogs
         private ReactiveList<string> m_cartNameListSource;
         private ReactiveList<string> m_emslUsageTypeSource;
         private ReactiveList<string> m_lcColumnSource;
+        private ReactiveList<string> m_emslProposalIDs;
+        private DMSData m_datasetDMS;
+        private ReactiveList<string> m_interestRatingSource;
+        private ReactiveList<ProposalUser> m_EMSLProposalUsersSource;
+        private string emslProposalUsersText;
+
         #endregion
 
-        public FilldownWindow()
+        public FillDownWindowViewModel()
         {
-            InitializeComponent();
-            DataContext = this;
-
             OperatorsSource = new ReactiveList<string>();
             InstrumentSource = new ReactiveList<string>();
             DatasetTypesSource = new ReactiveList<string>();
@@ -51,34 +47,30 @@ namespace BuzzardWPF.Windows.Dialogs
 
             EMSLProposalUsersSource = new ReactiveList<ProposalUser>();
             Dataset = new FilldownBuzzardDataset();
+
+            PickExperimentCommand = ReactiveCommand.Create(PickExperiment);
+            UseAllCommand = ReactiveCommand.Create(() => ShouldUseAllSettings(true));
+            UseNoneCommand = ReactiveCommand.Create(() => ShouldUseAllSettings(false));
+
+            this.WhenAnyValue(x => x.Dataset.CartName).ObserveOn(RxApp.MainThreadScheduler).Subscribe(LoadCartConfigsForCart);
         }
 
         #region Properties
+
+        public ReactiveCommand<Unit, Unit> PickExperimentCommand { get; }
+        public ReactiveCommand<Unit, Unit> UseAllCommand { get; }
+        public ReactiveCommand<Unit, Unit> UseNoneCommand { get; }
+
         public ReactiveList<string> EMSLProposalIDs
         {
             get { return m_emslProposalIDs; }
-            set
-            {
-                if (m_emslProposalIDs != value)
-                {
-                    m_emslProposalIDs = value;
-                    OnPropertyChanged("EMSLProposalIDs");
-                }
-            }
+            set { this.RaiseAndSetIfChanged(ref m_emslProposalIDs, value); }
         }
-        private ReactiveList<string> m_emslProposalIDs;
 
         public ReactiveList<string> LCColumnSource
         {
             get { return m_lcColumnSource; }
-            set
-            {
-                if (m_lcColumnSource != value)
-                {
-                    m_lcColumnSource = value;
-                    OnPropertyChanged("LCColumnSource");
-                }
-            }
+            set { this.RaiseAndSetIfChanged(ref m_lcColumnSource, value); }
         }
 
         public FilldownBuzzardDataset Dataset
@@ -95,7 +87,7 @@ namespace BuzzardWPF.Windows.Dialogs
                     }
 
                     m_dataset = value;
-                    OnPropertyChanged("Dataset");
+                    this.RaisePropertyChanged("Dataset");
 
                     if (m_dataset != null)
                     {
@@ -125,71 +117,35 @@ namespace BuzzardWPF.Windows.Dialogs
                 }
             }
         }
-        private DMSData m_datasetDMS;
 
         public ReactiveList<string> OperatorsSource
         {
             get { return m_operatorsSource; }
-            set
-            {
-                if (m_operatorsSource != value)
-                {
-                    m_operatorsSource = value;
-                    OnPropertyChanged("OperatorsSource");
-                }
-            }
+            set { this.RaiseAndSetIfChanged(ref m_operatorsSource, value); }
         }
 
         public ReactiveList<string> InstrumentSource
         {
             get { return m_instrumentsSource; }
-            set
-            {
-                if (m_instrumentsSource != value)
-                {
-                    m_instrumentsSource = value;
-                    OnPropertyChanged("InstrumentSource");
-                }
-            }
+            set { this.RaiseAndSetIfChanged(ref m_instrumentsSource, value); }
         }
 
         public ReactiveList<string> DatasetTypesSource
         {
             get { return m_datasetTypesSource; }
-            set
-            {
-                if (m_datasetTypesSource != value)
-                {
-                    m_datasetTypesSource = value;
-                    OnPropertyChanged("DatasetTypesSource");
-                }
-            }
+            set { this.RaiseAndSetIfChanged(ref m_datasetTypesSource, value); }
         }
 
         public ReactiveList<string> SeparationTypeSource
         {
             get { return m_separationTypeSource; }
-            set
-            {
-                if (m_separationTypeSource != value)
-                {
-                    m_separationTypeSource = value;
-                    OnPropertyChanged("SeparationTypeSource");
-                }
-            }
+            set { this.RaiseAndSetIfChanged(ref m_separationTypeSource, value); }
         }
 
         public ReactiveList<string> CartNameListSource
         {
             get { return m_cartNameListSource; }
-            set
-            {
-                if (m_cartNameListSource != value)
-                {
-                    m_cartNameListSource = value;
-                    OnPropertyChanged("CartNameListSource");
-                }
-            }
+            set { this.RaiseAndSetIfChanged(ref m_cartNameListSource, value); }
         }
 
         /// <summary>
@@ -201,43 +157,27 @@ namespace BuzzardWPF.Windows.Dialogs
         public ReactiveList<string> EmslUsageTypeSource
         {
             get { return m_emslUsageTypeSource; }
-            set
-            {
-                if (m_emslUsageTypeSource != value)
-                {
-                    m_emslUsageTypeSource = value;
-                    OnPropertyChanged("EmslUsageTypeSource");
-                }
-            }
+            set { this.RaiseAndSetIfChanged(ref m_emslUsageTypeSource, value); }
         }
 
         public ReactiveList<string> InterestRatingSource
         {
             get { return m_interestRatingSource; }
-            set
-            {
-                if (m_interestRatingSource != value)
-                {
-                    m_interestRatingSource = value;
-                    OnPropertyChanged("InterestRatingSource");
-                }
-            }
+            set { this.RaiseAndSetIfChanged(ref m_interestRatingSource, value); }
         }
-        private ReactiveList<string> m_interestRatingSource;
 
         public ReactiveList<ProposalUser> EMSLProposalUsersSource
         {
             get { return m_EMSLProposalUsersSource; }
-            set
-            {
-                if (m_EMSLProposalUsersSource != value)
-                {
-                    m_EMSLProposalUsersSource = value;
-                    OnPropertyChanged("EMSLProposalUsersSource");
-                }
-            }
+            set { this.RaiseAndSetIfChanged(ref m_EMSLProposalUsersSource, value); }
         }
-        private ReactiveList<ProposalUser> m_EMSLProposalUsersSource;
+
+        public string EmslProposalUsersText
+        {
+            get => emslProposalUsersText;
+            set => this.RaiseAndSetIfChanged(ref emslProposalUsersText, value);
+        }
+
         #endregion
 
         #region Event Handlers
@@ -255,54 +195,25 @@ namespace BuzzardWPF.Windows.Dialogs
             {
                 EMSLProposalUsersSource = DMS_DataAccessor.Instance.GetProposalUsers(DatasetDMS.EMSLProposalID);
 
-                PUserSelector.Text = string.Empty;
-                PUserSelector.SelectedItems.Clear();
+                EmslProposalUsersText = string.Empty;
+                Dataset.EMSLProposalUsers.Clear();
             }
         }
 
-        private void m_okButton_Click(object sender, RoutedEventArgs e)
+        private void PickExperiment()
         {
-            DialogResult = true;
-        }
-
-        private void LCColumnSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (e.AddedItems != null && e.AddedItems.Count > 0)
+            var dialogVm = new ExperimentsViewerViewModel();
+            var dialog = new ExperimentsDialogWindow()
             {
-                Dataset.LCColumn = e.AddedItems[0].ToString();
-                LCColumnSelector.SelectedIndex = -1;
-            }
-        }
-
-        private void UseAll_Click(object sender, RoutedEventArgs e)
-        {
-            ShouldUseAllSettings(true);
-        }
-
-        private void UseNone_Click(object sender, RoutedEventArgs e)
-        {
-            ShouldUseAllSettings(false);
-        }
-
-        private void PickExperiment_Click(object sender, RoutedEventArgs e)
-        {
-            var dialog = new ExperimentsDialog();
+                DataContext = dialogVm
+            };
 
             var stop = dialog.ShowDialog() != true;
             if (stop)
                 return;
 
-            var selectedExperiment = dialog.SelectedExperiment;
+            var selectedExperiment = dialogVm.SelectedExperiment;
             Dataset.ExperimentName = selectedExperiment.Experiment;
-        }
-
-        private void ProposalIDSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (e.AddedItems != null && e.AddedItems.Count > 0)
-            {
-                Dataset.DMSData.EMSLProposalID = e.AddedItems[0].ToString();
-                ProposalIDSelector.SelectedIndex = -1;
-            }
         }
 
         #endregion
@@ -318,7 +229,7 @@ namespace BuzzardWPF.Windows.Dialogs
             var selectedText = string.Empty;
             foreach (var user in Dataset.EMSLProposalUsers)
                 selectedText += user.UserName + "; ";
-            PUserSelector.Text = selectedText;
+            EmslProposalUsersText = selectedText;
         }
 
         private void ShouldUseAllSettings(bool shouldWe)
@@ -345,20 +256,8 @@ namespace BuzzardWPF.Windows.Dialogs
             Dataset.ShouldUseComment = shouldWe;
         }
 
-        private void OnPropertyChanged(string propertyName)
+        private void LoadCartConfigsForCart(string cartName)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-        #endregion
-
-        #region Events
-        private void CartNameList_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (e.AddedItems == null || e.AddedItems.Count == 0)
-                return;
-
-            var cartName = (string)e.AddedItems[0];
-
             if (string.IsNullOrEmpty(cartName))
                 return;
 
@@ -372,7 +271,6 @@ namespace BuzzardWPF.Windows.Dialogs
             }
 
         }
-
         #endregion
     }
 }

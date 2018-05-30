@@ -28,10 +28,13 @@ namespace BuzzardWPF
             // Block until the splash screen is displayed
             resetSplashCreated.WaitOne();
 
-            var openMainWindow = AppInitializer.InitializeApplication(splashScreen.SetInstrumentName);
+            var openMainWindow = AppInitializer.InitializeApplication(splashScreen.SetInstrumentName).Result;
             if (openMainWindow)
             {
-                var mainWindow = new Main();
+                var mainWindow = new MainWindow()
+                {
+                    DataContext = new MainWindowViewModel()
+                };
                 Application.Current.MainWindow = mainWindow;
                 MainWindow = mainWindow;
 
@@ -46,6 +49,7 @@ namespace BuzzardWPF
                 catch (Exception ex)
                 {
                     ApplicationLogger.LogError(0, "Buzzard quit unexpectedly. " + ex.Message, ex);
+                    mainWindow.Close();
                 }
             }
             else

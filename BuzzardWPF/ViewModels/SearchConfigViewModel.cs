@@ -1,34 +1,22 @@
 ﻿using System;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reactive;
+using System.Reactive.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
+using BuzzardLib.Searching;
 using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
-using BuzzardLib.Searching;
 using LcmsNetSDK.Logging;
 using ReactiveUI;
 
-namespace BuzzardWPF.Windows
+namespace BuzzardWPF.ViewModels
 {
-    /// <summary>
-    /// Interaction logic for SearchConfigView.xaml
-    /// </summary>
-    public partial class SearchConfigView
-        : UserControl, INotifyPropertyChanged
+    public class SearchConfigViewModel : ReactiveObject
     {
-        #region Events
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        /// <summary>
-        /// Fired when a search is triggered to start.
-        /// </summary>
-        public event EventHandler<SearchEventArgs> SearchStart;
-        #endregion
-
         #region Attributes
 
         private bool mIncludeArchivedItems;
@@ -40,46 +28,72 @@ namespace BuzzardWPF.Windows
         private SearchConfig mConfig;
 
         readonly Ookii.Dialogs.Wpf.VistaFolderBrowserDialog m_folderDialog;
+        private string[] directoryPathOptions;
+
+        private readonly IBuzzadier datasetSearcher;
+        private CancellationTokenSource searchCancelToken = new CancellationTokenSource();
+        private bool searching;
 
         #endregion
 
         /// <summary>
+        /// Constructor for valid design-time data context
+        /// </summary>
+        [Obsolete("For WPF design-time view only", true)]
+        public SearchConfigViewModel() : this(null)
+        {
+        }
+
+        /// <summary>
         /// Constructor.
         /// </summary>
-        public SearchConfigView()
+        public SearchConfigViewModel(IBuzzadier datasetSearcherImpl)
         {
-            InitializeComponent();
-            DataContext = this;
+            datasetSearcher = datasetSearcherImpl;
 
             m_folderDialog = new Ookii.Dialogs.Wpf.VistaFolderBrowserDialog { ShowNewFolderButton = true };
             mConfig = new SearchConfig();
 
             // Combo box for the search types.
-            var options = new ReactiveList<SearchOption>
+            SearchDepthOptions = new ReactiveList<SearchOption>
             {
                 SearchOption.AllDirectories,
                 SearchOption.TopDirectoryOnly
             };
 
-            // Add the search options to the list box
-            m_SearchDepth.ItemsSource = options;
-
             IsNotMonitoring = true;
+
+            ExploreDirectoryCommand = ReactiveCommand.Create(ExploreDirectory);
+            BrowseForPathCommand = ReactiveCommand.Create(BrowseForPath);
+            ResetToDefaultsCommand = ReactiveCommand.Create(ResetToDefaults);
+            SearchCommand = ReactiveCommand.CreateFromTask(Search);
+            StopSearchCommand = ReactiveCommand.Create(StopSearch, this.WhenAnyValue(x => x.Searching).ObserveOn(RxApp.MainThreadScheduler));
+            ResetDateRangeCommand = ReactiveCommand.Create(ResetDateRange);
+
+            this.WhenAnyValue(x => x.mConfig.DirectoryPath).ObserveOn(RxApp.MainThreadScheduler).Subscribe(x => SetDirectoryPathOptions());
         }
 
         #region Properties
 
+        private bool Searching
+        {
+            get => searching;
+            set => this.RaiseAndSetIfChanged(ref searching, value);
+        }
+
+        public ReactiveCommand<Unit, Unit> ExploreDirectoryCommand { get; }
+        public ReactiveCommand<Unit, Unit> BrowseForPathCommand { get; }
+        public ReactiveCommand<Unit, Unit> ResetToDefaultsCommand { get; }
+        public ReactiveCommand<Unit, Unit> SearchCommand { get; }
+        public ReactiveCommand<Unit, Unit> StopSearchCommand { get; }
+        public ReactiveCommand<Unit, Unit> ResetDateRangeCommand { get; }
+
+        public IReadOnlyReactiveList<SearchOption> SearchDepthOptions { get; }
+
         public SearchConfig Config
         {
             get { return mConfig; }
-            set
-            {
-                if (mConfig != value)
-                {
-                    mConfig = value;
-                    OnPropertyChanged("Config");
-                }
-            }
+            set { this.RaiseAndSetIfChanged(ref mConfig, value); }
         }
 
         public bool IncludeArchivedItems
@@ -90,7 +104,7 @@ namespace BuzzardWPF.Windows
                 if (mIncludeArchivedItems != value)
                 {
                     mIncludeArchivedItems = value;
-                    OnPropertyChanged("IncludeArchivedItems");
+                    this.RaisePropertyChanged("IncludeArchivedItems");
                 }
 
                 DatasetManager.Manager.IncludeArchivedItems = value;
@@ -104,9 +118,9 @@ namespace BuzzardWPF.Windows
             {
                 if (StateSingleton.IsCreatingTriggerFiles == value) return;
                 StateSingleton.IsCreatingTriggerFiles = value;
-                OnPropertyChanged("IsCreatingTriggerFiles");
-                OnPropertyChanged("IsSafeToSearch");
-                OnPropertyChanged("SearchButtonText");
+                this.RaisePropertyChanged("IsCreatingTriggerFiles");
+                this.RaisePropertyChanged("IsSafeToSearch");
+                this.RaisePropertyChanged("SearchButtonText");
             }
         }
 
@@ -120,13 +134,19 @@ namespace BuzzardWPF.Windows
             private set
             {
                 mIsNotMonitoring = value;
-                OnPropertyChanged("IsNotMonitoring");
-                OnPropertyChanged("IsSafeToSearch");
-                OnPropertyChanged("SearchButtonText");
+                this.RaisePropertyChanged("IsNotMonitoring");
+                this.RaisePropertyChanged("IsSafeToSearch");
+                this.RaisePropertyChanged("SearchButtonText");
             }
         }
 
         public string SearchButtonText => IsSafeToSearch ? "Search" : "(disabled)";
+
+        public string[] DirectoryPathOptions
+        {
+            get => directoryPathOptions;
+            private set => this.RaiseAndSetIfChanged(ref directoryPathOptions, value);
+        }
 
         #endregion
 
@@ -134,9 +154,7 @@ namespace BuzzardWPF.Windows
         /// <summary>
         /// Handles opening a Windows Explorer window for browsing the folder.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        private void ExploreDirectory()
         {
             if (Config == null)
                 return;
@@ -160,11 +178,9 @@ namespace BuzzardWPF.Windows
         /// <summary>
         /// Handles fill down for the paths
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void DirectoryPath_Populating(object sender, PopulatingEventArgs e)
+        private void SetDirectoryPathOptions()
         {
-            var text = m_directoryPath.Text;
+            var text = Config.DirectoryPath;
             string dirname;
 
             try
@@ -182,28 +198,24 @@ namespace BuzzardWPF.Windows
                 {
                     var drives = DriveInfo.GetDrives();
                     var driveNames = drives.Select(drive => drive.Name).ToArray();
-                    m_directoryPath.ItemsSource = driveNames;
+                    DirectoryPathOptions = driveNames;
                 }
                 else if (Directory.Exists(dirname))
                 {
                     var subFolders = Directory.GetDirectories(dirname, "*", SearchOption.TopDirectoryOnly);
-                    m_directoryPath.ItemsSource = subFolders;
+                    DirectoryPathOptions = subFolders;
                 }
             }
             catch
             {
                 // Ignore errors here
             }
-
-            m_directoryPath.PopulateComplete();
         }
 
         /// <summary>
         /// Handles when the user wants to start searching.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void m_search_Click(object sender, RoutedEventArgs e)
+        private async Task Search()
         {
             if (IsCreatingTriggerFiles)
             {
@@ -212,13 +224,23 @@ namespace BuzzardWPF.Windows
                 return;
             }
 
-            if (SearchStart != null)
+            Searching = true;
+            using (DatasetManager.Manager.Datasets.SuppressChangeNotifications())
             {
-                SearchStart(this, new SearchEventArgs(mConfig));
+                DatasetManager.Manager.Datasets.Clear();
             }
+            searchCancelToken = new CancellationTokenSource();
+            await datasetSearcher.SearchAsync(mConfig, searchCancelToken);
+            Searching = false;
         }
 
-        private void m_buttonBrowseForPath_Click(object sender, RoutedEventArgs e)
+        private void StopSearch()
+        {
+            if (Searching)
+                searchCancelToken.Cancel();
+        }
+
+        private void BrowseForPath()
         {
             if (Config == null)
                 return;
@@ -238,23 +260,19 @@ namespace BuzzardWPF.Windows
             }
         }
 
-        private void m_ResetToDefaults_Click(object sender, RoutedEventArgs e)
+        private void ResetToDefaults()
         {
             if (Config == null)
                 return;
 
             Config.ResetToDefaults(false);
             IncludeArchivedItems = false;
-
+            StopSearch();
         }
 
-        private void m_ResetDateRange_Click(object sender, RoutedEventArgs e)
+        private void ResetDateRange()
         {
-            if (Config == null)
-                return;
-
-            Config.ResetDateRange();
-
+            Config?.ResetDateRange();
         }
 
         #endregion
@@ -301,13 +319,6 @@ namespace BuzzardWPF.Windows
         {
             IsNotMonitoring = !e.Monitoring;
         }
-
-        private void OnPropertyChanged(string propertyName)
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-        }
         #endregion
-
     }
 }

@@ -1,29 +1,20 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
+using System.Reactive;
 using BuzzardLib.Searching;
 using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
+using BuzzardWPF.Views;
 using LcmsNetSDK.Data;
 using LcmsNetSDK.Logging;
 using ReactiveUI;
 
-namespace BuzzardWPF.Windows
+namespace BuzzardWPF.ViewModels
 {
-    /// <summary>
-    /// Interaction logic for WatcherConfig.xaml
-    /// </summary>
-    public partial class WatcherConfig
-        : UserControl, INotifyPropertyChanged, IEmslUsvUser
+    public class WatcherConfigViewModel : ReactiveObject, IEmslUsvUser
     {
-        #region Event
-        public event PropertyChangedEventHandler PropertyChanged;
-        #endregion
-
         #region Attributes
         private string m_selectedOperator;
         private string m_selectedInstrument;
@@ -39,11 +30,8 @@ namespace BuzzardWPF.Windows
         #endregion
 
         #region Initialization
-        public WatcherConfig()
+        public WatcherConfigViewModel()
         {
-            InitializeComponent();
-            DataContext = this;
-
             DatasetManager.Manager.PropertyChanged += Manager_PropertyChanged;
 
             DMS_DataAccessor.Instance.PropertyChanged += DMSDataManager_PropertyChanged;
@@ -54,9 +42,11 @@ namespace BuzzardWPF.Windows
 
             m_IsNotMonitoring = true;
 
-            EMSL_DataSelector.BoundContainer = this;
+            EmslUsageSelectionVm.BoundContainer = this;
 
             CartConfigNameListSource = new ReactiveList<string>();
+
+            SelectExperimentCommand = ReactiveCommand.Create(SelectExperiment);
         }
 
         void DMSDataManager_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -69,31 +59,31 @@ namespace BuzzardWPF.Windows
             switch (e.PropertyName)
             {
                 case "InstrumentData":
-                    OnPropertyChanged("InstrumentsSource");
+                    this.RaisePropertyChanged("InstrumentsSource");
                     break;
 
                 case "OperatorData":
-                    OnPropertyChanged("OperatorsSource");
+                    this.RaisePropertyChanged("OperatorsSource");
                     break;
 
                 case "DatasetTypes":
-                    OnPropertyChanged("DatasetTypesSource");
+                    this.RaisePropertyChanged("DatasetTypesSource");
                     break;
 
                 case "SeparationTypes":
-                    OnPropertyChanged("SeparationTypeSource");
+                    this.RaisePropertyChanged("SeparationTypeSource");
                     break;
 
                 case "CartNames":
-                    OnPropertyChanged("CartNameListSource");
+                    this.RaisePropertyChanged("CartNameListSource");
                     break;
 
                 case "CartConfigNames":
-                    OnPropertyChanged("CartConfigNameListSource");
+                    this.RaisePropertyChanged("CartConfigNameListSource");
                     break;
 
                 case "ColumnData":
-                    OnPropertyChanged("LCColumnSource");
+                    this.RaisePropertyChanged("LCColumnSource");
                     break;
             }
         }
@@ -103,12 +93,17 @@ namespace BuzzardWPF.Windows
             if (e.PropertyName != nameof(DatasetManager.WatcherConfigSelectedCartName))
                 return;
 
-           SelectedCartName = DatasetManager.Manager.WatcherConfigSelectedCartName;
+            SelectedCartName = DatasetManager.Manager.WatcherConfigSelectedCartName;
         }
 
         #endregion
 
         #region Properties
+
+        public EmslUsageSelectionViewModel EmslUsageSelectionVm { get; } = new EmslUsageSelectionViewModel();
+
+        public ReactiveCommand<Unit, Unit> SelectExperimentCommand { get; }
+
         public string LCColumn
         {
             get => m_lcColumn;
@@ -117,7 +112,7 @@ namespace BuzzardWPF.Windows
                 if (m_lcColumn != value)
                 {
                     m_lcColumn = value;
-                    OnPropertyChanged("LCColumn");
+                    this.RaisePropertyChanged("LCColumn");
                 }
 
                 DatasetManager.Manager.LCColumn = value;
@@ -134,7 +129,7 @@ namespace BuzzardWPF.Windows
                 if (m_experimentName != value)
                 {
                     m_experimentName = value;
-                    OnPropertyChanged("ExperimentName");
+                    this.RaisePropertyChanged("ExperimentName");
                 }
 
                 DatasetManager.Manager.ExperimentName = value;
@@ -149,7 +144,7 @@ namespace BuzzardWPF.Windows
                 if (m_selectedOperator != value)
                 {
                     m_selectedOperator = value;
-                    OnPropertyChanged("SelectedOperator");
+                    this.RaisePropertyChanged("SelectedOperator");
                 }
 
                 DatasetManager.Manager.WatcherConfigSelectedOperator = value;
@@ -164,7 +159,7 @@ namespace BuzzardWPF.Windows
                 if (m_selectedInstrument != value)
                 {
                     m_selectedInstrument = value;
-                    OnPropertyChanged("SelectedInstrument");
+                    this.RaisePropertyChanged("SelectedInstrument");
                 }
 
                 DatasetManager.Manager.WatcherConfigSelectedInstrument = value;
@@ -179,7 +174,7 @@ namespace BuzzardWPF.Windows
                 if (m_selectedDatasetType != value)
                 {
                     m_selectedDatasetType = value;
-                    OnPropertyChanged("SelectedDatasetType");
+                    this.RaisePropertyChanged("SelectedDatasetType");
                 }
 
                 DatasetManager.Manager.WatcherConfigSelectedDatasetType = value;
@@ -194,7 +189,7 @@ namespace BuzzardWPF.Windows
                 if (m_selectedSeparationType != value)
                 {
                     m_selectedSeparationType = value;
-                    OnPropertyChanged("SelectedSeparationType");
+                    this.RaisePropertyChanged("SelectedSeparationType");
                 }
 
                 DatasetManager.Manager.WatcherConfigSelectedSeparationType = value;
@@ -221,7 +216,7 @@ namespace BuzzardWPF.Windows
                     }
 
                     m_selectedCartName = value;
-                    OnPropertyChanged("SelectedCartName");
+                    this.RaisePropertyChanged("SelectedCartName");
                 }
 
                 DatasetManager.Manager.WatcherConfigSelectedCartName = value;
@@ -237,7 +232,7 @@ namespace BuzzardWPF.Windows
                 {
 
                     m_selectedCartConfigName = value;
-                    OnPropertyChanged("SelectedCartConfigName");
+                    this.RaisePropertyChanged("SelectedCartConfigName");
                 }
 
                 DatasetManager.Manager.WatcherConfigSelectedCartConfigName = value;
@@ -266,7 +261,7 @@ namespace BuzzardWPF.Windows
             private set
             {
                 m_IsNotMonitoring = value;
-                OnPropertyChanged("IsNotMonitoring");
+                this.RaisePropertyChanged("IsNotMonitoring");
             }
         }
         private bool m_IsNotMonitoring;
@@ -275,27 +270,22 @@ namespace BuzzardWPF.Windows
 
         #region Event Handlers
 
-        private void LCColumnSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (e.AddedItems != null && e.AddedItems.Count > 0)
-            {
-                LCColumn = e.AddedItems[0].ToString();
-                LCColumnSelector.SelectedIndex = -1;
-            }
-        }
-
         /// <summary>
         /// The brings up a dialog window that lets the user choose
         /// an experiment name they wish to apply to the new datasets.
         /// </summary>
-        private void SelectExperiment_Click(object sender, RoutedEventArgs e)
+        private void SelectExperiment()
         {
-            var dialog = new ExperimentsDialog();
+            var dialogVm = new ExperimentsViewerViewModel();
+            var dialog = new ExperimentsDialogWindow()
+            {
+                DataContext = dialogVm
+            };
             var stop = dialog.ShowDialog() != true;
             if (stop)
                 return;
 
-            ExperimentName = dialog.SelectedExperiment.Experiment;
+            ExperimentName = dialogVm.SelectedExperiment.Experiment;
         }
 
         /// <summary>
@@ -429,11 +419,6 @@ namespace BuzzardWPF.Windows
             return setting;
         }
 
-        private void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
         #endregion
 
         #region IEmslUsvUser Members
@@ -444,7 +429,7 @@ namespace BuzzardWPF.Windows
             set
             {
                 DatasetManager.Manager.UserComments = value;
-                OnPropertyChanged("UserComments");
+                this.RaisePropertyChanged("UserComments");
             }
         }
 
@@ -456,7 +441,7 @@ namespace BuzzardWPF.Windows
                 if (m_selectedEMSLUsageType != value)
                 {
                     m_selectedEMSLUsageType = value;
-                    OnPropertyChanged("SelectedEMSLUsageType");
+                    this.RaisePropertyChanged("SelectedEMSLUsageType");
                 }
 
                 DatasetManager.Manager.Watcher_EMSL_Usage = value;
@@ -472,7 +457,7 @@ namespace BuzzardWPF.Windows
                 if (m_emslProposalID != value)
                 {
                     m_emslProposalID = value;
-                    OnPropertyChanged("EMSLProposalID");
+                    this.RaisePropertyChanged("EMSLProposalID");
                 }
 
                 DatasetManager.Manager.Watcher_EMSL_ProposalID = value;
@@ -488,7 +473,7 @@ namespace BuzzardWPF.Windows
                 if (m_selectedEMSLProposalUsers != value)
                 {
                     m_selectedEMSLProposalUsers = value;
-                    OnPropertyChanged("SelectedEMSLProposalUsers");
+                    this.RaisePropertyChanged("SelectedEMSLProposalUsers");
                     //EMSL_DataSelector.UpdateSelectedUsersText();
                 }
 
@@ -498,6 +483,5 @@ namespace BuzzardWPF.Windows
         private ReactiveList<ProposalUser> m_selectedEMSLProposalUsers;
 
         #endregion
-
     }
 }

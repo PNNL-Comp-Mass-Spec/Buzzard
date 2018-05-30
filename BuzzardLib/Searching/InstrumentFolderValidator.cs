@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Management;
+using System.Reactive.Concurrency;
 using LcmsNetSDK.Data;
 using LcmsNetSDK.Logging;
+using ReactiveUI;
 
 namespace BuzzardLib.Searching
 {
@@ -60,7 +62,29 @@ namespace BuzzardLib.Searching
             }
 
             return shareList;
+        }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns>
+        /// Dictionary where key is the share name and path is the local path to that share.
+        /// For example, "ProteomicsData" and "C:\ProteomicsData"
+        /// </returns>
+        protected Dictionary<string, string> GetLocalWindowsShares()
+        {
+            var shareList = new Dictionary<string, string>();
+
+            foreach (var share in new ManagementObjectSearcher("SELECT * FROM Win32_Share").Get())
+            {
+                var shareName = share["Name"].ToString();
+                var sharePath = share["Path"].ToString();
+                // var shareCaption = share["Caption"].ToString();
+
+                shareList.Add(shareName, StandarizePath(sharePath));
+            }
+
+            return shareList;
         }
 
         protected string StandarizePath(string path)
@@ -121,7 +145,7 @@ namespace BuzzardLib.Searching
 
                     // Base folder is on this computer
                     // Determine the local shares
-                    localShares = GetWindowsShares(baseFolderHostName);
+                    localShares = GetLocalWindowsShares();
 
                     // Uncomment the following for debugging
                     // if (string.Equals(baseFolderHostName, "monroe3", StringComparison.CurrentCultureIgnoreCase))

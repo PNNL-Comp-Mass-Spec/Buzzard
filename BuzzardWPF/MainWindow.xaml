@@ -1,13 +1,13 @@
 ﻿<Window
-    x:Class="BuzzardWPF.Main"
+    x:Class="BuzzardWPF.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="clr-namespace:BuzzardLib.Converters;assembly=BuzzardLib"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:windows="clr-namespace:BuzzardWPF.Windows"
     xmlns:buzzardWpf="clr-namespace:BuzzardWPF"
-    Title="Buzzard"
+    xmlns:views="clr-namespace:BuzzardWPF.Views"
+    Title="{Binding Title}"
     Width="1200"
     Height="800"
     MinWidth="785"
@@ -17,7 +17,7 @@
     UseLayoutRounding="True"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d"
-    d:DataContext="{d:DesignInstance {x:Type buzzardWpf:Main}, IsDesignTimeCreatable=True}"
+    d:DataContext="{d:DesignInstance {x:Type buzzardWpf:MainWindowViewModel}, IsDesignTimeCreatable=True}"
     Closed="Main_OnClosed">
 
     <!--  Resources  -->
@@ -39,10 +39,11 @@
         <BitmapImage x:Key="BuzzardSource" UriSource="Resources\Buzzards.png" />
 
         <converters:BoolToObjectConverter
-            x:Key="MontitorButtonContentConverter"
+            x:Key="MonitorButtonContentConverter"
             FalseContent="Monitor"
             TrueContent="Stop" />
         <converters:InvertBoolConverter x:Key="InvertBoolConverter" />
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
 
         <Style TargetType="TextBlock">
             <Setter Property="FontSize" Value="15" />
@@ -155,7 +156,7 @@
                             Padding="5"
                             FontFamily="Calibri"
                             Header="Search">
-                            <windows:SearchConfigView x:Name="m_searchWindow" />
+                            <views:SearchConfigView x:Name="m_searchWindow" DataContext="{Binding SearchConfigVm}" />
                         </TabItem>
                     </TabControl>
                 </TabItem>
@@ -176,19 +177,19 @@
                             FontFamily="Calibri"
                             FontSize="14"
                             Header="Monitor">
-                            <windows:WatcherControl x:Name="m_scanWindow" />
+                            <views:WatcherControlView x:Name="m_scanWindow" DataContext="{Binding WatcherControlVm}" />
                         </TabItem>
                         <TabItem
                             Padding="5"
                             FontFamily="Calibri"
                             Header="Instrument Metadata">
-                            <windows:WatcherConfig x:Name="m_scanConfigWindow" />
+                            <views:WatcherConfigView x:Name="m_scanConfigWindow" DataContext="{Binding WatcherConfigVm}" />
                         </TabItem>
                         <TabItem
                             Padding="5"
                             FontFamily="Calibri"
                             Header="QC Samples">
-                            <windows:QCView x:Name="m_qcConfigWindow" />
+                            <views:QCView x:Name="m_qcConfigWindow" DataContext="{Binding QCVm}" />
                         </TabItem>
                     </TabControl>
                 </TabItem>
@@ -236,7 +237,7 @@
                                     Grid.Column="1"
                                     Height="32"
                                     Margin="9.8,4,5.2,4"
-                                    IsEnabled="False"
+                                    IsEnabled="{Binding RemoteFolderLocationIsEnabled}"
                                     Style="{StaticResource TextBoxStyle}"
                                     Text="{Binding Path=TriggerFileLocation, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
 
@@ -246,7 +247,7 @@
                                     Width="160"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
-                                    Click="UseDefaultTriggerFileLocation_Click"
+                                    Command="{Binding UseDefaultTriggerFileLocationCommand}"
                                     Content="Use default"
                                     Style="{StaticResource SimpleButtonStyle}" />
 
@@ -256,7 +257,7 @@
                                     Width="160"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
-                                    Click="SelectTriggerFileLocation_Click"
+                                    Command="{Binding SelectTriggerFileLocationCommand}"
                                     Content="Select folder ..."
                                     Style="{StaticResource SimpleButtonStyle}" />
 
@@ -275,8 +276,9 @@
                                     Width="160"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
-                                    Click="UseTestFolder_Click"
+                                    Command="{Binding UseTestFolderCommand}"
                                     Content="Use test folder"
+                                    Visibility="{Binding IsTestFolderVisible, Converter={StaticResource BoolToVis}}"
                                     Style="{StaticResource SimpleButtonStyle}" />
 
                                 <Button
@@ -285,7 +287,7 @@
                                     Width="160"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
-                                    Click="ForceDmsReload_Click"
+                                    Command="{Binding ForceDmsReloadCommand}"
                                     Content="Reload DMS cache"
                                     Style="{StaticResource SimpleButtonStyle}" />
 
@@ -326,7 +328,7 @@
                 Height="3"
                 HorizontalAlignment="Stretch"
                 Background="Gray" />
-            <windows:BuzzardGrid x:Name="m_dataGrid" Grid.Row="2" />
+            <views:BuzzardGridView x:Name="m_dataGrid" DataContext="{Binding BuzzardGridVm}" Grid.Row="2" />
         </Grid>
 
         <StatusBar

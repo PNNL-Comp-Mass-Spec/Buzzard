@@ -1,39 +1,38 @@
-﻿using System.ComponentModel;
-using System.Windows;
+﻿using System.Reactive;
+using ReactiveUI;
 
-namespace BuzzardWPF.Windows.Dialogs
+namespace BuzzardWPF.ViewModels
 {
-    /// <summary>
-    /// Interaction logic for DatasetOverwriteDialog.xaml
-    /// </summary>
-    public partial class DatasetOverwriteDialog
-        : Window, INotifyPropertyChanged
+    public class DatasetOverwriteDialogViewModel : ReactiveObject
     {
-        #region Events
-        public event PropertyChangedEventHandler PropertyChanged;
-        #endregion
-
         #region Attributes
-        private string  m_fileToRenamePath;
-        private string  m_fileInWayPath;
-        private bool    m_doSameToOtherConflicts;
-        private bool    m_skipRename;
+        private string m_fileToRenamePath;
+        private string m_fileInWayPath;
+        private bool m_doSameToOtherConflicts;
+        private bool m_skipRename;
         #endregion
 
         #region Initialize
-        public DatasetOverwriteDialog()
+        public DatasetOverwriteDialogViewModel()
         {
-            InitializeComponent();
-            DataContext = this;
-
             DoSameToOtherConflicts = false;
             FileToRenamePath = null;
             FileInWayPath = null;
             SkipDatasetRename = false;
+
+            ReplaceDatasetCommand = ReactiveCommand.Create(ReplaceDataset);
+            SkipDatasetCommand = ReactiveCommand.Create(SkipDataset);
         }
         #endregion
 
         #region Properties
+
+        public ReactiveCommand<Unit, Unit> ReplaceDatasetCommand { get; }
+        public ReactiveCommand<Unit, Unit> SkipDatasetCommand { get; }
+
+        public FileFolderInfoViewerViewModel SourcePathData { get; }
+        public FileFolderInfoViewerViewModel DestinationPathData { get; }
+
         public string FileToRenamePath
         {
             get { return m_fileToRenamePath; }
@@ -42,9 +41,9 @@ namespace BuzzardWPF.Windows.Dialogs
                 if (m_fileToRenamePath != value)
                 {
                     m_fileToRenamePath = value;
-                    OnPropertyChanged("FileToRenamePath");
+                    this.RaisePropertyChanged("FileToRenamePath");
 
-                    m_sourcePathDataViewer.PathName = value;
+                    SourcePathData.PathName = value;
                 }
             }
         }
@@ -57,9 +56,9 @@ namespace BuzzardWPF.Windows.Dialogs
                 if (m_fileInWayPath != value)
                 {
                     m_fileInWayPath = value;
-                    OnPropertyChanged("FileInWayPath");
+                    this.RaisePropertyChanged("FileInWayPath");
 
-                    m_destinationPathDataViewer.PathName = value;
+                    DestinationPathData.PathName = value;
                 }
             }
         }
@@ -72,7 +71,7 @@ namespace BuzzardWPF.Windows.Dialogs
                 if (m_doSameToOtherConflicts != value)
                 {
                     m_doSameToOtherConflicts = value;
-                    OnPropertyChanged("DoSameToOtherConflicts");
+                    this.RaisePropertyChanged("DoSameToOtherConflicts");
                 }
             }
         }
@@ -85,30 +84,26 @@ namespace BuzzardWPF.Windows.Dialogs
                 if (m_skipRename != value)
                 {
                     m_skipRename = value;
-                    OnPropertyChanged("SkipDatasetRename");
+                    this.RaisePropertyChanged("SkipDatasetRename");
                 }
             }
         }
+
+        public bool Success { get; private set; }
+
         #endregion
 
         #region Event Handlers
-        private void Replace_Click(object sender, RoutedEventArgs e)
+        private void ReplaceDataset()
         {
             SkipDatasetRename = false;
-            DialogResult = true;
+            Success = true;
         }
 
-        private void SkipDataset_Click(object sender, RoutedEventArgs e)
+        private void SkipDataset()
         {
             SkipDatasetRename = true;
-            DialogResult = true;
-        }
-        #endregion
-
-        #region Methods
-        private void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            Success = true;
         }
         #endregion
     }

@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using BuzzardWPF.Management;
 using LcmsNetDmsTools;
@@ -69,7 +70,7 @@ namespace BuzzardWPF
 
                 if (propertyName == LCMSSettings.PARAM_TRIGGERFILEFOLDER && string.IsNullOrWhiteSpace(propertyValue))
                 {
-                    propertyValue = Main.DEFAULT_TRIGGER_FOLDER_PATH;
+                    propertyValue = MainWindowViewModel.DEFAULT_TRIGGER_FOLDER_PATH;
                     Properties.Settings.Default[propertyName] = propertyValue;
                 }
 
@@ -244,7 +245,7 @@ namespace BuzzardWPF
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
-        public static bool InitializeApplication(Action<string> instrumentNameAction = null)
+        public static async Task<bool> InitializeApplication(Action<string> instrumentNameAction = null)
         {
             var openMainWindow = false;
 
@@ -301,7 +302,7 @@ namespace BuzzardWPF
 
             try
             {
-                // Load active experiments (created/used in the last 18 months), daasets, instruments, etc.
+                // Load active experiments (created/used in the last 18 months), datasets, instruments, etc.
                 dmsDbToolsInstance = new DMSDBTools
                 {
                     LoadExperiments = true,
@@ -313,7 +314,6 @@ namespace BuzzardWPF
                 dmsDbToolsInstance.ProgressEvent += dbTools_ProgressEvent;
 
                 dmsDbToolsInstance.LoadCacheFromDMS();
-
             }
             catch (Exception ex)
             {
@@ -349,7 +349,7 @@ namespace BuzzardWPF
             try
             {
                 // Load active requested runs from DMS
-                DatasetManager.Manager.LoadDmsCache();
+                await DatasetManager.Manager.LoadDmsCache().ConfigureAwait(false);
 
                 // Set a flag to indicate that the main window can now be shown
                 openMainWindow = true;

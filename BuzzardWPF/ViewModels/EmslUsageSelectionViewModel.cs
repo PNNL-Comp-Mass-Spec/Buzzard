@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Reactive.Linq;
 using System.Windows.Controls;
 using System.Windows.Data;
 using BuzzardWPF.Management;
@@ -8,25 +8,17 @@ using LcmsNetSDK.Data;
 using LcmsNetSDK.Logging;
 using ReactiveUI;
 
-namespace BuzzardWPF.Windows
+namespace BuzzardWPF.ViewModels
 {
-    /// <summary>
-    /// Interaction logic for EMS_UsageSelectionView.xaml
-    /// </summary>
-    public partial class EMSL_UsageSelectionView
-        : UserControl, INotifyPropertyChanged
+    public class EmslUsageSelectionViewModel : ReactiveObject
     {
-        #region Events
-        public event PropertyChangedEventHandler PropertyChanged;
-        #endregion
-
-        #region Attributes
+        #region Members
 
         /// <summary>
         /// EMSL Usage Types
         /// </summary>
         /// <remarks>Previously used, but deprecated in April 2017 is USER_UNKNOWN</remarks>
-        private static readonly string[] EMSL_USAGE_TYPES =
+        private static readonly string[] EMSL_USAGE_TYPES = // TODO: Load these from DMS?
         {
             "BROKEN",
             "CAP_DEV",
@@ -34,20 +26,24 @@ namespace BuzzardWPF.Windows
             "USER"
         };
 
+        private IEmslUsvUser m_boundContainer;
+        private ReactiveList<string> m_usageTypesSource;
+        private ReactiveList<string> m_availablePIDs;
+        private ReactiveList<ProposalUser> m_ProposalUsers;
+        private string proposalUsersText;
+
         #endregion
 
         #region Constructors
-        public EMSL_UsageSelectionView()
+        public EmslUsageSelectionViewModel()
         {
-            InitializeComponent();
-            DataContext = this;
-
             UsageTypesSource = new ReactiveList<string>(EMSL_USAGE_TYPES);
             AvailablePIDs = DMS_DataAccessor.Instance.ProposalIDs;
 
+            this.WhenAnyValue(x => x.BoundContainer.SelectedEMSLProposalUsers).ObserveOn(RxApp.MainThreadScheduler).Subscribe(x => UpdateSelectedUsersText());
         }
 
-        static EMSL_UsageSelectionView()
+        static EmslUsageSelectionViewModel()
         {
 
             // Assure that the DataAccessor has been initialized
@@ -74,7 +70,7 @@ namespace BuzzardWPF.Windows
                         m_boundContainer.PropertyChanged -= BoundContainer_PropertyChanged;
 
                     m_boundContainer = value;
-                    OnPropertyChanged("BoundContainer");
+                    this.RaisePropertyChanged("BoundContainer");
 
                     if (m_boundContainer != null)
                     {
@@ -86,49 +82,30 @@ namespace BuzzardWPF.Windows
                 }
             }
         }
-        private IEmslUsvUser m_boundContainer;
 
         public ReactiveList<string> UsageTypesSource
         {
             get { return m_usageTypesSource; }
-            set
-            {
-                if (m_usageTypesSource != value)
-                {
-                    m_usageTypesSource = value;
-                    OnPropertyChanged("UsageTypesSource");
-                }
-            }
+            set { this.RaiseAndSetIfChanged(ref m_usageTypesSource, value); }
         }
-        private ReactiveList<string> m_usageTypesSource;
 
         public ReactiveList<string> AvailablePIDs
         {
             get { return m_availablePIDs; }
-            set
-            {
-                if (m_availablePIDs != value)
-                {
-                    m_availablePIDs = value;
-                    OnPropertyChanged("AvailablePIDs");
-                }
-            }
+            set { this.RaiseAndSetIfChanged(ref m_availablePIDs, value); }
         }
-        private ReactiveList<string> m_availablePIDs;
 
         public ReactiveList<ProposalUser> ProposalUsers
         {
             get { return m_ProposalUsers; }
-            set
-            {
-                if (m_ProposalUsers != value)
-                {
-                    m_ProposalUsers = value;
-                    OnPropertyChanged("ProposalUsers");
-                }
-            }
+            set { this.RaiseAndSetIfChanged(ref m_ProposalUsers, value); }
         }
-        private ReactiveList<ProposalUser> m_ProposalUsers;
+
+        public string ProposalUsersText
+        {
+            get => proposalUsersText;
+            set => this.RaiseAndSetIfChanged(ref proposalUsersText, value);
+        }
 
         #endregion
 
@@ -139,8 +116,8 @@ namespace BuzzardWPF.Windows
             {
                 ProposalUsers = DMS_DataAccessor.Instance.GetProposalUsers(BoundContainer.EMSLProposalID);
 
-                PUserSelector.SelectedItems.Clear();
-                PUserSelector.Text = string.Empty;
+                BoundContainer?.SelectedEMSLProposalUsers.Clear();
+                ProposalUsersText = string.Empty;
             }
         }
 
@@ -151,15 +128,9 @@ namespace BuzzardWPF.Windows
                 ApplicationLogger.LogError(
                     0,
                     "EMSL Usage Selection View has no bound container to pass selected Proposal ID values to.");
-                PID_Selector.SelectedIndex = -1;
+                //PID_Selector.SelectedIndex = -1;
 
                 return;
-            }
-
-            if (e.AddedItems != null && e.AddedItems.Count > 0)
-            {
-                BoundContainer.EMSLProposalID = e.AddedItems[0].ToString();
-                PID_Selector.SelectedIndex = -1;
             }
         }
 
@@ -175,18 +146,18 @@ namespace BuzzardWPF.Windows
         /// </summary>
         public void UpdateSelectedUsersText()
         {
+            if (BoundContainer?.SelectedEMSLProposalUsers == null)
+            {
+                return;
+            }
+
             var userString = string.Empty;
             foreach (var user in BoundContainer.SelectedEMSLProposalUsers)
             {
-                userString += user.UserName + PUserSelector.Delimiter;
+                userString += user.UserName + "; ";
             }
 
-            PUserSelector.Text = userString;
-        }
-
-        private void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            ProposalUsersText = userString;
         }
         #endregion
 

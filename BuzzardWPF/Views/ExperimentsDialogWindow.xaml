@@ -1,10 +1,11 @@
 ﻿<Window
-    x:Class="BuzzardWPF.Windows.ExperimentsDialog"
+    x:Class="BuzzardWPF.Views.ExperimentsDialogWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:local="clr-namespace:BuzzardWPF.Windows"
+    xmlns:views="clr-namespace:BuzzardWPF.Views"
+    xmlns:viewModels="clr-namespace:BuzzardWPF.ViewModels"
     Title="Experiments"
     Width="800"
     Height="450"
@@ -17,7 +18,7 @@
     WindowStartupLocation="CenterScreen"
     WindowStyle="ToolWindow"
     mc:Ignorable="d"
-    d:DataContext="{d:DesignInstance {x:Type local:ExperimentsDialog}, IsDesignTimeCreatable=True}">
+    d:DataContext="{d:DesignInstance {x:Type viewModels:ExperimentsViewerViewModel}, IsDesignTimeCreatable=True}">
     <Window.Resources>
         <Style TargetType="Button">
             <Setter Property="MinHeight" Value="32" />
@@ -35,7 +36,7 @@
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
 
-        <local:ExperimentsViewer
+        <views:ExperimentsViewerView
             x:Name="m_viewer"
             Grid.Row="0"
             Grid.Column="0"
@@ -56,6 +57,7 @@
             Content="Cancel"
             FontFamily="Arial"
             IsCancel="True"
+            Click="Cancel_OnClick"
             Style="{StaticResource SimpleButtonStyle}" />
     </Grid>
 </Window>

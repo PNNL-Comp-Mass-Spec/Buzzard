@@ -1,31 +1,26 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Reactive;
+using System.Reactive.Concurrency;
+using System.Threading;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
+using BuzzardLib.Searching;
 using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
-using BuzzardLib.Searching;
-using BuzzardWPF.Windows;
-using LcmsNetDmsTools;
+using BuzzardWPF.ViewModels;
 using LcmsNetSDK.Logging;
-using LcmsNetSQLiteTools;
 using ReactiveUI;
 
 namespace BuzzardWPF
 {
-    /// <summary>
-    /// Interaction logic for Window1.xaml
-    /// </summary>
-    public partial class Main
-        : Window, INotifyPropertyChanged
+    public class MainWindowViewModel : ReactiveObject
     {
-
         #region Constants
 
         private const int DMS_UPDATE_INTERVAL_MINUTES = 10;
@@ -34,23 +29,17 @@ namespace BuzzardWPF
 
         #endregion
 
-        #region Events
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        #endregion
-
         #region "Member Variables"
-
-        private readonly object m_cacheLoadingSync;
 
         /// <summary>
         /// This helps alert the user the system is in monitoring mode.
         /// </summary>
-        private readonly DispatcherTimer m_animationTimer;
+        private readonly Timer m_animationTimer;
+
+        private bool animationEnabled = false;
 
         private int m_counter;
-        private Collection<BitmapImage> m_images;
+        private Collection<BitmapImage> m_images;  // TODO: Handle these differently?
         private Collection<BitmapImage> m_imagesEaster;
         private Collection<BitmapImage> m_animationImages;
         private IBuzzadier m_buzzadier;
@@ -58,23 +47,21 @@ namespace BuzzardWPF
 
         private bool m_firstTimeLoading;
         // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
-        private readonly DispatcherTimer m_dmsCheckTimer;
+        private readonly Timer m_dmsCheckTimer;
 
         private BitmapImage m_CurrentImage;
 
         private string m_triggerFileLocation;
         private string m_lastUpdated;
+        private bool remoteFolderLocationIsEnabled;
+        private readonly object lockEmslUsageTypesSource = new object();
 
         #endregion
 
         #region Initialize
 
-        public Main()
+        public MainWindowViewModel()
         {
-            InitializeComponent();
-
-            DataContext = this;
-            m_cacheLoadingSync = new object();
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();
             var version = assembly.GetName().Version.ToString();
             Title = "Buzzard - v." + version;
@@ -91,12 +78,9 @@ namespace BuzzardWPF
             // just pass the dispatcher along, but this way we can access other
             // parts of the main window if they are ever needed in the future.
             // -FCT
-            DatasetManager.Manager.MainWindow = this;
             DatasetManager.Manager.DatasetsLoaded += Manager_DatasetsLoaded;
 
             m_firstTimeLoading = true;
-            Closed += Main_Closed;
-            Loaded += Main_Loaded;
 
             ApplicationLogger.Message += ApplicationLogger_Message;
             ApplicationLogger.Error += ApplicationLogger_Error;
@@ -104,55 +88,47 @@ namespace BuzzardWPF
             // These values come from table T_EUS_UsageType
             // It is rarely updated, so we're not querying the database every time
             // Previously used, but deprecated in April 2017 is USER_UNKNOWN
-            m_dataGrid.EmslUsageTypesSource =
+            var emslUsageTypesSource =
                 new ReactiveList<string>
                     (
-                    new[] { "BROKEN", "CAP_DEV", "MAINTENANCE", "USER"}
+                    new[] { "BROKEN", "CAP_DEV", "MAINTENANCE", "USER" }
                     );
 
-            m_dataGrid.MainWindow = this;
+            BindingOperations.EnableCollectionSynchronization(emslUsageTypesSource, lockEmslUsageTypesSource);
 
-            if (!m_dataGrid.CartNameListSource.Contains("unknown"))
+            BuzzardGridVm.EmslUsageTypesSource = emslUsageTypesSource;
+
+            if (!BuzzardGridVm.CartNameListSource.Contains("unknown"))
             {
-                m_dataGrid.CartNameListSource.Add("unknown");
+                BuzzardGridVm.CartNameListSource.Add("unknown");
             }
 
-            m_dataGrid.Datasets = DatasetManager.Manager.Datasets;
+            m_animationTimer = new Timer(Animation_Tick, this, Timeout.Infinite, Timeout.Infinite);
+            animationEnabled = false;
 
-            m_animationTimer = new DispatcherTimer
-            {
-                Interval = new TimeSpan(0, 0, 1)
-            };
-            m_animationTimer.Tick += m_timer_Tick;
+            m_dmsCheckTimer = new Timer(DMSCheckTimer_Tick, this, TimeSpan.FromMinutes(DMS_UPDATE_INTERVAL_MINUTES), TimeSpan.FromMinutes(DMS_UPDATE_INTERVAL_MINUTES));
 
-            m_dmsCheckTimer = new DispatcherTimer(DispatcherPriority.Normal, Dispatcher)
-            {
-                Interval = new TimeSpan(0, DMS_UPDATE_INTERVAL_MINUTES, 0)
-            };
-            m_dmsCheckTimer.Tick += DMSCheckTimer_Tick;
-            m_dmsCheckTimer.IsEnabled = true;
-
-            m_searchWindow.SearchStart += m_searchWindow_SearchStart;
             RegisterSearcher(new FileSearchBuzzardier(DMS_DataAccessor.Instance.InstrumentDetails));
+            SearchConfigVm = new SearchConfigViewModel(m_buzzadier);
 
             // Wire up event handler on the embedded controls
-            var scanWindow = (WatcherControl)m_scanWindow.DataContext;
-            var scanConfig = (WatcherConfig)m_scanConfigWindow.DataContext;
-            var qcView = (QCView)m_qcConfigWindow.DataContext;
-
-            scanWindow.MonitoringToggled += scanConfig.MonitoringToggleHandler;
-            scanWindow.MonitoringToggled += qcView.MonitoringToggleHandler;
-            scanWindow.MonitoringToggled += m_searchWindow.MonitoringToggleHandler;
+            WatcherControlVm.MonitoringToggled += WatcherConfigVm.MonitoringToggleHandler;
+            WatcherControlVm.MonitoringToggled += QCVm.MonitoringToggleHandler;
+            WatcherControlVm.MonitoringToggled += SearchConfigVm.MonitoringToggleHandler;
 
             LoadImages();
             LastUpdated = DatasetManager.Manager.LastUpdated;
             ApplicationLogger.LogMessage(0, "Ready");
 
-            if (Environment.MachineName.ToLower() == "monroe3")
-                CmdUseTestFolder.Visibility = Visibility.Visible;
+            if (Environment.MachineName.ToLower() == "monroe5" || Environment.MachineName.ToLower() == "we27655")
+                IsTestFolderVisible = true;
             else
-                CmdUseTestFolder.Visibility = Visibility.Hidden;
+                IsTestFolderVisible = false;
 
+            UseDefaultTriggerFileLocationCommand = ReactiveCommand.Create(UseDefaultTriggerFileLocation);
+            SelectTriggerFileLocationCommand = ReactiveCommand.Create(SelectTriggerFileLocation);
+            UseTestFolderCommand = ReactiveCommand.Create(UseTestFolder);
+            ForceDmsReloadCommand = ReactiveCommand.Create(ForceDmsReload);
         }
 
         private void Manager_DatasetsLoaded(object sender, EventArgs e)
@@ -162,12 +138,12 @@ namespace BuzzardWPF
 
         private void StateSingleton_WatchingStateChanged(object sender, EventArgs e)
         {
-            m_animationTimer.IsEnabled = StateSingleton.IsMonitoring;
+            ControlAnimation(StateSingleton.IsMonitoring);
             if (!StateSingleton.IsMonitoring)
             {
                 CurrentImage = m_animationImages[0];
             }
-            OnPropertyChanged("IsNotMonitoring");
+            this.RaisePropertyChanged("IsNotMonitoring");
         }
 
         /// <summary>
@@ -230,6 +206,30 @@ namespace BuzzardWPF
 
         #region Properties
 
+        public ReactiveCommand<Unit, Unit> UseDefaultTriggerFileLocationCommand { get; }
+        public ReactiveCommand<Unit, Unit> SelectTriggerFileLocationCommand { get; }
+        public ReactiveCommand<Unit, Unit> UseTestFolderCommand { get; }
+        public ReactiveCommand<Unit, Unit> ForceDmsReloadCommand { get; }
+
+        /// <summary>
+        /// Title to display in the window title bar
+        /// </summary>
+        public string Title { get; }
+
+        public BuzzardGridViewModel BuzzardGridVm { get; } = new BuzzardGridViewModel();
+        public SearchConfigViewModel SearchConfigVm { get; }
+        public WatcherControlViewModel WatcherControlVm { get; } = new WatcherControlViewModel();
+        public WatcherConfigViewModel WatcherConfigVm { get; } = new WatcherConfigViewModel();
+        public QCViewModel QCVm { get; } = new QCViewModel();
+
+        public bool RemoteFolderLocationIsEnabled
+        {
+            get => remoteFolderLocationIsEnabled;
+            set => this.RaiseAndSetIfChanged(ref remoteFolderLocationIsEnabled, value);
+        }
+
+        public bool IsTestFolderVisible { get; }
+
         /// <summary>
         /// Gets or sets the image source containing the current image (not Image)
         /// of the buzzard animation.
@@ -242,17 +242,17 @@ namespace BuzzardWPF
                 if (Equals(m_CurrentImage, value))
                     return;
                 m_CurrentImage = value;
-                OnPropertyChanged("CurrentImage");
+                this.RaisePropertyChanged("CurrentImage");
             }
         }
 
         public bool DisableBaseFolderValidation
         {
-            get => m_searchWindow.Config.DisableBaseFolderValidation;
+            get => SearchConfigVm.Config.DisableBaseFolderValidation;
             set
             {
-                m_searchWindow.Config.DisableBaseFolderValidation = value;
-                OnPropertyChanged("DisableBaseFolderValidation");
+                SearchConfigVm.Config.DisableBaseFolderValidation = value;
+                this.RaisePropertyChanged("DisableBaseFolderValidation");
             }
         }
 
@@ -273,7 +273,7 @@ namespace BuzzardWPF
                 if (m_lastStatusMessage == value)
                     return;
                 m_lastStatusMessage = value;
-                OnPropertyChanged("LastStatusMessage");
+                this.RaisePropertyChanged("LastStatusMessage");
             }
         }
 
@@ -283,7 +283,7 @@ namespace BuzzardWPF
             set
             {
                 m_lastUpdated = value;
-                OnPropertyChanged("LastUpdated");
+                this.RaisePropertyChanged("LastUpdated");
             }
         }
 
@@ -295,7 +295,7 @@ namespace BuzzardWPF
                 if (m_triggerFileLocation != value)
                 {
                     m_triggerFileLocation = value;
-                    OnPropertyChanged("TriggerFileLocation");
+                    this.RaisePropertyChanged("TriggerFileLocation");
                 }
 
                 DatasetManager.Manager.TriggerFileLocation = value;
@@ -309,12 +309,7 @@ namespace BuzzardWPF
             // Create an action to place the message string into the property that
             // holds the last message. Then place action into a call for the UI
             // thread's dipatcher.
-            void updateLastStatusMsg()
-            {
-                LastStatusMessage = args.Message;
-            }
-
-            Dispatcher.BeginInvoke((Action)updateLastStatusMsg, DispatcherPriority.Normal);
+            RxApp.MainThreadScheduler.Schedule(() => LastStatusMessage = args.Message);
         }
 
         private void ApplicationLogger_Message(int messageLevel, MessageLoggerArgs args)
@@ -322,12 +317,7 @@ namespace BuzzardWPF
             // Create an action to place the message string into the property that
             // holds the last message. Then place action into a call for the UI
             // thread's dipatcher.
-            void updateLastStatusMsg()
-            {
-                LastStatusMessage = args.Message;
-            }
-
-            Dispatcher.BeginInvoke((Action)updateLastStatusMsg, DispatcherPriority.Normal);
+            RxApp.MainThreadScheduler.Schedule(() => LastStatusMessage = args.Message);
         }
 
         #region Searching
@@ -356,25 +346,9 @@ namespace BuzzardWPF
             m_buzzadier.ErrorEvent += m_buzzadier_ErrorEvent;
         }
 
-        /// <summary>
-        /// Searches a directory for instrument files (or folders) that buzzard could process
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void m_searchWindow_SearchStart(object sender, SearchEventArgs e)
-        {
-            m_dataGrid.Datasets.Clear();
-            m_buzzadier.Search(e.Config);
-        }
-
         private void m_buzzadier_DatasetFound(object sender, DatasetFoundEventArgs e)
         {
-            void addDataset()
-            {
-                AddDataset(e.Path, e.CaptureSubfolderPath, e.CurrentSearchConfig);
-            }
-
-            m_dataGrid.Dispatcher.BeginInvoke((Action)addDataset, DispatcherPriority.Normal);
+            AddDataset(e.Path, e.CaptureSubfolderPath, e.CurrentSearchConfig);
         }
 
         private void m_buzzadier_ErrorEvent(object sender, BuzzardLib.Searching.ErrorEventArgs e)
@@ -400,7 +374,7 @@ namespace BuzzardWPF
 
             // Lets see if the path we were given is already
             // being used as the source of a dataset
-            var alreadyPresent = m_dataGrid.Datasets.Any(
+            var alreadyPresent = BuzzardGridVm.Datasets.Any(
                 ds =>
                 {
                     // This dataset is most likely an empty-dummy dataset,
@@ -432,7 +406,7 @@ namespace BuzzardWPF
         private void SetTriggerFolderToTestPath()
         {
             UpdateTriggerFolderPath(@"E:\Run_Complete_Trigger");
-            TxtRemoteFolderLocation.IsEnabled = true;
+            RemoteFolderLocationIsEnabled = true;
         }
 
         private void UpdateTriggerFolderPath(string folderPath)
@@ -463,7 +437,7 @@ namespace BuzzardWPF
         /// Will set the CurrentImage value with the next image in the buzzard
         /// animation.
         /// </summary>
-        private void m_timer_Tick(object sender, EventArgs e)
+        private void Animation_Tick(object state)
         {
             // Increment the counter and wrap it around if neccessary
             m_counter++;
@@ -477,7 +451,7 @@ namespace BuzzardWPF
 
             m_counter %= n;
 
-            CurrentImage = m_animationImages[m_counter];
+            RxApp.MainThreadScheduler.Schedule(() => CurrentImage = m_animationImages[m_counter]);
         }
 
         /// <summary>
@@ -485,17 +459,17 @@ namespace BuzzardWPF
         /// to place their values into the settings object before
         /// saving the setting object for application shutdown.
         /// </summary>
-        private void Main_Closed(object sender, EventArgs e)
+        public void SaveSettings()
         {
             ApplicationLogger.LogMessage(0, "Main Window closed.");
 
             // Save settings
             ApplicationLogger.LogMessage(0, "Starting to save settings to config.");
-            m_scanConfigWindow.SaveSettings();
+            WatcherConfigVm.SaveSettings();
             Settings.Default.TriggerFileFolder = TriggerFileLocation;
-            m_scanWindow.SaveSettings();
-            m_searchWindow.SaveSettings();
-            m_qcConfigWindow.SaveSettings();
+            WatcherControlVm.SaveSettings();
+            SearchConfigVm.SaveSettings();
+            QCVm.SaveSettings();
             Settings.Default.Save();
             ApplicationLogger.LogMessage(0, "Settings saved to config.");
         }
@@ -503,7 +477,7 @@ namespace BuzzardWPF
         /// <summary>
         /// Will load the saved configuration settings on application startup.
         /// </summary>
-        private void Main_Loaded(object sender, RoutedEventArgs e)
+        public void LoadSettings()
         {
             if (m_firstTimeLoading)
             {
@@ -516,14 +490,30 @@ namespace BuzzardWPF
                 //BuzzardWPF.Properties.Settings.Default.Reset();
 
                 ApplicationLogger.LogMessage(0, "Loading settings from config.");
-                m_scanConfigWindow.LoadSettings();
+                WatcherConfigVm.LoadSettings();
                 UpdateTriggerFolderPath(Settings.Default.TriggerFileFolder);
-                m_scanWindow.LoadSettings();
-                m_searchWindow.LoadSettings();
-                m_qcConfigWindow.LoadSettings();
+                WatcherControlVm.LoadSettings();
+                SearchConfigVm.LoadSettings();
+                QCVm.LoadSettings();
                 ApplicationLogger.LogMessage(0, "Finished loading settings from config.");
 
                 m_firstTimeLoading = false;
+            }
+        }
+
+        private void ControlAnimation(bool enabled)
+        {
+            if (enabled != animationEnabled)
+            {
+                if (enabled)
+                {
+                    m_animationTimer.Change(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
+                }
+                else
+                {
+                    m_animationTimer.Change(Timeout.Infinite, Timeout.Infinite);
+                }
+                animationEnabled = enabled;
             }
         }
 
@@ -534,17 +524,12 @@ namespace BuzzardWPF
         /// <param name="e"></param>
         public void TurnAnimationOnOrOff_Click(object sender, RoutedEventArgs e)
         {
-            m_animationTimer.IsEnabled = !m_animationTimer.IsEnabled;
+            ControlAnimation(!animationEnabled);
         }
 
         #endregion
 
-        private void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        private void SelectTriggerFileLocation_Click(object sender, RoutedEventArgs e)
+        private void SelectTriggerFileLocation()
         {
             var eResult =
                 MessageBox.Show(
@@ -563,60 +548,47 @@ namespace BuzzardWPF
             if (result.HasValue && result.Value)
             {
                 UpdateTriggerFolderPath(folderDialog.SelectedPath);
-                TxtRemoteFolderLocation.IsEnabled = true;
+                RemoteFolderLocationIsEnabled = true;
             }
-
         }
 
-        private void UseDefaultTriggerFileLocation_Click(object sender, RoutedEventArgs e)
+        private void UseDefaultTriggerFileLocation()
         {
             UpdateTriggerFolderPath(DEFAULT_TRIGGER_FOLDER_PATH);
-            TxtRemoteFolderLocation.IsEnabled = false;
+            RemoteFolderLocationIsEnabled = false;
         }
 
-        private void DMSCheckTimer_Tick(object sender, EventArgs e)
+        private async void DMSCheckTimer_Tick(object state)
         {
-            lock (m_cacheLoadingSync)
+            if (DatasetManager.Manager.IsLoading)
             {
-                if (DatasetManager.Manager.IsLoading)
-                {
-                    return;
-                }
-
-                // Load active requested runs from DMS
-                DatasetManager.Manager.LoadDmsCache();
-
-                // Do not call DMS_DataAccessor.Instance.UpdateCacheNow()
-                // That class has its own timer for updating the data
+                return;
             }
+
+            // Load active requested runs from DMS
+            await DatasetManager.Manager.LoadDmsCache();
+
+            // Do not call DMS_DataAccessor.Instance.UpdateCacheNow()
+            // That class has its own timer for updating the data
         }
 
-        private void ForceDmsReload_Click(object sender, RoutedEventArgs e)
+        private async void ForceDmsReload()
         {
-
-            lock (m_cacheLoadingSync)
+            if (DatasetManager.Manager.IsLoading)
             {
-                if (DatasetManager.Manager.IsLoading)
-                {
-                    return;
-                }
-
-                // Load active requested runs from DMS
-                DatasetManager.Manager.LoadDmsCache();
-
-                // Also force an update on DMS_DataAccessor.Instance
-                DMS_DataAccessor.Instance.UpdateCacheNow("ForceDmsReload_Click");
+                return;
             }
+
+            // Load active requested runs from DMS
+            await DatasetManager.Manager.LoadDmsCache();
+
+            // Also force an update on DMS_DataAccessor.Instance
+            DMS_DataAccessor.Instance.UpdateCacheNow("ForceDmsReload");
         }
 
-        private void UseTestFolder_Click(object sender, RoutedEventArgs e)
+        private void UseTestFolder()
         {
             SetTriggerFolderToTestPath();
-        }
-
-        private void Main_OnClosed(object sender, EventArgs e)
-        {
-            AppInitializer.CleanupApplication();
         }
     }
 }

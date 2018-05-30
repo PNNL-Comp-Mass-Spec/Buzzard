@@ -1,57 +1,43 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Reactive;
+using System.Reactive.Concurrency;
+using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Threading;
 using BuzzardLib.Data;
 using BuzzardLib.IO;
 using BuzzardWPF.Management;
+using BuzzardWPF.Views;
 using LcmsNetSDK.Data;
 using LcmsNetSDK.Logging;
 using ReactiveUI;
 
-namespace BuzzardWPF.Windows
+namespace BuzzardWPF.ViewModels
 {
-    /// <summary>
-    /// Interaction logic for DatasetGrid.xaml
-    /// </summary>
-    public partial class BuzzardGrid
-        : UserControl, INotifyPropertyChanged
+    public class BuzzardGridViewModel : ReactiveObject
     {
-        #region Events
-        public event PropertyChangedEventHandler PropertyChanged;
-        #endregion
-
         #region Attributes
 
-        private Dialogs.FilldownWindow m_filldownWindow;
         private readonly FilldownBuzzardDataset m_fillDownDataset;
 
-        private ReactiveList<BuzzardDataset> m_datasets;
-        private ReactiveList<string> m_emslUseageTypesSource;
+        private ReactiveList<string> m_emslUsageTypesSource;
 
         private bool m_showGridItemDetail;
         private bool mAbortTriggerCreationNow;
+        private readonly object lockCartConfigNameListSource = new object();
 
         #endregion
 
         #region Initialize
-        public BuzzardGrid()
+        public BuzzardGridViewModel()
         {
-            InitializeComponent();
-
-            DataContext = this;
-
-            EmslUsageTypesSource = new ReactiveList<string>();
-
             ShowGridItemDetail = false;
 
             m_fillDownDataset = new FilldownBuzzardDataset
@@ -74,11 +60,25 @@ namespace BuzzardWPF.Windows
                 }
             };
 
+            Datasets.ItemsAdded.ObserveOn(RxApp.TaskpoolScheduler).Subscribe(DatasetAdded);
+            Datasets.ItemsRemoved.ObserveOn(RxApp.TaskpoolScheduler).Subscribe(DatasetRemoved);
+
             CartConfigNameListSource = new ReactiveList<string>();
 
             DMS_DataAccessor.Instance.PropertyChanged += DMSDataManager_PropertyChanged;
 
             DatasetManager.Manager.PropertyChanged += Manager_PropertyChanged;
+
+            InvertShowDetailsCommand = ReactiveCommand.Create(InvertShowDetails);
+            ClearAllDatasetsCommand = ReactiveCommand.Create(ClearAllDatasets);
+            ClearSelectedDatasetsCommand = ReactiveCommand.Create(ClearSelectedDatasets);
+            FixDatasetNamesCommand = ReactiveCommand.Create(FixDatasetNames);
+            BringUpExperimentsCommand = ReactiveCommand.Create(BringUpExperiments);
+            OpenFilldownCommand = ReactiveCommand.Create(OpenFilldown);
+            AbortCommand = ReactiveCommand.Create(AbortTriggerThread);
+            CreateTriggersCommand = ReactiveCommand.Create(CreateTriggers);
+
+            BindingOperations.EnableCollectionSynchronization(CartConfigNameListSource, lockCartConfigNameListSource);
         }
 
         public void SaveSettings()
@@ -129,37 +129,46 @@ namespace BuzzardWPF.Windows
             switch (e.PropertyName)
             {
                 case "InstrumentData":
-                    OnPropertyChanged("InstrumentsSource");
+                    this.RaisePropertyChanged("InstrumentsSource");
                     break;
 
                 case "OperatorData":
-                    OnPropertyChanged("OperatorsSource");
+                    this.RaisePropertyChanged("OperatorsSource");
                     break;
 
                 case "DatasetTypes":
-                    OnPropertyChanged("DatasetTypesSource");
+                    this.RaisePropertyChanged("DatasetTypesSource");
                     break;
 
                 case "SeparationTypes":
-                    OnPropertyChanged("SeparationTypeSource");
+                    this.RaisePropertyChanged("SeparationTypeSource");
                     break;
 
                 case "CartNames":
-                    OnPropertyChanged("CartNameListSource");
+                    this.RaisePropertyChanged("CartNameListSource");
                     break;
 
                 case "CartConfigNames":
-                    OnPropertyChanged("CartConfigNameListSource");
+                    this.RaisePropertyChanged("CartConfigNameListSource");
                     break;
 
                 case "ColumnData":
-                    OnPropertyChanged("LCColumnSource");
+                    this.RaisePropertyChanged("LCColumnSource");
                     break;
             }
         }
         #endregion
 
         #region Properties
+
+        public ReactiveCommand<Unit, Unit> InvertShowDetailsCommand { get; }
+        public ReactiveCommand<Unit, Unit> ClearAllDatasetsCommand { get; }
+        public ReactiveCommand<Unit, Unit> ClearSelectedDatasetsCommand { get; }
+        public ReactiveCommand<Unit, Unit> FixDatasetNamesCommand { get; }
+        public ReactiveCommand<Unit, Unit> BringUpExperimentsCommand { get; }
+        public ReactiveCommand<Unit, Unit> OpenFilldownCommand { get; }
+        public ReactiveCommand<Unit, Unit> AbortCommand { get; }
+        public ReactiveCommand<Unit, Unit> CreateTriggersCommand { get; }
 
         public ReactiveList<string> OperatorsSource => DMS_DataAccessor.Instance.OperatorData;
 
@@ -173,6 +182,8 @@ namespace BuzzardWPF.Windows
 
         public ReactiveList<string> CartNameListSource => DMS_DataAccessor.Instance.CartNames;
 
+        public ReactiveList<BuzzardDataset> SelectedDatasets { get; } = new ReactiveList<BuzzardDataset>();
+
         /// <summary>
         /// List of cart config names associated with the current cart
         /// </summary>
@@ -181,57 +192,11 @@ namespace BuzzardWPF.Windows
 
         public ReactiveList<string> EmslUsageTypesSource
         {
-            get { return m_emslUseageTypesSource; }
-            set
-            {
-                if (m_emslUseageTypesSource != value)
-                {
-                    m_emslUseageTypesSource = value;
-                    OnPropertyChanged("EmslUsageTypesSource");
-                }
-            }
+            get { return m_emslUsageTypesSource; }
+            set { this.RaiseAndSetIfChanged(ref m_emslUsageTypesSource, value); }
         }
 
-        public ReactiveList<BuzzardDataset> Datasets
-        {
-            get { return m_datasets; }
-            set
-            {
-                if (m_datasets != value)
-                {
-                    if (m_datasets != null)
-                        m_datasets.CollectionChanged -= Dataset_CollectionChanged;
-
-                    m_datasets = value;
-                    OnPropertyChanged("Datasets");
-
-                    if (m_datasets != null)
-                        m_datasets.CollectionChanged += Dataset_CollectionChanged;
-                }
-            }
-        }
-
-        public string AbortButtonVisibility
-        {
-            get
-            {
-                if (IsCreatingTriggerFiles)
-                    return "Visible";
-
-                return "Hidden";
-            }
-        }
-
-        public string CreateTriggerButtonVisibility
-        {
-            get
-            {
-                if (IsCreatingTriggerFiles)
-                    return "Hidden";
-
-                return "Visible";
-            }
-        }
+        public ReactiveList<BuzzardDataset> Datasets => DatasetManager.Manager.Datasets;
 
         public bool IsCreatingTriggerFiles
         {
@@ -240,9 +205,10 @@ namespace BuzzardWPF.Windows
             {
                 if (StateSingleton.IsCreatingTriggerFiles == value) return;
                 StateSingleton.IsCreatingTriggerFiles = value;
-                OnPropertyChanged("IsCreatingTriggerFiles");
-                OnPropertyChanged("AbortButtonVisibility");
-                OnPropertyChanged("CreateTriggerButtonVisibility");
+                this.RaisePropertyChanged("IsCreatingTriggerFiles");
+                this.RaisePropertyChanged(nameof(IsNotCreatingTriggerFiles));
+                this.RaisePropertyChanged("AbortButtonVisibility");
+                this.RaisePropertyChanged("CreateTriggerButtonVisibility");
             }
         }
 
@@ -256,17 +222,15 @@ namespace BuzzardWPF.Windows
                 if (m_showGridItemDetail != value)
                 {
                     m_showGridItemDetail = value;
-                    OnPropertyChanged("ShowGridItemDetail");
+                    this.RaisePropertyChanged("ShowGridItemDetail");
                 }
             }
         }
 
-        public Main MainWindow { get; set; }
-
         #endregion
 
         #region Event Handlers
-        private void InvertShowDetails_Click(object sender, RoutedEventArgs e)
+        private void InvertShowDetails()
         {
             ShowGridItemDetail = !ShowGridItemDetail;
         }
@@ -274,96 +238,83 @@ namespace BuzzardWPF.Windows
         /// <summary>
         /// Clears out all the datasets from the datagrid.
         /// </summary>
-        private void ClearAllDatasets_Click(object sender, RoutedEventArgs e)
+        private void ClearAllDatasets()
         {
             Datasets?.Clear();
         }
 
         /// <summary>
-        /// When the dataset collection is changed, this will be called
+        /// When an item is added to the dataset collection, this will be called
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void Dataset_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        /// <param name="dataset"></param>
+        void DatasetAdded(BuzzardDataset dataset)
         {
-            switch (e.Action)
+            // Loop through every Dataset we've already got, and if its request name
+            // matches the new Dataset's request name, then mark it as a redundant
+            foreach (var ds in Datasets.ToList())
             {
-                case NotifyCollectionChangedAction.Add:
-                    if (e.NewItems != null)
+                var isRedundantName = false;
+                // If both request names are empty, then they are the same.
+                if (string.IsNullOrWhiteSpace(ds.DMSData.DatasetName) && string.IsNullOrWhiteSpace(dataset.DMSData.DatasetName))
+                {
+                    isRedundantName = true;
+                }
+                // If only one request name is empty, then they are not the same
+                // and move on to checking the next one.
+                else if (string.IsNullOrWhiteSpace(ds.DMSData.DatasetName) || string.IsNullOrWhiteSpace(dataset.DMSData.DatasetName))
+                {
+                }
+                // Both request names are the same
+                else if (ds.DMSData.DatasetName.Equals(dataset.DMSData.DatasetName, StringComparison.OrdinalIgnoreCase))
+                {
+                    // If ds and dataset are the same Dataset object, then it doesn't
+                    // matter that they have the same DatasetName value.
+                    if (ds == dataset)
+                        continue;
+                    isRedundantName = true;
+                }
+
+                if (isRedundantName)
+                {
+                    RxApp.MainThreadScheduler.Schedule(() =>
                     {
-                        foreach (BuzzardDataset dataset in e.NewItems)
-                        {
-                            //
-                            // Check for redundent request names.
-                            //
-                            var isRedundantRequest = false;
+                        ds.NotOnlyDatasource = true;
+                        dataset.NotOnlyDatasource = true;
+                    });
+                }
+            }
+        }
 
-                            // Loop through every Dataset we've already got, and if its request name
-                            // matches the new Dataset's request name, then mark it as a redundant
-                            foreach (var ds in Datasets)
-                            {
-                                // If both request names are empty, then they are the same.
-                                if (string.IsNullOrWhiteSpace(ds.DMSData.DatasetName) && string.IsNullOrWhiteSpace(dataset.DMSData.DatasetName))
-                                {
-                                    ds.NotOnlyDatasource = true;
-                                    isRedundantRequest = true;
-                                }
-                                // If only one request name is empty, then they are not the same
-                                // and move on to checking the next one.
-                                else if (string.IsNullOrWhiteSpace(ds.DMSData.DatasetName) || string.IsNullOrWhiteSpace(dataset.DMSData.DatasetName))
-                                {
-                                }
-                                // Both request names are the same
-                                else if (ds.DMSData.DatasetName.Equals(dataset.DMSData.DatasetName, StringComparison.OrdinalIgnoreCase))
-                                {
-                                    // If ds and dataset are the same Dataset object, then it doesn't
-                                    // matter that they have the same DatasetName value.
-                                    if (ds == dataset)
-                                        continue;
-                                    ds.NotOnlyDatasource = true;
-                                    isRedundantRequest = true;
-                                }
-                            }
+        /// <summary>
+        /// When an item is removed from the dataset collection, this will be called
+        /// </summary>
+        /// <param name="dataset"></param>
+        void DatasetRemoved(BuzzardDataset dataset)
+        {
+            if (dataset.NotOnlyDatasource)
+            {
+                var otherSets = (from BuzzardDataset ds in Datasets
+                    where ds.DMSData.DatasetName.Equals(dataset.DMSData.DatasetName, StringComparison.OrdinalIgnoreCase)
+                    select ds).ToList();
 
-                            if (isRedundantRequest)
-                                dataset.NotOnlyDatasource = true;
-                        }
-                    }
-                    break;
-
-                case NotifyCollectionChangedAction.Move:
-                    break;
-                case NotifyCollectionChangedAction.Remove:
-                    if (e.OldItems != null)
-                        foreach (BuzzardDataset dataset in e.OldItems)
-                            if (dataset.NotOnlyDatasource)
-                            {
-                                var otherSets = (from BuzzardDataset ds in Datasets
-                                                 where ds.DMSData.DatasetName.Equals(dataset.DMSData.DatasetName, StringComparison.OrdinalIgnoreCase)
-                                                 select ds).ToList();
-
-                                if (otherSets.Count < 2)
-                                    foreach (var ds in otherSets)
-                                        ds.NotOnlyDatasource = false;
-                            }
-                    break;
-
-                case NotifyCollectionChangedAction.Replace:
-                case NotifyCollectionChangedAction.Reset:
-                default:
-                    break;
+                if (otherSets.Count < 2)
+                    RxApp.MainThreadScheduler.Schedule(() =>
+                    {
+                        foreach (var ds in otherSets)
+                            ds.NotOnlyDatasource = false;
+                    });
             }
         }
 
         /// <summary>
         /// Clear out the selected datasets from the datagrid.
         /// </summary>
-        private void ClearSelectedDatasets_Click(object sender, RoutedEventArgs e)
+        private void ClearSelectedDatasets()
         {
             if (Datasets == null)
                 return;
 
-            var selectedDatasets = GetSelectedDatasets();
+            var selectedDatasets = SelectedDatasets.ToList();
 
             foreach (var dataset in selectedDatasets)
             {
@@ -374,13 +325,13 @@ namespace BuzzardWPF.Windows
         /// <summary>
         /// Renames the specified datasets to remove invalid characters
         /// </summary>
-        private void FixDatasetNames_Click(object sender, RoutedEventArgs e)
+        private void FixDatasetNames()
         {
 
             //
             // Get list of selected datasets
             //
-            var selectedDatasets = GetSelectedDatasets();
+            var selectedDatasets = SelectedDatasets.ToList();
 
             // If there's nothing to rename, then exit
             if (selectedDatasets.Count == 0)
@@ -431,12 +382,7 @@ namespace BuzzardWPF.Windows
             //
             // Put in call to start renaming data
             //
-            void renameDatasets()
-            {
-                RenameDatasets(renameRequests, 0, true, false);
-            }
-
-            Dispatcher.BeginInvoke((Action)renameDatasets, DispatcherPriority.Normal);
+            RxApp.MainThreadScheduler.Schedule(() => RenameDatasets(renameRequests, 0, true, false));
         }
 
         /// <summary>
@@ -460,12 +406,7 @@ namespace BuzzardWPF.Windows
             startingIndex++;
             if (startingIndex < renameRequests.Count)
             {
-                void renameDatasets()
-                {
-                    RenameDatasets(renameRequests, startingIndex, informUserOnConflict, skipOnConflicts);
-                }
-
-                Dispatcher.BeginInvoke((Action)renameDatasets, DispatcherPriority.Normal);
+                RxApp.MainThreadScheduler.Schedule(() => RenameDatasets(renameRequests, startingIndex, informUserOnConflict, skipOnConflicts));
             }
             else
             {
@@ -475,29 +416,13 @@ namespace BuzzardWPF.Windows
             }
         }
 
-        /// <summary>
-        /// Deselects any dataset and all datasets that are held in the datagrid.
-        /// </summary>
-        private void SelectNoDatasets_Click(object sender, RoutedEventArgs e)
-        {
-            m_dataGrid.SelectedIndex = -1;
-        }
-
-        /// <summary>
-        /// Selects all the datasets that are held in the datagrid.
-        /// </summary>
-        private void SelectAllDatasets_Click(object sender, RoutedEventArgs e)
-        {
-            m_dataGrid.SelectAll();
-        }
-
-        private void BringUpExperiments_Click(object sender, RoutedEventArgs e)
+        private void BringUpExperiments()
         {
             //
             // Get the data sets we will be applying the changes
             // to.
             //
-            var selectedItems = GetSelectedDatasets();
+            var selectedItems = SelectedDatasets.ToList();
 
             // If nothing was selected, inform the user and get out
             if (selectedItems == null || selectedItems.Count == 0)
@@ -511,7 +436,9 @@ namespace BuzzardWPF.Windows
             // data source for what we'll be applying the
             // the selected datasets.
             //
-            var dialog = new ExperimentsDialog();
+            var dialog = new ExperimentsDialogWindow();
+            var dialogVm = new ExperimentsViewerViewModel();
+            dialog.DataContext = dialogVm;
             var keepGoing = dialog.ShowDialog() == true;
 
             // If the user say's they want out, then get out
@@ -520,7 +447,7 @@ namespace BuzzardWPF.Windows
                 return;
             }
 
-            var experiment = dialog.SelectedExperiment;
+            var experiment = dialogVm.SelectedExperiment;
 
             // Make sure the user did selected a data source
             if (experiment == null)
@@ -543,17 +470,17 @@ namespace BuzzardWPF.Windows
             ApplicationLogger.LogMessage(0, "Finished applying experiment data to datasets.");
         }
 
-        private void OpenFilldown_Click(object sender, RoutedEventArgs e)
+        private void OpenFilldown()
         {
             //
             // Get a list of which which Datasets are currently selected
             //
-            var selectedDatasets = GetSelectedDatasets();
+            var selectedDatasets = SelectedDatasets.ToList();
 
             //
             // Prep the Filldown Window for use.
             //
-            m_filldownWindow = new Dialogs.FilldownWindow
+            var filldownWindowVm = new FillDownWindowViewModel()
             {
                 Dataset = m_fillDownDataset,
                 OperatorsSource = OperatorsSource,
@@ -564,16 +491,20 @@ namespace BuzzardWPF.Windows
                 EmslUsageTypeSource = EmslUsageTypesSource,
                 LCColumnSource = LCColumnSource
             };
+            var filldownWindow = new FillDownWindow
+            {
+                DataContext = filldownWindowVm
+            };
 
             //
             // Get user input from the Filldown Window
             //
-            var stopDoingThis = m_filldownWindow.ShowDialog() != true;
+            var stopDoingThis = filldownWindow.ShowDialog() != true;
 
             if (stopDoingThis)
                 return;
 
-            var filldownData = m_filldownWindow.Dataset;
+            var filldownData = filldownWindowVm.Dataset;
 
             if (filldownData.ShouldUseLCColumn &&
                 !DMS_DataAccessor.Instance.ColumnData.Contains(filldownData.LCColumn))
@@ -655,22 +586,17 @@ namespace BuzzardWPF.Windows
             IsCreatingTriggerFiles = false;
         }
 
-        private void Abort_Click(object sender, RoutedEventArgs e)
-        {
-            AbortTriggerThread();
-        }
-
         /// <summary>
         /// This event handler should find the samples we want to make trigger files for
         /// and make them.
         /// </summary>
-        private void CreateTriggers_Click(object sender, RoutedEventArgs e)
+        private void CreateTriggers()
         {
             //
             // Find Datasets that the user has selected for
             // Trigger file creation.
             //
-            var selectedItems = GetSelectedDatasets();
+            var selectedItems = SelectedDatasets.ToList();
             if (selectedItems.Count == 0)
                 return;
 
@@ -997,50 +923,5 @@ namespace BuzzardWPF.Windows
         }
 
         #endregion
-
-        private List<BuzzardDataset> GetSelectedDatasets()
-        {
-            var selectedDatasets = new List<BuzzardDataset>(m_dataGrid.SelectedItems.Count);
-
-            foreach (var item in m_dataGrid.SelectedItems)
-                if (item is BuzzardDataset)
-                    selectedDatasets.Add(item as BuzzardDataset);
-
-            return selectedDatasets;
-        }
-
-        private void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-
-    public class ShowRowDetailConverter
-        : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            if (value == null)
-                return DataGridRowDetailsVisibilityMode.Collapsed;
-
-            bool show;
-            try
-            {
-                show = (bool)value;
-            }
-            catch
-            {
-                show = false;
-            }
-
-            return show ?
-                DataGridRowDetailsVisibilityMode.VisibleWhenSelected :
-                DataGridRowDetailsVisibilityMode.Collapsed;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

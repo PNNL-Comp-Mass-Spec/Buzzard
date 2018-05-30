@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Reactive.Concurrency;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Threading;
@@ -37,28 +39,18 @@ namespace BuzzardWPF.Management
         #region Attributes
 
         /// <summary>
-        /// thread for loading data from DMS.
-        /// </summary>
-        private Thread mDmsLoadThread;
-
-        /// <summary>
         /// Trie that holds requested run names from DMS.
         /// </summary>
         private readonly DatasetTrie mRequestedRunTrie;
 
-        /// <summary>
-        /// Flag indicating when true, that the dataset names have been loaded from DMS.
-        /// </summary>
-        private bool mDatasetsReady;
-
-        private Main mMainWindow;
+        private bool loadingDmsData = false;
 
         /// <summary>
         /// Dictionary where keys are FileInfo objects and values are false if the file is still waiting to be processed, or True if it has been processed (is found in the Success folder)
         /// </summary>
         private static Dictionary<string, bool> mTriggerFolderContents;
 
-        private DispatcherTimer mScannedDatasetTimer;
+        private Timer mScannedDatasetTimer;
 
         private static readonly string[] INTEREST_RATING_ARRAY = { "Unreviewed", "Not Released", "Released", "Rerun (Good Data)", "Rerun (Superseded)" };
         public static readonly ReactiveList<string> INTEREST_RATINGS_COLLECTION;
@@ -73,7 +65,6 @@ namespace BuzzardWPF.Management
         private DatasetManager()
         {
             mRequestedRunTrie = new DatasetTrie();
-            mDatasetsReady = false;
             Datasets = new ReactiveList<BuzzardDataset>();
 
             WatcherConfigSelectedCartName = null;
@@ -87,6 +78,8 @@ namespace BuzzardWPF.Management
             MinimumFileSizeKB = 100;
 
             BindingOperations.EnableCollectionSynchronization(Datasets, lockDatasets);
+
+            SetupTimers();
         }
 
         static DatasetManager()
@@ -97,51 +90,30 @@ namespace BuzzardWPF.Management
 
         #region Loading Data
 
-        /// <summary>
-        /// Abort for the Dms Thread.
-        /// </summary>
-        private void AbortDmsThread()
+        public async Task LoadDmsCache()
         {
-            try
+            lock (this)
             {
-                mDmsLoadThread.Abort();
-            }
-            catch
-            {
-                // Ignore errors here
-            }
-            finally
-            {
-                try
+                if (loadingDmsData)
                 {
-                    mDmsLoadThread.Join(100);
+                    return;
                 }
-                catch
-                {
-                    // Ignore errors here
-                }
+
+                loadingDmsData = true;
             }
-            mDmsLoadThread = null;
+
+            await Task.Run(() => LoadDmsData()).ConfigureAwait(false);
+
+            lock (this)
+            {
+                loadingDmsData = false;
+            }
         }
 
         /// <summary>
         /// Loads active requested runs from DMS
         /// </summary>
-        public void LoadDmsCache()
-        {
-            if (mDmsLoadThread != null)
-            {
-                AbortDmsThread();
-            }
-
-            // Create a new threaded load.
-            var start = new ThreadStart(LoadThread);
-            mDmsLoadThread = new Thread(start);
-            mDatasetsReady = false;
-            mDmsLoadThread.Start();
-        }
-
-        private void LoadThread()
+        public void LoadDmsData()
         {
             var currentTask = "Initializing";
 
@@ -198,7 +170,6 @@ namespace BuzzardWPF.Management
                             currentTask = "Parsing trigger files in " + diSuccessFolder.FullName;
                             AddTriggerFiles(diSuccessFolder, true);
                         }
-
                     }
                     catch
                     {
@@ -207,8 +178,6 @@ namespace BuzzardWPF.Management
                 }
 
                 currentTask = "Raise event DatasetsLoaded";
-                mDatasetsReady = true;
-
                 LastUpdated = string.Format("Cache Last Updated: {0}", DateTime.Now);
                 DatasetsLoaded?.Invoke(this, null);
             }
@@ -219,11 +188,8 @@ namespace BuzzardWPF.Management
             }
         }
 
-        public string LastUpdated
-        {
-            get;
-            set;
-        }
+        public string LastUpdated { get; set; }
+
         #endregion
 
         #region Trigger Files
@@ -377,7 +343,7 @@ namespace BuzzardWPF.Management
 
             if (string.IsNullOrWhiteSpace(dataset.FilePath))
             {
-                dataset.DatasetStatus = DatasetStatus.FailedFileError;
+                RxApp.MainThreadScheduler.Schedule(() => dataset.DatasetStatus = DatasetStatus.FailedFileError);
                 return;
             }
 
@@ -432,36 +398,37 @@ namespace BuzzardWPF.Management
                 }
 
                 // Match found
+                RxApp.MainThreadScheduler.Schedule(() => {
                 dataset.DMSData = data.CloneLockedWithPath(dataset.FilePath);
                 dataset.DMSDataLastUpdate = DateTime.UtcNow;
-
+                });
             }
             catch (DatasetTrieException ex)
             {
                 if (fiDataset.Name.StartsWith("x_", StringComparison.OrdinalIgnoreCase))
-                    dataset.DatasetStatus = DatasetStatus.DatasetMarkedCaptured;
+                    RxApp.MainThreadScheduler.Schedule(() => dataset.DatasetStatus = DatasetStatus.DatasetMarkedCaptured);
                 else
                 {
                     if (!CreateTriggerOnDMSFail)
                     {
                         // Either there was no match, or it was an ambiguous match
                         if (ex.SearchDepth >= SEARCH_DEPTH_AMBIGUOUS_MATCH)
-                            dataset.DatasetStatus = DatasetStatus.FailedAmbiguousDmsRequest;
+                            RxApp.MainThreadScheduler.Schedule(() => dataset.DatasetStatus = DatasetStatus.FailedAmbiguousDmsRequest);
                         else
-                            dataset.DatasetStatus = DatasetStatus.FailedNoDmsRequest;
+                            RxApp.MainThreadScheduler.Schedule(() => dataset.DatasetStatus = DatasetStatus.FailedNoDmsRequest);
                     }
                 }
             }
             catch (Exception)
             {
-                dataset.DatasetStatus = DatasetStatus.FailedUnknown;
+                RxApp.MainThreadScheduler.Schedule(() => dataset.DatasetStatus = DatasetStatus.FailedUnknown);
             }
 
             if (!string.IsNullOrWhiteSpace(datasetName))
             {
                 // Look for a match to an existing dataset in DMS
                 if (DMS_DataAccessor.Instance.Datasets.Contains(datasetName))
-                    dataset.DatasetStatus = DatasetStatus.DatasetAlreadyInDMS;
+                    RxApp.MainThreadScheduler.Schedule(() => dataset.DatasetStatus = DatasetStatus.DatasetAlreadyInDMS);
             }
         }
         #endregion
@@ -478,22 +445,7 @@ namespace BuzzardWPF.Management
 
         public string FileWatchRoot { get; set; }
 
-        public bool IsLoading => mDatasetsReady == false;
-
-        public Main MainWindow
-        {
-            get => mMainWindow;
-            set
-            {
-                if (Equals(mMainWindow, value))
-                {
-                    return;
-                }
-
-                mMainWindow = value;
-                SetupTimers();
-            }
-        }
+        public bool IsLoading => loadingDmsData;
 
         public static DatasetManager Manager { get; }
 
@@ -503,23 +455,14 @@ namespace BuzzardWPF.Management
 
         private void SetupTimers()
         {
-            if (MainWindow == null)
-                return;
-
-            mScannedDatasetTimer = new DispatcherTimer(DispatcherPriority.Normal, MainWindow.Dispatcher)
-            {
-                // Update every 500 msec
-                Interval = new TimeSpan(0, 0, 0, 0, 500)
-            };
-
-            mScannedDatasetTimer.Tick += ScannedDatasetTimer_Tick;
-            mScannedDatasetTimer.Start();
+            // Update every 500 msec
+            mScannedDatasetTimer = new Timer(ScannedDatasetTimer_Tick, this, 500, 500);
         }
 
         /// <summary>
         /// This will keep the UI components of the Datasets that are found by the scanner up to date.
         /// </summary>
-        void ScannedDatasetTimer_Tick(object sender, EventArgs e)
+        void ScannedDatasetTimer_Tick(object state)
         {
             try
             {
@@ -545,6 +488,7 @@ namespace BuzzardWPF.Management
                                              item.DatasetStatus != DatasetStatus.DatasetAlreadyInDMS
                                        select item).ToList();
 
+                RxApp.MainThreadScheduler.Schedule(() => {
                 foreach (var dataset in datasetsToCheck)
                 {
                     var datasetName = dataset.Name;
@@ -628,7 +572,7 @@ namespace BuzzardWPF.Management
                         "Exception in ScannedDatasetTimer_Tick for dataset " + datasetName, ex);
                     }
                 }
-
+                });
             }
             catch (Exception ex)
             {
@@ -955,19 +899,6 @@ namespace BuzzardWPF.Management
             DatasetSource howWasItFound = DatasetSource.Searcher,
             string oldFullPath = "")
         {
-            // If we're on the wrong thread, then put in
-            // a call to this in the correct thread and exit.
-            if (!MainWindow.Dispatcher.CheckAccess())
-            {
-                void createPendingDataset()
-                {
-                    CreatePendingDataset(datasetFileOrFolderPath, captureSubfolderPath, allowFolderMatch, howWasItFound, oldFullPath);
-                }
-
-                MainWindow.Dispatcher.BeginInvoke((Action)createPendingDataset, DispatcherPriority.Normal);
-                return;
-            }
-
             bool isArchived;
             var originalPath = ValidateFileOrFolderPath(datasetFileOrFolderPath, allowFolderMatch, out isArchived);
             if (string.IsNullOrEmpty(originalPath))
@@ -984,7 +915,7 @@ namespace BuzzardWPF.Management
                 var fileNameOld = Path.GetFileName(oldFullPath);
                 if (!fileNameOld.StartsWith("x_", StringComparison.OrdinalIgnoreCase))
                 {
-                    foreach (var datasetEntry in Datasets)
+                    foreach (var datasetEntry in Datasets.ToList())
                     {
                         if (datasetEntry.FilePath.Equals(oldFullPath, StringComparison.OrdinalIgnoreCase))
                         {
@@ -1006,7 +937,7 @@ namespace BuzzardWPF.Management
                 //
                 // Find if we need to create a new dataset.
                 //
-                foreach (var datasetEntry in Datasets)
+                foreach (var datasetEntry in Datasets.ToList())
                 {
                     if (datasetEntry.FilePath.Equals(datasetFileOrFolderPath, StringComparison.OrdinalIgnoreCase) ||
                         datasetEntry.FilePath.Equals(originalPath, StringComparison.OrdinalIgnoreCase))
@@ -1148,7 +1079,7 @@ namespace BuzzardWPF.Management
                         dataset.DatasetStatus = DatasetStatus.TriggerFileSent;
                 }
 
-                Datasets.Add(dataset);
+                RxApp.MainThreadScheduler.Schedule(() => Datasets.Add(dataset));
 
                 ApplicationLogger.LogMessage(
                     0,
@@ -1196,19 +1127,7 @@ namespace BuzzardWPF.Management
 
         public void UpdateDataset(string path)
         {
-            // If we're on the wrong thread, then put in
-            // a call to this in the correct thread and exit.
-            if (!MainWindow.Dispatcher.CheckAccess())
-            {
-                void updateDatasetPath()
-                {
-                    UpdateDataset(path);
-                }
-
-                MainWindow.Dispatcher.BeginInvoke((Action)updateDatasetPath, DispatcherPriority.Normal);
-                return;
-            }
-
+            // TODO: Does more of this need to be run on the main thread using RxApp.MainThreadScheduler?
             bool isArchived;
             var pathToUse = ValidateFileOrFolderPath(path, true, out isArchived);
 
@@ -1216,7 +1135,7 @@ namespace BuzzardWPF.Management
             {
                 if (datasetEntry.FilePath.Equals(pathToUse, StringComparison.OrdinalIgnoreCase))
                 {
-                    datasetEntry.UpdateFileProperties();
+                    RxApp.MainThreadScheduler.Schedule(() => datasetEntry.UpdateFileProperties());
                     break;
                 }
             }

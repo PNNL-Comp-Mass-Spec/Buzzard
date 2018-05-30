@@ -1,46 +1,40 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
+using System.Reactive;
 using BuzzardLib.Searching;
 using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
+using BuzzardWPF.Views;
 using LcmsNetSDK.Data;
 using ReactiveUI;
 
-namespace BuzzardWPF.Windows
+namespace BuzzardWPF.ViewModels
 {
-    /// <summary>
-    /// Interaction logic for QCView.xaml
-    /// </summary>
-    public partial class QCView
-        : UserControl, IEmslUsvUser
+    public class QCViewModel : ReactiveObject, IEmslUsvUser
     {
-        #region Events
-        public event PropertyChangedEventHandler PropertyChanged;
-        #endregion
-
         #region Initialize
-        public QCView()
+        public QCViewModel()
         {
-            InitializeComponent();
-            DataContext = this;
+            EmslUsageSelectionVm.BoundContainer = this;
 
-            EMSL_UsageSelectors.BoundContainer = this;
-
-            SelectedEMSLUsageType = EMSL_UsageSelectors.UsageTypesSource[1];
+            SelectedEMSLUsageType = EmslUsageSelectionVm.UsageTypesSource[1];
             EMSLProposalID = null;
             ExperimentName = null;
             SelectedEMSLProposalUsers = new ReactiveList<ProposalUser>();
 
             m_IsNotMonitoring = true;
+
+            SelectExperimentCommand = ReactiveCommand.Create(SelectExperiment);
         }
         #endregion
 
         #region Properties
+
+        public ReactiveCommand<Unit, Unit> SelectExperimentCommand { get; }
+
+        public EmslUsageSelectionViewModel EmslUsageSelectionVm { get; } = new EmslUsageSelectionViewModel();
+
         public string SelectedEMSLUsageType
         {
             get => m_selectedEMSLUsageType;
@@ -49,7 +43,7 @@ namespace BuzzardWPF.Windows
                 if (m_selectedEMSLUsageType != value)
                 {
                     m_selectedEMSLUsageType = value;
-                    OnPropertyChanged("SelectedEMSLUsageType");
+                    this.RaisePropertyChanged("SelectedEMSLUsageType");
                 }
 
                 DatasetManager.Manager.EMSL_Usage = value;
@@ -65,7 +59,7 @@ namespace BuzzardWPF.Windows
                 if (m_emslProposalID != value)
                 {
                     m_emslProposalID = value;
-                    OnPropertyChanged("EMSLProposalID");
+                    this.RaisePropertyChanged("EMSLProposalID");
                 }
 
                 DatasetManager.Manager.EMSL_ProposalID = value;
@@ -81,7 +75,7 @@ namespace BuzzardWPF.Windows
                 if (m_experimentName != value)
                 {
                     m_experimentName = value;
-                    OnPropertyChanged("ExperimentName");
+                    this.RaisePropertyChanged("ExperimentName");
                 }
 
                 DatasetManager.Manager.QC_ExperimentName = value;
@@ -97,7 +91,7 @@ namespace BuzzardWPF.Windows
                 if (m_createOnDMSFail != value)
                 {
                     m_createOnDMSFail = value;
-                    OnPropertyChanged("CreateOnDMSFail");
+                    this.RaisePropertyChanged("CreateOnDMSFail");
                 }
 
                 DatasetManager.Manager.QC_CreateTriggerOnDMSFail = value;
@@ -113,9 +107,9 @@ namespace BuzzardWPF.Windows
                 if (m_selectedEMSLProposalUsers != value)
                 {
                     m_selectedEMSLProposalUsers = value;
-                    OnPropertyChanged("SelectedEMSLProposalUsers");
+                    this.RaisePropertyChanged("SelectedEMSLProposalUsers");
 
-                    EMSL_UsageSelectors.UpdateSelectedUsersText();
+                    EmslUsageSelectionVm.UpdateSelectedUsersText();
                 }
 
                 DatasetManager.Manager.QC_SelectedProposalUsers = value;
@@ -126,11 +120,7 @@ namespace BuzzardWPF.Windows
         public bool IsNotMonitoring
         {
             get => m_IsNotMonitoring;
-            private set
-            {
-                m_IsNotMonitoring = value;
-                OnPropertyChanged("IsNotMonitoring");
-            }
+            private set { this.RaiseAndSetIfChanged(ref m_IsNotMonitoring, value); }
         }
         private bool m_IsNotMonitoring;
 
@@ -141,14 +131,18 @@ namespace BuzzardWPF.Windows
         /// The brings up a dialog window that lets the user choose
         /// an experiment name they wish to apply to the new datasets.
         /// </summary>
-        private void SelectExperiment_Click(object sender, RoutedEventArgs e)
+        private void SelectExperiment()
         {
-            var dialog = new ExperimentsDialog();
+            var dialogVm = new ExperimentsViewerViewModel();
+            var dialog = new ExperimentsDialogWindow()
+            {
+                DataContext = dialogVm
+            };
             var stop = dialog.ShowDialog() != true;
             if (stop)
                 return;
 
-            ExperimentName = dialog.SelectedExperiment.Experiment;
+            ExperimentName = dialogVm.SelectedExperiment.Experiment;
         }
 
         /// <summary>
@@ -191,11 +185,6 @@ namespace BuzzardWPF.Windows
                 selectedUsers = Settings.Default.QC_EMSL_Users.Cast<string>().ToList();
 
             SelectedEMSLProposalUsers = DMS_DataAccessor.Instance.FindSavedEMSLProposalUsers(EMSLProposalID, selectedUsers);
-        }
-
-        private void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
         #endregion
     }

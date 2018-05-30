@@ -1,15 +1,15 @@
 ﻿<UserControl
-    x:Class="BuzzardWPF.Windows.FileFolderInfoViewer"
+    x:Class="BuzzardWPF.Views.FileFolderInfoViewerView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="clr-namespace:BuzzardLib.Converters;assembly=BuzzardLib"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:windows="clr-namespace:BuzzardWPF.Windows"
+    xmlns:viewModels="clr-namespace:BuzzardWPF.ViewModels"
     d:DesignHeight="300"
     d:DesignWidth="300"
     mc:Ignorable="d"
-    d:DataContext="{d:DesignInstance {x:Type windows:FileFolderInfoViewer}, IsDesignTimeCreatable=True}">
+    d:DataContext="{d:DesignInstance {x:Type viewModels:FileFolderInfoViewerViewModel}, IsDesignTimeCreatable=True}">
     <UserControl.Resources>
         <converters:ByteToKBConverter x:Key="FileSizeConverter" />
 
@@ -27,7 +27,7 @@
             <ContentPresenter Name="PART_SelectedContentHost" ContentSource="SelectedContent" />
         </ControlTemplate>
     </UserControl.Resources>
-    <TabControl x:Name="m_tabControl" Template="{StaticResource TabControlTemplate}">
+    <TabControl x:Name="m_tabControl" Template="{StaticResource TabControlTemplate}" SelectedIndex="{Binding SelectedTabIndex}">
         <TabItem Header="No Item">
             <Grid>
                 <Grid.RowDefinitions>

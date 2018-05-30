@@ -1,11 +1,11 @@
 ﻿<Window
-    x:Class="BuzzardWPF.Windows.Dialogs.FilldownWindow"
+    x:Class="BuzzardWPF.Views.FillDownWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-    xmlns:dialogs="clr-namespace:BuzzardWPF.Windows.Dialogs"
+    xmlns:viewModels="clr-namespace:BuzzardWPF.ViewModels"
     Title="Dataset Filldown"
     Width="475"
     Height="648.179"
@@ -20,7 +20,7 @@
     WindowStartupLocation="CenterScreen"
     WindowStyle="ToolWindow"
     mc:Ignorable="d"
-    d:DataContext="{d:DesignInstance {x:Type dialogs:FilldownWindow}, IsDesignTimeCreatable=True}">
+    d:DataContext="{d:DesignInstance {x:Type viewModels:FillDownWindowViewModel}, IsDesignTimeCreatable=True}">
     <Window.Resources>
         <Style x:Key="ButtonStyle" TargetType="ButtonBase">
             <Setter Property="MinHeight" Value="28" />
@@ -62,7 +62,7 @@
                 Grid.Column="1"
                 Width="100"
                 MinHeight="32"
-                Click="m_okButton_Click"
+                Click="OkButton_Click"
                 Content="Ok"
                 FontFamily="Arial"
                 IsDefault="True"
@@ -81,13 +81,13 @@
         <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
             <Button
                 MinHeight="32"
-                Click="UseAll_Click"
+                Command="{Binding UseAllCommand}"
                 Content="Use All"
                 FontFamily="Arial"
                 Style="{StaticResource SimpleButtonStyle}" />
             <Button
                 MinHeight="32"
-                Click="UseNone_Click"
+                Command="{Binding UseNoneCommand}"
                 Content="Use None"
                 FontFamily="Arial"
                 Style="{StaticResource SimpleButtonStyle}" />
@@ -196,7 +196,7 @@
                     Grid.Column="1"
                     Margin="2"
                     ItemsSource="{Binding Path=LCColumnSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                    SelectionChanged="LCColumnSelector_SelectionChanged" />
+                    SelectedItem="{Binding Dataset.LCColumn}" />
 
             </Grid>
 
@@ -232,8 +232,7 @@
                 Grid.Column="2"
                 Margin="2"
                 ItemsSource="{Binding Path=CartNameListSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                SelectedValue="{Binding Path=Dataset.CartName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                SelectionChanged="CartNameList_OnSelectionChanged" />
+                SelectedItem="{Binding Path=Dataset.CartName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
             <!--  Cart Config  -->
             <Label
@@ -307,7 +306,7 @@
                     Grid.Column="1"
                     Margin="2"
                     ItemsSource="{Binding Path=EMSLProposalIDs, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                    SelectionChanged="ProposalIDSelector_SelectionChanged" />
+                    SelectedItem="{Binding Dataset.DMSData.EMSLProposalID}" />
 
             </Grid>
 
@@ -328,7 +327,8 @@
                 Delimiter="; "
                 DisplayMemberPath="UserName"
                 ItemsSource="{Binding Path=EMSLProposalUsersSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                SelectedItemsOverride="{Binding Path=Dataset.EMSLProposalUsers, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                SelectedItemsOverride="{Binding Path=Dataset.EMSLProposalUsers, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                Text="{Binding EmslProposalUsersText}"/>
 
             <!--  Experiment Name  -->
             <ToggleButton
@@ -352,7 +352,7 @@
                 MinHeight="32"
                 Margin="0,5,4.8,0"
                 HorizontalAlignment="Right"
-                Click="PickExperiment_Click"
+                Command="{Binding PickExperimentCommand}"
                 Content="Experiments..."
                 FontFamily="Arial"
                 Style="{StaticResource SimpleButtonStyle}" />

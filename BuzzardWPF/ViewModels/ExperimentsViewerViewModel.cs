@@ -1,27 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Threading;
+using System.Reactive;
+using System.Reactive.Concurrency;
 using BuzzardWPF.Management;
 using LcmsNetSDK.Data;
 using ReactiveUI;
 
-namespace BuzzardWPF.Windows
+namespace BuzzardWPF.ViewModels
 {
-    /// <summary>
-    /// Interaction logic for ExperimentsViewer.xaml
-    /// </summary>
-    public partial class ExperimentsViewer
-        : UserControl, INotifyPropertyChanged
+    public class ExperimentsViewerViewModel : ReactiveObject
     {
-        #region Events
-        public event PropertyChangedEventHandler PropertyChanged;
-        #endregion
-
         #region Attributes
         private string m_filterText;
         private ExperimentData m_selectedExperiment;
@@ -33,18 +22,23 @@ namespace BuzzardWPF.Windows
         private List<string> m_reason;
 
         private ReactiveList<ExperimentData> m_experiments;
+        private FilterOption selectedFilterOption;
+        private List<string> autoCompleteBoxItems;
+
         #endregion
 
         #region Initialization
-        public ExperimentsViewer()
+        public ExperimentsViewerViewModel()
         {
-            InitializeComponent();
-            DataContext = this;
-
             FilterText = string.Empty;
 
-            Action loadExperiments = LoadExperiments;
-            Dispatcher.BeginInvoke(loadExperiments, DispatcherPriority.Render);
+            FilterOptions = new ReactiveList<FilterOption>(Enum.GetValues(typeof(FilterOption)).Cast<FilterOption>().Where(x => x != FilterOption.None));
+            SelectedFilterOption = FilterOption.Researcher;
+            SearchCommand = ReactiveCommand.Create(Search);
+
+            //Dispatcher.BeginInvoke(LoadExperiments, DispatcherPriority.Render);
+            RxApp.MainThreadScheduler.Schedule(LoadExperiments);
+            SetAutoCompleteList();
         }
 
         private void LoadExperiments()
@@ -114,17 +108,21 @@ namespace BuzzardWPF.Windows
         #endregion
 
         #region Properties
+
+        public ReactiveCommand<Unit, Unit> SearchCommand { get; }
+
+        public IReadOnlyReactiveList<FilterOption> FilterOptions { get; }
+
+        public FilterOption SelectedFilterOption
+        {
+            get => selectedFilterOption;
+            set => this.RaiseAndSetIfChanged(ref selectedFilterOption, value);
+        }
+
         public ExperimentData SelectedExperiment
         {
             get { return m_selectedExperiment; }
-            set
-            {
-                if (m_selectedExperiment != value)
-                {
-                    m_selectedExperiment = value;
-                    OnPropertyChanged("SelectedExperiment");
-                }
-            }
+            set { this.RaiseAndSetIfChanged(ref m_selectedExperiment, value); }
         }
 
         public string FilterText
@@ -132,75 +130,70 @@ namespace BuzzardWPF.Windows
             get { return m_filterText; }
             set
             {
-                if (m_filterText != value)
+                if (value == null)
                 {
-                    m_filterText = value;
-
-                    if (value == null)
-                        m_filterText = string.Empty;
-
-                    OnPropertyChanged("FilterText");
+                    value = string.Empty;
                 }
+
+                this.RaiseAndSetIfChanged(ref m_filterText, value);
             }
         }
 
         public ReactiveList<ExperimentData> Experiments
         {
             get { return m_experiments; }
-            set
-            {
-                if (m_experiments != value)
-                {
-                    m_experiments = value;
-                    OnPropertyChanged("Experiments");
-                }
-            }
+            set { this.RaiseAndSetIfChanged(ref m_experiments, value); }
         }
+
+        public List<string> AutoCompleteBoxItems
+        {
+            get => autoCompleteBoxItems;
+            private set => this.RaiseAndSetIfChanged(ref autoCompleteBoxItems, value);
+        }
+
         #endregion
 
-        #region Event Handlers
+        #region Methods
         /// <summary>
         /// Gives the autofill box a list of times to use as its source based
         /// on the selected filter to use.
         /// </summary>
-        private void FilterBox_Populating(object sender, PopulatingEventArgs e)
+        private void SetAutoCompleteList()
         {
-            var filterOption = GetSelectedFilter();
+            var filterOption = SelectedFilterOption;
 
             switch (filterOption)
             {
                 case FilterOption.Researcher:
-                    m_filterBox.ItemsSource = m_researcherList;
+                    AutoCompleteBoxItems = m_researcherList;
                     break;
 
                 case FilterOption.Experiment:
-                    m_filterBox.ItemsSource = m_experimentNameList;
+                    AutoCompleteBoxItems = m_experimentNameList;
                     break;
 
                 case FilterOption.Organism:
-                    m_filterBox.ItemsSource = m_organismNameList;
+                    AutoCompleteBoxItems = m_organismNameList;
                     break;
 
                 case FilterOption.Reason:
-                    m_filterBox.ItemsSource = m_reason;
+                    AutoCompleteBoxItems = m_reason;
                     break;
 
                 default:
-                    m_filterBox.ItemsSource = new string[] { };
+                    AutoCompleteBoxItems = new List<string>();
                     break;
             }
-
-            m_filterBox.PopulateComplete();
         }
 
         /// <summary>
         /// Searches for experiments that meet-up to the selected filter and
         /// filter screen.
         /// </summary>
-        private void Search_Click(object sender, RoutedEventArgs e)
+        private void Search()
         {
             Experiments = null;
-            var filterOption = GetSelectedFilter();
+            var filterOption = SelectedFilterOption;
 
             IEnumerable<ExperimentData> x = null;
 
@@ -245,59 +238,13 @@ namespace BuzzardWPF.Windows
             catch (Exception ex)
             {
                 // Search error; do not update Experiments
-                Console.WriteLine("Error ignored in ExperimentsViewser.Search_Click: " + ex.Message);
+                Console.WriteLine("Error ignored in ExperimentsViewerViewModel.Search_Click: " + ex.Message);
             }
 
         }
         #endregion
 
-        #region Methods
-        /// <summary>
-        /// Gets the filter that was selected from the drop down box.
-        /// </summary>
-        private FilterOption GetSelectedFilter()
-        {
-            var result = FilterOption.None;
-
-            var selectedItem = m_comboBox.SelectedItem as ComboBoxItem;
-            if (selectedItem == null)
-                return result;
-
-            var tag = selectedItem.Tag as string;
-
-            switch (tag)
-            {
-                case "rs":
-                    result = FilterOption.Researcher;
-                    break;
-
-                case "ex":
-                    result = FilterOption.Experiment;
-                    break;
-
-                case "or":
-                    result = FilterOption.Organism;
-                    break;
-
-                case "ra":
-                    result = FilterOption.Reason;
-                    break;
-
-                default:
-                    result = FilterOption.None;
-                    break;
-            }
-
-            return result;
-        }
-
-        private void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-        #endregion
-
-        private enum FilterOption
+        public enum FilterOption
         {
             Researcher,
             Experiment,

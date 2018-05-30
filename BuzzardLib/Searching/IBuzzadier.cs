@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace BuzzardLib.Searching
 {
@@ -37,6 +39,13 @@ namespace BuzzardLib.Searching
         /// </summary>
         /// <param name="config"></param>
         void Search(SearchConfig config);
+
+        /// <summary>
+        /// Call to start searching.
+        /// </summary>
+        /// <param name="config"></param>
+        /// <param name="cancelToken"></param>
+        Task SearchAsync(SearchConfig config, CancellationTokenSource cancelToken);
 
         /// <summary>
         /// Call to stop searching.

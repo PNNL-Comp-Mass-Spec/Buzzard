@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Reactive.Concurrency;
 using System.Threading;
 using LcmsNetDmsTools;
 using LcmsNetSDK.Data;
@@ -12,8 +12,7 @@ using ReactiveUI;
 
 namespace BuzzardWPF.Management
 {
-    public class DMS_DataAccessor
-        : INotifyPropertyChanged
+    public class DMS_DataAccessor : INotifyPropertyChanged
     {
 
         #region Constants
@@ -53,15 +52,14 @@ namespace BuzzardWPF.Management
             mLastLoadFromCache = DateTime.UtcNow.AddMinutes(-60);
 
             mDataRefreshIntervalHours = 6;
+        }
 
-            mAutoUpdateTimer = new System.Timers.Timer
+        private void StartAutoUpdateTimer()
+        {
+            if (mAutoUpdateTimer == null)
             {
-                AutoReset = true,
-                Enabled = false,
-                Interval = 30 * 1000
-            };
-
-            mAutoUpdateTimer.Elapsed += mAutoUpdateTimer_Elapsed;
+                mAutoUpdateTimer = new Timer(AutoUpdateTimer_Tick, this, TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(30));
+            }
         }
 
         static DMS_DataAccessor()
@@ -202,7 +200,7 @@ namespace BuzzardWPF.Management
             }
 
             // Now that data has been loaded, enable the timer that will auto-update the data every mDataRefreshIntervalHours hours
-            mAutoUpdateTimer.Enabled = true;
+            StartAutoUpdateTimer();
         }
 
         /// <summary>
@@ -260,7 +258,7 @@ namespace BuzzardWPF.Management
             }
 
             mLastSQLiteUpdate = DateTime.UtcNow;
-            LoadDMSDataFromCache(true);
+            RxApp.MainThreadScheduler.Schedule(() => LoadDMSDataFromCache(true));
 
             mIsUpdating = false;
         }
@@ -298,7 +296,7 @@ namespace BuzzardWPF.Management
 
         #region Member Variables
 
-        private readonly System.Timers.Timer mAutoUpdateTimer;
+        private Timer mAutoUpdateTimer;
 
         private float mDataRefreshIntervalHours;
         private DateTime mLastSQLiteUpdate;
@@ -312,7 +310,7 @@ namespace BuzzardWPF.Management
 
         #region Private Methods
 
-        void mAutoUpdateTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        void AutoUpdateTimer_Tick(object state)
         {
             if (DataRefreshIntervalHours <= 0)
                 return;
@@ -325,7 +323,7 @@ namespace BuzzardWPF.Management
             // Set the Last Update time to now to prevent this function from calling UpdateCacheNow repeatedly if the DMS update takes over 30 seconds
             mLastSQLiteUpdate = DateTime.UtcNow;
 
-            UpdateCacheNow("mAutoUpdateTimer_Elapsed");
+            UpdateCacheNow("AutoUpdateTimer_Tick");
         }
 
         private bool UpdateSQLiteCache()

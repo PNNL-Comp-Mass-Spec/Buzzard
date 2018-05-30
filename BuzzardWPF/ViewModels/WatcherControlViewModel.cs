@@ -1,24 +1,21 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Reactive;
+using System.Threading;
 using System.Windows;
-using System.Windows.Controls;
 using BuzzardLib.Data;
 using BuzzardLib.IO;
 using BuzzardLib.Searching;
 using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
 using LcmsNetSDK.Logging;
+using ReactiveUI;
 
-namespace BuzzardWPF.Windows
+namespace BuzzardWPF.ViewModels
 {
-    /// <summary>
-    /// Interaction logic for WatcherControl.xaml
-    /// </summary>
-    public partial class WatcherControl
-        : UserControl, INotifyPropertyChanged
+    public class WatcherControlViewModel : ReactiveObject
     {
         #region Constants
 
@@ -27,7 +24,6 @@ namespace BuzzardWPF.Windows
         #endregion
 
         #region Events
-        public event PropertyChangedEventHandler PropertyChanged;
         public EventHandler<StartStopEventArgs> MonitoringToggled;
         #endregion
 
@@ -42,31 +38,26 @@ namespace BuzzardWPF.Windows
         private bool mCreateTriggerOnDMSFail;
 
         private readonly ConcurrentDictionary<string, DateTime> mFilePathsToProcess;
-        private readonly System.Timers.Timer mFileUpdateHandler;
+        private readonly Timer mFileUpdateHandler;
+        private bool fileUpdateHandlerEnabled = false;
 
         readonly Ookii.Dialogs.Wpf.VistaFolderBrowserDialog mFolderDialog;
         private readonly FileSystemWatcher mFileSystemWatcher;
+        private string[] directorySelectorOptionsList;
 
         #endregion
 
         #region Initialization
-        public WatcherControl()
+        public WatcherControlViewModel()
         {
-            InitializeComponent();
             StateSingleton.IsMonitoring = false;
-            DataContext = this;
 
             //this.EMSL_DataSelector.BoundContainer = this;
 
             mFilePathsToProcess = new ConcurrentDictionary<string, DateTime>();
 
-            mFileUpdateHandler = new System.Timers.Timer
-            {
-                AutoReset = true,
-                Interval = 1000         // Process new/changed files once per second
-            };
-            mFileUpdateHandler.Elapsed += m_FileUpdateHandler_Elapsed;
-            mFileUpdateHandler.Enabled = false;
+            mFileUpdateHandler = new Timer(FileUpdateHandler_Tick, this, Timeout.Infinite, Timeout.Infinite);
+            fileUpdateHandlerEnabled = false;
 
             mFolderDialog = new Ookii.Dialogs.Wpf.VistaFolderBrowserDialog { ShowNewFolderButton = true };
 
@@ -80,6 +71,9 @@ namespace BuzzardWPF.Windows
 
             ResetToDefaults();
 
+            SelectDirectoryCommand = ReactiveCommand.Create(SelectDirectory);
+            ResetToDefaultsCommand = ReactiveCommand.Create(ResetToDefaults);
+            MonitorStartStopCommand = ReactiveCommand.Create(MonitorStartStop);
         }
 
         private void ResetToDefaults()
@@ -98,6 +92,11 @@ namespace BuzzardWPF.Windows
         #endregion
 
         #region Properties
+
+        public ReactiveCommand<Unit, Unit> SelectDirectoryCommand { get; }
+        public ReactiveCommand<Unit, Unit> ResetToDefaultsCommand { get; }
+        public ReactiveCommand<Unit, Unit> MonitorStartStopCommand { get; }
+
         public bool CreateTriggerOnDMSFail
         {
             get { return mCreateTriggerOnDMSFail; }
@@ -106,7 +105,7 @@ namespace BuzzardWPF.Windows
                 if (mCreateTriggerOnDMSFail != value)
                 {
                     mCreateTriggerOnDMSFail = value;
-                    OnPropertyChanged("CreateTriggerOnDMSFail");
+                    this.RaisePropertyChanged("CreateTriggerOnDMSFail");
                 }
 
                 DatasetManager.Manager.CreateTriggerOnDMSFail = value;
@@ -116,27 +115,13 @@ namespace BuzzardWPF.Windows
         public string Extension
         {
             get { return mExtension; }
-            set
-            {
-                if (mExtension != value)
-                {
-                    mExtension = value;
-                    OnPropertyChanged("Extension");
-                }
-            }
+            set { this.RaiseAndSetIfChanged(ref mExtension, value); }
         }
 
         public SearchOption WatchDepth
         {
             get { return mWatchDepth; }
-            set
-            {
-                if (mWatchDepth != value)
-                {
-                    mWatchDepth = value;
-                    OnPropertyChanged("WatchDepth");
-                }
-            }
+            set { this.RaiseAndSetIfChanged(ref mWatchDepth, value); }
         }
 
         public string DirectoryToWatch
@@ -157,7 +142,9 @@ namespace BuzzardWPF.Windows
                         }
                     }
                     */
-                    OnPropertyChanged("DirectoryToWatch");
+                    this.RaisePropertyChanged("DirectoryToWatch");
+
+                    SetDirectorySelectorOptionsList();
                 }
 
             }
@@ -170,8 +157,8 @@ namespace BuzzardWPF.Windows
             {
                 if (StateSingleton.IsMonitoring == value) return;
                 StateSingleton.IsMonitoring = value;
-                OnPropertyChanged("IsWatching");
-                OnPropertyChanged("IsNotMonitoring");
+                this.RaisePropertyChanged("IsWatching");
+                this.RaisePropertyChanged("IsNotMonitoring");
             }
         }
 
@@ -185,7 +172,7 @@ namespace BuzzardWPF.Windows
                 if (mMatchFolders != value)
                 {
                     mMatchFolders = value;
-                    OnPropertyChanged("MatchFolders");
+                    this.RaisePropertyChanged("MatchFolders");
                 }
 
                 DatasetManager.Manager.MatchFolders = value;
@@ -208,9 +195,9 @@ namespace BuzzardWPF.Windows
                 if (mWaitTimeMinutes != value)
                 {
                     mWaitTimeMinutes = value;
-                    OnPropertyChanged("WaitTime");
-                    OnPropertyChanged("WaitTime_MinComp");
-                    OnPropertyChanged("WaitTime_HrComp");
+                    this.RaisePropertyChanged("WaitTime");
+                    this.RaisePropertyChanged("WaitTime_MinComp");
+                    this.RaisePropertyChanged("WaitTime_HrComp");
                 }
 
                 DatasetManager.Manager.TriggerFileCreationWaitTime = value;
@@ -228,10 +215,16 @@ namespace BuzzardWPF.Windows
                 if (mMinimumFileSizeKB != value)
                 {
                     mMinimumFileSizeKB = value;
-                    OnPropertyChanged("MinimumFileSize");
+                    this.RaisePropertyChanged("MinimumFileSize");
                 }
                 DatasetManager.Manager.MinimumFileSizeKB = value;
             }
+        }
+
+        public string[] DirectorySelectorOptionsList
+        {
+            get => directorySelectorOptionsList;
+            private set => this.RaiseAndSetIfChanged(ref directorySelectorOptionsList, value);
         }
 
         #endregion
@@ -282,7 +275,7 @@ namespace BuzzardWPF.Windows
             // The monitor will auto-notify the user of this (if a trigger file has not yet been sent)
         }
 
-        private void AutoFillDirectorySelector_Populating(object sender, PopulatingEventArgs e)
+        private void SetDirectorySelectorOptionsList()
         {
             var text = DirectoryToWatch;
             string dirname;
@@ -302,33 +295,43 @@ namespace BuzzardWPF.Windows
                 {
                     var drives = DriveInfo.GetDrives();
                     var driveNames = drives.Select(drive => drive.Name).ToArray();
-                    m_autoFillDirectorySelector.ItemsSource = driveNames;
+                    DirectorySelectorOptionsList = driveNames;
                 }
                 else if (Directory.Exists(dirname))
                 {
                     var subFolders = Directory.GetDirectories(dirname, "*", SearchOption.TopDirectoryOnly);
-                    m_autoFillDirectorySelector.ItemsSource = subFolders;
+                    DirectorySelectorOptionsList = subFolders;
                 }
             }
             catch
             {
                 // Ignore errors here
             }
-
-            m_autoFillDirectorySelector.PopulateComplete();
         }
 
-        void m_FileUpdateHandler_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        void FileUpdateHandler_Tick(object state)
         {
             ProcessFilePathQueue();
         }
 
-        private void m_ResetToDefaults_Click(object sender, RoutedEventArgs e)
+        private void ControlFileMonitor(bool enabled)
         {
-            ResetToDefaults();
+            if (enabled != fileUpdateHandlerEnabled)
+            {
+                if (enabled)
+                {
+                    // Process new/changed files once per second
+                    mFileUpdateHandler.Change(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
+                }
+                else
+                {
+                    mFileUpdateHandler.Change(Timeout.Infinite, Timeout.Infinite);
+                }
+                fileUpdateHandlerEnabled = enabled;
+            }
         }
 
-        private void SelectDirectory_Click(object sender, RoutedEventArgs e)
+        private void SelectDirectory()
         {
             mFolderDialog.SelectedPath = DirectoryToWatch;
 
@@ -340,7 +343,7 @@ namespace BuzzardWPF.Windows
             }
         }
 
-        private void MonitorStartStop_Click(object sender, RoutedEventArgs e)
+        private void MonitorStartStop()
         {
             if (IsWatching)
                 StopWatching();
@@ -382,7 +385,7 @@ namespace BuzzardWPF.Windows
 
             var lstKeys = mFilePathsToProcess.Keys.ToList();
 
-            mFileUpdateHandler.Enabled = false;
+            ControlFileMonitor(false);
             var diBaseFolder = new DirectoryInfo(DirectoryToWatch);
 
             foreach (var fullFilePath in lstKeys)
@@ -427,8 +430,7 @@ namespace BuzzardWPF.Windows
                 }
             }
 
-            mFileUpdateHandler.Enabled = IsWatching;
-
+            ControlFileMonitor(IsWatching);
         }
 
         private void ReportError(string errorMsg)
@@ -445,14 +447,7 @@ namespace BuzzardWPF.Windows
             mFileSystemWatcher.EnableRaisingEvents = false;
             IsWatching = false;
 
-            mFileUpdateHandler.Enabled = false;
-
-            // This may seem a bit strange since I used bindings to
-            // enable and disable the other controls, but for some
-            // reason bindings didn't work for doing that to these
-            // two controls.
-            m_dialogButton.IsEnabled = true;
-            m_dropDown.IsEnabled = true;
+            ControlFileMonitor(false);
 
             OnMonitoringToggled(false);
 
@@ -523,14 +518,7 @@ namespace BuzzardWPF.Windows
             mFileSystemWatcher.EnableRaisingEvents = true;
             IsWatching = true;
 
-            mFileUpdateHandler.Enabled = true;
-
-            // This may seem a bit strange since I used bindings to
-            // enable and disable the other controls, but for some
-            // reason bindings didn't work for doing that to these
-            // two controls.
-            m_dialogButton.IsEnabled = false;
-            m_dropDown.IsEnabled = false;
+            ControlFileMonitor(true);
 
             OnMonitoringToggled(true);
 
@@ -541,13 +529,6 @@ namespace BuzzardWPF.Windows
         {
             MonitoringToggled?.Invoke(this, new StartStopEventArgs(monitoring));
         }
-
-        private void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
         #endregion
-
     }
-
 }

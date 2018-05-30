@@ -93,111 +93,120 @@
     <Compile Include="DynamicSplashScreenWindow.xaml.cs">
       <DependentUpon>DynamicSplashScreenWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MainWindowViewModel.cs" />
     <Compile Include="Management\CartConfigFilter.cs" />
     <Compile Include="Management\DatasetFactory.cs" />
     <Compile Include="Management\DatasetManager.cs" />
     <Compile Include="Management\DMSConfig.cs" />
     <Compile Include="Management\DMS_DataAccessor.cs" />
     <Compile Include="Management\RenameDataRequest.cs" />
-    <Compile Include="AppInitializer.cs" />
-    <Compile Include="Settings.cs" />
-    <Compile Include="Windows\BuzzardGrid.xaml.cs">
-      <DependentUpon>BuzzardGrid.xaml</DependentUpon>
+    <Compile Include="ViewModels\BuzzardGridViewModel.cs" />
+    <Compile Include="ViewModels\DatasetOverwriteDialogViewModel.cs" />
+    <Compile Include="ViewModels\EmslUsageSelectionViewModel.cs" />
+    <Compile Include="ViewModels\ExperimentsViewerViewModel.cs" />
+    <Compile Include="ViewModels\FileFolderInfoViewerViewModel.cs" />
+    <Compile Include="ViewModels\FillDownWindowViewModel.cs" />
+    <Compile Include="ViewModels\QCViewModel.cs" />
+    <Compile Include="ViewModels\SearchConfigViewModel.cs" />
+    <Compile Include="ViewModels\WatcherConfigViewModel.cs" />
+    <Compile Include="ViewModels\WatcherControlViewModel.cs" />
+    <Compile Include="Views\BuzzardGridView.xaml.cs">
+      <DependentUpon>BuzzardGridView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows\Dialogs\DatasetOverwriteDialog.xaml.cs">
-      <DependentUpon>DatasetOverwriteDialog.xaml</DependentUpon>
+    <Compile Include="Views\DatasetOverwriteDialogWindow.xaml.cs">
+      <DependentUpon>DatasetOverwriteDialogWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows\EMSL_UsageSelectionView.xaml.cs">
-      <DependentUpon>EMSL_UsageSelectionView.xaml</DependentUpon>
+    <Compile Include="Views\EmslUsageSelectionView.xaml.cs">
+      <DependentUpon>EmslUsageSelectionView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows\Dialogs\ExperimentsDialog.xaml.cs">
-      <DependentUpon>ExperimentsDialog.xaml</DependentUpon>
+    <Compile Include="Views\ExperimentsDialogWindow.xaml.cs">
+      <DependentUpon>ExperimentsDialogWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows\ExperimentsViewer.xaml.cs">
-      <DependentUpon>ExperimentsViewer.xaml</DependentUpon>
+    <Compile Include="Views\ExperimentsViewerView.xaml.cs">
+      <DependentUpon>ExperimentsViewerView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows\FileFolderInfoViewer.xaml.cs">
-      <DependentUpon>FileFolderInfoViewer.xaml</DependentUpon>
+    <Compile Include="Views\FileFolderInfoViewerView.xaml.cs">
+      <DependentUpon>FileFolderInfoViewerView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows\Dialogs\FilldownWindow.xaml.cs">
-      <DependentUpon>FilldownWindow.xaml</DependentUpon>
+    <Compile Include="Views\FillDownWindow.xaml.cs">
+      <DependentUpon>FillDownWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="IEmslUsvUser.cs" />
-    <Compile Include="Windows\QCView.xaml.cs">
+    <Compile Include="Views\QCView.xaml.cs">
       <DependentUpon>QCView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows\SearchConfigView.xaml.cs">
+    <Compile Include="Views\SearchConfigView.xaml.cs">
       <DependentUpon>SearchConfigView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ShowRowDetailConverter.cs" />
+    <Compile Include="Views\WatcherConfigView.xaml.cs">
+      <DependentUpon>WatcherConfigView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\WatcherControlView.xaml.cs">
+      <DependentUpon>WatcherControlView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AppInitializer.cs" />
+    <Compile Include="Settings.cs" />
+    <Compile Include="IEmslUsvUser.cs" />
     <Compile Include="StateSingleton.cs" />
-    <Compile Include="Windows\WatcherConfig.xaml.cs">
-      <DependentUpon>WatcherConfig.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Windows\WatcherControl.xaml.cs">
-      <DependentUpon>WatcherControl.xaml</DependentUpon>
-    </Compile>
     <Page Include="DynamicSplashScreenWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Main.xaml">
-      <Generator>MSBuild:Compile</Generator>
+    <Page Include="MainWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\BuzzardGridView.xaml">
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DatasetOverwriteDialogWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\EmslUsageSelectionView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ExperimentsDialogWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ExperimentsViewerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\FileFolderInfoViewerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\FillDownWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\QCView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SearchConfigView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\WatcherConfigView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\WatcherControlView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Main.xaml.cs">
-      <DependentUpon>Main.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Page Include="Windows\BuzzardGrid.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Windows\Dialogs\DatasetOverwriteDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Windows\EMSL_UsageSelectionView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Windows\Dialogs\ExperimentsDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Windows\ExperimentsViewer.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Windows\FileFolderInfoViewer.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Windows\Dialogs\FilldownWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Windows\QCView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Windows\SearchConfigView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Windows\WatcherConfig.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Windows\WatcherControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
