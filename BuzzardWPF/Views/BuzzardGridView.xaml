@@ -197,12 +197,14 @@
                 Style="{StaticResource SimpleButtonStyle}" />
             <Button
                 Click="SelectNoDatasets_Click"
+                IsEnabled="{Binding DatasetSelected}"
                 Content="Select None"
                 FontFamily="Arial"
                 FontSize="14"
                 Style="{StaticResource SimpleButtonStyle}" />
             <Button
                 Click="SelectAllDatasets_Click"
+                IsEnabled="{Binding CanSelectDatasets}"
                 Content=" Select All"
                 FontFamily="Arial"
                 FontSize="14"

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -32,6 +31,8 @@ namespace BuzzardWPF.ViewModels
         private bool m_showGridItemDetail;
         private bool mAbortTriggerCreationNow;
         private readonly object lockCartConfigNameListSource = new object();
+        private readonly ObservableAsPropertyHelper<bool> canSelectDatasets;
+        private readonly ObservableAsPropertyHelper<bool> datasetSelected;
 
         #endregion
 
@@ -70,13 +71,16 @@ namespace BuzzardWPF.ViewModels
             DatasetManager.Manager.PropertyChanged += Manager_PropertyChanged;
 
             InvertShowDetailsCommand = ReactiveCommand.Create(InvertShowDetails);
-            ClearAllDatasetsCommand = ReactiveCommand.Create(ClearAllDatasets);
-            ClearSelectedDatasetsCommand = ReactiveCommand.Create(ClearSelectedDatasets);
-            FixDatasetNamesCommand = ReactiveCommand.Create(FixDatasetNames);
-            BringUpExperimentsCommand = ReactiveCommand.Create(BringUpExperiments);
-            OpenFilldownCommand = ReactiveCommand.Create(OpenFilldown);
+            ClearAllDatasetsCommand = ReactiveCommand.Create(ClearAllDatasets, Datasets.WhenAnyValue(x => x.Count).Select(x => x > 0).ObserveOn(RxApp.MainThreadScheduler));
+            ClearSelectedDatasetsCommand = ReactiveCommand.Create(ClearSelectedDatasets, SelectedDatasets.WhenAnyValue(x => x.Count).Select(x => x > 0).ObserveOn(RxApp.MainThreadScheduler));
+            FixDatasetNamesCommand = ReactiveCommand.Create(FixDatasetNames, SelectedDatasets.WhenAnyValue(x => x.Count).Select(x => x > 0).ObserveOn(RxApp.MainThreadScheduler));
+            BringUpExperimentsCommand = ReactiveCommand.Create(BringUpExperiments, SelectedDatasets.WhenAnyValue(x => x.Count).Select(x => x > 0).ObserveOn(RxApp.MainThreadScheduler));
+            OpenFilldownCommand = ReactiveCommand.Create(OpenFilldown, SelectedDatasets.WhenAnyValue(x => x.Count).Select(x => x > 0).ObserveOn(RxApp.MainThreadScheduler));
             AbortCommand = ReactiveCommand.Create(AbortTriggerThread);
-            CreateTriggersCommand = ReactiveCommand.Create(CreateTriggers);
+            CreateTriggersCommand = ReactiveCommand.Create(CreateTriggers, SelectedDatasets.WhenAnyValue(x => x.Count).Select(x => x > 0).ObserveOn(RxApp.MainThreadScheduler));
+
+            canSelectDatasets = Datasets.CountChanged.Select(x => x > 0).ToProperty(this, x => x.CanSelectDatasets);
+            datasetSelected = SelectedDatasets.CountChanged.Select(x => x > 0).ToProperty(this, x => x.DatasetSelected);
 
             BindingOperations.EnableCollectionSynchronization(CartConfigNameListSource, lockCartConfigNameListSource);
         }
@@ -160,6 +164,9 @@ namespace BuzzardWPF.ViewModels
         #endregion
 
         #region Properties
+
+        public bool CanSelectDatasets => canSelectDatasets.Value;
+        public bool DatasetSelected => datasetSelected.Value;
 
         public ReactiveCommand<Unit, Unit> InvertShowDetailsCommand { get; }
         public ReactiveCommand<Unit, Unit> ClearAllDatasetsCommand { get; }
