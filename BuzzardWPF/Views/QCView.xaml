@@ -6,8 +6,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:views="clr-namespace:BuzzardWPF.Views"
     xmlns:viewModels="clr-namespace:BuzzardWPF.ViewModels"
-    d:DesignHeight="300"
-    d:DesignWidth="600"
+    xmlns:management="clr-namespace:BuzzardWPF.Management"
+    d:DesignHeight="390"
+    d:DesignWidth="900"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance {x:Type viewModels:QCViewModel}, IsDesignTimeCreatable=True}">
     <UserControl.Resources>
@@ -49,13 +50,15 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
-            <RowDefinition Height="auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <StackPanel
             Grid.Row="0"
             Grid.Column="0"
             Margin="1,1,4,1">
+            <TextBlock Style="{StaticResource TextBlockStyle}" FontWeight="Bold"  Text="These settings only apply to datasets that start with 'QC_' or 'QC-'." />
             <views:EmslUsageSelectionView DataContext="{Binding EmslUsageSelectionVm}" IsEnabled="{Binding Path=DataContext.IsNotMonitoring, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:QCView}}}" />
 
             <GroupBox Header="Experiments">
@@ -97,16 +100,48 @@
                         Style="{StaticResource SimpleButtonStyle}" />
                 </Grid>
             </GroupBox>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource TextBlockStyle}" Text="Dataset Names starting with:" />
+                <TextBox Grid.Row="0" Grid.Column="1" Style="{StaticResource TextBoxStyle}" Text="{Binding DatasetNameMatch}" ToolTip="Use '*' to match all QC datasets; duplicates not allowed" />
+            </Grid>
         </StackPanel>
 
+        <Button Grid.Row="1" Grid.Column="0" Style="{StaticResource SimpleButtonStyle}" HorizontalAlignment="Right" MinWidth="160" Content="Add QC Monitor" Command="{Binding AddQcMonitorCommand}" />
+
+        <DataGrid Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Margin="4" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserResizeRows="False" AutoGenerateColumns="False" SelectionMode="Single"
+                  ItemsSource="{Binding Manager.QcMonitors}"
+                  SelectedItem="{Binding SelectedQcMonitor}"
+                  d:DataContext="{d:DesignInstance {x:Type management:QcMonitorData}, IsDesignTimeCreatable=True}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Experiment" Binding="{Binding ExperimentName}" IsReadOnly="True" />
+                <DataGridTextColumn Header="Dataset Name Match" Binding="{Binding DatasetNameMatch}" IsReadOnly="True" />
+                <DataGridTextColumn Header="EMSL Usage" Binding="{Binding EmslUsageType}" IsReadOnly="True">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="ToolTip" Value="{Binding EmslUsageDisplayString}"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <Button Grid.Row="1" Grid.Column="2" Style="{StaticResource SimpleButtonStyle}" HorizontalAlignment="Right" MinWidth="180" Content="Remove QC Monitor" Command="{Binding RemoveQcMonitorCommand}" />
+
         <CheckBox
-            Grid.Row="1"
+            Grid.Row="2"
             Grid.Column="0"
             Grid.ColumnSpan="2"
             VerticalAlignment="Center"
             Content="Create Trigger For QC's ?"
             FontSize="15"
-            IsChecked="{Binding Path=CreateOnDMSFail, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            IsChecked="{Binding Path=Manager.QC_CreateTriggerOnDMSFail, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
             IsEnabled="{Binding Path=IsNotMonitoring}"
             ToolTip="Do you want the watcher to auto-create the trigger file for datasets it finds when their DMS is unresolved?" />
     </Grid>

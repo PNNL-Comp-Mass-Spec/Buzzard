@@ -26,9 +26,14 @@ namespace BuzzardWPF.Management
                 DMSData = {DatasetName = BuzzardTriggerFileTools.GetDatasetNameFromFilePath(path)}
             };
 
-            if (dataset.DMSData.DatasetName.StartsWith("qc_shew", StringComparison.OrdinalIgnoreCase) ||
-                dataset.DMSData.DatasetName.StartsWith("qc_mam", StringComparison.OrdinalIgnoreCase))
+            if (dataset.DMSData.DatasetName.StartsWith("qc_", StringComparison.OrdinalIgnoreCase) ||
+                dataset.DMSData.DatasetName.StartsWith("qc-", StringComparison.OrdinalIgnoreCase))
+            {
+                // Assuming that people will generally name QC datasets 'QC_xxx' or 'QC-xxx'
+                // But we can't watch for everything a user may do here...
+                // This is now used as a gateway check for if we need to match the dataset name to a QC experiment name
                 dataset.IsQC = true;
+            }
 
             return dataset;
         }

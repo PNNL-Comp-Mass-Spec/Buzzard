@@ -56,6 +56,7 @@ namespace BuzzardWPF.Management
         public static readonly ReactiveList<string> INTEREST_RATINGS_COLLECTION;
 
         private readonly object lockDatasets = new object();
+        private readonly object lockQcMonitors = new object();
 
         #endregion
 
@@ -78,6 +79,7 @@ namespace BuzzardWPF.Management
             MinimumFileSizeKB = 100;
 
             BindingOperations.EnableCollectionSynchronization(Datasets, lockDatasets);
+            BindingOperations.EnableCollectionSynchronization(QcMonitors, lockQcMonitors);
 
             SetupTimers();
         }
@@ -438,10 +440,9 @@ namespace BuzzardWPF.Management
         /// <summary>
         /// Instrument data files / folders that are candidate datasets
         /// </summary>
-        public ReactiveList<BuzzardDataset> Datasets
-        {
-            get;
-        }
+        public ReactiveList<BuzzardDataset> Datasets { get; }
+
+        public ReactiveList<QcMonitorData> QcMonitors { get; } = new ReactiveList<QcMonitorData>();
 
         public string FileWatchRoot { get; set; }
 
@@ -766,12 +767,7 @@ namespace BuzzardWPF.Management
         #endregion
 
         #region Quality Control (QC)
-        public string EMSL_Usage { get; set; }
-        public string EMSL_ProposalID { get; set; }
-        public string QC_ExperimentName { get; set; }
         public bool QC_CreateTriggerOnDMSFail { get; set; }
-
-        public IEnumerable<ProposalUser> QC_SelectedProposalUsers { get; set; }
         #endregion
 
         #region Dataset RunTime Updates
@@ -1027,12 +1023,29 @@ namespace BuzzardWPF.Management
                 // any previous data for given properties
                 if (dataset.IsQC)
                 {
-                    dataset.ExperimentName = QC_ExperimentName;
-                    dataset.DMSData.Experiment = QC_ExperimentName;
+                    // use data from the first QC monitor with a dataset name match
+                    var chosenMonitor = QcMonitors.FirstOrDefault(x => dataset.DMSData.DatasetName.StartsWith(x.DatasetNameMatch, StringComparison.OrdinalIgnoreCase));
+                    if (chosenMonitor == null && QcMonitors.Any(x => x.MatchesAny))
+                    {
+                        chosenMonitor = QcMonitors.First(x => x.MatchesAny);
+                    }
 
-                    emslUsageType = EMSL_Usage;
-                    emslProposalId = EMSL_ProposalID;
-                    emslProposalUsers = QC_SelectedProposalUsers;
+                    if (chosenMonitor != null)
+                    {
+                        dataset.ExperimentName = chosenMonitor.ExperimentName;
+                        dataset.DMSData.Experiment = chosenMonitor.ExperimentName;
+
+                        emslUsageType = chosenMonitor.EmslUsageType;
+                        emslProposalId = chosenMonitor.EmslProposalId;
+                        emslProposalUsers = chosenMonitor.EmslProposalUsers;
+                    }
+                    else
+                    {
+                        // No monitor matched, use the watcher information
+                        emslUsageType = Watcher_EMSL_Usage;
+                        emslProposalId = Watcher_EMSL_ProposalID;
+                        emslProposalUsers = Watcher_SelectedProposalUsers;
+                    }
                 }
                 else
                 {
@@ -1119,7 +1132,7 @@ namespace BuzzardWPF.Management
             else if (!DMS_DataAccessor.Instance.ColumnData.Contains(LCColumn))
                 missingFields.Add("Invalid LC Column name");
 
-            if (string.IsNullOrWhiteSpace(QC_ExperimentName))
+            if (QcMonitors.Count == 0)
                 missingFields.Add(QC_EXPERIMENT_NAME_DESCRIPTION);
 
             return missingFields;

@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Collections.Specialized;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Linq;
 using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
 using BuzzardWPF.Searching;
@@ -23,106 +24,105 @@ namespace BuzzardWPF.ViewModels
             ExperimentName = null;
             SelectedEMSLProposalUsers = new ReactiveList<ProposalUser>();
 
-            m_IsNotMonitoring = true;
+            isNotMonitoring = true;
 
             SelectExperimentCommand = ReactiveCommand.Create(SelectExperiment);
+            AddQcMonitorCommand = ReactiveCommand.Create(AddQcMonitor, this.WhenAnyValue(x => x.ExperimentName, x => x.DatasetNameMatch, x => x.SelectedEMSLUsageType, x => x.EMSLProposalID, x => x.SelectedEMSLProposalUsers, x => x.SelectedEMSLProposalUsers.Count, x => x.Manager.QcMonitors).Select(
+                x =>
+                {
+                    var musts = !string.IsNullOrWhiteSpace(x.Item1) && !string.IsNullOrWhiteSpace(x.Item2) && !string.IsNullOrWhiteSpace(x.Item3);
+                    if (!musts)
+                    {
+                        return false;
+                    }
+
+                    if (x.Item7.Any(y => y.DatasetNameMatch.Equals(x.Item2)))
+                    {
+                        return false;
+                    }
+
+                        if (x.Item3.Equals("USER", StringComparison.OrdinalIgnoreCase))
+                    {
+                        return !string.IsNullOrWhiteSpace(x.Item4) && x.Item5.Any();
+                    }
+
+                    return true;
+                }));
+
+            RemoveQcMonitorCommand = ReactiveCommand.Create(RemoveQcMonitor, this.WhenAnyValue(x => x.SelectedQcMonitor).Select(x => x != null));
+
+            this.WhenAnyValue(x => x.ExperimentName).Subscribe(x => DatasetNameMatch = x);
         }
         #endregion
 
         #region Properties
 
+        private string selectedEMSLUsageType;
+        private string emslProposalID;
+        private string experimentName;
+        private ReactiveList<ProposalUser> selectedEMSLProposalUsers;
+        private bool isNotMonitoring;
+        private string datasetNameMatch;
+        private QcMonitorData selectedQcMonitor;
+
         public ReactiveCommand<Unit, Unit> SelectExperimentCommand { get; }
+        public ReactiveCommand<Unit, Unit> AddQcMonitorCommand { get; }
+        public ReactiveCommand<Unit, Unit> RemoveQcMonitorCommand { get; }
 
         public EmslUsageSelectionViewModel EmslUsageSelectionVm { get; } = new EmslUsageSelectionViewModel();
 
         public string SelectedEMSLUsageType
         {
-            get => m_selectedEMSLUsageType;
-            set
-            {
-                if (m_selectedEMSLUsageType != value)
-                {
-                    m_selectedEMSLUsageType = value;
-                    this.RaisePropertyChanged("SelectedEMSLUsageType");
-                }
-
-                DatasetManager.Manager.EMSL_Usage = value;
-            }
+            get => selectedEMSLUsageType;
+            set => this.RaiseAndSetIfChanged(ref selectedEMSLUsageType, value);
         }
-        private string m_selectedEMSLUsageType;
 
         public string EMSLProposalID
         {
-            get => m_emslProposalID;
-            set
-            {
-                if (m_emslProposalID != value)
-                {
-                    m_emslProposalID = value;
-                    this.RaisePropertyChanged("EMSLProposalID");
-                }
-
-                DatasetManager.Manager.EMSL_ProposalID = value;
-            }
+            get => emslProposalID;
+            set => this.RaiseAndSetIfChanged(ref emslProposalID, value);
         }
-        private string m_emslProposalID;
 
         public string ExperimentName
         {
-            get => m_experimentName;
-            set
-            {
-                if (m_experimentName != value)
-                {
-                    m_experimentName = value;
-                    this.RaisePropertyChanged("ExperimentName");
-                }
-
-                DatasetManager.Manager.QC_ExperimentName = value;
-            }
+            get => experimentName;
+            set => this.RaiseAndSetIfChanged(ref experimentName, value);
         }
-        private string m_experimentName;
 
-        public bool CreateOnDMSFail
-        {
-            get => m_createOnDMSFail;
-            set
-            {
-                if (m_createOnDMSFail != value)
-                {
-                    m_createOnDMSFail = value;
-                    this.RaisePropertyChanged("CreateOnDMSFail");
-                }
-
-                DatasetManager.Manager.QC_CreateTriggerOnDMSFail = value;
-            }
-        }
-        private bool m_createOnDMSFail;
+        public DatasetManager Manager => DatasetManager.Manager;
 
         public ReactiveList<ProposalUser> SelectedEMSLProposalUsers
         {
-            get => m_selectedEMSLProposalUsers;
+            get => selectedEMSLProposalUsers;
             set
             {
-                if (m_selectedEMSLProposalUsers != value)
+                if (selectedEMSLProposalUsers != value)
                 {
-                    m_selectedEMSLProposalUsers = value;
-                    this.RaisePropertyChanged("SelectedEMSLProposalUsers");
+                    selectedEMSLProposalUsers = value;
+                    this.RaisePropertyChanged();
 
                     EmslUsageSelectionVm.UpdateSelectedUsersText();
                 }
-
-                DatasetManager.Manager.QC_SelectedProposalUsers = value;
             }
         }
-        private ReactiveList<ProposalUser> m_selectedEMSLProposalUsers;
+
+        public string DatasetNameMatch
+        {
+            get => datasetNameMatch;
+            set => this.RaiseAndSetIfChanged(ref datasetNameMatch, value);
+        }
 
         public bool IsNotMonitoring
         {
-            get => m_IsNotMonitoring;
-            private set { this.RaiseAndSetIfChanged(ref m_IsNotMonitoring, value); }
+            get => isNotMonitoring;
+            private set => this.RaiseAndSetIfChanged(ref isNotMonitoring, value);
         }
-        private bool m_IsNotMonitoring;
+
+        public QcMonitorData SelectedQcMonitor
+        {
+            get => selectedQcMonitor;
+            set => this.RaiseAndSetIfChanged(ref selectedQcMonitor, value);
+        }
 
         #endregion
 
@@ -145,6 +145,33 @@ namespace BuzzardWPF.ViewModels
             ExperimentName = dialogVm.SelectedExperiment.Experiment;
         }
 
+        private void AddQcMonitor()
+        {
+            var qcMonitor = new QcMonitorData
+            {
+                ExperimentName = ExperimentName,
+                EmslProposalId = EMSLProposalID,
+                EmslUsageType = SelectedEMSLUsageType,
+                DatasetNameMatch = DatasetNameMatch
+            };
+            using (qcMonitor.EmslProposalUsers.SuppressChangeNotifications())
+            {
+                qcMonitor.EmslProposalUsers.AddRange(SelectedEMSLProposalUsers);
+            }
+
+            Manager.QcMonitors.Add(qcMonitor);
+        }
+
+        private void RemoveQcMonitor()
+        {
+            if (SelectedQcMonitor == null)
+            {
+                return;
+            }
+
+            Manager.QcMonitors.Remove(SelectedQcMonitor);
+        }
+
         /// <summary>
         /// Enables / disables the controls based on e.Monitoring
         /// </summary>
@@ -159,16 +186,23 @@ namespace BuzzardWPF.ViewModels
         #region Methods
         public void SaveSettings()
         {
-            Settings.Default.QC_ExperimentName = ExperimentName;
-            Settings.Default.QC_ProposalID = EMSLProposalID;
-            Settings.Default.QC_SelectedUsageType = SelectedEMSLUsageType;
-            Settings.Default.QC_CreateTriggerOnDMS_Fail = CreateOnDMSFail;
+            //Settings.Default.QC_ExperimentName = ExperimentName;
+            //Settings.Default.QC_ProposalID = EMSLProposalID;
+            //Settings.Default.QC_SelectedUsageType = SelectedEMSLUsageType;
+            //Settings.Default.QC_CreateTriggerOnDMS_Fail = DatasetManager.Manager.QC_CreateTriggerOnDMSFail;
+            //
+            //var selectedEMSLUsers = new System.Collections.Specialized.StringCollection();
+            //foreach (var user in SelectedEMSLProposalUsers)
+            //    selectedEMSLUsers.Add(user.UserID.ToString());
+            //
+            //Settings.Default.QC_EMSL_Users = selectedEMSLUsers;
 
-            var selectedEMSLUsers = new StringCollection();
-            foreach (var user in SelectedEMSLProposalUsers)
-                selectedEMSLUsers.Add(user.UserID.ToString());
+            Settings.Default.QC_CreateTriggerOnDMS_Fail = DatasetManager.Manager.QC_CreateTriggerOnDMSFail;
 
-            Settings.Default.QC_EMSL_Users = selectedEMSLUsers;
+            if (DatasetManager.Manager.QcMonitors.Any())
+            {
+                QcMonitorData.SaveSettings(DatasetManager.Manager.QcMonitors);
+            }
         }
 
         public void LoadSettings()
@@ -176,7 +210,7 @@ namespace BuzzardWPF.ViewModels
             ExperimentName = Settings.Default.QC_ExperimentName;
             EMSLProposalID = Settings.Default.QC_ProposalID;
             SelectedEMSLUsageType = Settings.Default.QC_SelectedUsageType;
-            CreateOnDMSFail = Settings.Default.QC_CreateTriggerOnDMS_Fail;
+            DatasetManager.Manager.QC_CreateTriggerOnDMSFail = Settings.Default.QC_CreateTriggerOnDMS_Fail;
 
             List<string> selectedUsers;
             if (Settings.Default.QC_EMSL_Users == null)
@@ -184,7 +218,31 @@ namespace BuzzardWPF.ViewModels
             else
                 selectedUsers = Settings.Default.QC_EMSL_Users.Cast<string>().ToList();
 
-            SelectedEMSLProposalUsers = DMS_DataAccessor.Instance.FindSavedEMSLProposalUsers(EMSLProposalID, selectedUsers);
+            if (!string.IsNullOrWhiteSpace(ExperimentName) && string.IsNullOrWhiteSpace(Settings.Default.QC_Monitors))
+            {
+                SelectedEMSLProposalUsers = DMS_DataAccessor.Instance.FindSavedEMSLProposalUsers(EMSLProposalID, selectedUsers);
+
+                var monitor = new QcMonitorData()
+                {
+                    ExperimentName = ExperimentName,
+                    EmslProposalId = EMSLProposalID,
+                    EmslUsageType = SelectedEMSLUsageType,
+                    DatasetNameMatch = "*"
+                };
+                using (monitor.EmslProposalUsers.SuppressChangeNotifications())
+                {
+                    monitor.EmslProposalUsers.AddRange(SelectedEMSLProposalUsers);
+                }
+
+                DatasetManager.Manager.QcMonitors.Add(monitor);
+            }
+            else if (!string.IsNullOrWhiteSpace(Settings.Default.QC_Monitors))
+            {
+                using (DatasetManager.Manager.QcMonitors.SuppressChangeNotifications())
+                {
+                    DatasetManager.Manager.QcMonitors.AddRange(QcMonitorData.LoadSettings());
+                }
+            }
         }
         #endregion
     }

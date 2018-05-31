@@ -739,5 +739,17 @@ namespace BuzzardWPF.Properties {
                 this["FilldownCartConfig"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string QC_Monitors {
+            get {
+                return ((string)(this["QC_Monitors"]));
+            }
+            set {
+                this["QC_Monitors"] = value;
+            }
+        }
     }
 }
