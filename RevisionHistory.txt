@@ -1,5 +1,11 @@
 Buzzard Change Log
 
+Version 1.8.0.0; May 31, 2018
+	- Refactor code to use MVVM instead of WPF code-behind
+	- User interface improvements (primarily disabling buttons when they can't do anything)
+	- Merge BuzzardLib project into BuzzardWPF project
+	- Modify the monitoring for QC datasets to support other QC types and to allow multiple experiments
+
 Version 1.7.13.9; September 1, 2017
 	- Prevent "Run Start" from being later than "Run Finish" in the XML trigger file
 
