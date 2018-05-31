@@ -9,7 +9,6 @@
     xmlns:dmsData="clr-namespace:LcmsNetSDK.Data;assembly=LcmsNetSdk"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:BuzzardWPF.ViewModels"
-    xmlns:views="clr-namespace:BuzzardWPF.Views"
     d:DesignHeight="267"
     d:DesignWidth="749.4"
     Background="{x:Null}"
@@ -23,7 +22,7 @@
         <converters:WaitTimeToProgressValueConverter x:Key="ProgressBarConverter" />
         <converters:WaitTimeTextConverter x:Key="WaitTimeTextConverter" />
         <converters:EmptyRequestNameConverter x:Key="RequestNameConverter" />
-        <views:ShowRowDetailConverter x:Key="ShowRowDetailsConverter" />
+        <converters:ShowRowDetailConverter x:Key="ShowRowDetailsConverter" />
         <converters:BoolToObjectConverter
             x:Key="ShowDetailButtonContentConverter"
             FalseContent="Show Row Details"

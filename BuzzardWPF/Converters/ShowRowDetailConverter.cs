@@ -2,7 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Data;
 
-namespace BuzzardWPF.Views
+namespace BuzzardWPF.Converters
 {
     public class ShowRowDetailConverter
         : IValueConverter

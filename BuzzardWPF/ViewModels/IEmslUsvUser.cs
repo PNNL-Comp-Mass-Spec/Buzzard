@@ -2,7 +2,7 @@
 using LcmsNetSDK.Data;
 using ReactiveUI;
 
-namespace BuzzardWPF
+namespace BuzzardWPF.ViewModels
 {
     public interface IEmslUsvUser : INotifyPropertyChanged
     {

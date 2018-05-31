@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BuzzardWPF
+namespace BuzzardWPF.Management
 {
     /// <summary>
     /// Holds state information

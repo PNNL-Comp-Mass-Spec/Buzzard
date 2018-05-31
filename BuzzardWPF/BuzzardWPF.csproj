@@ -87,6 +87,7 @@
     <Compile Include="Converters\InvertBoolConverter.cs" />
     <Compile Include="Converters\RedudantRequestBackgroundConverter.cs" />
     <Compile Include="Converters\SearchOptionValueConverter.cs" />
+    <Compile Include="Converters\ShowRowDetailConverter.cs" />
     <Compile Include="Converters\TabLockSwitchConverter.cs" />
     <Compile Include="Converters\WaitTimeTextConverter.cs" />
     <Compile Include="Converters\WaitTimeToProgressValueConverter.cs" />
@@ -112,6 +113,7 @@
     <Compile Include="Management\DMSConfig.cs" />
     <Compile Include="Management\DMS_DataAccessor.cs" />
     <Compile Include="Management\RenameDataRequest.cs" />
+    <Compile Include="Management\StateSingleton.cs" />
     <Compile Include="Searching\DatasetFoundEventArgs.cs" />
     <Compile Include="Searching\ErrorEventArgs.cs" />
     <Compile Include="Searching\FileSearchBuzzardier.cs" />
@@ -126,6 +128,7 @@
     <Compile Include="ViewModels\ExperimentsViewerViewModel.cs" />
     <Compile Include="ViewModels\FileFolderInfoViewerViewModel.cs" />
     <Compile Include="ViewModels\FillDownWindowViewModel.cs" />
+    <Compile Include="ViewModels\IEmslUsvUser.cs" />
     <Compile Include="ViewModels\QCViewModel.cs" />
     <Compile Include="ViewModels\SearchConfigViewModel.cs" />
     <Compile Include="ViewModels\WatcherConfigViewModel.cs" />
@@ -157,7 +160,6 @@
     <Compile Include="Views\SearchConfigView.xaml.cs">
       <DependentUpon>SearchConfigView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ShowRowDetailConverter.cs" />
     <Compile Include="Views\WatcherConfigView.xaml.cs">
       <DependentUpon>WatcherConfigView.xaml</DependentUpon>
     </Compile>
@@ -165,9 +167,6 @@
       <DependentUpon>WatcherControlView.xaml</DependentUpon>
     </Compile>
     <Compile Include="AppInitializer.cs" />
-    <Compile Include="Settings.cs" />
-    <Compile Include="IEmslUsvUser.cs" />
-    <Compile Include="StateSingleton.cs" />
     <Page Include="DynamicSplashScreenWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
