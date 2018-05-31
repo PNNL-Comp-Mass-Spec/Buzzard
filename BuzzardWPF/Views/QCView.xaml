@@ -109,7 +109,17 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource TextBlockStyle}" Text="Dataset Names starting with:" />
-                <TextBox Grid.Row="0" Grid.Column="1" Style="{StaticResource TextBoxStyle}" Text="{Binding DatasetNameMatch}" ToolTip="Use '*' to match all QC datasets; duplicates not allowed" />
+                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding DatasetNameMatch}" ToolTip="Use '*' to match all QC datasets; duplicates not allowed">
+                    <TextBox.Style>
+                        <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource TextBoxStyle}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding DatasetNameMatchIsDuplicate}" Value="True">
+                                    <Setter Property="Background" Value="Red" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBox.Style>
+                </TextBox>
             </Grid>
         </StackPanel>
 

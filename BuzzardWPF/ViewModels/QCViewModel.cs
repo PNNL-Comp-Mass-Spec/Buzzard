@@ -33,15 +33,19 @@ namespace BuzzardWPF.ViewModels
                     var musts = !string.IsNullOrWhiteSpace(x.Item1) && !string.IsNullOrWhiteSpace(x.Item2) && !string.IsNullOrWhiteSpace(x.Item3);
                     if (!musts)
                     {
+                        DatasetNameMatchIsDuplicate = false;
                         return false;
                     }
 
                     if (x.Item7.Any(y => y.DatasetNameMatch.Equals(x.Item2)))
                     {
+                        DatasetNameMatchIsDuplicate = true;
                         return false;
                     }
 
-                        if (x.Item3.Equals("USER", StringComparison.OrdinalIgnoreCase))
+                    DatasetNameMatchIsDuplicate = false;
+
+                    if (x.Item3.Equals("USER", StringComparison.OrdinalIgnoreCase))
                     {
                         return !string.IsNullOrWhiteSpace(x.Item4) && x.Item5.Any();
                     }
@@ -64,6 +68,7 @@ namespace BuzzardWPF.ViewModels
         private bool isNotMonitoring;
         private string datasetNameMatch;
         private QcMonitorData selectedQcMonitor;
+        private bool datasetNameMatchIsDuplicate;
 
         public ReactiveCommand<Unit, Unit> SelectExperimentCommand { get; }
         public ReactiveCommand<Unit, Unit> AddQcMonitorCommand { get; }
@@ -122,6 +127,12 @@ namespace BuzzardWPF.ViewModels
         {
             get => selectedQcMonitor;
             set => this.RaiseAndSetIfChanged(ref selectedQcMonitor, value);
+        }
+
+        public bool DatasetNameMatchIsDuplicate
+        {
+            get => datasetNameMatchIsDuplicate;
+            private set => this.RaiseAndSetIfChanged(ref datasetNameMatchIsDuplicate, value);
         }
 
         #endregion
