@@ -40,7 +40,6 @@ namespace BuzzardWPF.ViewModels
 
             experimentSelected = this.WhenAnyValue(x => x.SelectedExperiment).Select(x => x != null).ToProperty(this, x => x.ExperimentSelected, scheduler: RxApp.MainThreadScheduler);
 
-            //Dispatcher.BeginInvoke(LoadExperiments, DispatcherPriority.Render);
             RxApp.MainThreadScheduler.Schedule(LoadExperiments);
             SetAutoCompleteList();
         }

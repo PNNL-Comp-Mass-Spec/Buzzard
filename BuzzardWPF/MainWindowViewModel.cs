@@ -154,49 +154,19 @@ namespace BuzzardWPF
             m_images = new Collection<BitmapImage>();
             m_imagesEaster = new Collection<BitmapImage>();
 
-            var bitmaps = new Collection<Bitmap>
-            {
-                Properties.Resources.buzzards,
-                Properties.Resources.buzzards1,
-                Properties.Resources.buzzards2,
-                Properties.Resources.buzzards3,
-                Properties.Resources.buzzards4,
-                Properties.Resources.buzzards5,
-            };
+            m_images.Add((BitmapImage)Application.Current.Resources["Buzzards"]);
+            m_images.Add((BitmapImage)Application.Current.Resources["Buzzards1"]);
+            m_images.Add((BitmapImage)Application.Current.Resources["Buzzards2"]);
+            m_images.Add((BitmapImage)Application.Current.Resources["Buzzards3"]);
+            m_images.Add((BitmapImage)Application.Current.Resources["Buzzards4"]);
+            m_images.Add((BitmapImage)Application.Current.Resources["Buzzards5"]);
 
-            var bitmapsEaster = new Collection<Bitmap>
-            {
-                Properties.Resources.buzzardsz,
-                Properties.Resources.buzzardsz1,
-                Properties.Resources.buzzardsz2,
-                Properties.Resources.buzzardsz3,
-                Properties.Resources.buzzardsz4,
-                Properties.Resources.buzzardsz5
-            };
-
-            foreach (var bitmap in bitmaps)
-            {
-                var ms = new MemoryStream();
-                bitmap.Save(ms, ImageFormat.Png);
-                ms.Position = 0;
-                var bi = new BitmapImage();
-                bi.BeginInit();
-                bi.StreamSource = ms;
-                bi.EndInit();
-                m_images.Add(bi);
-            }
-
-            foreach (var bitmap in bitmapsEaster)
-            {
-                var ms = new MemoryStream();
-                bitmap.Save(ms, ImageFormat.Png);
-                ms.Position = 0;
-                var bi = new BitmapImage();
-                bi.BeginInit();
-                bi.StreamSource = ms;
-                bi.EndInit();
-                m_imagesEaster.Add(bi);
-            }
+            m_imagesEaster.Add((BitmapImage)Application.Current.Resources["Buzzardsz"]);
+            m_imagesEaster.Add((BitmapImage)Application.Current.Resources["Buzzardsz1"]);
+            m_imagesEaster.Add((BitmapImage)Application.Current.Resources["Buzzardsz2"]);
+            m_imagesEaster.Add((BitmapImage)Application.Current.Resources["Buzzardsz3"]);
+            m_imagesEaster.Add((BitmapImage)Application.Current.Resources["Buzzardsz4"]);
+            m_imagesEaster.Add((BitmapImage)Application.Current.Resources["Buzzardsz5"]);
 
             m_animationImages = m_images;
             CurrentImage = m_animationImages[0];
