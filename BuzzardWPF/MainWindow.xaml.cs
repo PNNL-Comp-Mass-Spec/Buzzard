@@ -27,7 +27,8 @@ namespace BuzzardWPF
             Closed += Main_Closed;
             Loaded += Main_Loaded;
         }
-        private bool m_firstTimeLoading;
+
+        private bool firstTimeLoading = true;
 
         private void Main_OnClosed(object sender, EventArgs e)
         {
@@ -55,7 +56,7 @@ namespace BuzzardWPF
         /// </summary>
         private void Main_Loaded(object sender, RoutedEventArgs e)
         {
-            if (m_firstTimeLoading)
+            if (firstTimeLoading)
             {
                 //// This next piece of code will reset the settings
                 //// to their default values before loading them into
@@ -68,7 +69,7 @@ namespace BuzzardWPF
                 {
                     mwvm.LoadSettings();
                 }
-                m_firstTimeLoading = false;
+                firstTimeLoading = false;
             }
         }
     }
