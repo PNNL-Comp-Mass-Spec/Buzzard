@@ -99,31 +99,31 @@
                 <DataGridTextColumn
                     MinWidth="60"
                     Binding="{Binding Path=ID}"
-                    Header="ID" />
+                    Header="ID" IsReadOnly="True" />
                 <DataGridTextColumn
                     MinWidth="60"
                     Binding="{Binding Path=Request}"
-                    Header="Request" />
+                    Header="Request" IsReadOnly="True" />
                 <DataGridTextColumn
                     MinWidth="125"
                     Binding="{Binding Path=Researcher}"
-                    Header="Researcher" />
+                    Header="Researcher" IsReadOnly="True" />
                 <DataGridTextColumn
                     MinWidth="125"
                     Binding="{Binding Path=Created}"
-                    Header="Created" />
+                    Header="Created" IsReadOnly="True" />
                 <DataGridTextColumn
                     MinWidth="150"
                     Binding="{Binding Path=Experiment}"
-                    Header="Experiment" />
+                    Header="Experiment" IsReadOnly="True" />
                 <DataGridTextColumn
                     MinWidth="125"
                     Binding="{Binding Path=Organism}"
-                    Header="Organism" />
+                    Header="Organism" IsReadOnly="True" />
                 <DataGridTextColumn
                     MinWidth="275"
                     Binding="{Binding Path=Reason}"
-                    Header="Reason" />
+                    Header="Reason" IsReadOnly="True" />
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

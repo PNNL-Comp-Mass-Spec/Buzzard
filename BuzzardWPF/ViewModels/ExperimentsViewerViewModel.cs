@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Concurrency;
+using System.Reactive.Linq;
 using BuzzardWPF.Management;
 using LcmsNetSDK.Data;
 using ReactiveUI;
@@ -24,6 +25,7 @@ namespace BuzzardWPF.ViewModels
         private ReactiveList<ExperimentData> m_experiments;
         private FilterOption selectedFilterOption;
         private List<string> autoCompleteBoxItems;
+        private readonly ObservableAsPropertyHelper<bool> experimentSelected;
 
         #endregion
 
@@ -33,8 +35,10 @@ namespace BuzzardWPF.ViewModels
             FilterText = string.Empty;
 
             FilterOptions = new ReactiveList<FilterOption>(Enum.GetValues(typeof(FilterOption)).Cast<FilterOption>().Where(x => x != FilterOption.None));
-            SelectedFilterOption = FilterOption.Researcher;
+            SelectedFilterOption = FilterOption.Experiment;
             SearchCommand = ReactiveCommand.Create(Search);
+
+            experimentSelected = this.WhenAnyValue(x => x.SelectedExperiment).Select(x => x != null).ToProperty(this, x => x.ExperimentSelected, scheduler: RxApp.MainThreadScheduler);
 
             //Dispatcher.BeginInvoke(LoadExperiments, DispatcherPriority.Render);
             RxApp.MainThreadScheduler.Schedule(LoadExperiments);
@@ -110,6 +114,8 @@ namespace BuzzardWPF.ViewModels
         #region Properties
 
         public ReactiveCommand<Unit, Unit> SearchCommand { get; }
+
+        public bool ExperimentSelected => experimentSelected.Value;
 
         public IReadOnlyReactiveList<FilterOption> FilterOptions { get; }
 
