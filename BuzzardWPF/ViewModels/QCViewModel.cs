@@ -161,13 +161,17 @@ namespace BuzzardWPF.ViewModels
             var qcMonitor = new QcMonitorData
             {
                 ExperimentName = ExperimentName,
-                EmslProposalId = EMSLProposalID,
                 EmslUsageType = SelectedEMSLUsageType,
                 DatasetNameMatch = DatasetNameMatch
             };
-            using (qcMonitor.EmslProposalUsers.SuppressChangeNotifications())
+
+            if (SelectedEMSLUsageType.Equals("USER", StringComparison.OrdinalIgnoreCase))
             {
-                qcMonitor.EmslProposalUsers.AddRange(SelectedEMSLProposalUsers);
+                qcMonitor.EmslProposalId = EMSLProposalID;
+                using (qcMonitor.EmslProposalUsers.SuppressChangeNotifications())
+                {
+                    qcMonitor.EmslProposalUsers.AddRange(SelectedEMSLProposalUsers);
+                }
             }
 
             Manager.QcMonitors.Add(qcMonitor);
@@ -197,16 +201,16 @@ namespace BuzzardWPF.ViewModels
         #region Methods
         public void SaveSettings()
         {
-            //Settings.Default.QC_ExperimentName = ExperimentName;
-            //Settings.Default.QC_ProposalID = EMSLProposalID;
-            //Settings.Default.QC_SelectedUsageType = SelectedEMSLUsageType;
-            //Settings.Default.QC_CreateTriggerOnDMS_Fail = DatasetManager.Manager.QC_CreateTriggerOnDMSFail;
-            //
-            //var selectedEMSLUsers = new System.Collections.Specialized.StringCollection();
-            //foreach (var user in SelectedEMSLProposalUsers)
-            //    selectedEMSLUsers.Add(user.UserID.ToString());
-            //
-            //Settings.Default.QC_EMSL_Users = selectedEMSLUsers;
+            // Still save the changes here...
+            Settings.Default.QC_ExperimentName = ExperimentName;
+            Settings.Default.QC_ProposalID = EMSLProposalID;
+            Settings.Default.QC_SelectedUsageType = SelectedEMSLUsageType;
+
+            var selectedEMSLUsers = new System.Collections.Specialized.StringCollection();
+            foreach (var user in SelectedEMSLProposalUsers)
+                selectedEMSLUsers.Add(user.UserID.ToString());
+
+            Settings.Default.QC_EMSL_Users = selectedEMSLUsers;
 
             Settings.Default.QC_CreateTriggerOnDMS_Fail = DatasetManager.Manager.QC_CreateTriggerOnDMSFail;
 
@@ -236,13 +240,17 @@ namespace BuzzardWPF.ViewModels
                 var monitor = new QcMonitorData()
                 {
                     ExperimentName = ExperimentName,
-                    EmslProposalId = EMSLProposalID,
                     EmslUsageType = SelectedEMSLUsageType,
                     DatasetNameMatch = "*"
                 };
-                using (monitor.EmslProposalUsers.SuppressChangeNotifications())
+
+                if (!string.IsNullOrWhiteSpace(monitor.EmslUsageType) && monitor.EmslUsageType.Equals("USER", StringComparison.OrdinalIgnoreCase))
                 {
-                    monitor.EmslProposalUsers.AddRange(SelectedEMSLProposalUsers);
+                    monitor.EmslProposalId = EMSLProposalID;
+                    using (monitor.EmslProposalUsers.SuppressChangeNotifications())
+                    {
+                        monitor.EmslProposalUsers.AddRange(SelectedEMSLProposalUsers);
+                    }
                 }
 
                 DatasetManager.Manager.QcMonitors.Add(monitor);
