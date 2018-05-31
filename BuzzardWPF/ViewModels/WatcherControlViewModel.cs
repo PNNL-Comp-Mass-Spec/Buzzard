@@ -5,11 +5,11 @@ using System.Linq;
 using System.Reactive;
 using System.Threading;
 using System.Windows;
-using BuzzardLib.Data;
-using BuzzardLib.IO;
-using BuzzardLib.Searching;
+using BuzzardWPF.Data;
+using BuzzardWPF.IO;
 using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
+using BuzzardWPF.Searching;
 using LcmsNetSDK.Logging;
 using ReactiveUI;
 

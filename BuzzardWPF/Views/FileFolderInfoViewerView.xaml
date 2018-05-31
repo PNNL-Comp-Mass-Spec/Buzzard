@@ -2,7 +2,7 @@
     x:Class="BuzzardWPF.Views.FileFolderInfoViewerView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:converters="clr-namespace:BuzzardLib.Converters;assembly=BuzzardLib"
+    xmlns:converters="clr-namespace:BuzzardWPF.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:BuzzardWPF.ViewModels"

@@ -7,9 +7,9 @@ using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using BuzzardLib.Searching;
 using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
+using BuzzardWPF.Searching;
 using LcmsNetSDK.Logging;
 using ReactiveUI;
 

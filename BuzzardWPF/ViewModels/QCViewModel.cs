@@ -2,9 +2,9 @@
 using System.Collections.Specialized;
 using System.Linq;
 using System.Reactive;
-using BuzzardLib.Searching;
 using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
+using BuzzardWPF.Searching;
 using BuzzardWPF.Views;
 using LcmsNetSDK.Data;
 using ReactiveUI;

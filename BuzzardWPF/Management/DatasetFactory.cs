@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.ObjectModel;
-using BuzzardLib.Data;
-using BuzzardLib.IO;
+using BuzzardWPF.Data;
+using BuzzardWPF.IO;
 using ReactiveUI;
 
 namespace BuzzardWPF.Management

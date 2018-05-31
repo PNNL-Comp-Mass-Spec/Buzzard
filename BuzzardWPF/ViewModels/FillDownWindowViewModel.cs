@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Reactive;
 using System.Reactive.Linq;
-using BuzzardLib.Data;
+using BuzzardWPF.Data;
 using BuzzardWPF.Management;
 using BuzzardWPF.Views;
 using LcmsNetSDK.Data;

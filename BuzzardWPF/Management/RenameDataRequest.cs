@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using BuzzardLib.Data;
-using BuzzardLib.IO;
+using BuzzardWPF.Data;
+using BuzzardWPF.IO;
 using BuzzardWPF.ViewModels;
 using BuzzardWPF.Views;
 using LcmsNetSDK.Logging;

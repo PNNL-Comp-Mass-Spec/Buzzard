@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Reactive;
@@ -10,9 +8,9 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
-using BuzzardLib.Searching;
 using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
+using BuzzardWPF.Searching;
 using BuzzardWPF.ViewModels;
 using LcmsNetSDK.Logging;
 using ReactiveUI;
@@ -321,7 +319,7 @@ namespace BuzzardWPF
             AddDataset(e.Path, e.CaptureSubfolderPath, e.CurrentSearchConfig);
         }
 
-        private void m_buzzadier_ErrorEvent(object sender, BuzzardLib.Searching.ErrorEventArgs e)
+        private void m_buzzadier_ErrorEvent(object sender, BuzzardWPF.Searching.ErrorEventArgs e)
         {
             MessageBox.Show(e.ErrorMessage, "Search Error", MessageBoxButton.OK, MessageBoxImage.Exclamation);
         }
