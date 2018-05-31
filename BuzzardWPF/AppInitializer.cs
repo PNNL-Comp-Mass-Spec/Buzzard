@@ -4,8 +4,9 @@ using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
-using System.Windows.Forms;
+using System.Windows;
 using BuzzardWPF.Management;
 using LcmsNetDmsTools;
 using LcmsNetSDK;
@@ -78,7 +79,7 @@ namespace BuzzardWPF
             }
 
             // Add path to executable as a saved setting
-            var fi = new FileInfo(Application.ExecutablePath);
+            var fi = new FileInfo(Assembly.GetEntryAssembly().Location);
             LCMSSettings.SetParameter("ApplicationPath", fi.DirectoryName);
 
         }
@@ -134,7 +135,7 @@ namespace BuzzardWPF
                                                  "Please update directory permissions or run Buzzard as an administrator: {1}",
                                                  localPath, ex.Message);
                 LogCriticalError(errorMessage, null);
-                Application.Exit();
+                Application.Current.Shutdown(-1);
             }
         }
         #endregion
@@ -197,9 +198,9 @@ namespace BuzzardWPF
                     if (installerVersionPart > runningVersionPart)
                     {
                         var updateMsg = "A new version of Buzzard is available at " + installerFolderPath + "; Install the new version now?";
-                        var eResponse = MessageBox.Show(updateMsg, @"Upgrade Advised", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                        var eResponse = MessageBox.Show(updateMsg, @"Upgrade Advised", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
 
-                        if (eResponse == DialogResult.Yes)
+                        if (eResponse == MessageBoxResult.Yes)
                         {
                             // Launch the installer
                             // First need to copy it locally (since running over the network fails on some of the computers)
@@ -434,8 +435,8 @@ namespace BuzzardWPF
 
             if (showPopup)
             {
-                MessageBox.Show(errorMessage + @"  " + exceptionMessage, @"Error", MessageBoxButtons.OK,
-                                MessageBoxIcon.Exclamation);
+                MessageBox.Show(errorMessage + @"  " + exceptionMessage, @"Error", MessageBoxButton.OK,
+                                MessageBoxImage.Exclamation);
             }
         }
     }
