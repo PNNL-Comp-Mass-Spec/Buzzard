@@ -487,9 +487,9 @@ namespace BuzzardWPF.ViewModels
                 }
 
                 if (!DatasetManager.Manager.QC_CreateTriggerOnDMSFail &&
-                    missingData.Contains(DatasetManager.QC_EXPERIMENT_NAME_DESCRIPTION))
+                    missingData.Contains(DatasetManager.QC_MONITORS_DESCRIPTION))
                 {
-                    missingData.Remove(DatasetManager.QC_EXPERIMENT_NAME_DESCRIPTION);
+                    missingData.Remove(DatasetManager.QC_MONITORS_DESCRIPTION);
                 }
             }
 

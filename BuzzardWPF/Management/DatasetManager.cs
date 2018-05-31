@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reactive.Concurrency;
@@ -8,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
-using System.Windows.Threading;
 using BuzzardWPF.Data;
 using BuzzardWPF.IO;
 using LcmsNetDmsTools;
@@ -26,7 +24,7 @@ namespace BuzzardWPF.Management
     {
         public const string PREVIEW_TRIGGERFILE_FLAG = "Nonexistent_Fake_TriggerFile.xmL";
         public const string EXPERIMENT_NAME_DESCRIPTION = "Experiment";
-        public const string QC_EXPERIMENT_NAME_DESCRIPTION = "QC Experiment Name";
+        public const string QC_MONITORS_DESCRIPTION = "QC Monitor(s) (or uncheck 'Create Trigger For QC's ?')";
 
         #region Events
         /// <summary>
@@ -1133,7 +1131,7 @@ namespace BuzzardWPF.Management
                 missingFields.Add("Invalid LC Column name");
 
             if (QcMonitors.Count == 0)
-                missingFields.Add(QC_EXPERIMENT_NAME_DESCRIPTION);
+                missingFields.Add(QC_MONITORS_DESCRIPTION);
 
             return missingFields;
         }
