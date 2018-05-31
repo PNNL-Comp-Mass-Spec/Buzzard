@@ -47,7 +47,7 @@ namespace BuzzardWPF.ViewModels
 
                     if (x.Item3.Equals("USER", StringComparison.OrdinalIgnoreCase))
                     {
-                        return !string.IsNullOrWhiteSpace(x.Item4) && x.Item5.Any();
+                        return !string.IsNullOrWhiteSpace(x.Item4);
                     }
 
                     return true;
