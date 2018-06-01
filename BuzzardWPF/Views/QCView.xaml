@@ -23,10 +23,10 @@
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
 
-        <Style x:Key="ComboBoxStyle" TargetType="ComboBox">
+        <Style TargetType="ComboBox">
             <Setter Property="MinHeight" Value="32" />
             <Setter Property="Margin" Value="2" />
-            <Setter Property="MinWidth" Value="300" />
+            <Setter Property="MinWidth" Value="80" />
             <Setter Property="FontSize" Value="15" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
         </Style>

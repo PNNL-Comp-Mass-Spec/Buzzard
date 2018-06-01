@@ -60,6 +60,11 @@ namespace BuzzardWPF.Management
                     return null;
                 }
 
+                if (!EmslProposalUsers.Any())
+                {
+                    return EmslProposalId;
+                }
+
                 return $"{EmslProposalId}: {EmslProposalUsersNames}";
             }
         }

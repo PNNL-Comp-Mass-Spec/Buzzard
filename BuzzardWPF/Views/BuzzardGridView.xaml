@@ -38,7 +38,7 @@
             <ContentPresenter Name="PART_SelectedContentHost" ContentSource="SelectedContent" />
         </ControlTemplate>
 
-        <Style x:Key="ButtonStyle" TargetType="Button">
+        <Style TargetType="Button">
             <Setter Property="MinWidth" Value="95" />
             <Setter Property="MinHeight" Value="32" />
         </Style>

@@ -22,13 +22,10 @@
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance {x:Type viewModels:FillDownWindowViewModel}, IsDesignTimeCreatable=True}">
     <Window.Resources>
-        <Style x:Key="ButtonStyle" TargetType="ButtonBase">
+        <Style TargetType="{x:Type ToggleButton}">
             <Setter Property="MinHeight" Value="28" />
             <Setter Property="MinWidth" Value="100" />
             <Setter Property="Margin" Value="2" />
-        </Style>
-
-        <Style x:Key="ToggleButtonStyle" BasedOn="{StaticResource ButtonStyle}" TargetType="ToggleButton">
             <Setter Property="Content" Value="Use" />
             <Setter Property="Background" Value="White" />
             <Setter Property="Foreground" Value="LightGray" />
