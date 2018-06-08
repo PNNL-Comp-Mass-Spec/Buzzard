@@ -17,8 +17,7 @@
     UseLayoutRounding="True"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d"
-    d:DataContext="{d:DesignInstance {x:Type buzzardWpf:MainWindowViewModel}, IsDesignTimeCreatable=True}"
-    Closed="Main_OnClosed">
+    d:DataContext="{d:DesignInstance {x:Type buzzardWpf:MainWindowViewModel}, IsDesignTimeCreatable=True}">
 
     <!--  Resources  -->
     <Window.Resources>

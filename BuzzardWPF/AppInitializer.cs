@@ -7,7 +7,6 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using BuzzardWPF.Management;
-using LcmsNetDmsTools;
 using LcmsNetSDK;
 using LcmsNetSDK.Logging;
 using LcmsNetSQLiteTools;
@@ -31,9 +30,6 @@ namespace BuzzardWPF
         private const int CONST_DEFAULT_MESSAGE_LOG_LEVEL = 5;
 
         public const string PROGRAM_DATE = "May 31, 2018";
-
-        private static DMSDBTools dmsDbToolsInstance;
-        private static readonly SQLiteTools sqliteToolsInstance = SQLiteTools.GetInstance();
 
         #endregion
 
@@ -274,26 +270,8 @@ namespace BuzzardWPF
 
             ApplicationLogger.LogMessage(-1, "Loading DMS data");
 
-            try
-            {
-                // Load active experiments (created/used in the last 18 months), datasets, instruments, etc.
-                dmsDbToolsInstance = new DMSDBTools
-                {
-                    LoadExperiments = true,
-                    LoadDatasets = true,
-                    RecentExperimentsMonthsToLoad = DMS_DataAccessor.RECENT_EXPERIMENT_MONTHS,
-                    RecentDatasetsMonthsToLoad = DMS_DataAccessor.RECENT_DATASET_MONTHS
-                };
-
-                dmsDbToolsInstance.ProgressEvent += dbTools_ProgressEvent;
-
-                dmsDbToolsInstance.LoadCacheFromDMS();
-            }
-            catch (Exception ex)
-            {
-                var errorMessage = "Error loading data from DMS!";
-                LogCriticalError(errorMessage, ex);
-            }
+            // Load the needed data from DMS into the SQLite cache file, with progress updates and special error reporting
+            DMS_DataAccessor.Instance.UpdateSQLiteCacheFromDms(dbTools_ProgressEvent, (msq, ex) => LogCriticalError(msq, ex));
 
             ApplicationLogger.LogMessage(-1, "Checking For Local Trigger Files");
 
@@ -353,12 +331,6 @@ namespace BuzzardWPF
             }
 
             return openMainWindow;
-        }
-
-        public static void CleanupApplication()
-        {
-            dmsDbToolsInstance.Dispose();
-            sqliteToolsInstance.Dispose();
         }
 
         static void dbTools_ProgressEvent(object sender, ProgressEventArgs e)

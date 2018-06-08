@@ -30,11 +30,6 @@ namespace BuzzardWPF
 
         private bool firstTimeLoading = true;
 
-        private void Main_OnClosed(object sender, EventArgs e)
-        {
-            AppInitializer.CleanupApplication();
-        }
-
         /// <summary>
         /// Will tell the various configuration containing controls
         /// to place their values into the settings object before

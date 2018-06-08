@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
@@ -126,7 +126,7 @@ namespace BuzzardWPF
             UseDefaultTriggerFileLocationCommand = ReactiveCommand.Create(UseDefaultTriggerFileLocation);
             SelectTriggerFileLocationCommand = ReactiveCommand.Create(SelectTriggerFileLocation);
             UseTestFolderCommand = ReactiveCommand.Create(UseTestFolder);
-            ForceDmsReloadCommand = ReactiveCommand.Create(ForceDmsReload);
+            ForceDmsReloadCommand = ReactiveCommand.CreateFromTask(ForceDmsReload);
         }
 
         private void Manager_DatasetsLoaded(object sender, EventArgs e)
@@ -540,18 +540,18 @@ namespace BuzzardWPF
             // That class has its own timer for updating the data
         }
 
-        private async void ForceDmsReload()
+        private async Task ForceDmsReload()
         {
             if (DatasetManager.Manager.IsLoading)
             {
                 return;
             }
 
+            // Also force an update on DMS_DataAccessor.Instance
+            await DMS_DataAccessor.Instance.UpdateCacheNow("ForceDmsReload");
+
             // Load active requested runs from DMS
             await DatasetManager.Manager.LoadDmsCache();
-
-            // Also force an update on DMS_DataAccessor.Instance
-            DMS_DataAccessor.Instance.UpdateCacheNow("ForceDmsReload");
         }
 
         private void UseTestFolder()

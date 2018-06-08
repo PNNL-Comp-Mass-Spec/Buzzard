@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Threading;
 using System.Windows;
+using BuzzardWPF.Management;
 using LcmsNetSDK.Logging;
+using LcmsNetSQLiteTools;
 
 namespace BuzzardWPF
 {
@@ -12,7 +14,6 @@ namespace BuzzardWPF
     {
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-
             AppDomain.CurrentDomain.FirstChanceException += CurrentDomain_FirstChanceException;
 
             // Show the splash screen
@@ -31,6 +32,7 @@ namespace BuzzardWPF
             var openMainWindow = AppInitializer.InitializeApplication(splashScreen.SetInstrumentName).Result;
             if (openMainWindow)
             {
+                dmsDataAccessorInstance = DMS_DataAccessor.Instance;
                 var mainWindow = new MainWindow()
                 {
                     DataContext = new MainWindowViewModel()
@@ -105,6 +107,9 @@ namespace BuzzardWPF
             {
                 splashScreen.LoadComplete();
             }
+
+            sqliteToolsInstance.Dispose();
+            dmsDataAccessorInstance?.Dispose();
         }
 
         /// <summary>
@@ -116,6 +121,9 @@ namespace BuzzardWPF
 
         private ManualResetEvent resetSplashCreated;
         private Thread splashThread;
+
+        private static readonly SQLiteTools sqliteToolsInstance = SQLiteTools.GetInstance();
+        private static DMS_DataAccessor dmsDataAccessorInstance = null;
 
         private void ShowSplashScreen()
         {

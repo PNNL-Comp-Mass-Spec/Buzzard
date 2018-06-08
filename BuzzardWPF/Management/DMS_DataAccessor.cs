@@ -4,7 +4,9 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Concurrency;
 using System.Threading;
+using System.Threading.Tasks;
 using LcmsNetDmsTools;
+using LcmsNetSDK;
 using LcmsNetSDK.Data;
 using LcmsNetSDK.Logging;
 using LcmsNetSQLiteTools;
@@ -12,7 +14,7 @@ using ReactiveUI;
 
 namespace BuzzardWPF.Management
 {
-    public class DMS_DataAccessor : INotifyPropertyChanged
+    public class DMS_DataAccessor : INotifyPropertyChanged, IDisposable
     {
 
         #region Constants
@@ -52,6 +54,21 @@ namespace BuzzardWPF.Management
             mLastLoadFromCache = DateTime.UtcNow.AddMinutes(-60);
 
             mDataRefreshIntervalHours = 6;
+
+            // Load active experiments (created/used in the last 18 months), datasets, instruments, etc.
+            dmsDbTools = new DMSDBTools
+            {
+                LoadExperiments = true,
+                LoadDatasets = true,
+                RecentExperimentsMonthsToLoad = RECENT_EXPERIMENT_MONTHS,
+                RecentDatasetsMonthsToLoad = RECENT_DATASET_MONTHS
+            };
+        }
+
+        public void Dispose()
+        {
+            mAutoUpdateTimer?.Dispose();
+            dmsDbTools?.Dispose();
         }
 
         private void StartAutoUpdateTimer()
@@ -204,53 +221,13 @@ namespace BuzzardWPF.Management
         }
 
         /// <summary>
-        /// Abort for the Dms Thread.
-        /// </summary>
-        private void AbortUpdateThread()
-        {
-            try
-            {
-                mUpdateCacheThread.Abort();
-            }
-            catch
-            {
-                // Ignore errors here
-            }
-            finally
-            {
-                try
-                {
-                    mUpdateCacheThread.Join(100);
-                }
-                catch
-                {
-                    // Ignore errors here
-                }
-            }
-            mUpdateCacheThread = null;
-        }
-
-        /// <summary>
         /// Loads the DMS Data Cache
         /// </summary>
-        private void StartUpdateThreaded()
-        {
-            if (mUpdateCacheThread != null)
-            {
-                AbortUpdateThread();
-            }
-
-            // Create a new threaded update
-            var start = new ThreadStart(UpdateCacheThread);
-            mUpdateCacheThread = new Thread(start);
-            mUpdateCacheThread.Start();
-        }
-
-        private void UpdateCacheThread()
+        private void UpdateCache()
         {
             mIsUpdating = true;
 
-            var success = UpdateSQLiteCache();
+            var success = UpdateSQLiteCacheFromDms();
             if (!success)
             {
                 mIsUpdating = false;
@@ -266,25 +243,41 @@ namespace BuzzardWPF.Management
         /// <summary>
         /// Force updating the SQLite cache database with instrument, experiment, dataset, etc. info
         /// </summary>
-        public void UpdateCacheNow(string callingFunction = "unknown")
+        public async Task UpdateCacheNow(string callingFunction = "unknown")
         {
+            lock (m_cacheLoadingSync)
+            {
+                if (mIsUpdating)
+                {
+                    return;
+                }
+
+                mIsUpdating = true;
+            }
 
             try
             {
-                lock (m_cacheLoadingSync)
-                {
-                    if (mIsUpdating)
-                    {
-                        return;
-                    }
-                    StartUpdateThreaded();
-                }
+                await Task.Run(() => UpdateCache()).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
                 ApplicationLogger.LogError(0, string.Format("Exception updating the cached DMS data (called from {0}): {1}", callingFunction, ex.Message));
             }
 
+            lock (m_cacheLoadingSync)
+            {
+                mIsUpdating = false;
+            }
+        }
+
+        public List<SampleData> LoadDMSRequestedRuns()
+        {
+            // Instantiate SampleQueryData using default filters (essentially no filters)
+            // Only active requested runs are retrieved
+            var queryData = new SampleQueryData();
+
+            // Load the samples (essentially requested runs) from DMS
+            return dmsDbTools.GetRequestedRunsFromDMS(queryData);
         }
 
         #endregion
@@ -301,16 +294,29 @@ namespace BuzzardWPF.Management
         private float mDataRefreshIntervalHours;
         private DateTime mLastSQLiteUpdate;
         private DateTime mLastLoadFromCache;
+        private DMSDBTools dmsDbTools;
+
+        private List<ProposalUser> m_proposalUsers;
+        private Dictionary<string, List<UserIDPIDCrossReferenceEntry>> m_pidIndexedCrossReferenceList;
+        private readonly Dictionary<string, ReactiveList<ProposalUser>> m_proposalUserCollections;
+        private ReactiveList<string> m_ColumnData;
+        private ReactiveList<string> m_instrumentData;
+        private ReactiveList<string> m_operatorData;
+        private ReactiveList<string> m_datasetTypes;
+        private ReactiveList<string> m_separationTypes;
+        private ReactiveList<string> m_cartNames;
+        private ReactiveList<string> m_cartConfigNames;
+        private SortedSet<string> m_Datasets;
+        private List<ExperimentData> m_experiments;
 
         private readonly object m_cacheLoadingSync = new object();
         private bool mIsUpdating;
-        private Thread mUpdateCacheThread;
 
         #endregion
 
         #region Private Methods
 
-        void AutoUpdateTimer_Tick(object state)
+        private async void AutoUpdateTimer_Tick(object state)
         {
             if (DataRefreshIntervalHours <= 0)
                 return;
@@ -323,30 +329,41 @@ namespace BuzzardWPF.Management
             // Set the Last Update time to now to prevent this function from calling UpdateCacheNow repeatedly if the DMS update takes over 30 seconds
             mLastSQLiteUpdate = DateTime.UtcNow;
 
-            UpdateCacheNow("AutoUpdateTimer_Tick");
+            await UpdateCacheNow("AutoUpdateTimer_Tick");
         }
 
-        private bool UpdateSQLiteCache()
+        /// <summary>
+        /// Update data from DMS, with optional extra logging
+        /// </summary>
+        /// <param name="progressEventHandler">Handler to report progress information from DMSDBTools</param>
+        /// <param name="errorAction">Handler to report exception information</param>
+        /// <returns></returns>
+        public bool UpdateSQLiteCacheFromDms(ProgressEventHandler progressEventHandler = null, Action<string, Exception> errorAction = null)
         {
             try
             {
-                // Load active experiments (created/used in the last 18 months), daasets, instruments, etc.
-                var dbTools = new DMSDBTools
+                if (progressEventHandler != null)
                 {
-                    LoadExperiments = true,
-                    LoadDatasets = true,
-                    RecentExperimentsMonthsToLoad = RECENT_EXPERIMENT_MONTHS,
-                    RecentDatasetsMonthsToLoad = RECENT_DATASET_MONTHS
-                };
+                    dmsDbTools.ProgressEvent += progressEventHandler;
+                }
 
-                dbTools.LoadCacheFromDMS();
+                dmsDbTools.LoadCacheFromDMS();
 
                 return true;
             }
             catch (Exception ex)
             {
-                ApplicationLogger.LogError(0, "Error updating the SQLite cache file", ex);
+                var message = "Error loading data from DMS and updating the SQLite cache file!";
+                ApplicationLogger.LogError(0, message, ex);
+                errorAction?.Invoke(message, ex);
                 return false;
+            }
+            finally
+            {
+                if (progressEventHandler != null)
+                {
+                    dmsDbTools.ProgressEvent -= progressEventHandler;
+                }
             }
         }
 
@@ -435,9 +452,7 @@ namespace BuzzardWPF.Management
         {
             try
             {
-
-                m_pidIndexedCrossReferenceList =
-                        new Dictionary<string, List<UserIDPIDCrossReferenceEntry>>();
+                m_pidIndexedCrossReferenceList = new Dictionary<string, List<UserIDPIDCrossReferenceEntry>>();
 
                 List<ProposalUser> eusUsers;
 
@@ -478,9 +493,6 @@ namespace BuzzardWPF.Management
                 ApplicationLogger.LogError(0, "Exception in LoadProposalUsers: " + ex.Message);
             }
         }
-
-        private List<ProposalUser> m_proposalUsers;
-        private Dictionary<string, List<UserIDPIDCrossReferenceEntry>> m_pidIndexedCrossReferenceList;
 
         /// <summary>
         /// Gets an ReactiveList of ProposalUsers that are involved with the given PID.
@@ -568,7 +580,6 @@ namespace BuzzardWPF.Management
 
             return m_proposalUserCollections[proposalID];
         }
-        private readonly Dictionary<string, ReactiveList<ProposalUser>> m_proposalUserCollections;
 
         /// <summary>
         /// Proposal IDs
@@ -641,7 +652,6 @@ namespace BuzzardWPF.Management
                 }
             }
         }
-        private ReactiveList<string> m_ColumnData;
 
         /// <summary>
         /// List of the DMS instrument names
@@ -658,7 +668,6 @@ namespace BuzzardWPF.Management
                 }
             }
         }
-        private ReactiveList<string> m_instrumentData;
 
         /// <summary>
         /// Instrument details (Name, status, source hostname, source share name, capture method
@@ -681,7 +690,6 @@ namespace BuzzardWPF.Management
                 }
             }
         }
-        private ReactiveList<string> m_operatorData;
 
         /// <summary>
         /// Dataset types
@@ -698,7 +706,6 @@ namespace BuzzardWPF.Management
                 }
             }
         }
-        private ReactiveList<string> m_datasetTypes;
 
         /// <summary>
         /// Separation types
@@ -715,7 +722,6 @@ namespace BuzzardWPF.Management
                 }
             }
         }
-        private ReactiveList<string> m_separationTypes;
 
         /// <summary>
         /// Cart names
@@ -732,7 +738,6 @@ namespace BuzzardWPF.Management
                 }
             }
         }
-        private ReactiveList<string> m_cartNames;
 
         /// <summary>
         /// Cart config names
@@ -749,7 +754,6 @@ namespace BuzzardWPF.Management
                 }
             }
         }
-        private ReactiveList<string> m_cartConfigNames;
 
         /// <summary>
         /// List of DMS dataset names
@@ -767,7 +771,6 @@ namespace BuzzardWPF.Management
                 }
             }
         }
-        private SortedSet<string> m_Datasets;
 
         /// <summary>
         /// List of DMS experiment names
@@ -791,7 +794,6 @@ namespace BuzzardWPF.Management
                 }
             }
         }
-        private List<ExperimentData> m_experiments;
 
         #endregion
 

@@ -9,7 +9,6 @@ using System.Windows;
 using System.Windows.Data;
 using BuzzardWPF.Data;
 using BuzzardWPF.IO;
-using LcmsNetDmsTools;
 using LcmsNetSDK;
 using LcmsNetSDK.Data;
 using LcmsNetSDK.Logging;
@@ -119,15 +118,9 @@ namespace BuzzardWPF.Management
 
             try
             {
-                // Instantiate SampleQueryData using default filters (essentially no filters)
-                // Only active requested runs are retrieved
-                var queryData = new SampleQueryData();
-
                 // Load the samples (essentially requested runs) from DMS
-                var dbTools = new DMSDBTools();
-
                 currentTask = "Retrieving samples (requested runs) from DMS";
-                var samples = dbTools.GetRequestedRunsFromDMS(queryData);
+                var samples = DMS_DataAccessor.Instance.LoadDMSRequestedRuns();
 
                 currentTask = "Populating mRequestedRunTrie";
                 lock (mRequestedRunTrie)
