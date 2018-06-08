@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
@@ -180,7 +179,7 @@ namespace BuzzardWPF
                 if (string.IsNullOrWhiteSpace(fileVersion))
                     return false;
 
-                var versionPartsInstaller = fileVersion.Split('.');
+                var installerVersion = new Version(fileVersionInfo.FileMajorPart, fileVersionInfo.FileMinorPart, fileVersionInfo.FileBuildPart, fileVersionInfo.FilePrivatePart);
 
                 var assembly = System.Reflection.Assembly.GetExecutingAssembly();
                 var versionRunning = assembly.GetName().Version.ToString();
@@ -188,37 +187,25 @@ namespace BuzzardWPF
                 if (string.IsNullOrWhiteSpace(versionRunning))
                     return false;
 
-                var versionPartsRunning = versionRunning.Split('.');
+                var runningVersion = assembly.GetName().Version;
 
-                for (var i = 0; i < versionPartsInstaller.Length; i++)
+                if (installerVersion > runningVersion)
                 {
-                    var installerVersionPart = GetValue(versionPartsInstaller, i);
-                    var runningVersionPart = GetValue(versionPartsRunning, i);
+                    var updateMsg = "A new version of Buzzard is available at " + installerFolderPath + "; Install the new version now?";
+                    var eResponse = MessageBox.Show(updateMsg, @"Upgrade Advised", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
 
-                    if (installerVersionPart > runningVersionPart)
+                    if (eResponse == MessageBoxResult.Yes)
                     {
-                        var updateMsg = "A new version of Buzzard is available at " + installerFolderPath + "; Install the new version now?";
-                        var eResponse = MessageBox.Show(updateMsg, @"Upgrade Advised", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+                        // Launch the installer
+                        // First need to copy it locally (since running over the network fails on some of the computers)
 
-                        if (eResponse == MessageBoxResult.Yes)
-                        {
-                            // Launch the installer
-                            // First need to copy it locally (since running over the network fails on some of the computers)
+                        LaunchTheInstaller(fiInstaller);
 
-                            LaunchTheInstaller(fiInstaller);
-
-                            return true;
-                        }
-                        break;
-                    }
-
-                    if (installerVersionPart < runningVersionPart)
-                    {
-                        // This version is user; stop comparing to the installer
-                        break;
+                        return true;
                     }
                 }
 
+                // This version is user; stop comparing to the installer
                 return false;
             }
             catch (Exception ex)
@@ -227,20 +214,6 @@ namespace BuzzardWPF
                 System.Threading.Thread.Sleep(750);
                 return false;
             }
-        }
-
-        private static int GetValue(IList<string> versionArray, int index)
-        {
-            if (index >= versionArray.Count)
-            {
-                return 0;
-            }
-
-            if (int.TryParse(versionArray[index], out var value))
-            {
-                return value;
-            }
-            return 0;
         }
 
         /// <summary>
