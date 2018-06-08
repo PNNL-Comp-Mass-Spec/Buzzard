@@ -30,7 +30,7 @@ namespace BuzzardWPF
         /// <remarks>Log levels are 0 to 5, where 0 is most important and 5 is least important</remarks>
         private const int CONST_DEFAULT_MESSAGE_LOG_LEVEL = 5;
 
-        public const string PROGRAM_DATE = "September 1, 2017";
+        public const string PROGRAM_DATE = "April 3, 2018";
 
         #endregion
 
@@ -176,7 +176,7 @@ namespace BuzzardWPF
                 if (string.IsNullOrWhiteSpace(fileVersion))
                     return false;
 
-                var versionPartsInstaller = fileVersion.Split('.');
+                var installerVersion = new Version(fileVersionInfo.FileMajorPart, fileVersionInfo.FileMinorPart, fileVersionInfo.FileBuildPart, fileVersionInfo.FilePrivatePart);
 
                 var assembly = System.Reflection.Assembly.GetExecutingAssembly();
                 var versionRunning = assembly.GetName().Version.ToString();
@@ -184,37 +184,41 @@ namespace BuzzardWPF
                 if (string.IsNullOrWhiteSpace(versionRunning))
                     return false;
 
-                var versionPartsRunning = versionRunning.Split('.');
-
-                for (var i = 0; i < versionPartsInstaller.Length; i++)
+                var runningVersion = assembly.GetName().Version;
+                
+                if (installerVersion > runningVersion)
                 {
-                    var installerVersionPart = GetValue(versionPartsInstaller, i);
-                    var runningVersionPart = GetValue(versionPartsRunning, i);
-
-                    if (installerVersionPart > runningVersionPart)
+                    if (installerVersion >= new Version(1, 8))
                     {
-                        var updateMsg = "A new version of Buzzard is available at " + installerFolderPath + "; Install the new version now?";
-                        var eResponse = MessageBox.Show(updateMsg, @"Upgrade Advised", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
-
-                        if (eResponse == DialogResult.Yes)
+                        // Check the installed .NET Framework version; 1.8.x.y requires a minimum of .NET 4.6.2
+                        var baseKey = Microsoft.Win32.RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, Microsoft.Win32.RegistryView.Default);
+                        var subKey = baseKey.OpenSubKey(@"Software\Microsoft\NET Framework Setup\NDP\v4\Full", false);
+                        var releaseValue = (int)subKey.GetValue("Release");
+                        // Release 394802 is 4.6.2 on Windows 10, Release 394806 is 4.6.2 on other Windows OSes
+                        if (releaseValue < 394802)
                         {
-                            // Launch the installer
-                            // First need to copy it locally (since running over the network fails on some of the computers)
+                            var updateMsgErr = "A new version of Buzzard is available at " + installerFolderPath + "; Unable to install because it requires .NET 4.6.2 or newer, which is not installed. Please contact Matt Monroe or Bryson Gibbons to resolve.";
+                            MessageBox.Show(updateMsgErr, @"Upgrade Not Possible", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 
-                            LaunchTheInstaller(fiInstaller);
-
-                            return true;
+                            return false;
                         }
-                        break;
                     }
 
-                    if (installerVersionPart < runningVersionPart)
+                    var updateMsg = "A new version of Buzzard is available at " + installerFolderPath + "; Install the new version now?";
+                    var eResponse = MessageBox.Show(updateMsg, @"Upgrade Advised", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+
+                    if (eResponse == DialogResult.Yes)
                     {
-                        // This version is user; stop comparing to the installer
-                        break;
+                        // Launch the installer
+                        // First need to copy it locally (since running over the network fails on some of the computers)
+
+                        LaunchTheInstaller(fiInstaller);
+
+                        return true;
                     }
                 }
 
+                // This version is user; stop comparing to the installer
                 return false;
             }
             catch (Exception ex)
