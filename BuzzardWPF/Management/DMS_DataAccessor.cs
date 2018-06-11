@@ -294,7 +294,7 @@ namespace BuzzardWPF.Management
         private float mDataRefreshIntervalHours;
         private DateTime mLastSQLiteUpdate;
         private DateTime mLastLoadFromCache;
-        private DMSDBTools dmsDbTools;
+        private readonly DMSDBTools dmsDbTools;
 
         private List<ProposalUser> m_proposalUsers;
         private Dictionary<string, List<UserIDPIDCrossReferenceEntry>> m_pidIndexedCrossReferenceList;

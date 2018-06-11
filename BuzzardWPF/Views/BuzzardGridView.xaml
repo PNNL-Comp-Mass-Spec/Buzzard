@@ -348,7 +348,8 @@
                                         </MultiBinding>
                                     </TextBlock.Text>
                                     <TextBlock.Foreground>
-                                        <SolidColorBrush Color="Black" />
+                                        <!-- This is needed for the ColorAnimation defined below (including the x:Name) -->
+                                        <SolidColorBrush x:Name="ForegroundBrush" Color="Black" />
                                     </TextBlock.Foreground>
                                 </TextBlock>
                             </Grid>
