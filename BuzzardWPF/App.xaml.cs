@@ -63,21 +63,12 @@ namespace BuzzardWPF
 
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
-            ApplicationLogger.LogError(0, "Buzzard had an unhandled error.  " + e.Exception.Message, e.Exception);
+            ApplicationLogger.LogError(0, "Buzzard had an unhandled critical error.  " + e.Exception.Message, e.Exception);
             ShutdownCleanup();
         }
 
         private void CurrentDomain_FirstChanceException(object sender, System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs e)
         {
-            ShutdownCleanup();
-
-            if (e.Exception is System.IO.IOException && e.Exception.Message.Contains("logo_2017"))
-            {
-                // Exception is "Cannot locate resource 'resources/logo_2017.png'."
-                // It can safely be ignored
-                return;
-            }
-
             if (e.Exception is System.IO.FileNotFoundException && e.Exception.Message.Contains("System.XmlSerializers"))
             {
                 // Exception is "Could not load file or assembly 'System.XmlSerializers, ... The system cannot find the file specified."
@@ -92,7 +83,7 @@ namespace BuzzardWPF
                 return;
             }
 
-            ApplicationLogger.LogError(0, "Buzzard had an unhandled error.  " + e.Exception.Message, e.Exception);
+            ApplicationLogger.LogError(0, "Buzzard had an unhandled non-critical error.  " + e.Exception.Message, e.Exception);
         }
 
         private void Application_Exit(object sender, ExitEventArgs e)
