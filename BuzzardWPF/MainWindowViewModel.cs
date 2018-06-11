@@ -53,6 +53,7 @@ namespace BuzzardWPF
         private string m_lastUpdated;
         private bool remoteFolderLocationIsEnabled;
         private readonly object lockEmslUsageTypesSource = new object();
+        private readonly Timer settingsSaveTimer;
 
         #endregion
 
@@ -127,6 +128,9 @@ namespace BuzzardWPF
             SelectTriggerFileLocationCommand = ReactiveCommand.Create(SelectTriggerFileLocation);
             UseTestFolderCommand = ReactiveCommand.Create(UseTestFolder);
             ForceDmsReloadCommand = ReactiveCommand.CreateFromTask(ForceDmsReload);
+
+            // Auto-save settings every 5 minutes, on a background thread
+            settingsSaveTimer = new Timer(SaveSettings_Tick, this, TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(5));
         }
 
         private void Manager_DatasetsLoaded(object sender, EventArgs e)
@@ -427,10 +431,21 @@ namespace BuzzardWPF
         /// to place their values into the settings object before
         /// saving the setting object for application shutdown.
         /// </summary>
-        public void SaveSettings()
+        public void SaveSettingsOnClose()
         {
             ApplicationLogger.LogMessage(0, "Main Window closed.");
 
+            settingsSaveTimer.Dispose();
+
+            // Save settings
+            SaveSettings();
+        }
+
+        /// <summary>
+        /// Save settings
+        /// </summary>
+        private void SaveSettings()
+        {
             // Save settings
             ApplicationLogger.LogMessage(0, "Starting to save settings to config.");
             WatcherConfigVm.SaveSettings();
@@ -467,6 +482,11 @@ namespace BuzzardWPF
 
                 m_firstTimeLoading = false;
             }
+        }
+
+        private void SaveSettings_Tick(object state)
+        {
+            SaveSettings();
         }
 
         private void ControlAnimation(bool enabled)

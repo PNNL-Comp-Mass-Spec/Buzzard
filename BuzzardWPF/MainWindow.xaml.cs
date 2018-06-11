@@ -42,7 +42,7 @@ namespace BuzzardWPF
             // Save settings
             if (DataContext is MainWindowViewModel mwvm)
             {
-                mwvm.SaveSettings();
+                mwvm.SaveSettingsOnClose();
             }
         }
 
