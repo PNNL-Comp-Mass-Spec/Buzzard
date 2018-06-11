@@ -460,11 +460,7 @@ namespace BuzzardWPF.Management
             {
                 // Find the datasets that have source data found by the
                 // file watcher.
-                var query = (from BuzzardDataset ds in Datasets
-                             where ds.DatasetSource == DatasetSource.Watcher
-                             select ds).ToList();
-
-                var datasets = new List<BuzzardDataset>(query);
+                var datasets = Datasets.Where(ds => ds.DatasetSource == DatasetSource.Watcher).ToList();
 
                 // If there aren't any, then we're done.
                 if (datasets.Count == 0)
@@ -474,11 +470,11 @@ namespace BuzzardWPF.Management
                 var timeToWait = new TimeSpan(0, TriggerFileCreationWaitTime, 0);
 
                 var totalSecondsToWait = TriggerFileCreationWaitTime * 60;
-                var datasetsToCheck = (from item in datasets
-                                       where item.DatasetStatus != DatasetStatus.TriggerFileSent &&
-                                             item.DatasetStatus != DatasetStatus.Ignored &&
-                                             item.DatasetStatus != DatasetStatus.DatasetAlreadyInDMS
-                                       select item).ToList();
+                var datasetsToCheck = datasets.Where(item =>
+                    item.DatasetStatus != DatasetStatus.TriggerFileSent &&
+                    item.DatasetStatus != DatasetStatus.Ignored &&
+                    item.DatasetStatus != DatasetStatus.DatasetAlreadyInDMS
+                    ).ToList();
 
                 RxApp.MainThreadScheduler.Schedule(() => {
                 foreach (var dataset in datasetsToCheck)
@@ -499,7 +495,7 @@ namespace BuzzardWPF.Management
                         var hasTriggerFileSent = false;
 
                         // Also make sure that the trigger file does not exist on the server...
-                        foreach (var filePath in Manager.TriggerDirectoryContents.Keys)
+                        foreach (var filePath in Manager.TriggerDirectoryContents.Keys.ToList())
                         {
                             if (filePath.ToLower().Contains(dataset.DMSData.DatasetName.ToLower()))
                             {
