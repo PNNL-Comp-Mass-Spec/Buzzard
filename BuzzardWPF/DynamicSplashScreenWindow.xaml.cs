@@ -37,6 +37,11 @@ namespace BuzzardWPF
             var assemName = assem.GetName();
             var ver = assemName.Version + "; " + AppInitializer.PROGRAM_DATE;
 
+            if (Properties.Settings.Default.IsTestVersion)
+            {
+                ver += "    TEST VERSION";
+            }
+
             Version = ver;
         }
 

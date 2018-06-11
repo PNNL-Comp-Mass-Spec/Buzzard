@@ -31,6 +31,8 @@ namespace BuzzardWPF
 
         public const string PROGRAM_DATE = "May 31, 2018";
 
+        private const string DefaultInstallerFolder = @"\\proto-5\BionetSoftware\Buzzard";
+
         #endregion
 
         #region Configuration Loading
@@ -135,20 +137,23 @@ namespace BuzzardWPF
         }
         #endregion
 
-        /// <summary>
+        ///  <summary>
         ///
-        /// </summary>
-        /// <param name="installerFolderPath"></param>
+        ///  </summary>
+        ///  <param name="installerFolderPath"></param>
+        /// <param name="isTestDir"></param>
+        /// <param name="currentWindow"></param>
         /// <returns>
-        /// True if a new version exists and the user launched the installer
-        /// In that case, this program will exit, thus allowing the installer to complete successfully
-        /// </returns>
-#if DotNET4
-        private static bool CheckForNewVersion(string installerFolderPath = @"\\proto-5\BionetSoftware\Buzzard\DotNet4.0_XP")
-#else
-        private static bool CheckForNewVersion(string installerFolderPath = @"\\proto-5\BionetSoftware\Buzzard")
-#endif
+        ///  True if a new version exists and the user launched the installer
+        ///  In that case, this program will exit, thus allowing the installer to complete successfully
+        ///  </returns>
+        private static bool CheckForNewVersion(string installerFolderPath = DefaultInstallerFolder, bool isTestDir = false, Window currentWindow = null)
         {
+            if (isTestDir && DefaultInstallerFolder.Equals(installerFolderPath))
+            {
+                installerFolderPath = Path.Combine(DefaultInstallerFolder, "Testing");
+            }
+
             try
             {
                 var diInstallerFolder = new DirectoryInfo(installerFolderPath);
@@ -188,7 +193,17 @@ namespace BuzzardWPF
                 if (installerVersion > runningVersion)
                 {
                     var updateMsg = "A new version of Buzzard is available at " + installerFolderPath + "; Install the new version now?";
-                    var eResponse = MessageBox.Show(updateMsg, @"Upgrade Advised", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+                    updateMsg += $"\n\nCurrent Version:\t{runningVersion}\nNew Version:\t{installerVersion}" + (isTestDir ? " (TESTING)" : "");
+
+                    var eResponse = MessageBoxResult.None;
+                    if (currentWindow != null)
+                    {
+                        eResponse = currentWindow.ShowMessage(updateMsg, @"Upgrade Advised", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+                    }
+                    else
+                    {
+                        eResponse = MessageBox.Show(updateMsg, @"Upgrade Advised", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+                    }
 
                     if (eResponse == MessageBoxResult.Yes)
                     {
@@ -215,7 +230,7 @@ namespace BuzzardWPF
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
-        public static async Task<bool> InitializeApplication(Action<string> instrumentNameAction = null)
+        public static async Task<bool> InitializeApplication(Window displayWindow, Action<string> instrumentNameAction = null)
         {
             var openMainWindow = false;
 
@@ -260,7 +275,28 @@ namespace BuzzardWPF
 
             ApplicationLogger.LogMessage(-1, "Checking for a new version");
 
-            var newVersionInstalling = CheckForNewVersion();
+            var newVersionInstalling = false;
+            if (Properties.Settings.Default.UpgradeWithTestVersion)
+            {
+                newVersionInstalling = CheckForNewVersion(isTestDir: true, currentWindow: displayWindow);
+                if (newVersionInstalling)
+                {
+                    Properties.Settings.Default.IsTestVersion = true;
+                    Properties.Settings.Default.Save();
+                }
+            }
+
+            // If we don't get test versions, or there is not a test version available, check the default directory
+            if (!newVersionInstalling)
+            {
+                newVersionInstalling = CheckForNewVersion(currentWindow: displayWindow);
+                if (newVersionInstalling)
+                {
+                    Properties.Settings.Default.IsTestVersion = false;
+                    Properties.Settings.Default.Save();
+                }
+            }
+
             if (newVersionInstalling)
             {
                 ApplicationLogger.LogMessage(-1, "Closing since new version is installing");

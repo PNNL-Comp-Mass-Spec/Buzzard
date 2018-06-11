@@ -155,6 +155,7 @@
     <Compile Include="Views\FillDownWindow.xaml.cs">
       <DependentUpon>FillDownWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MessageBoxDisplayExtension.cs" />
     <Compile Include="Views\QCView.xaml.cs">
       <DependentUpon>QCView.xaml</DependentUpon>
     </Compile>

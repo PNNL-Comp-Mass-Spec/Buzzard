@@ -751,5 +751,29 @@ namespace BuzzardWPF.Properties {
                 this["QC_Monitors"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UpgradeWithTestVersion {
+            get {
+                return ((bool)(this["UpgradeWithTestVersion"]));
+            }
+            set {
+                this["UpgradeWithTestVersion"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsTestVersion {
+            get {
+                return ((bool)(this["IsTestVersion"]));
+            }
+            set {
+                this["IsTestVersion"] = value;
+            }
+        }
     }
 }
