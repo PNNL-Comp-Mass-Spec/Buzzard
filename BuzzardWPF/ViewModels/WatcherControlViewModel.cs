@@ -15,7 +15,7 @@ using ReactiveUI;
 
 namespace BuzzardWPF.ViewModels
 {
-    public class WatcherControlViewModel : ReactiveObject
+    public class WatcherControlViewModel : ReactiveObject, IStoredSettingsMonitor
     {
         #region Constants
 
@@ -31,11 +31,7 @@ namespace BuzzardWPF.ViewModels
 
         private string mDirectoryToWatch;
         private SearchOption mWatchDepth;
-        private int mWaitTimeMinutes;
-        private int mMinimumFileSizeKB;
-        private bool mMatchFolders;
         private string mExtension;
-        private bool mCreateTriggerOnDMSFail;
 
         private readonly ConcurrentDictionary<string, DateTime> mFilePathsToProcess;
         private readonly Timer mFileUpdateHandler;
@@ -85,15 +81,14 @@ namespace BuzzardWPF.ViewModels
 
         private void ResetToDefaults()
         {
-
             // Leave this unchanged: m_directoryToWatch;
 
             WatchDepth = SearchConfig.DEFAULT_SEARCH_DEPTH;
-            WaitTime = DEFAULT_WAIT_TIME_MINUTES;
-            MinimumFileSizeKB = SearchConfig.DEFAULT_MINIMUM_FILE_SIZE_KB;
-            MatchFolders = SearchConfig.DEFAULT_MATCH_FOLDERS;
+            DatasetManager.TriggerFileCreationWaitTime = DEFAULT_WAIT_TIME_MINUTES;
+            DatasetManager.MinimumFileSizeKB = SearchConfig.DEFAULT_MINIMUM_FILE_SIZE_KB;
+            DatasetManager.MatchFolders = SearchConfig.DEFAULT_MATCH_FOLDERS;
             Extension = SearchConfig.DEFAULT_FILE_EXTENSION;
-            CreateTriggerOnDMSFail = false;
+            DatasetManager.CreateTriggerOnDMSFail = false;
         }
 
         #endregion
@@ -106,42 +101,29 @@ namespace BuzzardWPF.ViewModels
 
         public IReadOnlyReactiveList<SearchOption> SearchDepthOptions { get; }
 
-        public bool CreateTriggerOnDMSFail
-        {
-            get { return mCreateTriggerOnDMSFail; }
-            set
-            {
-                if (mCreateTriggerOnDMSFail != value)
-                {
-                    mCreateTriggerOnDMSFail = value;
-                    this.RaisePropertyChanged("CreateTriggerOnDMSFail");
-                }
+        public DatasetManager DatasetManager => DatasetManager.Manager;
 
-                DatasetManager.Manager.CreateTriggerOnDMSFail = value;
-            }
-        }
+        public bool SettingsChanged { get; set; }
 
         public string Extension
         {
-            get { return mExtension; }
-            set { this.RaiseAndSetIfChanged(ref mExtension, value); }
+            get => mExtension;
+            set => this.RaiseAndSetIfChangedMonitored(ref mExtension, value);
         }
 
         public SearchOption WatchDepth
         {
-            get { return mWatchDepth; }
-            set { this.RaiseAndSetIfChanged(ref mWatchDepth, value); }
+            get => mWatchDepth;
+            set => this.RaiseAndSetIfChangedMonitored(ref mWatchDepth, value);
         }
 
         public string DirectoryToWatch
         {
-            get { return mDirectoryToWatch; }
+            get => mDirectoryToWatch;
             set
             {
-                if (mDirectoryToWatch != value)
+                if (this.RaiseAndSetIfChangedMonitoredBool(ref mDirectoryToWatch, value))
                 {
-                    mDirectoryToWatch = value;
-
                     /*
                     if (value != null)
                     {
@@ -151,11 +133,9 @@ namespace BuzzardWPF.ViewModels
                         }
                     }
                     */
-                    this.RaisePropertyChanged("DirectoryToWatch");
 
                     SetDirectorySelectorOptionsList();
                 }
-
             }
         }
 
@@ -172,63 +152,6 @@ namespace BuzzardWPF.ViewModels
         }
 
         public bool IsNotMonitoring => !IsWatching;
-
-        public bool MatchFolders
-        {
-            get { return mMatchFolders; }
-            set
-            {
-                if (mMatchFolders != value)
-                {
-                    mMatchFolders = value;
-                    this.RaisePropertyChanged("MatchFolders");
-                }
-
-                DatasetManager.Manager.MatchFolders = value;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the amount of time to wait for
-        /// trigger file creation on files that were
-        /// found by the scanner.
-        /// </summary>
-        /// <remarks>
-        /// This is measured in minutes.
-        /// </remarks>
-        public int WaitTime
-        {
-            get { return mWaitTimeMinutes; }
-            set
-            {
-                if (mWaitTimeMinutes != value)
-                {
-                    mWaitTimeMinutes = value;
-                    this.RaisePropertyChanged("WaitTime");
-                    this.RaisePropertyChanged("WaitTime_MinComp");
-                    this.RaisePropertyChanged("WaitTime_HrComp");
-                }
-
-                DatasetManager.Manager.TriggerFileCreationWaitTime = value;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the minimum file size in KB before starting a trigger creation
-        /// </summary>
-        public int MinimumFileSizeKB
-        {
-            get { return mMinimumFileSizeKB; }
-            set
-            {
-                if (mMinimumFileSizeKB != value)
-                {
-                    mMinimumFileSizeKB = value;
-                    this.RaisePropertyChanged("MinimumFileSize");
-                }
-                DatasetManager.Manager.MinimumFileSizeKB = value;
-            }
-        }
 
         public string[] DirectorySelectorOptionsList
         {
@@ -363,28 +286,29 @@ namespace BuzzardWPF.ViewModels
 
         #region Methods
 
-        public void SaveSettings()
+        public bool SaveSettings(bool force = false)
         {
+            if (!SettingsChanged && !force)
+            {
+                return false;
+            }
+
             Settings.Default.Watcher_FilePattern = Extension;
             Settings.Default.Watcher_SearchType = WatchDepth;
-            Settings.Default.Watcher_WaitTime = WaitTime;
             Settings.Default.Watcher_WatchDir = DirectoryToWatch;
-            Settings.Default.Watcher_FileSize = MinimumFileSizeKB;
-            Settings.Default.Watcher_MatchFolders = MatchFolders;
-            Settings.Default.WatcherConfig_CreateTriggerOnDMS_Fail = CreateTriggerOnDMSFail;
 
+            SettingsChanged = false;
+
+            return true;
         }
 
         public void LoadSettings()
         {
             Extension = Settings.Default.Watcher_FilePattern;
             WatchDepth = Settings.Default.Watcher_SearchType;
-            WaitTime = Settings.Default.Watcher_WaitTime;
             DirectoryToWatch = Settings.Default.Watcher_WatchDir;
-            MinimumFileSizeKB = Settings.Default.Watcher_FileSize;
-            MatchFolders = Settings.Default.Watcher_MatchFolders;
-            CreateTriggerOnDMSFail = Settings.Default.WatcherConfig_CreateTriggerOnDMS_Fail;
 
+            SettingsChanged = false;
         }
 
         private void ProcessFilePathQueue()
@@ -486,7 +410,7 @@ namespace BuzzardWPF.ViewModels
                     missingData.Remove(DatasetManager.EXPERIMENT_NAME_DESCRIPTION);
                 }
 
-                if (!DatasetManager.Manager.QC_CreateTriggerOnDMSFail &&
+                if (!DatasetManager.QcCreateTriggerOnDMSFail &&
                     missingData.Contains(DatasetManager.QC_MONITORS_DESCRIPTION))
                 {
                     missingData.Remove(DatasetManager.QC_MONITORS_DESCRIPTION);

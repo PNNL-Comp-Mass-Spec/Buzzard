@@ -1,14 +1,15 @@
 ﻿using System;
-using System.ComponentModel;
 using System.IO;
+using BuzzardWPF.Management;
+using BuzzardWPF.Properties;
+using ReactiveUI;
 
 namespace BuzzardWPF.Searching
 {
     /// <summary>
     /// Class that holds the information from the user interface about how to find data files.
     /// </summary>
-    public class SearchConfig
-        : INotifyPropertyChanged
+    public class SearchConfig : ReactiveObject, IStoredSettingsMonitor
     {
         #region "Constants"
 
@@ -16,12 +17,6 @@ namespace BuzzardWPF.Searching
         public const string DEFAULT_FILE_EXTENSION = ".raw";
         public const SearchOption DEFAULT_SEARCH_DEPTH = SearchOption.TopDirectoryOnly;
         public const bool DEFAULT_MATCH_FOLDERS = true;
-
-        #endregion
-
-        #region Events
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
 
@@ -56,20 +51,15 @@ namespace BuzzardWPF.Searching
 
         #region "Properties"
 
+        public bool SettingsChanged { get; set; }
+
         /// <summary>
         /// Gets or sets the path to search in.
         /// </summary>
         public string DirectoryPath
         {
-            get { return mDirectoryPath; }
-            set
-            {
-                if (mDirectoryPath != value)
-                {
-                    mDirectoryPath = value;
-                    OnPropertyChanged("DirectoryPath");
-                }
-            }
+            get => mDirectoryPath;
+            set => this.RaiseAndSetIfChangedMonitored(ref mDirectoryPath, value);
         }
 
         public bool DisableBaseFolderValidation
@@ -78,7 +68,7 @@ namespace BuzzardWPF.Searching
             set
             {
                 mDisableBaseFolderValidation = value;
-                OnPropertyChanged("DisableBaseFolderValidation");
+                this.RaisePropertyChanged("DisableBaseFolderValidation");
             }
         }
 
@@ -87,15 +77,8 @@ namespace BuzzardWPF.Searching
         /// </summary>
         public string FileExtension
         {
-            get { return mFileExtension; }
-            set
-            {
-                if (mFileExtension != value)
-                {
-                    mFileExtension = value;
-                    OnPropertyChanged("FileExtension");
-                }
-            }
+            get => mFileExtension;
+            set => this.RaiseAndSetIfChangedMonitored(ref mFileExtension, value);
         }
 
         /// <summary>
@@ -109,7 +92,7 @@ namespace BuzzardWPF.Searching
                 if (mFolderNameFilter != value)
                 {
                     mFolderNameFilter = value;
-                    OnPropertyChanged("FolderNameFilter");
+                    this.RaisePropertyChanged("FolderNameFilter");
                 }
             }
         }
@@ -125,7 +108,7 @@ namespace BuzzardWPF.Searching
                 if (mFilenameFilter != value)
                 {
                     mFilenameFilter = value;
-                    OnPropertyChanged("FilenameFilter");
+                    this.RaisePropertyChanged("FilenameFilter");
                 }
             }
         }
@@ -135,15 +118,8 @@ namespace BuzzardWPF.Searching
         /// </summary>
         public SearchOption SearchDepth
         {
-            get { return mSearchDepth; }
-            set
-            {
-                if (mSearchDepth != value)
-                {
-                    mSearchDepth = value;
-                    OnPropertyChanged("SearchDepth");
-                }
-            }
+            get => mSearchDepth;
+            set => this.RaiseAndSetIfChangedMonitored(ref mSearchDepth, value);
         }
 
         /// <summary>
@@ -151,15 +127,8 @@ namespace BuzzardWPF.Searching
         /// </summary>
         public DateTime? StartDate
         {
-            get { return mStartDate; }
-            set
-            {
-                if (mStartDate != value)
-                {
-                    mStartDate = value;
-                    OnPropertyChanged("StartDate");
-                }
-            }
+            get => mStartDate;
+            set => this.RaiseAndSetIfChangedMonitored(ref mStartDate, value);
         }
 
         /// <summary>
@@ -167,41 +136,20 @@ namespace BuzzardWPF.Searching
         /// </summary>
         public DateTime? EndDate
         {
-            get { return mEndDate; }
-            set
-            {
-                if (mEndDate != value)
-                {
-                    mEndDate = value;
-                    OnPropertyChanged("EndDate");
-                }
-            }
+            get => mEndDate;
+            set => this.RaiseAndSetIfChangedMonitored(ref mEndDate, value);
         }
 
         public bool MatchFolders
         {
-            get { return mMatchFolders; }
-            set
-            {
-                if (mMatchFolders != value)
-                {
-                    mMatchFolders = value;
-                    OnPropertyChanged("MatchFolders");
-                }
-            }
+            get => mMatchFolders;
+            set => this.RaiseAndSetIfChangedMonitored(ref mMatchFolders, value);
         }
 
         public int MinimumSizeKB
         {
-            get { return mMinimumSizeKB; }
-            set
-            {
-                if (mMinimumSizeKB != value)
-                {
-                    mMinimumSizeKB = value;
-                    OnPropertyChanged("MinimumSizeKB");
-                }
-            }
+            get => mMinimumSizeKB;
+            set => this.RaiseAndSetIfChangedMonitored(ref mMinimumSizeKB, value);
         }
         #endregion
 
@@ -227,11 +175,42 @@ namespace BuzzardWPF.Searching
 
         #endregion
 
-        private void OnPropertyChanged(string propertyName)
+        public bool SaveSettings(bool force = false)
         {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            if (!SettingsChanged && !force)
+            {
+                return false;
+            }
+
+            Settings.Default.Search_MatchFolders = MatchFolders;
+
+            if (StartDate.HasValue)
+                Settings.Default.SearchDateFrom = StartDate.Value;
+
+            if (EndDate.HasValue)
+                Settings.Default.SearchDateTo = EndDate.Value;
+
+            Settings.Default.SearchExtension = FileExtension;
+            Settings.Default.SearchPath = DirectoryPath;
+            Settings.Default.SearchDirectoryOptions = SearchDepth;
+            Settings.Default.SearchMinimumSizeKB = MinimumSizeKB;
+
+            SettingsChanged = false;
+
+            return true;
         }
 
+        public void LoadSettings()
+        {
+            MatchFolders = Settings.Default.Search_MatchFolders;
+            StartDate = Settings.Default.SearchDateFrom;
+            EndDate = Settings.Default.SearchDateTo;
+            FileExtension = Settings.Default.SearchExtension;
+            DirectoryPath = Settings.Default.SearchPath;
+            SearchDepth = Settings.Default.SearchDirectoryOptions;
+            MinimumSizeKB = Settings.Default.SearchMinimumSizeKB;
+
+            SettingsChanged = false;
+        }
     }
 }

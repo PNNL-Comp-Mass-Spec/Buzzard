@@ -69,8 +69,8 @@
                         Grid.Column="1"
                         FontWeight="Regular"
                         IsEnabled="{Binding Path=IsNotMonitoring}"
-                        ItemsSource="{Binding Path=InstrumentsSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                        SelectedItem="{Binding Path=SelectedInstrument, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        ItemsSource="{Binding Path=DmsData.InstrumentData, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        SelectedItem="{Binding Path=DatasetManager.WatcherConfigSelectedInstrument, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         Style="{StaticResource ComboBoxStyle}" />
                 </Grid>
             </GroupBox>
@@ -103,8 +103,8 @@
                         Grid.Column="1"
                         FontWeight="Regular"
                         IsEnabled="{Binding Path=IsNotMonitoring}"
-                        ItemsSource="{Binding Path=CartNameListSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                        SelectedItem="{Binding Path=SelectedCartName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        ItemsSource="{Binding Path=DmsData.CartNames, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        SelectedItem="{Binding Path=DatasetManager.WatcherConfigSelectedCartName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         Style="{StaticResource ComboBoxStyle}" />
                     <TextBlock
                         Grid.Row="1"
@@ -117,8 +117,8 @@
                         Grid.Column="1"
                         FontWeight="Regular"
                         IsEnabled="{Binding Path=IsNotMonitoring}"
-                        ItemsSource="{Binding Path=CartConfigNameListSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                        SelectedItem="{Binding Path=SelectedCartConfigName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        ItemsSource="{Binding Path=DatasetManager.CartConfigNameListForCart, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        SelectedItem="{Binding Path=DatasetManager.WatcherConfigSelectedCartConfigName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         Style="{StaticResource ComboBoxStyle}" />
                     <TextBlock
                         Grid.Row="2"
@@ -131,8 +131,8 @@
                         Grid.Column="1"
                         FontWeight="Regular"
                         IsEnabled="{Binding Path=IsNotMonitoring}"
-                        ItemsSource="{Binding Path=SeparationTypeSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                        SelectedItem="{Binding Path=SelectedSeparationType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        ItemsSource="{Binding Path=DmsData.SeparationTypes, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        SelectedItem="{Binding Path=DatasetManager.WatcherConfigSelectedSeparationType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         Style="{StaticResource ComboBoxStyle}" />
                     <TextBlock
                         Grid.Row="3"
@@ -145,8 +145,8 @@
                         Grid.Column="1"
                         FontWeight="Regular"
                         IsEnabled="{Binding Path=IsNotMonitoring}"
-                        ItemsSource="{Binding Path=DatasetTypesSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                        SelectedItem="{Binding Path=SelectedDatasetType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        ItemsSource="{Binding Path=DmsData.DatasetTypes, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        SelectedItem="{Binding Path=DatasetManager.WatcherConfigSelectedDatasetType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         Style="{StaticResource ComboBoxStyle}" />
                     <TextBlock
                         Grid.Row="4"
@@ -166,15 +166,15 @@
                             Margin="2"
                             FontWeight="Regular"
                             IsEnabled="{Binding Path=IsNotMonitoring}"
-                            Text="{Binding Path=LCColumn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            Text="{Binding Path=DatasetManager.LCColumn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                         <ComboBox
                             Grid.Column="1"
                             Margin="2"
                             FontWeight="Regular"
                             IsEnabled="{Binding Path=IsNotMonitoring}"
-                            ItemsSource="{Binding Path=LCColumnSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                            SelectedItem="{Binding LCColumn}" />
+                            ItemsSource="{Binding Path=DmsData.ColumnData, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                            SelectedItem="{Binding DatasetManager.LCColumn}" />
 
                     </Grid>
 
@@ -190,8 +190,8 @@
                         Grid.Column="1"
                         FontWeight="Regular"
                         IsEnabled="{Binding Path=IsNotMonitoring}"
-                        ItemsSource="{Binding Path=OperatorsSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                        SelectedItem="{Binding Path=SelectedOperator, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        ItemsSource="{Binding Path=DmsData.OperatorData, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        SelectedItem="{Binding Path=DatasetManager.WatcherConfigSelectedOperator, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         Style="{StaticResource ComboBoxStyle}" />
                 </Grid>
             </GroupBox>
@@ -227,7 +227,7 @@
                         Grid.Column="1"
                         IsEnabled="{Binding Path=IsNotMonitoring}"
                         Style="{StaticResource TextBoxStyle}"
-                        Text="{Binding Path=ExperimentName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        Text="{Binding Path=DatasetManager.ExperimentName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                     <Button
                         Grid.Row="1"
@@ -259,7 +259,7 @@
                     Style="{StaticResource TextBlockStyle}"
                     Text="Comments" />
             </Label>
-            <TextBox Margin="5" Text="{Binding Path=UserComments, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBox Margin="5" Text="{Binding Path=DatasetManager.UserComments, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         </DockPanel>
     </Grid>
 </UserControl>

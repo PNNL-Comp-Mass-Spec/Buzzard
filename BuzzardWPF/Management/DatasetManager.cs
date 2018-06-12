@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Reactive.Concurrency;
@@ -9,6 +10,7 @@ using System.Windows;
 using System.Windows.Data;
 using BuzzardWPF.Data;
 using BuzzardWPF.IO;
+using BuzzardWPF.Properties;
 using LcmsNetSDK;
 using LcmsNetSDK.Data;
 using LcmsNetSDK.Logging;
@@ -19,7 +21,7 @@ namespace BuzzardWPF.Management
     /// <summary>
     /// Manages a list of datasets
     /// </summary>
-    public class DatasetManager : ReactiveObject
+    public class DatasetManager : ReactiveObject, IStoredSettingsMonitor
     {
         public const string PREVIEW_TRIGGERFILE_FLAG = "Nonexistent_Fake_TriggerFile.xmL";
         public const string EXPERIMENT_NAME_DESCRIPTION = "Experiment";
@@ -72,6 +74,9 @@ namespace BuzzardWPF.Management
             WatcherConfigSelectedInstrument = null;
             WatcherConfigSelectedOperator = null;
             WatcherConfigSelectedSeparationType = null;
+            WatcherEmslUsage = null;
+            WatcherEmslProposalID = null;
+            WatcherSelectedProposalUsers = new ReactiveList<ProposalUser>();
             TriggerFileCreationWaitTime = 5;
             MinimumFileSizeKB = 100;
 
@@ -441,7 +446,13 @@ namespace BuzzardWPF.Management
 
         public static DatasetManager Manager { get; }
 
-        public string UserComments { get; set; }
+        public string UserComments
+        {
+            get => userComments;
+            set => this.RaiseAndSetIfChangedMonitored(ref userComments, value);
+        }
+
+        public bool SettingsChanged { get; set; }
 
         #endregion
 
@@ -584,7 +595,7 @@ namespace BuzzardWPF.Management
 
                 if (dataset.IsQC)
                 {
-                    if (!QC_CreateTriggerOnDMSFail)
+                    if (!QcCreateTriggerOnDMSFail)
                     {
                         return;
                     }
@@ -619,6 +630,7 @@ namespace BuzzardWPF.Management
         }
 
         #region Searcher Config
+
         /// <summary>
         /// This value tells the DatasetManager whether or not
         /// to create a dataset for an archived datasource that
@@ -627,16 +639,25 @@ namespace BuzzardWPF.Management
         /// <remarks>
         /// the SearchConvfigView is responsible for setting this.
         /// </remarks>
-        public bool IncludeArchivedItems { get; set; }
+        public bool IncludeArchivedItems
+        {
+            get => includeArchivedItems;
+            set => this.RaiseAndSetIfChangedMonitored(ref includeArchivedItems, value);
+        }
 
         /// <summary>
         /// Set to True to allow folders to be selected as Datasets
         /// </summary>
-        public bool MatchFolders { get; set; }
+        public bool MatchFolders
+        {
+            get => matchFolders;
+            set => this.RaiseAndSetIfChangedMonitored(ref matchFolders, value);
+        }
 
         #endregion
 
         #region Watcher Config
+
         /// <summary>
         /// This value tells the DatasetManager which LC Column to
         /// use for datasets that were found by the File Watcher.
@@ -644,7 +665,11 @@ namespace BuzzardWPF.Management
         /// <remarks>
         /// The Watcher Config control is responsible for setting this.
         /// </remarks>
-        public string LCColumn { get; set; }
+        public string LCColumn
+        {
+            get => lcColumn;
+            set => this.RaiseAndSetIfChangedMonitored(ref lcColumn, value);
+        }
 
         /// <summary>
         /// This values tells the DatasetManager what name to use
@@ -653,7 +678,11 @@ namespace BuzzardWPF.Management
         /// <remarks>
         /// The Watcher Config control is responsible for setting this.
         /// </remarks>
-        public string ExperimentName { get; set; }
+        public string ExperimentName
+        {
+            get => experimentName;
+            set => this.RaiseAndSetIfChangedMonitored(ref experimentName, value);
+        }
 
         /// <summary>
         /// This values tells the DatasetManager if it can create
@@ -666,12 +695,15 @@ namespace BuzzardWPF.Management
         /// <remarks>
         /// The Watcher Config control is responsible for setting this.
         /// </remarks>
-        public bool CreateTriggerOnDMSFail { get; set; }
+        public bool CreateTriggerOnDMSFail
+        {
+            get => createTriggerOnDmsFail;
+            set => this.RaiseAndSetIfChangedMonitored(ref createTriggerOnDmsFail, value);
+        }
 
         /// <summary>
         /// This is the amount of time that we should wait before
-        /// creating a tigger file for a dataset that was scanned
-        /// in.
+        /// creating a trigger file for a dataset that was found by the scanner.
         /// </summary>
         /// <remarks>
         /// This is measured in minutes.
@@ -679,12 +711,20 @@ namespace BuzzardWPF.Management
         /// <remarks>
         /// The Watcher control is responsible for setting this.
         /// </remarks>
-        public int TriggerFileCreationWaitTime { get; set; }
+        public int TriggerFileCreationWaitTime
+        {
+            get => triggerFileCreationWaitTime;
+            set => this.RaiseAndSetIfChangedMonitored(ref triggerFileCreationWaitTime, value);
+        }
 
         /// <summary>
         /// Gets or sets the minimum file size (in KB) before starting the timer for trigger file creation
         /// </summary>
-        public int MinimumFileSizeKB { get; set; }
+        public int MinimumFileSizeKB
+        {
+            get => minimumFileSizeKb;
+            set => this.RaiseAndSetIfChangedMonitored(ref minimumFileSizeKb, value);
+        }
 
         /// <summary>
         /// This item contains a copy of the SelectedInstrument value of
@@ -693,9 +733,37 @@ namespace BuzzardWPF.Management
         /// <remarks>
         /// WatcherConfig is responsible for setting this value.
         /// </remarks>
-        public string WatcherConfigSelectedInstrument { get; set; }
+        public string WatcherConfigSelectedInstrument
+        {
+            get => watcherConfigSelectedInstrument;
+            set => this.RaiseAndSetIfChangedMonitored(ref watcherConfigSelectedInstrument, value);
+        }
 
-        private string m_WatcherConfigSelectedCartName;
+        /// <summary>
+        /// List of cart config names associated with the current cart
+        /// </summary>
+        /// <remarks>Updated via the WatcherConfigSelectedCartName setter</remarks>
+        public ReactiveList<string> CartConfigNameListForCart { get; } = new ReactiveList<string>();
+
+        private string watcherConfigSelectedCartName;
+        private string triggerFileLocation;
+        private string lcColumn;
+        private string experimentName;
+        private string watcherConfigSelectedInstrument;
+        private string watcherConfigSelectedOperator;
+        private bool createTriggerOnDmsFail;
+        private bool matchFolders;
+        private int minimumFileSizeKb;
+        private string watcherConfigSelectedCartConfigName;
+        private string watcherConfigSelectedSeparationType;
+        private string watcherConfigSelectedDatasetType;
+        private string watcherEmslUsage;
+        private string watcherEmslProposalId;
+        private ReactiveList<ProposalUser> watcherSelectedProposalUsers;
+        private bool qcCreateTriggerOnDmsFail;
+        private int triggerFileCreationWaitTime;
+        private string userComments;
+        private bool includeArchivedItems;
 
         /// <summary>
         /// This item contains a copy of the SelectedCartName value of
@@ -705,8 +773,27 @@ namespace BuzzardWPF.Management
         /// WatcherConfig is responsible for setting this value.
         /// </remarks>
         public string WatcherConfigSelectedCartName {
-            get { return m_WatcherConfigSelectedCartName; }
-            set { this.RaiseAndSetIfChanged(ref m_WatcherConfigSelectedCartName, value); }
+            get => watcherConfigSelectedCartName;
+            set
+            {
+                if (this.RaiseAndSetIfChangedMonitoredBool(ref watcherConfigSelectedCartName, value))
+                {
+                    if (!string.IsNullOrWhiteSpace(value))
+                    {
+                        using (CartConfigNameListForCart.SuppressChangeNotifications())
+                        {
+                            // Update the allowable CartConfig names
+                            CartConfigNameListForCart.Clear();
+
+                            var cartConfigNames = CartConfigFilter.GetCartConfigNamesForCart(value);
+                            foreach (var item in cartConfigNames)
+                            {
+                                CartConfigNameListForCart.Add(item);
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -716,7 +803,11 @@ namespace BuzzardWPF.Management
         /// <remarks>
         /// WatcherConfig is responsible for setting this value.
         /// </remarks>
-        public string WatcherConfigSelectedCartConfigName { get; set; }
+        public string WatcherConfigSelectedCartConfigName
+        {
+            get => watcherConfigSelectedCartConfigName;
+            set => this.RaiseAndSetIfChangedMonitored(ref watcherConfigSelectedCartConfigName, value);
+        }
 
         /// <summary>
         /// This item contains a copy of the SelectedSeperationType value of
@@ -725,7 +816,11 @@ namespace BuzzardWPF.Management
         /// <remarks>
         /// WatcherConfig is responsible for setting this value.
         /// </remarks>
-        public string WatcherConfigSelectedSeparationType { get; set; }
+        public string WatcherConfigSelectedSeparationType
+        {
+            get => watcherConfigSelectedSeparationType;
+            set => this.RaiseAndSetIfChangedMonitored(ref watcherConfigSelectedSeparationType, value);
+        }
 
         /// <summary>
         /// This item contains a copy of the SelectedDatasetType value of
@@ -734,7 +829,11 @@ namespace BuzzardWPF.Management
         /// <remarks>
         /// WatcherConfig is responsible for setting this value.
         /// </remarks>
-        public string WatcherConfigSelectedDatasetType { get; set; }
+        public string WatcherConfigSelectedDatasetType
+        {
+            get => watcherConfigSelectedDatasetType;
+            set => this.RaiseAndSetIfChangedMonitored(ref watcherConfigSelectedDatasetType, value);
+        }
 
         /// <summary>
         /// This item contains a copy of the SelectedOperator value of
@@ -743,18 +842,46 @@ namespace BuzzardWPF.Management
         /// <remarks>
         /// WatcherConfig is responsible for setting this value.
         /// </remarks>
-        public string WatcherConfigSelectedOperator { get; set; }
+        public string WatcherConfigSelectedOperator
+        {
+            get => watcherConfigSelectedOperator;
+            set => this.RaiseAndSetIfChangedMonitored(ref watcherConfigSelectedOperator, value);
+        }
 
-        public string TriggerFileLocation { get; set; }
+        public string TriggerFileLocation
+        {
+            get => triggerFileLocation;
+            set => this.RaiseAndSetIfChangedMonitored(ref triggerFileLocation, value);
+        }
 
-        public string Watcher_EMSL_Usage { get; set; }
-        public string Watcher_EMSL_ProposalID { get; set; }
-        public IEnumerable<ProposalUser> Watcher_SelectedProposalUsers { get; set; }
+        public string WatcherEmslUsage
+        {
+            get => watcherEmslUsage;
+            set => this.RaiseAndSetIfChangedMonitored(ref watcherEmslUsage, value);
+        }
+
+        public string WatcherEmslProposalID
+        {
+            get => watcherEmslProposalId;
+            set => this.RaiseAndSetIfChangedMonitored(ref watcherEmslProposalId, value);
+        }
+
+        public ReactiveList<ProposalUser> WatcherSelectedProposalUsers
+        {
+            get => watcherSelectedProposalUsers;
+            set => this.RaiseAndSetIfChangedMonitored(ref watcherSelectedProposalUsers, value);
+        }
 
         #endregion
 
         #region Quality Control (QC)
-        public bool QC_CreateTriggerOnDMSFail { get; set; }
+
+        public bool QcCreateTriggerOnDMSFail
+        {
+            get => qcCreateTriggerOnDmsFail;
+            set => this.RaiseAndSetIfChangedMonitored(ref qcCreateTriggerOnDmsFail, value);
+        }
+
         #endregion
 
         #region Dataset RunTime Updates
@@ -1029,16 +1156,16 @@ namespace BuzzardWPF.Management
                     else
                     {
                         // No monitor matched, use the watcher information
-                        emslUsageType = Watcher_EMSL_Usage;
-                        emslProposalId = Watcher_EMSL_ProposalID;
-                        emslProposalUsers = Watcher_SelectedProposalUsers;
+                        emslUsageType = WatcherEmslUsage;
+                        emslProposalId = WatcherEmslProposalID;
+                        emslProposalUsers = WatcherSelectedProposalUsers;
                     }
                 }
                 else
                 {
-                    emslUsageType = Watcher_EMSL_Usage;
-                    emslProposalId = Watcher_EMSL_ProposalID;
-                    emslProposalUsers = Watcher_SelectedProposalUsers;
+                    emslUsageType = WatcherEmslUsage;
+                    emslProposalId = WatcherEmslProposalID;
+                    emslProposalUsers = WatcherSelectedProposalUsers;
                 }
 
                 dataset.DMSData.EMSLUsageType = emslUsageType;
@@ -1207,5 +1334,166 @@ namespace BuzzardWPF.Management
             return diDatasetFolder.FullName;
         }
 
+        public bool SaveSettings(bool force = false)
+        {
+            if (!SettingsChanged && !force)
+            {
+                return false;
+            }
+
+            Settings.Default.Searcher_IncludeArchivedItems = IncludeArchivedItems;
+
+            Settings.Default.TriggerFileFolder = TriggerFileLocation;
+            Settings.Default.QC_CreateTriggerOnDMS_Fail = QcCreateTriggerOnDMSFail;
+
+            Settings.Default.WatcherConfig_CreateTriggerOnDMS_Fail = CreateTriggerOnDMSFail;
+            Settings.Default.Watcher_MatchFolders = MatchFolders;
+            Settings.Default.Watcher_FileSize = MinimumFileSizeKB;
+            Settings.Default.Watcher_WaitTime = TriggerFileCreationWaitTime;
+
+            Settings.Default.WatcherConfig_SelectedCartName = WatcherConfigSelectedCartName;
+            Settings.Default.WatcherConfig_SelectedCartConfigName = WatcherConfigSelectedCartConfigName;
+            Settings.Default.WatcherConfig_SelectedColumnData = WatcherConfigSelectedDatasetType;
+            Settings.Default.WatcherConfig_SelectedInstrument = WatcherConfigSelectedInstrument;
+            Settings.Default.WatcherConfig_SelectedOperator = WatcherConfigSelectedOperator;
+            Settings.Default.WatcherConfig_ExperimentName = ExperimentName;
+            Settings.Default.WatcherConfig_LCColumn = LCColumn;
+            Settings.Default.WatcherConfig_UserComment = UserComments;
+            Settings.Default.WatcherConfig_SelectedSeperationType = WatcherConfigSelectedSeparationType;
+            Settings.Default.Watcher_EMSL_UsageType = WatcherEmslUsage;
+            Settings.Default.Watcher_EMSL_ProposalID = WatcherEmslProposalID;
+
+            var selectedEmslUsers = new StringCollection();
+            foreach (var user in WatcherSelectedProposalUsers)
+                selectedEmslUsers.Add(user.UserID.ToString());
+
+            Settings.Default.Watcher_EMSL_Users = selectedEmslUsers;
+
+            if (QcMonitors.Any())
+            {
+                QcMonitorData.SaveSettings(QcMonitors);
+            }
+
+            SettingsChanged = false;
+
+            return true;
+        }
+
+        public void LoadSettings()
+        {
+            IncludeArchivedItems = Settings.Default.Searcher_IncludeArchivedItems;
+
+            TriggerFileLocation = Settings.Default.TriggerFileFolder;
+            QcCreateTriggerOnDMSFail = Settings.Default.QC_CreateTriggerOnDMS_Fail;
+
+            ExperimentName = Settings.Default.WatcherConfig_ExperimentName;
+
+            if (!string.IsNullOrWhiteSpace(Settings.Default.QC_Monitors))
+            {
+                using (QcMonitors.SuppressChangeNotifications())
+                {
+                    QcMonitors.AddRange(QcMonitorData.LoadSettings());
+                }
+            }
+
+            CreateTriggerOnDMSFail = Settings.Default.WatcherConfig_CreateTriggerOnDMS_Fail;
+            MatchFolders = Settings.Default.Watcher_MatchFolders;
+            MinimumFileSizeKB = Settings.Default.Watcher_FileSize;
+            TriggerFileCreationWaitTime = Settings.Default.Watcher_WaitTime;
+
+            WatcherEmslUsage = Settings.Default.Watcher_EMSL_UsageType;
+            WatcherEmslProposalID = Settings.Default.Watcher_EMSL_ProposalID;
+
+            List<string> selectedUsers;
+            if (Settings.Default.Watcher_EMSL_Users == null)
+                selectedUsers = new List<string>();
+            else
+                selectedUsers = Settings.Default.Watcher_EMSL_Users.Cast<string>().ToList();
+
+            WatcherSelectedProposalUsers = DMS_DataAccessor.Instance.FindSavedEMSLProposalUsers(WatcherEmslProposalID, selectedUsers);
+
+            UserComments = Settings.Default.WatcherConfig_UserComment;
+
+            /*
+             * The following settings need to be checked before being applied
+             * due to the fact that they need to be valid options within the
+             * collections that act as their sources.
+             */
+            WatcherConfigSelectedCartName = CheckSetting(
+                Settings.Default.WatcherConfig_SelectedCartName,
+                DMS_DataAccessor.Instance.CartNames,
+                "Cart");
+
+            WatcherConfigSelectedCartConfigName = CheckSetting(
+                Settings.Default.WatcherConfig_SelectedCartConfigName,
+                CartConfigNameListForCart,
+                "CartConfig");
+
+            WatcherConfigSelectedDatasetType = CheckSetting(
+                Settings.Default.WatcherConfig_SelectedColumnData,
+                DMS_DataAccessor.Instance.DatasetTypes,
+                "Column Type");
+
+            WatcherConfigSelectedInstrument = CheckSetting(
+                Settings.Default.WatcherConfig_SelectedInstrument,
+                DMS_DataAccessor.Instance.InstrumentData,
+                "Instrument");
+
+            WatcherConfigSelectedOperator = CheckSetting(
+                Settings.Default.WatcherConfig_SelectedOperator,
+                DMS_DataAccessor.Instance.OperatorData,
+                "Operator");
+
+            WatcherConfigSelectedSeparationType = CheckSetting(
+                Settings.Default.WatcherConfig_SelectedSeperationType,
+                DMS_DataAccessor.Instance.SeparationTypes,
+                "Separation Type");
+
+            LCColumn = CheckSetting(
+                Settings.Default.WatcherConfig_LCColumn,
+                DMS_DataAccessor.Instance.ColumnData,
+                "LC Column");
+
+            SettingsChanged = false;
+        }
+
+        /// <summary>
+        /// This method makes sure that the loading setting is still valid. If it's
+        /// valid, it will be returned. If not, an error message will be logged and
+        /// a null value will be returned in place of the setting.
+        /// </summary>
+        /// <remarks>
+        /// A setting can become invalid when it's removed as an option from the
+        /// database.
+        /// </remarks>
+        private string CheckSetting(string setting, ReactiveList<string> options, string errorIntro)
+        {
+            var s = " was not found when restoring settings for the File Watcher Configuration.";
+
+            if (string.IsNullOrWhiteSpace(setting))
+            {
+                // there is no setting, so return something
+                // that will make sure that nothing is selected
+                // in the UI.
+                setting = null;
+            }
+            else if (!options.Contains(setting))
+            {
+                // The setting is not valid. Log the error
+                // and return something that will make sure
+                // the UI doesn't select anything for this
+                // setting.
+                ApplicationLogger.LogError(
+                    0,
+                    string.Format(
+                        "{2} {0}{1}",
+                        setting,
+                        s,
+                        errorIntro));
+                setting = null;
+            }
+
+            return setting;
+        }
     }
 }

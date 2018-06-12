@@ -139,7 +139,7 @@
             VerticalAlignment="Center"
             Content="Match Folders"
             FontSize="15"
-            IsChecked="{Binding Path=MatchFolders, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            IsChecked="{Binding Path=DatasetManager.MatchFolders, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
             IsEnabled="{Binding Path=IsNotMonitoring}" />
 
         <Label
@@ -163,7 +163,7 @@
             IsEnabled="{Binding Path=IsNotMonitoring}"
             Maximum="2000000"
             Minimum="5"
-            Value="{Binding Path=MinimumFileSizeKB, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            Value="{Binding Path=DatasetManager.MinimumFileSizeKB, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
         <Button
             Grid.Row="3"
@@ -215,7 +215,7 @@
             IsEnabled="{Binding Path=IsNotMonitoring}"
             Maximum="600"
             Minimum="1"
-            Value="{Binding Path=WaitTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            Value="{Binding Path=DatasetManager.TriggerFileCreationWaitTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
         <CheckBox
             Grid.Row="4"
@@ -224,7 +224,7 @@
             VerticalAlignment="Center"
             Content="Upload when DMS request not found"
             FontSize="15"
-            IsChecked="{Binding Path=CreateTriggerOnDMSFail, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            IsChecked="{Binding Path=DatasetManager.CreateTriggerOnDMSFail, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
             IsEnabled="{Binding Path=IsNotMonitoring}"
             ToolTip="Do you want the watcher to auto-create the trigger file for datasets it finds when their DMS is unresolved?" />
 

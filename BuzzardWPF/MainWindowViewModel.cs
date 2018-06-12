@@ -49,7 +49,6 @@ namespace BuzzardWPF
 
         private BitmapImage m_CurrentImage;
 
-        private string m_triggerFileLocation;
         private string m_lastUpdated;
         private bool remoteFolderLocationIsEnabled;
         private readonly object lockEmslUsageTypesSource = new object();
@@ -193,6 +192,7 @@ namespace BuzzardWPF
         public WatcherControlViewModel WatcherControlVm { get; } = new WatcherControlViewModel();
         public WatcherConfigViewModel WatcherConfigVm { get; } = new WatcherConfigViewModel();
         public QCViewModel QCVm { get; } = new QCViewModel();
+        public DatasetManager DatasetManager => DatasetManager.Manager;
 
         public bool RemoteFolderLocationIsEnabled
         {
@@ -256,21 +256,6 @@ namespace BuzzardWPF
             {
                 m_lastUpdated = value;
                 this.RaisePropertyChanged("LastUpdated");
-            }
-        }
-
-        public string TriggerFileLocation
-        {
-            get => m_triggerFileLocation;
-            set
-            {
-                if (m_triggerFileLocation != value)
-                {
-                    m_triggerFileLocation = value;
-                    this.RaisePropertyChanged("TriggerFileLocation");
-                }
-
-                DatasetManager.Manager.TriggerFileLocation = value;
             }
         }
 
@@ -377,13 +362,8 @@ namespace BuzzardWPF
 
         private void SetTriggerFolderToTestPath()
         {
-            UpdateTriggerFolderPath(@"E:\Run_Complete_Trigger");
+            DatasetManager.TriggerFileLocation = @"E:\Run_Complete_Trigger";
             RemoteFolderLocationIsEnabled = true;
-        }
-
-        private void UpdateTriggerFolderPath(string folderPath)
-        {
-            TriggerFileLocation = folderPath;
         }
 
         private void m_buzzadier_SearchComplete(object sender, EventArgs e)
@@ -438,22 +418,25 @@ namespace BuzzardWPF
             settingsSaveTimer.Dispose();
 
             // Save settings
-            SaveSettings();
+            SaveSettings(true);
         }
 
         /// <summary>
         /// Save settings
         /// </summary>
-        private void SaveSettings()
+        private void SaveSettings(bool force = true)
         {
             // Save settings
             ApplicationLogger.LogMessage(0, "Starting to save settings to config.");
-            WatcherConfigVm.SaveSettings();
-            Settings.Default.TriggerFileFolder = TriggerFileLocation;
-            WatcherControlVm.SaveSettings();
-            SearchConfigVm.SaveSettings();
-            QCVm.SaveSettings();
-            Settings.Default.Save();
+            var settingsChanged = false;
+            settingsChanged |= WatcherControlVm.SaveSettings(force);
+            settingsChanged |= SearchConfigVm.SaveSettings(force);
+            settingsChanged |= QCVm.SaveSettings(force);
+            settingsChanged |= DatasetManager.SaveSettings(force);
+            if (settingsChanged || force)
+            {
+                Settings.Default.Save();
+            }
             ApplicationLogger.LogMessage(0, "Settings saved to config.");
         }
 
@@ -473,8 +456,7 @@ namespace BuzzardWPF
                 //BuzzardWPF.Properties.Settings.Default.Reset();
 
                 ApplicationLogger.LogMessage(0, "Loading settings from config.");
-                WatcherConfigVm.LoadSettings();
-                UpdateTriggerFolderPath(Settings.Default.TriggerFileFolder);
+                DatasetManager.LoadSettings();
                 WatcherControlVm.LoadSettings();
                 SearchConfigVm.LoadSettings();
                 QCVm.LoadSettings();
@@ -486,7 +468,7 @@ namespace BuzzardWPF
 
         private void SaveSettings_Tick(object state)
         {
-            SaveSettings();
+            SaveSettings(false);
         }
 
         private void ControlAnimation(bool enabled)
@@ -528,21 +510,21 @@ namespace BuzzardWPF
                 return;
 
             var folderDialog = new Ookii.Dialogs.Wpf.VistaFolderBrowserDialog();
-            if (!string.IsNullOrWhiteSpace(TriggerFileLocation))
-                folderDialog.SelectedPath = TriggerFileLocation;
+            if (!string.IsNullOrWhiteSpace(DatasetManager.TriggerFileLocation))
+                folderDialog.SelectedPath = DatasetManager.TriggerFileLocation;
 
             var result = folderDialog.ShowDialog();
 
             if (result.HasValue && result.Value)
             {
-                UpdateTriggerFolderPath(folderDialog.SelectedPath);
+                DatasetManager.TriggerFileLocation = folderDialog.SelectedPath;
                 RemoteFolderLocationIsEnabled = true;
             }
         }
 
         private void UseDefaultTriggerFileLocation()
         {
-            UpdateTriggerFolderPath(DEFAULT_TRIGGER_FOLDER_PATH);
+            DatasetManager.TriggerFileLocation = DEFAULT_TRIGGER_FOLDER_PATH;
             RemoteFolderLocationIsEnabled = false;
         }
 

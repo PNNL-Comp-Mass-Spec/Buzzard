@@ -12,7 +12,7 @@ using ReactiveUI;
 
 namespace BuzzardWPF.ViewModels
 {
-    public class QCViewModel : ReactiveObject, IEmslUsvUser
+    public class QCViewModel : ReactiveObject, IEmslUsvUser, IStoredSettingsMonitor
     {
         #region Initialize
         public QCViewModel()
@@ -76,22 +76,24 @@ namespace BuzzardWPF.ViewModels
 
         public EmslUsageSelectionViewModel EmslUsageSelectionVm { get; } = new EmslUsageSelectionViewModel();
 
+        public bool SettingsChanged { get; set; }
+
         public string SelectedEMSLUsageType
         {
             get => selectedEMSLUsageType;
-            set => this.RaiseAndSetIfChanged(ref selectedEMSLUsageType, value);
+            set => this.RaiseAndSetIfChangedMonitored(ref selectedEMSLUsageType, value);
         }
 
         public string EMSLProposalID
         {
             get => emslProposalID;
-            set => this.RaiseAndSetIfChanged(ref emslProposalID, value);
+            set => this.RaiseAndSetIfChangedMonitored(ref emslProposalID, value);
         }
 
         public string ExperimentName
         {
             get => experimentName;
-            set => this.RaiseAndSetIfChanged(ref experimentName, value);
+            set => this.RaiseAndSetIfChangedMonitored(ref experimentName, value);
         }
 
         public DatasetManager Manager => DatasetManager.Manager;
@@ -101,11 +103,8 @@ namespace BuzzardWPF.ViewModels
             get => selectedEMSLProposalUsers;
             set
             {
-                if (selectedEMSLProposalUsers != value)
+                if (this.RaiseAndSetIfChangedMonitoredBool(ref selectedEMSLProposalUsers, value))
                 {
-                    selectedEMSLProposalUsers = value;
-                    this.RaisePropertyChanged();
-
                     EmslUsageSelectionVm.UpdateSelectedUsersText();
                 }
             }
@@ -199,8 +198,13 @@ namespace BuzzardWPF.ViewModels
         #endregion
 
         #region Methods
-        public void SaveSettings()
+        public bool SaveSettings(bool force = false)
         {
+            if (!SettingsChanged && !force)
+            {
+                return false;
+            }
+
             // Still save the changes here...
             Settings.Default.QC_ExperimentName = ExperimentName;
             Settings.Default.QC_ProposalID = EMSLProposalID;
@@ -212,12 +216,9 @@ namespace BuzzardWPF.ViewModels
 
             Settings.Default.QC_EMSL_Users = selectedEMSLUsers;
 
-            Settings.Default.QC_CreateTriggerOnDMS_Fail = DatasetManager.Manager.QC_CreateTriggerOnDMSFail;
+            SettingsChanged = false;
 
-            if (DatasetManager.Manager.QcMonitors.Any())
-            {
-                QcMonitorData.SaveSettings(DatasetManager.Manager.QcMonitors);
-            }
+            return true;
         }
 
         public void LoadSettings()
@@ -225,7 +226,6 @@ namespace BuzzardWPF.ViewModels
             ExperimentName = Settings.Default.QC_ExperimentName;
             EMSLProposalID = Settings.Default.QC_ProposalID;
             SelectedEMSLUsageType = Settings.Default.QC_SelectedUsageType;
-            DatasetManager.Manager.QC_CreateTriggerOnDMSFail = Settings.Default.QC_CreateTriggerOnDMS_Fail;
 
             List<string> selectedUsers;
             if (Settings.Default.QC_EMSL_Users == null)
@@ -253,15 +253,10 @@ namespace BuzzardWPF.ViewModels
                     }
                 }
 
-                DatasetManager.Manager.QcMonitors.Add(monitor);
+                Manager.QcMonitors.Add(monitor);
             }
-            else if (!string.IsNullOrWhiteSpace(Settings.Default.QC_Monitors))
-            {
-                using (DatasetManager.Manager.QcMonitors.SuppressChangeNotifications())
-                {
-                    DatasetManager.Manager.QcMonitors.AddRange(QcMonitorData.LoadSettings());
-                }
-            }
+
+            SettingsChanged = false;
         }
         #endregion
     }

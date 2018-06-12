@@ -151,7 +151,7 @@
             VerticalAlignment="Center"
             Content="Create Trigger For QC's ?"
             FontSize="15"
-            IsChecked="{Binding Path=Manager.QC_CreateTriggerOnDMSFail, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            IsChecked="{Binding Path=Manager.QcCreateTriggerOnDMSFail, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
             IsEnabled="{Binding Path=IsNotMonitoring}"
             ToolTip="Do you want the watcher to auto-create the trigger file for datasets it finds when their DMS is unresolved?" />
     </Grid>

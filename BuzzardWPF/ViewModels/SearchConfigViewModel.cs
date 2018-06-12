@@ -8,7 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using BuzzardWPF.Management;
-using BuzzardWPF.Properties;
 using BuzzardWPF.Searching;
 using LcmsNetSDK.Logging;
 using ReactiveUI;
@@ -19,7 +18,6 @@ namespace BuzzardWPF.ViewModels
     {
         #region Attributes
 
-        private bool mIncludeArchivedItems;
         private bool mIsNotMonitoring;
 
         /// <summary>
@@ -90,25 +88,12 @@ namespace BuzzardWPF.ViewModels
 
         public IReadOnlyReactiveList<SearchOption> SearchDepthOptions { get; }
 
+        public DatasetManager DatasetManager => DatasetManager.Manager;
+
         public SearchConfig Config
         {
-            get { return mConfig; }
-            set { this.RaiseAndSetIfChanged(ref mConfig, value); }
-        }
-
-        public bool IncludeArchivedItems
-        {
-            get { return mIncludeArchivedItems; }
-            set
-            {
-                if (mIncludeArchivedItems != value)
-                {
-                    mIncludeArchivedItems = value;
-                    this.RaisePropertyChanged("IncludeArchivedItems");
-                }
-
-                DatasetManager.Manager.IncludeArchivedItems = value;
-            }
+            get => mConfig;
+            set => this.RaiseAndSetIfChanged(ref mConfig, value);
         }
 
         public bool IsCreatingTriggerFiles
@@ -266,7 +251,7 @@ namespace BuzzardWPF.ViewModels
                 return;
 
             Config.ResetToDefaults(false);
-            IncludeArchivedItems = false;
+            DatasetManager.IncludeArchivedItems = false;
             StopSearch();
         }
 
@@ -278,36 +263,14 @@ namespace BuzzardWPF.ViewModels
         #endregion
 
         #region Methods
-        public void SaveSettings()
+        public bool SaveSettings(bool force = false)
         {
-            Settings.Default.Searcher_IncludeArchivedItems = IncludeArchivedItems;
-            Settings.Default.Search_MatchFolders = Config.MatchFolders;
-
-            if (Config.StartDate.HasValue)
-                Settings.Default.SearchDateFrom = Config.StartDate.Value;
-
-            if (Config.EndDate.HasValue)
-                Settings.Default.SearchDateTo = Config.EndDate.Value;
-
-            Settings.Default.SearchExtension = Config.FileExtension;
-            Settings.Default.SearchPath = Config.DirectoryPath;
-            Settings.Default.SearchDirectoryOptions = Config.SearchDepth;
-            Settings.Default.SearchMinimumSizeKB = Config.MinimumSizeKB;
-            Settings.Default.Save();
+            return Config.SaveSettings(force);
         }
 
         public void LoadSettings()
         {
-            IncludeArchivedItems = Settings.Default.Searcher_IncludeArchivedItems;
-            Config.MatchFolders = Settings.Default.Search_MatchFolders;
-
-            Config.StartDate = Settings.Default.SearchDateFrom;
-            Config.EndDate = Settings.Default.SearchDateTo;
-            Config.FileExtension = Settings.Default.SearchExtension;
-            Config.DirectoryPath = Settings.Default.SearchPath;
-            Config.SearchDepth = Settings.Default.SearchDirectoryOptions;
-            Config.MinimumSizeKB = Settings.Default.SearchMinimumSizeKB;
-
+            Config.LoadSettings();
         }
 
         /// <summary>

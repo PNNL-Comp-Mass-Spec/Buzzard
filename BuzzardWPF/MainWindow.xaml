@@ -237,7 +237,7 @@
                                     Margin="9.8,4,5.2,4"
                                     IsEnabled="{Binding RemoteFolderLocationIsEnabled}"
                                     Style="{StaticResource TextBoxStyle}"
-                                    Text="{Binding Path=TriggerFileLocation, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
+                                    Text="{Binding Path=DatasetManager.TriggerFileLocation, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
 
                                 <Button
                                     Grid.Row="0"
