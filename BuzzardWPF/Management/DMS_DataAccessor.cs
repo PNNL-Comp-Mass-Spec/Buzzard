@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Concurrency;
 using System.Threading;
@@ -14,7 +13,7 @@ using ReactiveUI;
 
 namespace BuzzardWPF.Management
 {
-    public class DMS_DataAccessor : INotifyPropertyChanged, IDisposable
+    public class DMS_DataAccessor : ReactiveObject, IDisposable
     {
 
         #region Constants
@@ -22,10 +21,6 @@ namespace BuzzardWPF.Management
         public const int RECENT_EXPERIMENT_MONTHS = 18;
         public const int RECENT_DATASET_MONTHS = 12;
 
-        #endregion
-
-        #region Events
-        public event PropertyChangedEventHandler PropertyChanged;
         #endregion
 
         #region Initialize
@@ -282,10 +277,7 @@ namespace BuzzardWPF.Management
 
         #endregion
 
-        public static DMS_DataAccessor Instance
-        {
-            get;
-        }
+        public static DMS_DataAccessor Instance { get; }
 
         #region Member Variables
 
@@ -299,7 +291,7 @@ namespace BuzzardWPF.Management
         private List<ProposalUser> m_proposalUsers;
         private Dictionary<string, List<UserIDPIDCrossReferenceEntry>> m_pidIndexedCrossReferenceList;
         private readonly Dictionary<string, ReactiveList<ProposalUser>> m_proposalUserCollections;
-        private ReactiveList<string> m_ColumnData;
+        private ReactiveList<string> m_columnData;
         private ReactiveList<string> m_instrumentData;
         private ReactiveList<string> m_operatorData;
         private ReactiveList<string> m_datasetTypes;
@@ -642,15 +634,8 @@ namespace BuzzardWPF.Management
         /// </summary>
         public ReactiveList<string> ColumnData
         {
-            get { return m_ColumnData; }
-            private set
-            {
-                if (m_ColumnData != value)
-                {
-                    m_ColumnData = value;
-                    OnPropertyChanged("ColumnData");
-                }
-            }
+            get => m_columnData;
+            private set => this.RaiseAndSetIfChanged(ref m_columnData, value);
         }
 
         /// <summary>
@@ -658,15 +643,8 @@ namespace BuzzardWPF.Management
         /// </summary>
         public ReactiveList<string> InstrumentData
         {
-            get { return m_instrumentData; }
-            private set
-            {
-                if (m_instrumentData != value)
-                {
-                    m_instrumentData = value;
-                    OnPropertyChanged("InstrumentData");
-                }
-            }
+            get => m_instrumentData;
+            private set => this.RaiseAndSetIfChanged(ref m_instrumentData, value);
         }
 
         /// <summary>
@@ -680,15 +658,8 @@ namespace BuzzardWPF.Management
         /// </summary>
         public ReactiveList<string> OperatorData
         {
-            get { return m_operatorData; }
-            private set
-            {
-                if (m_operatorData != value)
-                {
-                    m_operatorData = value;
-                    OnPropertyChanged("OperatorData");
-                }
-            }
+            get => m_operatorData;
+            private set => this.RaiseAndSetIfChanged(ref m_operatorData, value);
         }
 
         /// <summary>
@@ -696,15 +667,8 @@ namespace BuzzardWPF.Management
         /// </summary>
         public ReactiveList<string> DatasetTypes
         {
-            get { return m_datasetTypes; }
-            private set
-            {
-                if (m_datasetTypes != value)
-                {
-                    m_datasetTypes = value;
-                    OnPropertyChanged("DatasetTypes");
-                }
-            }
+            get => m_datasetTypes;
+            private set => this.RaiseAndSetIfChanged(ref m_datasetTypes, value);
         }
 
         /// <summary>
@@ -712,15 +676,8 @@ namespace BuzzardWPF.Management
         /// </summary>
         public ReactiveList<string> SeparationTypes
         {
-            get { return m_separationTypes; }
-            private set
-            {
-                if (m_separationTypes != value)
-                {
-                    m_separationTypes = value;
-                    OnPropertyChanged("SeparationTypes");
-                }
-            }
+            get => m_separationTypes;
+            private set => this.RaiseAndSetIfChanged(ref m_separationTypes, value);
         }
 
         /// <summary>
@@ -728,15 +685,8 @@ namespace BuzzardWPF.Management
         /// </summary>
         public ReactiveList<string> CartNames
         {
-            get { return m_cartNames; }
-            private set
-            {
-                if (m_cartNames != value)
-                {
-                    m_cartNames = value;
-                    OnPropertyChanged("CartNames");
-                }
-            }
+            get => m_cartNames;
+            private set => this.RaiseAndSetIfChanged(ref m_cartNames, value);
         }
 
         /// <summary>
@@ -744,15 +694,8 @@ namespace BuzzardWPF.Management
         /// </summary>
         public ReactiveList<string> CartConfigNames
         {
-            get { return m_cartConfigNames; }
-            private set
-            {
-                if (m_cartConfigNames != value)
-                {
-                    m_cartConfigNames = value;
-                    OnPropertyChanged("CartConfigNames");
-                }
-            }
+            get => m_cartConfigNames;
+            private set => this.RaiseAndSetIfChanged(ref m_cartConfigNames, value);
         }
 
         /// <summary>
@@ -761,15 +704,8 @@ namespace BuzzardWPF.Management
         /// <remarks>Sorted set for fast lookups (not-case sensitive)</remarks>
         public SortedSet<string> Datasets
         {
-            get { return m_Datasets; }
-            private set
-            {
-                if (m_Datasets != value)
-                {
-                    m_Datasets = value;
-                    OnPropertyChanged("Datasets");
-                }
-            }
+            get => m_Datasets;
+            private set => this.RaiseAndSetIfChanged(ref m_Datasets, value);
         }
 
         /// <summary>
@@ -784,22 +720,10 @@ namespace BuzzardWPF.Management
         /// </remarks>
         public List<ExperimentData> Experiments
         {
-            get { return m_experiments; }
-            set
-            {
-                if (m_experiments != value)
-                {
-                    m_experiments = value;
-                    OnPropertyChanged("Experiments");
-                }
-            }
+            get => m_experiments;
+            set => this.RaiseAndSetIfChanged(ref m_experiments, value);
         }
 
         #endregion
-
-        private void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
     }
 }

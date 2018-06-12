@@ -37,8 +37,8 @@ namespace BuzzardWPF.Converters
         /// </summary>
         public object TrueContent
         {
-            get { return m_trueContent; }
-            set { m_trueContent = value; }
+            get => m_trueContent;
+            set => m_trueContent = value;
         }
 
         /// <summary>
@@ -47,8 +47,8 @@ namespace BuzzardWPF.Converters
         /// </summary>
         public object FalseContent
         {
-            get { return m_falseContent; }
-            set { m_falseContent = value; }
+            get => m_falseContent;
+            set => m_falseContent = value;
         }
 
         /// <summary>
@@ -57,8 +57,8 @@ namespace BuzzardWPF.Converters
         /// </summary>
         public object NullContent
         {
-            get { return m_nullContent; }
-            set { m_nullContent = value; }
+            get => m_nullContent;
+            set => m_nullContent = value;
         }
         #endregion
 

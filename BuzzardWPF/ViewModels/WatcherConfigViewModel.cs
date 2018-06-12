@@ -13,7 +13,7 @@ namespace BuzzardWPF.ViewModels
         #region Initialization
         public WatcherConfigViewModel()
         {
-            m_IsNotMonitoring = true;
+            isNotMonitoring = true;
 
             EmslUsageSelectionVm.BoundContainer = this;
 
@@ -38,14 +38,10 @@ namespace BuzzardWPF.ViewModels
 
         public bool IsNotMonitoring
         {
-            get => m_IsNotMonitoring;
-            private set
-            {
-                m_IsNotMonitoring = value;
-                this.RaisePropertyChanged("IsNotMonitoring");
-            }
+            get => isNotMonitoring;
+            private set => this.RaiseAndSetIfChanged(ref isNotMonitoring, value);
         }
-        private bool m_IsNotMonitoring;
+        private bool isNotMonitoring;
 
         #endregion
 

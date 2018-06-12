@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reactive;
@@ -66,9 +65,7 @@ namespace BuzzardWPF.ViewModels
 
             CartConfigNameListSource = new ReactiveList<string>();
 
-            DMS_DataAccessor.Instance.PropertyChanged += DMSDataManager_PropertyChanged;
-
-            DatasetManager.Manager.PropertyChanged += Manager_PropertyChanged;
+            DatasetManager.WhenAnyValue(x => x.WatcherConfigSelectedCartName).Subscribe(UpdateCartConfigNames);
 
             InvertShowDetailsCommand = ReactiveCommand.Create(InvertShowDetails);
             ClearAllDatasetsCommand = ReactiveCommand.Create(ClearAllDatasets, Datasets.WhenAnyValue(x => x.Count).Select(x => x > 0).ObserveOn(RxApp.MainThreadScheduler));
@@ -102,13 +99,8 @@ namespace BuzzardWPF.ViewModels
             Properties.Settings.Default.Save();
         }
 
-        private void Manager_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void UpdateCartConfigNames(string cartName)
         {
-            if (e.PropertyName != nameof(DatasetManager.WatcherConfigSelectedCartName))
-                return;
-
-            var cartName = DatasetManager.Manager.WatcherConfigSelectedCartName;
-
             if (string.IsNullOrEmpty(cartName))
                 return;
 
@@ -128,45 +120,15 @@ namespace BuzzardWPF.ViewModels
             }
         }
 
-        void DMSDataManager_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            switch (e.PropertyName)
-            {
-                case "InstrumentData":
-                    this.RaisePropertyChanged("InstrumentsSource");
-                    break;
-
-                case "OperatorData":
-                    this.RaisePropertyChanged("OperatorsSource");
-                    break;
-
-                case "DatasetTypes":
-                    this.RaisePropertyChanged("DatasetTypesSource");
-                    break;
-
-                case "SeparationTypes":
-                    this.RaisePropertyChanged("SeparationTypeSource");
-                    break;
-
-                case "CartNames":
-                    this.RaisePropertyChanged("CartNameListSource");
-                    break;
-
-                case "CartConfigNames":
-                    this.RaisePropertyChanged("CartConfigNameListSource");
-                    break;
-
-                case "ColumnData":
-                    this.RaisePropertyChanged("LCColumnSource");
-                    break;
-            }
-        }
         #endregion
 
         #region Properties
 
         public bool CanSelectDatasets => canSelectDatasets.Value;
         public bool DatasetSelected => datasetSelected.Value;
+
+        public DatasetManager DatasetManager => DatasetManager.Manager;
+        public DMS_DataAccessor DmsData => DMS_DataAccessor.Instance;
 
         public ReactiveCommand<Unit, Unit> InvertShowDetailsCommand { get; }
         public ReactiveCommand<Unit, Unit> ClearAllDatasetsCommand { get; }
@@ -176,18 +138,6 @@ namespace BuzzardWPF.ViewModels
         public ReactiveCommand<Unit, Unit> OpenFilldownCommand { get; }
         public ReactiveCommand<Unit, Unit> AbortCommand { get; }
         public ReactiveCommand<Unit, Unit> CreateTriggersCommand { get; }
-
-        public ReactiveList<string> OperatorsSource => DMS_DataAccessor.Instance.OperatorData;
-
-        public ReactiveList<string> LCColumnSource => DMS_DataAccessor.Instance.ColumnData;
-
-        public ReactiveList<string> InstrumentsSource => DMS_DataAccessor.Instance.InstrumentData;
-
-        public ReactiveList<string> DatasetTypesSource => DMS_DataAccessor.Instance.DatasetTypes;
-
-        public ReactiveList<string> SeparationTypeSource => DMS_DataAccessor.Instance.SeparationTypes;
-
-        public ReactiveList<string> CartNameListSource => DMS_DataAccessor.Instance.CartNames;
 
         public ReactiveList<BuzzardDataset> SelectedDatasets { get; } = new ReactiveList<BuzzardDataset>();
 
@@ -199,11 +149,11 @@ namespace BuzzardWPF.ViewModels
 
         public ReactiveList<string> EmslUsageTypesSource
         {
-            get { return m_emslUsageTypesSource; }
-            set { this.RaiseAndSetIfChanged(ref m_emslUsageTypesSource, value); }
+            get => m_emslUsageTypesSource;
+            set => this.RaiseAndSetIfChanged(ref m_emslUsageTypesSource, value);
         }
 
-        public ReactiveList<BuzzardDataset> Datasets => DatasetManager.Manager.Datasets;
+        public ReactiveList<BuzzardDataset> Datasets => DatasetManager.Datasets;
 
         public bool IsCreatingTriggerFiles
         {
@@ -212,10 +162,8 @@ namespace BuzzardWPF.ViewModels
             {
                 if (StateSingleton.IsCreatingTriggerFiles == value) return;
                 StateSingleton.IsCreatingTriggerFiles = value;
-                this.RaisePropertyChanged("IsCreatingTriggerFiles");
+                this.RaisePropertyChanged(nameof(IsCreatingTriggerFiles));
                 this.RaisePropertyChanged(nameof(IsNotCreatingTriggerFiles));
-                this.RaisePropertyChanged("AbortButtonVisibility");
-                this.RaisePropertyChanged("CreateTriggerButtonVisibility");
             }
         }
 
@@ -223,15 +171,8 @@ namespace BuzzardWPF.ViewModels
 
         public bool ShowGridItemDetail
         {
-            get { return m_showGridItemDetail; }
-            set
-            {
-                if (m_showGridItemDetail != value)
-                {
-                    m_showGridItemDetail = value;
-                    this.RaisePropertyChanged("ShowGridItemDetail");
-                }
-            }
+            get => m_showGridItemDetail;
+            set => this.RaiseAndSetIfChanged(ref m_showGridItemDetail, value);
         }
 
         #endregion
@@ -490,13 +431,13 @@ namespace BuzzardWPF.ViewModels
             var filldownWindowVm = new FillDownWindowViewModel()
             {
                 Dataset = m_fillDownDataset,
-                OperatorsSource = OperatorsSource,
-                InstrumentSource = InstrumentsSource,
-                DatasetTypesSource = DatasetTypesSource,
-                SeparationTypeSource = SeparationTypeSource,
-                CartNameListSource = CartNameListSource,
+                OperatorsSource = DmsData.OperatorData,
+                InstrumentSource = DmsData.InstrumentData,
+                DatasetTypesSource = DmsData.DatasetTypes,
+                SeparationTypeSource = DmsData.SeparationTypes,
+                CartNameListSource = DmsData.CartNames,
                 EmslUsageTypeSource = EmslUsageTypesSource,
-                LCColumnSource = LCColumnSource
+                LCColumnSource = DmsData.ColumnData
             };
             var filldownWindow = new FillDownWindow
             {
@@ -514,7 +455,7 @@ namespace BuzzardWPF.ViewModels
             var filldownData = filldownWindowVm.Dataset;
 
             if (filldownData.ShouldUseLCColumn &&
-                !DMS_DataAccessor.Instance.ColumnData.Contains(filldownData.LCColumn))
+                !DmsData.ColumnData.Contains(filldownData.LCColumn))
             {
                 MessageBox.Show("Unknown LC column: " + filldownData.LCColumn +
                                 "; please use the dropdown to select a valid column name");
@@ -528,7 +469,7 @@ namespace BuzzardWPF.ViewModels
 
             if (filldownData.ShouldUseCart)
             {
-                DatasetManager.Manager.WatcherConfigSelectedCartName = filldownData.CartName;
+                DatasetManager.WatcherConfigSelectedCartName = filldownData.CartName;
             }
 
             foreach (var dataset in selectedDatasets)
@@ -665,7 +606,7 @@ namespace BuzzardWPF.ViewModels
                                        where !dataset.DMSData.LockData
                                        select dataset;
 
-                DatasetManager.Manager.ResolveDms(needsDmsResolved);
+                DatasetManager.ResolveDms(needsDmsResolved);
 
                 if (mAbortTriggerCreationNow)
                 {

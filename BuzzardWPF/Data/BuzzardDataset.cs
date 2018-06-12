@@ -1,18 +1,14 @@
 ﻿using System;
 using System.ComponentModel;
 using System.IO;
+using BuzzardWPF.Management;
 using LcmsNetSDK.Data;
 using ReactiveUI;
 
 namespace BuzzardWPF.Data
 {
-    public class BuzzardDataset
-        : INotifyPropertyChanged
+    public class BuzzardDataset : ReactiveObject
     {
-        #region Events
-        public event PropertyChangedEventHandler PropertyChanged;
-        #endregion
-
         #region Attributes
         private string m_filePath;
 
@@ -81,41 +77,20 @@ namespace BuzzardWPF.Data
         #region UI data place holders
         public bool PulseText
         {
-            get { return m_PulseText; }
-            set
-            {
-                if (m_PulseText != value)
-                {
-                    m_PulseText = value;
-                    OnPropertyChanged("PulseText");
-                }
-            }
+            get => m_PulseText;
+            set => this.RaiseAndSetIfChanged(ref m_PulseText, value);
         }
 
         public int SecondsTillTriggerCreation
         {
-            get { return m_secondsRemainingTillTriggerCreation; }
-            set
-            {
-                if (m_secondsRemainingTillTriggerCreation != value)
-                {
-                    m_secondsRemainingTillTriggerCreation = value;
-                    OnPropertyChanged("SecondsTillTriggerCreation");
-                }
-            }
+            get => m_secondsRemainingTillTriggerCreation;
+            set => this.RaiseAndSetIfChanged(ref m_secondsRemainingTillTriggerCreation, value);
         }
 
         public double WaitTimePercentage
         {
-            get { return m_waitTimePercentage; }
-            set
-            {
-                if (Math.Abs(m_waitTimePercentage - value) > float.Epsilon)
-                {
-                    m_waitTimePercentage = value;
-                    OnPropertyChanged("WaitTimePercentage");
-                }
-            }
+            get => m_waitTimePercentage;
+            set => this.RaiseAndSetIfChanged(ref m_waitTimePercentage, value);
         }
         #endregion
 
@@ -123,70 +98,32 @@ namespace BuzzardWPF.Data
 
         public ReactiveList<ProposalUser> EMSLProposalUsers
         {
-            get { return m_emslProposalUsers; }
-            set
-            {
-                if (m_emslProposalUsers != value)
-                {
-                    m_emslProposalUsers = value;
-                    OnPropertyChanged("EMSLProposalUsers");
-                }
-            }
+            get => m_emslProposalUsers;
+            set => this.RaiseAndSetIfChanged(ref m_emslProposalUsers, value);
         }
 
         public string LCColumn
         {
-            get { return m_lcColumn; }
-            set
-            {
-                if (m_lcColumn != value)
-                {
-                    m_lcColumn = value;
-                    OnPropertyChanged("LCColumn");
-                }
-            }
+            get => m_lcColumn;
+            set => this.RaiseAndSetIfChanged(ref m_lcColumn, value);
         }
 
         public string Comment
         {
-            get
-            {
-                return m_comment;
-            }
-            set
-            {
-                if (m_comment != value)
-                {
-                    m_comment = value;
-                    OnPropertyChanged("Comment");
-                }
-            }
+            get => m_comment;
+            set => this.RaiseAndSetIfChanged(ref m_comment, value);
         }
 
         public string CaptureSubfolderPath
         {
-            get { return mCaptureSubfolderPath; }
-            set
-            {
-                if (mCaptureSubfolderPath != value)
-                {
-                    mCaptureSubfolderPath = value;
-                    OnPropertyChanged("CaptureSubfolderPath");
-                }
-            }
+            get => mCaptureSubfolderPath;
+            set => this.RaiseAndSetIfChanged(ref mCaptureSubfolderPath, value);
         }
 
         public TriggerFileStatus TriggerFileStatus
         {
-            get { return m_triggerFileStatus; }
-            set
-            {
-                if (m_triggerFileStatus != value)
-                {
-                    m_triggerFileStatus = value;
-                    OnPropertyChanged("TriggerFileStatus");
-                }
-            }
+            get => m_triggerFileStatus;
+            set => this.RaiseAndSetIfChanged(ref m_triggerFileStatus, value);
         }
 
         public DMSStatus DMSStatus
@@ -202,41 +139,20 @@ namespace BuzzardWPF.Data
 
         public DatasetSource DatasetSource
         {
-            get { return m_datasetSource; }
-            set
-            {
-                if (m_datasetSource != value)
-                {
-                    m_datasetSource = value;
-                    OnPropertyChanged("DatasetSource");
-                }
-            }
+            get => m_datasetSource;
+            set => this.RaiseAndSetIfChanged(ref m_datasetSource, value);
         }
 
         public string ExperimentName
         {
-            get { return m_experimentName; }
-            set
-            {
-                if (m_experimentName != value)
-                {
-                    m_experimentName = value;
-                    OnPropertyChanged("ExperimentName");
-                }
-            }
+            get => m_experimentName;
+            set => this.RaiseAndSetIfChanged(ref m_experimentName, value);
         }
 
         public bool IsQC
         {
-            get { return m_isQC; }
-            set
-            {
-                if (m_isQC != value)
-                {
-                    m_isQC = value;
-                    OnPropertyChanged("IsQC");
-                }
-            }
+            get => m_isQC;
+            set => this.RaiseAndSetIfChanged(ref m_isQC, value);
         }
 
         /// <summary>
@@ -246,117 +162,52 @@ namespace BuzzardWPF.Data
         /// </summary>
         public bool NotOnlyDatasource
         {
-            get { return m_notOnlySource; }
-            set
-            {
-                if (m_notOnlySource != value)
-                {
-                    m_notOnlySource = value;
-                    OnPropertyChanged("NotOnlyDatasource");
-                }
-            }
+            get => m_notOnlySource;
+            set => this.RaiseAndSetIfChanged(ref m_notOnlySource, value);
         }
 
         public string Instrument
         {
-            get { return m_instrument; }
-            set
-            {
-                if (m_instrument != value)
-                {
-                    m_instrument = value;
-                    OnPropertyChanged("Instrument");
-                }
-            }
+            get => m_instrument;
+            set => this.RaiseAndSetIfChanged(ref m_instrument, value);
         }
 
         public string Operator
         {
-            get { return m_operator; }
-            set
-            {
-                if (m_operator != value)
-                {
-                    m_operator = value;
-                    OnPropertyChanged("Operator");
-                }
-            }
+            get => m_operator;
+            set => this.RaiseAndSetIfChanged(ref m_operator, value);
         }
 
         public string SeparationType
         {
-            get { return m_separationType; }
-            set
-            {
-                if (m_separationType != value)
-                {
-                    m_separationType = value;
-                    OnPropertyChanged("SeparationType");
-                }
-            }
+            get => m_separationType;
+            set => this.RaiseAndSetIfChanged(ref m_separationType, value);
         }
 
         public string CartName
         {
-            get { return m_cartName; }
-            set
-            {
-                if (m_cartName != value)
-                {
-                    m_cartName = value;
-                    OnPropertyChanged("CartName");
-
-                    ValidateCartConfig();
-                }
-            }
+            get => m_cartName;
+            set => this.RaiseAndSetIfChanged(ref m_cartName, value, x => ValidateCartConfig());
         }
 
         public string CartConfigName
         {
-            get { return m_cartConfigName; }
-            set
-            {
-                if (m_cartConfigName != value)
-                {
-                    m_cartConfigName = value;
-                    OnPropertyChanged("CartConfigName");
-
-                    ValidateCartConfig();
-                }
-            }
+            get => m_cartConfigName;
+            set => this.RaiseAndSetIfChanged(ref m_cartConfigName, value, x => ValidateCartConfig());
         }
 
         public DMSData DMSData
         {
-            get { return m_dmsData; }
-            set
-            {
-                if (m_dmsData != value)
-                {
-                    m_dmsData = value;
-                    OnPropertyChanged("DMSData");
-                    OnPropertyChanged("DMSStatus");
-                }
-            }
+            get => m_dmsData;
+            set => this.RaiseAndSetIfChanged(ref m_dmsData, value, x => this.RaisePropertyChanged(nameof(DMSStatus)));
         }
 
-        public DateTime DMSDataLastUpdate
-        {
-            get;
-            set;
-        }
+        public DateTime DMSDataLastUpdate { get; set; }
 
         public string InterestRating
         {
-            get { return m_interestRating; }
-            set
-            {
-                if (m_interestRating != value)
-                {
-                    m_interestRating = value;
-                    OnPropertyChanged("InterestRating");
-                }
-            }
+            get => m_interestRating;
+            set => this.RaiseAndSetIfChanged(ref m_interestRating, value);
         }
 
         /// <summary>
@@ -368,25 +219,13 @@ namespace BuzzardWPF.Data
         public DatasetStatus DatasetStatus
         {
             get => m_status;
-            set
-            {
-                if (m_status == value) return;
-                m_status = value;
-
-                OnPropertyChanged("DatasetStatus");
-            }
+            set => this.RaiseAndSetIfChanged(ref m_status, value);
         }
 
         public string TriggerCreationWarning
         {
             get => m_TriggerCreationWarning;
-            set
-            {
-                if (string.CompareOrdinal(m_TriggerCreationWarning, value) == 0) return;
-                m_TriggerCreationWarning = value;
-
-                OnPropertyChanged("TriggerCreationWarning");
-            }
+            set => this.RaiseAndSetIfChanged(ref m_TriggerCreationWarning, value);
         }
 
         #endregion
@@ -394,13 +233,7 @@ namespace BuzzardWPF.Data
         public bool CartConfigStatus
         {
             get => m_CartConfigStatus;
-            set
-            {
-                if (m_CartConfigStatus == value) return;
-                m_CartConfigStatus = value;
-
-                OnPropertyChanged("CartConfigStatus");
-            }
+            set => this.RaiseAndSetIfChanged(ref m_CartConfigStatus, value);
         }
 
         private void ValidateCartConfig()
@@ -416,18 +249,12 @@ namespace BuzzardWPF.Data
         #region File Properties
         public string FilePath
         {
-            get { return m_filePath; }
-            set
+            get => m_filePath;
+            set => this.RaiseAndSetIfChanged(ref m_filePath, value, x =>
             {
-                if (m_filePath != value)
-                {
-                    m_filePath = value;
-                    OnPropertyChanged("FilePath");
-                    OnPropertyChanged("Extension");
-
-                    UpdateFileProperties();
-                }
-            }
+                this.RaisePropertyChanged(nameof(Extension));
+                UpdateFileProperties();
+            });
         }
 
         public string Extension
@@ -445,41 +272,26 @@ namespace BuzzardWPF.Data
 
         public DateTime RunStart
         {
-            get { return m_runStart; }
-            private set
-            {
-                if (m_runStart != value)
-                {
-                    m_runStart = value;
-                    OnPropertyChanged("RunStart");
-                }
-            }
+            get => m_runStart;
+            private set => this.RaiseAndSetIfChanged(ref m_runStart, value);
         }
 
         public DateTime RunFinish
         {
-            get { return m_runFinish; }
+            get => m_runFinish;
             set
             {
-                if (m_runFinish != value && m_runFinish < value)
+                if (m_runFinish < value)
                 {
-                    m_runFinish = value;
-                    OnPropertyChanged("RunFinish");
+                    this.RaiseAndSetIfChanged(ref m_runFinish, value);
                 }
             }
         }
 
         public long FileSize
         {
-            get { return m_fileSize; }
-            private set
-            {
-                if (m_fileSize != value)
-                {
-                    m_fileSize = value;
-                    OnPropertyChanged("FileSize");
-                }
-            }
+            get => m_fileSize;
+            private set => this.RaiseAndSetIfChanged(ref m_fileSize, value);
         }
 
         /// <summary>
@@ -541,11 +353,6 @@ namespace BuzzardWPF.Data
             RunStart = DateTime.MinValue;
             RunFinish = DateTime.MinValue;
             return false;
-        }
-
-        protected void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         #region Members blindly brought over from classDataset
@@ -625,10 +432,7 @@ namespace BuzzardWPF.Data
         /// </remarks>
         public DateTime LastWrite
         {
-            get
-            {
-                return m_lastWrite;
-            }
+            get => m_lastWrite;
             set
             {
 

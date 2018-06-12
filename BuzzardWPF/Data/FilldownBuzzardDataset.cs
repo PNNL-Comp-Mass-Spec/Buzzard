@@ -1,7 +1,8 @@
-﻿namespace BuzzardWPF.Data
+﻿using ReactiveUI;
+
+namespace BuzzardWPF.Data
 {
-    public class FilldownBuzzardDataset
-        : BuzzardDataset
+    public class FilldownBuzzardDataset : BuzzardDataset
     {
         #region Attributes
         private bool m_shouldUseOperator;
@@ -16,6 +17,8 @@
 
         private bool m_shouldUseLCColumn;
         private bool m_shouldUseComment;
+        private bool m_shouldUseInterestRating;
+        private bool m_shouldUseEMSLProposalUsers;
         #endregion
 
         #region Initialize
@@ -41,164 +44,75 @@
         #region Properties
         public bool ShouldUseLCColumn
         {
-            get { return m_shouldUseLCColumn; }
-            set
-            {
-                if (m_shouldUseLCColumn != value)
-                {
-                    m_shouldUseLCColumn = value;
-                    OnPropertyChanged("ShouldUseLCColumn");
-                }
-            }
+            get => m_shouldUseLCColumn;
+            set => this.RaiseAndSetIfChanged(ref m_shouldUseLCColumn, value);
         }
 
         public bool ShouldUseExperimentName
         {
-            get { return m_shouldUseExperimentName; }
-            set
-            {
-                if (m_shouldUseExperimentName != value)
-                {
-                    m_shouldUseExperimentName = value;
-                    OnPropertyChanged("ShouldUseExperimentName");
-                }
-            }
+            get => m_shouldUseExperimentName;
+            set => this.RaiseAndSetIfChanged(ref m_shouldUseExperimentName, value);
         }
 
         public bool ShouldUseComment
         {
-            get
-            {
-                return m_shouldUseComment;
-            }
-            set
-            {
-                if (m_shouldUseComment != value)
-                {
-                    m_shouldUseComment = value;
-                    OnPropertyChanged("ShouldUseComment");
-                }
-            }
+            get => m_shouldUseComment;
+            set => this.RaiseAndSetIfChanged(ref m_shouldUseComment, value);
         }
 
         public bool ShouldUseOperator
         {
-            get { return m_shouldUseOperator; }
-            set
-            {
-                if (m_shouldUseOperator != value)
-                {
-                    m_shouldUseOperator = value;
-                    OnPropertyChanged("ShouldUseOperator");
-                }
-            }
+            get => m_shouldUseOperator;
+            set => this.RaiseAndSetIfChanged(ref m_shouldUseOperator, value);
         }
 
         public bool ShouldUseDatasetType
         {
-            get { return m_shouldUseDatasetType; }
-            set
-            {
-                if (m_shouldUseDatasetType != value)
-                {
-                    m_shouldUseDatasetType = value;
-                    OnPropertyChanged("ShouldUseDatasetType");
-                }
-            }
+            get => m_shouldUseDatasetType;
+            set => this.RaiseAndSetIfChanged(ref m_shouldUseDatasetType, value);
         }
 
         public bool ShouldUseSeparationType
         {
-            get { return m_shouldUseSeperationType; }
-            set
-            {
-                if (m_shouldUseSeperationType != value)
-                {
-                    m_shouldUseSeperationType = value;
-                    OnPropertyChanged("ShouldUseSeparationType");
-                }
-            }
+            get => m_shouldUseSeperationType;
+            set => this.RaiseAndSetIfChanged(ref m_shouldUseSeperationType, value);
         }
 
         public bool ShouldUseInstrumentType
         {
-            get { return m_shouldUseInstrumentType; }
-            set
-            {
-                if (m_shouldUseInstrumentType != value)
-                {
-                    m_shouldUseInstrumentType = value;
-                    OnPropertyChanged("ShouldUseInstrumentType");
-                }
-            }
+            get => m_shouldUseInstrumentType;
+            set => this.RaiseAndSetIfChanged(ref m_shouldUseInstrumentType, value);
         }
 
         public bool ShouldUseCart
         {
-            get { return m_shouldUseCart; }
-            set
-            {
-                if (m_shouldUseCart != value)
-                {
-                    m_shouldUseCart = value;
-                    OnPropertyChanged("ShouldUseCart");
-                }
-            }
+            get => m_shouldUseCart;
+            set => this.RaiseAndSetIfChanged(ref m_shouldUseCart, value);
         }
 
         public bool ShouldUseEMSLProposalID
         {
-            get { return m_shouldUseEmslProposalID; }
-            set
-            {
-                if (m_shouldUseEmslProposalID != value)
-                {
-                    m_shouldUseEmslProposalID = value;
-                    OnPropertyChanged("ShouldUseEMSLProposalID");
-                }
-            }
+            get => m_shouldUseEmslProposalID;
+            set => this.RaiseAndSetIfChanged(ref m_shouldUseEmslProposalID, value);
         }
 
         public bool ShouldUseEMSLUsageType
         {
-            get { return m_shouldUseEmslUsageType; }
-            set
-            {
-                if (m_shouldUseEmslUsageType != value)
-                {
-                    m_shouldUseEmslUsageType = value;
-                    OnPropertyChanged("ShouldUseEMSLUsageType");
-                }
-            }
+            get => m_shouldUseEmslUsageType;
+            set => this.RaiseAndSetIfChanged(ref m_shouldUseEmslUsageType, value);
         }
 
         public bool ShouldUseInterestRating
         {
-            get { return m_shouldUseInterestRating; }
-            set
-            {
-                if (m_shouldUseInterestRating != value)
-                {
-                    m_shouldUseInterestRating = value;
-                    OnPropertyChanged("ShouldUseInterestRating");
-                }
-            }
+            get => m_shouldUseInterestRating;
+            set => this.RaiseAndSetIfChanged(ref m_shouldUseInterestRating, value);
         }
-        private bool m_shouldUseInterestRating;
 
         public bool ShouldUseEMSLProposalUsers
         {
-            get { return m_shouldUseEMSLProposalUsers; }
-            set
-            {
-                if (m_shouldUseEMSLProposalUsers != value)
-                {
-                    m_shouldUseEMSLProposalUsers = value;
-                    OnPropertyChanged("ShouldUseEMSLProposalUsers");
-                }
-            }
+            get => m_shouldUseEMSLProposalUsers;
+            set => this.RaiseAndSetIfChanged(ref m_shouldUseEMSLProposalUsers, value);
         }
-        private bool m_shouldUseEMSLProposalUsers;
         #endregion
     }
 }

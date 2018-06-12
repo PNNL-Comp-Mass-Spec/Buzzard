@@ -126,13 +126,13 @@ namespace BuzzardWPF.ViewModels
 
         public ExperimentData SelectedExperiment
         {
-            get { return m_selectedExperiment; }
-            set { this.RaiseAndSetIfChanged(ref m_selectedExperiment, value); }
+            get => m_selectedExperiment;
+            set => this.RaiseAndSetIfChanged(ref m_selectedExperiment, value);
         }
 
         public string FilterText
         {
-            get { return m_filterText; }
+            get => m_filterText;
             set
             {
                 if (value == null)
@@ -146,8 +146,8 @@ namespace BuzzardWPF.ViewModels
 
         public ReactiveList<ExperimentData> Experiments
         {
-            get { return m_experiments; }
-            set { this.RaiseAndSetIfChanged(ref m_experiments, value); }
+            get => m_experiments;
+            set => this.RaiseAndSetIfChanged(ref m_experiments, value);
         }
 
         public List<string> AutoCompleteBoxItems

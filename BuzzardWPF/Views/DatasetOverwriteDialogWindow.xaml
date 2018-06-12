@@ -61,7 +61,7 @@
                     FontWeight="Black"
                     Text="Item being replaced:" />
                 <views:FileFolderInfoViewerView
-                    DataContext="{Binding DestinationPathData}"
+                    DataContext="{Binding ExistingTargetPathData}"
                     Grid.Row="3"
                     Margin="1,2,1,20" />
             </Grid>

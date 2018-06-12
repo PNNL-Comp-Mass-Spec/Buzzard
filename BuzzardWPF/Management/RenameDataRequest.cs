@@ -15,10 +15,7 @@ namespace BuzzardWPF.Management
         /// File path to fix invalid characters in
         /// </summary>
         public string SourceDataPath {
-            get
-            {
-                return mSourceDataPath;
-            }
+            get => mSourceDataPath;
             set
             {
                 mSourceDataPath = value;
@@ -60,11 +57,7 @@ namespace BuzzardWPF.Management
             {
                 if (informUser)
                 {
-                    var dialogVm = new DatasetOverwriteDialogViewModel
-                    {
-                        FileToRenamePath = SourceDataPath,
-                        FileInWayPath = FixedDataPath
-                    };
+                    var dialogVm = new DatasetOverwriteDialogViewModel(SourceDataPath, FixedDataPath);
                     var dialog = new DatasetOverwriteDialogWindow
                     {
                         DataContext = dialogVm

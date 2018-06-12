@@ -98,14 +98,14 @@ namespace BuzzardWPF.ViewModels
 
         public bool IsCreatingTriggerFiles
         {
-            get { return StateSingleton.IsCreatingTriggerFiles; }
+            get => StateSingleton.IsCreatingTriggerFiles;
             private set
             {
                 if (StateSingleton.IsCreatingTriggerFiles == value) return;
                 StateSingleton.IsCreatingTriggerFiles = value;
-                this.RaisePropertyChanged("IsCreatingTriggerFiles");
-                this.RaisePropertyChanged("IsSafeToSearch");
-                this.RaisePropertyChanged("SearchButtonText");
+                this.RaisePropertyChanged();
+                this.RaisePropertyChanged(nameof(IsSafeToSearch));
+                this.RaisePropertyChanged(nameof(SearchButtonText));
             }
         }
 
@@ -115,13 +115,13 @@ namespace BuzzardWPF.ViewModels
 
         public bool IsNotMonitoring
         {
-            get { return mIsNotMonitoring; }
+            get => mIsNotMonitoring;
             private set
             {
                 mIsNotMonitoring = value;
-                this.RaisePropertyChanged("IsNotMonitoring");
-                this.RaisePropertyChanged("IsSafeToSearch");
-                this.RaisePropertyChanged("SearchButtonText");
+                this.RaisePropertyChanged();
+                this.RaisePropertyChanged(nameof(IsSafeToSearch));
+                this.RaisePropertyChanged(nameof(SearchButtonText));
             }
         }
 
@@ -210,9 +210,9 @@ namespace BuzzardWPF.ViewModels
             }
 
             Searching = true;
-            using (DatasetManager.Manager.Datasets.SuppressChangeNotifications())
+            using (DatasetManager.Datasets.SuppressChangeNotifications())
             {
-                DatasetManager.Manager.Datasets.Clear();
+                DatasetManager.Datasets.Clear();
             }
             searchCancelToken = new CancellationTokenSource();
             await datasetSearcher.SearchAsync(mConfig, searchCancelToken);

@@ -506,7 +506,7 @@ namespace BuzzardWPF.Management
                         var hasTriggerFileSent = false;
 
                         // Also make sure that the trigger file does not exist on the server...
-                        foreach (var filePath in Manager.TriggerDirectoryContents.Keys.ToList())
+                        foreach (var filePath in TriggerDirectoryContents.Keys.ToList())
                         {
                             if (filePath.ToLower().Contains(dataset.DMSData.DatasetName.ToLower()))
                             {
@@ -1083,7 +1083,7 @@ namespace BuzzardWPF.Management
             {
                 dataset = DatasetFactory.LoadDataset(datasetFileOrFolderPath);
                 dataset.CaptureSubfolderPath = captureSubfolderPath;
-                dataset.Comment = Manager.UserComments;
+                dataset.Comment = UserComments;
 
                 BuzzardTriggerFileTools.ValidateDatasetName(dataset, dataset.DMSData.DatasetName);
 
@@ -1193,7 +1193,7 @@ namespace BuzzardWPF.Management
                     ResolveDms(dataset, true);
 
                     var hasTriggerFileSent = false;
-                    foreach (var filePath in Manager.TriggerDirectoryContents.Keys)
+                    foreach (var filePath in TriggerDirectoryContents.Keys)
                     {
                         if (filePath.ToLower().Contains(dataset.DMSData.DatasetName.ToLower()))
                         {
@@ -1213,7 +1213,7 @@ namespace BuzzardWPF.Management
                     string.Format("Data source: '{0}' found.", datasetFileOrFolderPath));
             }
 
-            Manager.ResolveDms(dataset, newDatasetFound);
+            ResolveDms(dataset, newDatasetFound);
         }
 
         public List<string> GetMissingRequiredFields()
@@ -1266,12 +1266,10 @@ namespace BuzzardWPF.Management
                     break;
                 }
             }
-
         }
 
         private string ValidateFileOrFolderPath(string path, bool allowFolderMatch, out bool isArchived)
         {
-
             isArchived = false;
 
             if (string.IsNullOrWhiteSpace(path))

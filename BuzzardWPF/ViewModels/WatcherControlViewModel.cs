@@ -141,13 +141,13 @@ namespace BuzzardWPF.ViewModels
 
         public bool IsWatching
         {
-            get { return StateSingleton.IsMonitoring; }
+            get => StateSingleton.IsMonitoring;
             private set
             {
                 if (StateSingleton.IsMonitoring == value) return;
                 StateSingleton.IsMonitoring = value;
-                this.RaisePropertyChanged("IsWatching");
-                this.RaisePropertyChanged("IsNotMonitoring");
+                this.RaisePropertyChanged();
+                this.RaisePropertyChanged(nameof(IsNotMonitoring));
             }
         }
 
@@ -194,7 +194,7 @@ namespace BuzzardWPF.ViewModels
             const bool allowFolderMatch = true;
 
             // File was renamed, either update an existing dataset, or add a new one
-            DatasetManager.Manager.CreatePendingDataset(
+            DatasetManager.CreatePendingDataset(
                 e.FullPath,
                 BuzzardTriggerFileTools.GetCaptureSubfolderPath(DirectoryToWatch, e.FullPath),
                 allowFolderMatch,
@@ -327,10 +327,10 @@ namespace BuzzardWPF.ViewModels
 
                 if (mFilePathsToProcess.TryRemove(fullFilePath, out queueTime))
                 {
-                    var extension = Path.GetExtension(fullFilePath).ToLower();
-
                     if (string.IsNullOrWhiteSpace(fullFilePath) || fullFilePath.Contains('$'))
                         continue;
+
+                    var extension = Path.GetExtension(fullFilePath).ToLower();
 
                     if (extension != Extension.ToLower())
                     {
@@ -359,7 +359,7 @@ namespace BuzzardWPF.ViewModels
                         }
                     }
 
-                    DatasetManager.Manager.CreatePendingDataset(fullFilePath, parentFolderPath, allowFolderMatch, DatasetSource.Watcher);
+                    DatasetManager.CreatePendingDataset(fullFilePath, parentFolderPath, allowFolderMatch, DatasetSource.Watcher);
                 }
             }
 
@@ -400,11 +400,11 @@ namespace BuzzardWPF.ViewModels
             }
 
             // Make sure the required metadata has been defined
-            var missingData = DatasetManager.Manager.GetMissingRequiredFields();
+            var missingData = DatasetManager.GetMissingRequiredFields();
 
             if (missingData.Count > 0)
             {
-                if (!DatasetManager.Manager.CreateTriggerOnDMSFail &&
+                if (!DatasetManager.CreateTriggerOnDMSFail &&
                     missingData.Contains(DatasetManager.EXPERIMENT_NAME_DESCRIPTION))
                 {
                     missingData.Remove(DatasetManager.EXPERIMENT_NAME_DESCRIPTION);
@@ -443,7 +443,7 @@ namespace BuzzardWPF.ViewModels
                 return;
             }
 
-            DatasetManager.Manager.FileWatchRoot = diBaseFolder.FullName;
+            DatasetManager.FileWatchRoot = diBaseFolder.FullName;
 
             mFileSystemWatcher.Path = diBaseFolder.FullName;
             mFileSystemWatcher.IncludeSubdirectories = WatchDepth == SearchOption.AllDirectories;

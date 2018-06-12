@@ -61,7 +61,7 @@ namespace BuzzardWPF.ViewModels
         #region Properties
         public IEmslUsvUser BoundContainer
         {
-            get { return m_boundContainer; }
+            get => m_boundContainer;
             set
             {
                 if (m_boundContainer != value)
@@ -70,7 +70,7 @@ namespace BuzzardWPF.ViewModels
                         m_boundContainer.PropertyChanged -= BoundContainer_PropertyChanged;
 
                     m_boundContainer = value;
-                    this.RaisePropertyChanged("BoundContainer");
+                    this.RaisePropertyChanged();
 
                     if (m_boundContainer != null)
                     {
@@ -85,20 +85,20 @@ namespace BuzzardWPF.ViewModels
 
         public ReactiveList<string> UsageTypesSource
         {
-            get { return m_usageTypesSource; }
-            set { this.RaiseAndSetIfChanged(ref m_usageTypesSource, value); }
+            get => m_usageTypesSource;
+            set => this.RaiseAndSetIfChanged(ref m_usageTypesSource, value);
         }
 
         public ReactiveList<string> AvailablePIDs
         {
-            get { return m_availablePIDs; }
-            set { this.RaiseAndSetIfChanged(ref m_availablePIDs, value); }
+            get => m_availablePIDs;
+            set => this.RaiseAndSetIfChanged(ref m_availablePIDs, value);
         }
 
         public ReactiveList<ProposalUser> ProposalUsers
         {
-            get { return m_ProposalUsers; }
-            set { this.RaiseAndSetIfChanged(ref m_ProposalUsers, value); }
+            get => m_ProposalUsers;
+            set => this.RaiseAndSetIfChanged(ref m_ProposalUsers, value);
         }
 
         public string ProposalUsersText

@@ -296,7 +296,7 @@
                                     VerticalAlignment="Center"
                                     Content="Disable base folder validation (manual search)"
                                     FontSize="15"
-                                    IsChecked="{Binding Path=DisableBaseFolderValidation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    IsChecked="{Binding Path=SearchConfigVm.Config.DisableBaseFolderValidation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                     IsEnabled="{Binding Path=IsNotMonitoring}" />
 
                                 <Label

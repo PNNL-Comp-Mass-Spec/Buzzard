@@ -63,19 +63,19 @@ namespace BuzzardWPF.ViewModels
 
         public ReactiveList<string> EMSLProposalIDs
         {
-            get { return m_emslProposalIDs; }
-            set { this.RaiseAndSetIfChanged(ref m_emslProposalIDs, value); }
+            get => m_emslProposalIDs;
+            set => this.RaiseAndSetIfChanged(ref m_emslProposalIDs, value);
         }
 
         public ReactiveList<string> LCColumnSource
         {
-            get { return m_lcColumnSource; }
-            set { this.RaiseAndSetIfChanged(ref m_lcColumnSource, value); }
+            get => m_lcColumnSource;
+            set => this.RaiseAndSetIfChanged(ref m_lcColumnSource, value);
         }
 
         public FilldownBuzzardDataset Dataset
         {
-            get { return m_dataset; }
+            get => m_dataset;
             set
             {
                 if (m_dataset != value)
@@ -87,7 +87,7 @@ namespace BuzzardWPF.ViewModels
                     }
 
                     m_dataset = value;
-                    this.RaisePropertyChanged("Dataset");
+                    this.RaisePropertyChanged();
 
                     if (m_dataset != null)
                     {
@@ -102,7 +102,7 @@ namespace BuzzardWPF.ViewModels
 
         private DMSData DatasetDMS
         {
-            get { return m_datasetDMS; }
+            get => m_datasetDMS;
             set
             {
                 if (m_datasetDMS != value)
@@ -120,32 +120,32 @@ namespace BuzzardWPF.ViewModels
 
         public ReactiveList<string> OperatorsSource
         {
-            get { return m_operatorsSource; }
-            set { this.RaiseAndSetIfChanged(ref m_operatorsSource, value); }
+            get => m_operatorsSource;
+            set => this.RaiseAndSetIfChanged(ref m_operatorsSource, value);
         }
 
         public ReactiveList<string> InstrumentSource
         {
-            get { return m_instrumentsSource; }
-            set { this.RaiseAndSetIfChanged(ref m_instrumentsSource, value); }
+            get => m_instrumentsSource;
+            set => this.RaiseAndSetIfChanged(ref m_instrumentsSource, value);
         }
 
         public ReactiveList<string> DatasetTypesSource
         {
-            get { return m_datasetTypesSource; }
-            set { this.RaiseAndSetIfChanged(ref m_datasetTypesSource, value); }
+            get => m_datasetTypesSource;
+            set => this.RaiseAndSetIfChanged(ref m_datasetTypesSource, value);
         }
 
         public ReactiveList<string> SeparationTypeSource
         {
-            get { return m_separationTypeSource; }
-            set { this.RaiseAndSetIfChanged(ref m_separationTypeSource, value); }
+            get => m_separationTypeSource;
+            set => this.RaiseAndSetIfChanged(ref m_separationTypeSource, value);
         }
 
         public ReactiveList<string> CartNameListSource
         {
-            get { return m_cartNameListSource; }
-            set { this.RaiseAndSetIfChanged(ref m_cartNameListSource, value); }
+            get => m_cartNameListSource;
+            set => this.RaiseAndSetIfChanged(ref m_cartNameListSource, value);
         }
 
         /// <summary>
@@ -156,20 +156,20 @@ namespace BuzzardWPF.ViewModels
 
         public ReactiveList<string> EmslUsageTypeSource
         {
-            get { return m_emslUsageTypeSource; }
-            set { this.RaiseAndSetIfChanged(ref m_emslUsageTypeSource, value); }
+            get => m_emslUsageTypeSource;
+            set => this.RaiseAndSetIfChanged(ref m_emslUsageTypeSource, value);
         }
 
         public ReactiveList<string> InterestRatingSource
         {
-            get { return m_interestRatingSource; }
-            set { this.RaiseAndSetIfChanged(ref m_interestRatingSource, value); }
+            get => m_interestRatingSource;
+            set => this.RaiseAndSetIfChanged(ref m_interestRatingSource, value);
         }
 
         public ReactiveList<ProposalUser> EMSLProposalUsersSource
         {
-            get { return m_EMSLProposalUsersSource; }
-            set { this.RaiseAndSetIfChanged(ref m_EMSLProposalUsersSource, value); }
+            get => m_EMSLProposalUsersSource;
+            set => this.RaiseAndSetIfChanged(ref m_EMSLProposalUsersSource, value);
         }
 
         public string EmslProposalUsersText

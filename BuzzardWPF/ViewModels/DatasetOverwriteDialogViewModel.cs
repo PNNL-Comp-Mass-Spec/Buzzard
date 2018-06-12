@@ -1,4 +1,5 @@
-﻿using System.Reactive;
+﻿using System;
+using System.Reactive;
 using ReactiveUI;
 
 namespace BuzzardWPF.ViewModels
@@ -6,18 +7,25 @@ namespace BuzzardWPF.ViewModels
     public class DatasetOverwriteDialogViewModel : ReactiveObject
     {
         #region Attributes
-        private string m_fileToRenamePath;
-        private string m_fileInWayPath;
         private bool m_doSameToOtherConflicts;
         private bool m_skipRename;
         #endregion
 
         #region Initialize
-        public DatasetOverwriteDialogViewModel()
+
+        /// <summary>
+        /// Constructor for valid design-time data context
+        /// </summary>
+        [Obsolete("For WPF design-time view only", true)]
+        public DatasetOverwriteDialogViewModel() : this(null, null)
+        {
+        }
+
+        public DatasetOverwriteDialogViewModel(string sourceFilePath, string existingTargetFilePath)
         {
             DoSameToOtherConflicts = false;
-            FileToRenamePath = null;
-            FileInWayPath = null;
+            SourcePathData.PathName = sourceFilePath;
+            ExistingTargetPathData.PathName = existingTargetFilePath;
             SkipDatasetRename = false;
 
             ReplaceDatasetCommand = ReactiveCommand.Create(ReplaceDataset);
@@ -30,63 +38,19 @@ namespace BuzzardWPF.ViewModels
         public ReactiveCommand<Unit, Unit> ReplaceDatasetCommand { get; }
         public ReactiveCommand<Unit, Unit> SkipDatasetCommand { get; }
 
-        public FileFolderInfoViewerViewModel SourcePathData { get; }
-        public FileFolderInfoViewerViewModel DestinationPathData { get; }
-
-        public string FileToRenamePath
-        {
-            get { return m_fileToRenamePath; }
-            set
-            {
-                if (m_fileToRenamePath != value)
-                {
-                    m_fileToRenamePath = value;
-                    this.RaisePropertyChanged("FileToRenamePath");
-
-                    SourcePathData.PathName = value;
-                }
-            }
-        }
-
-        public string FileInWayPath
-        {
-            get { return m_fileInWayPath; }
-            set
-            {
-                if (m_fileInWayPath != value)
-                {
-                    m_fileInWayPath = value;
-                    this.RaisePropertyChanged("FileInWayPath");
-
-                    DestinationPathData.PathName = value;
-                }
-            }
-        }
+        public FileFolderInfoViewerViewModel SourcePathData { get; } = new FileFolderInfoViewerViewModel();
+        public FileFolderInfoViewerViewModel ExistingTargetPathData { get; } = new FileFolderInfoViewerViewModel();
 
         public bool DoSameToOtherConflicts
         {
-            get { return m_doSameToOtherConflicts; }
-            set
-            {
-                if (m_doSameToOtherConflicts != value)
-                {
-                    m_doSameToOtherConflicts = value;
-                    this.RaisePropertyChanged("DoSameToOtherConflicts");
-                }
-            }
+            get => m_doSameToOtherConflicts;
+            set => this.RaiseAndSetIfChanged(ref m_doSameToOtherConflicts, value);
         }
 
         public bool SkipDatasetRename
         {
-            get { return m_skipRename; }
-            private set
-            {
-                if (m_skipRename != value)
-                {
-                    m_skipRename = value;
-                    this.RaisePropertyChanged("SkipDatasetRename");
-                }
-            }
+            get => m_skipRename;
+            private set => this.RaiseAndSetIfChanged(ref m_skipRename, value);
         }
 
         public bool Success { get; private set; }

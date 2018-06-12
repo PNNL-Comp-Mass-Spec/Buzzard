@@ -53,26 +53,26 @@ namespace BuzzardWPF
         #region Properties
         public string LastLoggedItem
         {
-            get { return lastLoggedItem; }
-            private set { this.RaiseAndSetIfChanged(ref lastLoggedItem, value); }
+            get => lastLoggedItem;
+            private set => this.RaiseAndSetIfChanged(ref lastLoggedItem, value);
         }
 
         public string LogFilePath
         {
-            get { return logFilePath; }
-            private set { this.RaiseAndSetIfChanged(ref logFilePath, value); }
+            get => logFilePath;
+            private set => this.RaiseAndSetIfChanged(ref logFilePath, value);
         }
 
         public string Version
         {
-            get { return version; }
-            private set { this.RaiseAndSetIfChanged(ref version, value); }
+            get => version;
+            private set => this.RaiseAndSetIfChanged(ref version, value);
         }
 
         public string InstrumentName
         {
-            get { return instrumentName; }
-            private set { this.RaiseAndSetIfChanged(ref instrumentName, value); }
+            get => instrumentName;
+            private set => this.RaiseAndSetIfChanged(ref instrumentName, value);
         }
         #endregion
 

@@ -25,7 +25,7 @@ namespace BuzzardWPF.Management
 
         public static bool IsCreatingTriggerFiles
         {
-            get { return m_isCreatingTriggerFiles; }
+            get => m_isCreatingTriggerFiles;
             set
             {
                 m_isCreatingTriggerFiles = value;
@@ -37,7 +37,7 @@ namespace BuzzardWPF.Management
         /// </summary>
         public static bool IsMonitoring
         {
-            get { return m_isMonitoring; }
+            get => m_isMonitoring;
             set
             {
                 m_isMonitoring = value;

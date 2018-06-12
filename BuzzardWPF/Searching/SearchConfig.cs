@@ -64,12 +64,8 @@ namespace BuzzardWPF.Searching
 
         public bool DisableBaseFolderValidation
         {
-            get { return mDisableBaseFolderValidation; }
-            set
-            {
-                mDisableBaseFolderValidation = value;
-                this.RaisePropertyChanged("DisableBaseFolderValidation");
-            }
+            get => mDisableBaseFolderValidation;
+            set => this.RaiseAndSetIfChanged(ref mDisableBaseFolderValidation, value);
         }
 
         /// <summary>
@@ -86,15 +82,8 @@ namespace BuzzardWPF.Searching
         /// </summary>
         public string FolderNameFilter
         {
-            get { return mFolderNameFilter; }
-            set
-            {
-                if (mFolderNameFilter != value)
-                {
-                    mFolderNameFilter = value;
-                    this.RaisePropertyChanged("FolderNameFilter");
-                }
-            }
+            get => mFolderNameFilter;
+            set => this.RaiseAndSetIfChanged(ref mFolderNameFilter, value);
         }
 
         /// <summary>
@@ -102,15 +91,8 @@ namespace BuzzardWPF.Searching
         /// </summary>
         public string FilenameFilter
         {
-            get { return mFilenameFilter; }
-            set
-            {
-                if (mFilenameFilter != value)
-                {
-                    mFilenameFilter = value;
-                    this.RaisePropertyChanged("FilenameFilter");
-                }
-            }
+            get => mFilenameFilter;
+            set => this.RaiseAndSetIfChanged(ref mFilenameFilter, value);
         }
 
         /// <summary>

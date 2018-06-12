@@ -395,7 +395,7 @@
                     SortMemberPath="Operator">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <ComboBox ItemsSource="{Binding Source={x:Reference BaseDC}, Path=DataContext.OperatorsSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=Operator, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <ComboBox ItemsSource="{Binding Source={x:Reference BaseDC}, Path=DataContext.DmsData.OperatorData, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=Operator, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -409,7 +409,7 @@
                         <DataTemplate>
                             <TabControl SelectedIndex="{Binding Path=., Converter={StaticResource LockSwitchConverter}}" Template="{StaticResource TabControlTemplate}">
                                 <TabItem>
-                                    <ComboBox ItemsSource="{Binding Source={x:Reference BaseDC}, Path=DataContext.DatasetTypesSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=DMSData.DatasetType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                    <ComboBox ItemsSource="{Binding Source={x:Reference BaseDC}, Path=DataContext.DmsData.DatasetTypes, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=DMSData.DatasetType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                 </TabItem>
                                 <TabItem>
                                     <TextBlock VerticalAlignment="Top" Text="{Binding Path=DMSData.DatasetType, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -426,7 +426,7 @@
                     SortMemberPath="LCColumn">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <ComboBox ItemsSource="{Binding Source={x:Reference BaseDC}, Path=DataContext.LCColumnSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=LCColumn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <ComboBox ItemsSource="{Binding Source={x:Reference BaseDC}, Path=DataContext.DmsData.ColumnData, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=LCColumn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -438,7 +438,7 @@
                     SortMemberPath="Instrument">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <ComboBox ItemsSource="{Binding Source={x:Reference BaseDC}, Path=DataContext.InstrumentsSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=Instrument, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <ComboBox ItemsSource="{Binding Source={x:Reference BaseDC}, Path=DataContext.DmsData.InstrumentData, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=Instrument, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -450,7 +450,7 @@
                     SortMemberPath="SeparationType">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <ComboBox ItemsSource="{Binding Source={x:Reference BaseDC}, Path=DataContext.SeparationTypeSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=SeparationType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <ComboBox ItemsSource="{Binding Source={x:Reference BaseDC}, Path=DataContext.DmsData.SeparationTypes, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=SeparationType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

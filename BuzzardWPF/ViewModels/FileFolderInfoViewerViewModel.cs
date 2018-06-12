@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using BuzzardWPF.Management;
 using ReactiveUI;
 
 namespace BuzzardWPF.ViewModels
@@ -28,74 +29,50 @@ namespace BuzzardWPF.ViewModels
         #region Properties
         public int FileCount
         {
-            get { return m_fileCount; }
-            set { this.RaiseAndSetIfChanged(ref m_fileCount, value); }
+            get => m_fileCount;
+            set => this.RaiseAndSetIfChanged(ref m_fileCount, value);
         }
 
         public int FolderCount
         {
-            get { return m_folderCount; }
-            set { this.RaiseAndSetIfChanged(ref m_folderCount, value); }
+            get => m_folderCount;
+            set => this.RaiseAndSetIfChanged(ref m_folderCount, value);
         }
 
         public bool IsFile
         {
-            get { return m_isFile; }
-            private set
-            {
-                var oldValue = m_isFile;
-                this.RaiseAndSetIfChanged(ref m_isFile, value);
-                if (oldValue != value)
-                {
-                    UpdateViewsPage();
-                }
-            }
+            get => m_isFile;
+            private set => this.RaiseAndSetIfChanged(ref m_isFile, value, x => UpdateViewsPage());
         }
 
         public long SizeBytes
         {
-            get { return m_sizeBytes; }
-            private set { this.RaiseAndSetIfChanged(ref m_sizeBytes, value); }
+            get => m_sizeBytes;
+            private set => this.RaiseAndSetIfChanged(ref m_sizeBytes, value);
         }
 
         public DateTime CreationDate
         {
-            get { return m_creationDate; }
-            private set { this.RaiseAndSetIfChanged(ref m_creationDate, value); }
+            get => m_creationDate;
+            private set => this.RaiseAndSetIfChanged(ref m_creationDate, value);
         }
 
         public DateTime LastModifiedDate
         {
-            get { return m_lastModifiedDate; }
-            private set { this.RaiseAndSetIfChanged(ref m_lastModifiedDate, value); }
+            get => m_lastModifiedDate;
+            private set => this.RaiseAndSetIfChanged(ref m_lastModifiedDate, value);
         }
 
         public bool ItemFound
         {
-            get { return m_itemFound; }
-            private set
-            {
-                var oldValue = m_itemFound;
-                this.RaiseAndSetIfChanged(ref m_itemFound, value);
-                if (oldValue != value)
-                {
-                    UpdateViewsPage();
-                }
-            }
+            get => m_itemFound;
+            private set => this.RaiseAndSetIfChanged(ref m_itemFound, value, x => UpdateViewsPage());
         }
 
         public string PathName
         {
-            get { return m_pathName; }
-            set
-            {
-                var oldValue = m_pathName;
-                this.RaiseAndSetIfChanged(ref m_pathName, value);
-                if (oldValue != value)
-                {
-                    GetPathInfo();
-                }
-            }
+            get => m_pathName;
+            set => this.RaiseAndSetIfChanged(ref m_pathName, value, x => GetPathInfo());
         }
 
         public int SelectedTabIndex

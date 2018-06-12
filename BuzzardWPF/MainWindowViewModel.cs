@@ -76,7 +76,7 @@ namespace BuzzardWPF
             // just pass the dispatcher along, but this way we can access other
             // parts of the main window if they are ever needed in the future.
             // -FCT
-            DatasetManager.Manager.DatasetsLoaded += Manager_DatasetsLoaded;
+            DatasetManager.DatasetsLoaded += Manager_DatasetsLoaded;
 
             m_firstTimeLoading = true;
 
@@ -96,9 +96,9 @@ namespace BuzzardWPF
 
             BuzzardGridVm.EmslUsageTypesSource = emslUsageTypesSource;
 
-            if (!BuzzardGridVm.CartNameListSource.Contains("unknown"))
+            if (!DMS_DataAccessor.Instance.CartNames.Contains("unknown"))
             {
-                BuzzardGridVm.CartNameListSource.Add("unknown");
+                DMS_DataAccessor.Instance.CartNames.Add("unknown");
             }
 
             m_animationTimer = new Timer(Animation_Tick, this, Timeout.Infinite, Timeout.Infinite);
@@ -115,7 +115,7 @@ namespace BuzzardWPF
             WatcherControlVm.MonitoringToggled += SearchConfigVm.MonitoringToggleHandler;
 
             LoadImages();
-            LastUpdated = DatasetManager.Manager.LastUpdated;
+            LastUpdated = DatasetManager.LastUpdated;
             ApplicationLogger.LogMessage(0, "Ready");
 
             if (Environment.MachineName.ToLower() == "monroe5" || Environment.MachineName.ToLower() == "we27655")
@@ -134,7 +134,7 @@ namespace BuzzardWPF
 
         private void Manager_DatasetsLoaded(object sender, EventArgs e)
         {
-            LastUpdated = DatasetManager.Manager.LastUpdated;
+            LastUpdated = DatasetManager.LastUpdated;
         }
 
         private void StateSingleton_WatchingStateChanged(object sender, EventArgs e)
@@ -144,7 +144,7 @@ namespace BuzzardWPF
             {
                 CurrentImage = m_animationImages[0];
             }
-            this.RaisePropertyChanged("IsNotMonitoring");
+            this.RaisePropertyChanged(nameof(IsNotMonitoring));
         }
 
         /// <summary>
@@ -209,23 +209,7 @@ namespace BuzzardWPF
         public BitmapImage CurrentImage
         {
             get => m_CurrentImage;
-            set
-            {
-                if (Equals(m_CurrentImage, value))
-                    return;
-                m_CurrentImage = value;
-                this.RaisePropertyChanged("CurrentImage");
-            }
-        }
-
-        public bool DisableBaseFolderValidation
-        {
-            get => SearchConfigVm.Config.DisableBaseFolderValidation;
-            set
-            {
-                SearchConfigVm.Config.DisableBaseFolderValidation = value;
-                this.RaisePropertyChanged("DisableBaseFolderValidation");
-            }
+            set => this.RaiseAndSetIfChanged(ref m_CurrentImage, value);
         }
 
         /// <summary>
@@ -240,23 +224,13 @@ namespace BuzzardWPF
         public string LastStatusMessage
         {
             get => m_lastStatusMessage;
-            set
-            {
-                if (m_lastStatusMessage == value)
-                    return;
-                m_lastStatusMessage = value;
-                this.RaisePropertyChanged("LastStatusMessage");
-            }
+            set => this.RaiseAndSetIfChanged(ref m_lastStatusMessage, value);
         }
 
         public string LastUpdated
         {
             get => m_lastUpdated;
-            set
-            {
-                m_lastUpdated = value;
-                this.RaisePropertyChanged("LastUpdated");
-            }
+            set => this.RaiseAndSetIfChanged(ref m_lastUpdated, value);
         }
 
         #endregion
@@ -349,7 +323,7 @@ namespace BuzzardWPF
                     0,
                     string.Format("Data source: '{0}' is already present.", datasetFileOrFolderPath));
 
-                DatasetManager.Manager.UpdateDataset(datasetFileOrFolderPath);
+                DatasetManager.UpdateDataset(datasetFileOrFolderPath);
                 return;
             }
 
@@ -357,7 +331,7 @@ namespace BuzzardWPF
             // Create a dataset from the given path,
             // and load it into the UI.
             //
-            DatasetManager.Manager.CreatePendingDataset(datasetFileOrFolderPath, captureSubfolderPath, config.MatchFolders);
+            DatasetManager.CreatePendingDataset(datasetFileOrFolderPath, captureSubfolderPath, config.MatchFolders);
         }
 
         private void SetTriggerFolderToTestPath()
@@ -530,13 +504,13 @@ namespace BuzzardWPF
 
         private async void DMSCheckTimer_Tick(object state)
         {
-            if (DatasetManager.Manager.IsLoading)
+            if (DatasetManager.IsLoading)
             {
                 return;
             }
 
             // Load active requested runs from DMS
-            await DatasetManager.Manager.LoadDmsCache();
+            await DatasetManager.LoadDmsCache();
 
             // Do not call DMS_DataAccessor.Instance.UpdateCacheNow()
             // That class has its own timer for updating the data
@@ -544,7 +518,7 @@ namespace BuzzardWPF
 
         private async Task ForceDmsReload()
         {
-            if (DatasetManager.Manager.IsLoading)
+            if (DatasetManager.IsLoading)
             {
                 return;
             }
@@ -553,7 +527,7 @@ namespace BuzzardWPF
             await DMS_DataAccessor.Instance.UpdateCacheNow("ForceDmsReload");
 
             // Load active requested runs from DMS
-            await DatasetManager.Manager.LoadDmsCache();
+            await DatasetManager.LoadDmsCache();
         }
 
         private void UseTestFolder()
