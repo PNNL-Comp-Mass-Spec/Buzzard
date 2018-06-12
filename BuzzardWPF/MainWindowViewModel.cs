@@ -403,6 +403,7 @@ namespace BuzzardWPF
             // Save settings
             ApplicationLogger.LogMessage(0, "Starting to save settings to config.");
             var settingsChanged = false;
+            settingsChanged |= BuzzardGridVm.SaveSettings(force);
             settingsChanged |= WatcherControlVm.SaveSettings(force);
             settingsChanged |= SearchConfigVm.SaveSettings(force);
             settingsChanged |= QCVm.SaveSettings(force);
@@ -430,6 +431,7 @@ namespace BuzzardWPF
                 //BuzzardWPF.Properties.Settings.Default.Reset();
 
                 ApplicationLogger.LogMessage(0, "Loading settings from config.");
+                BuzzardGridVm.LoadSettings();
                 DatasetManager.LoadSettings();
                 WatcherControlVm.LoadSettings();
                 SearchConfigVm.LoadSettings();

@@ -40,25 +40,7 @@ namespace BuzzardWPF.ViewModels
         {
             ShowGridItemDetail = false;
 
-            m_fillDownDataset = new FilldownBuzzardDataset
-            {
-                Comment = Properties.Settings.Default.FilldownComment,
-
-                Operator = Properties.Settings.Default.FilldownOperator,
-                SeparationType = Properties.Settings.Default.FilldownSeparationType,
-                LCColumn = Properties.Settings.Default.FilldownColumn,
-                Instrument = Properties.Settings.Default.FilldownInstrument,
-                CartName = Properties.Settings.Default.FilldownCart,
-                CartConfigName = Properties.Settings.Default.FilldownCartConfig,
-                InterestRating = Properties.Settings.Default.FilldownInterest,
-                ExperimentName = Properties.Settings.Default.FilldownExperimentName,
-                DMSData =
-                {
-                    EMSLUsageType = Properties.Settings.Default.FilldownEMSLUsage,
-                    EMSLProposalID = Properties.Settings.Default.FilldownEMSLProposal,
-                    DatasetType = Properties.Settings.Default.FilldownDatasetType
-                }
-            };
+            m_fillDownDataset = new FilldownBuzzardDataset();
 
             Datasets.ItemsAdded.ObserveOn(RxApp.TaskpoolScheduler).Subscribe(DatasetAdded);
             Datasets.ItemsRemoved.ObserveOn(RxApp.TaskpoolScheduler).Subscribe(DatasetRemoved);
@@ -82,21 +64,23 @@ namespace BuzzardWPF.ViewModels
             BindingOperations.EnableCollectionSynchronization(CartConfigNameListSource, lockCartConfigNameListSource);
         }
 
-        public void SaveSettings()
+        private bool settingsChanged = false;
+
+        public bool SaveSettings(bool force = false)
         {
-            Properties.Settings.Default.FilldownComment = m_fillDownDataset.Comment;
-            Properties.Settings.Default.FilldownOperator = m_fillDownDataset.Operator;
-            Properties.Settings.Default.FilldownDatasetType = m_fillDownDataset.DMSData.DatasetType;
-            Properties.Settings.Default.FilldownSeparationType = m_fillDownDataset.SeparationType;
-            Properties.Settings.Default.FilldownColumn = m_fillDownDataset.LCColumn;
-            Properties.Settings.Default.FilldownInstrument = m_fillDownDataset.Instrument;
-            Properties.Settings.Default.FilldownCart = m_fillDownDataset.CartName;
-            Properties.Settings.Default.FilldownCartConfig = m_fillDownDataset.CartConfigName;
-            Properties.Settings.Default.FilldownInterest = m_fillDownDataset.InterestRating;
-            Properties.Settings.Default.FilldownEMSLUsage = m_fillDownDataset.DMSData.EMSLUsageType;
-            Properties.Settings.Default.FilldownEMSLProposal = m_fillDownDataset.DMSData.EMSLProposalID;
-            Properties.Settings.Default.FilldownExperimentName = m_fillDownDataset.ExperimentName;
-            Properties.Settings.Default.Save();
+            if (!settingsChanged)
+            {
+                return false;
+            }
+
+            settingsChanged = false;
+            return true;
+        }
+
+        public void LoadSettings()
+        {
+            m_fillDownDataset.LoadSettings();
+            settingsChanged = false;
         }
 
         private void UpdateCartConfigNames(string cartName)
@@ -462,7 +446,12 @@ namespace BuzzardWPF.ViewModels
                 return;
             }
 
-            SaveSettings();
+            // force-save the current settings, and set the local flag to true
+            if (m_fillDownDataset.SettingsChanged)
+            {
+                m_fillDownDataset.SaveSettings(true);
+                settingsChanged = true;
+            }
 
             // Any changes that were selected in the Filldown
             // Window are passed on to the selected Datasets.

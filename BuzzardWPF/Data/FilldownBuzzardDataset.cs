@@ -1,8 +1,12 @@
-﻿using ReactiveUI;
+﻿using System;
+using BuzzardWPF.Management;
+using BuzzardWPF.Properties;
+using LcmsNetSDK.Data;
+using ReactiveUI;
 
 namespace BuzzardWPF.Data
 {
-    public class FilldownBuzzardDataset : BuzzardDataset
+    public class FilldownBuzzardDataset : BuzzardDataset, IStoredSettingsMonitor
     {
         #region Attributes
         private bool m_shouldUseOperator;
@@ -38,6 +42,16 @@ namespace BuzzardWPF.Data
             ShouldUseInterestRating = true;
             ShouldUseEMSLProposalUsers = true;
             ShouldUseComment = true;
+
+            // Monitors for propertyChanged events
+            this.WhenAnyValue(x => x.DMSData, x => x.DMSData.DatasetType, x => x.DMSData.EMSLUsageType, x => x.DMSData.EMSLProposalID)
+                .Subscribe(x => SettingsChanged = true);
+            this.WhenAnyValue(x => x.Comment, x => x.Operator, x => x.SeparationType, x => x.LCColumn, x => x.Instrument)
+                .Subscribe(x => SettingsChanged = true);
+            this.WhenAnyValue(x => x.CartName, x => x.CartConfigName, x => x.InterestRating, x => x.ExperimentName)
+                .Subscribe(x => SettingsChanged = true);
+
+            LoadSettings();
         }
         #endregion
 
@@ -113,6 +127,54 @@ namespace BuzzardWPF.Data
             get => m_shouldUseEMSLProposalUsers;
             set => this.RaiseAndSetIfChanged(ref m_shouldUseEMSLProposalUsers, value);
         }
+
+        public bool SettingsChanged { get; set; }
+
         #endregion
+
+        public bool SaveSettings(bool force = false)
+        {
+            if (!SettingsChanged && !force)
+            {
+                return false;
+            }
+
+            Settings.Default.FilldownComment = Comment;
+            Settings.Default.FilldownOperator = Operator;
+            Settings.Default.FilldownDatasetType = DMSData.DatasetType;
+            Settings.Default.FilldownSeparationType = SeparationType;
+            Settings.Default.FilldownColumn = LCColumn;
+            Settings.Default.FilldownInstrument = Instrument;
+            Settings.Default.FilldownCart = CartName;
+            Settings.Default.FilldownCartConfig = CartConfigName;
+            Settings.Default.FilldownInterest = InterestRating;
+            Settings.Default.FilldownEMSLUsage = DMSData.EMSLUsageType;
+            Settings.Default.FilldownEMSLProposal = DMSData.EMSLProposalID;
+            Settings.Default.FilldownExperimentName = ExperimentName;
+
+            return true;
+        }
+
+        public void LoadSettings()
+        {
+            Comment = Settings.Default.FilldownComment;
+            Operator = Settings.Default.FilldownOperator;
+            SeparationType = Settings.Default.FilldownSeparationType;
+            LCColumn = Settings.Default.FilldownColumn;
+            Instrument = Settings.Default.FilldownInstrument;
+            CartName = Settings.Default.FilldownCart;
+            CartConfigName = Settings.Default.FilldownCartConfig;
+            InterestRating = Settings.Default.FilldownInterest;
+            ExperimentName = Settings.Default.FilldownExperimentName;
+
+            if (DMSData == null)
+            {
+                DMSData = new DMSData();
+            }
+
+            DMSData.EMSLUsageType = Settings.Default.FilldownEMSLUsage;
+            DMSData.EMSLProposalID = Settings.Default.FilldownEMSLProposal;
+            DMSData.DatasetType = Settings.Default.FilldownDatasetType;
+        }
     }
 }
