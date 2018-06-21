@@ -6,6 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:toolkit="http://schemas.xceed.com/wpf/xaml/toolkit"
     xmlns:viewModels="clr-namespace:BuzzardWPF.ViewModels"
+    xmlns:cueBannerOverlay="clr-namespace:LcmsNetCommonControls.Controls.CueBannerOverlay;assembly=LcmsNetCommonControls"
     d:DesignHeight="152.8"
     d:DesignWidth="600"
     mc:Ignorable="d"
@@ -105,7 +106,11 @@
                         Margin="0,3,3.4,3"
                         IsEnabled="{Binding Path=BoundContainer.SelectedEMSLUsageType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource EnableProposalIDConverter}}"
                         ItemsSource="{Binding Path=AvailablePIDs, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                        SelectedItem="{Binding BoundContainer.EMSLProposalID}" />
+                        SelectedItem="{Binding BoundContainer.EMSLProposalID}">
+                        <cueBannerOverlay:CueBannerService.CueBanner>
+                            <TextBlock Text="Select" Margin="0" FontWeight="Regular" Style="{StaticResource TextBlockStyle}" />
+                        </cueBannerOverlay:CueBannerService.CueBanner>
+                    </ComboBox>
                 </Grid>
                 <TextBlock
                     Grid.Row="2"
@@ -121,7 +126,11 @@
                     DisplayMemberPath="UserName"
                     IsEnabled="{Binding Path=BoundContainer.SelectedEMSLUsageType, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource EnableProposalIDConverter}}"
                     ItemsSource="{Binding Path=ProposalUsers, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                    SelectedItemsOverride="{Binding Path=BoundContainer.SelectedEMSLProposalUsers, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    SelectedItemsOverride="{Binding Path=BoundContainer.SelectedEMSLProposalUsers, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <cueBannerOverlay:CueBannerService.CueBanner>
+                        <TextBlock Text="Select" Margin="0" FontWeight="Regular" Style="{StaticResource TextBlockStyle}" />
+                    </cueBannerOverlay:CueBannerService.CueBanner>
+                </toolkit:CheckComboBox>
             </Grid>
         </GroupBox>
     </StackPanel>

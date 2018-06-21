@@ -6,6 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:BuzzardWPF.ViewModels"
     xmlns:views="clr-namespace:BuzzardWPF.Views"
+    xmlns:cueBannerOverlay="clr-namespace:LcmsNetCommonControls.Controls.CueBannerOverlay;assembly=LcmsNetCommonControls"
     d:DesignHeight="400"
     d:DesignWidth="1050"
     mc:Ignorable="d"
@@ -71,7 +72,11 @@
                         IsEnabled="{Binding Path=IsNotMonitoring}"
                         ItemsSource="{Binding Path=DmsData.InstrumentData, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                         SelectedItem="{Binding Path=DatasetManager.WatcherConfigSelectedInstrument, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        Style="{StaticResource ComboBoxStyle}" />
+                        Style="{StaticResource ComboBoxStyle}">
+                        <cueBannerOverlay:CueBannerService.CueBanner>
+                            <TextBlock Text="Select" Margin="0" FontWeight="Regular" Style="{StaticResource TextBlockStyle}" />
+                        </cueBannerOverlay:CueBannerService.CueBanner>
+                    </ComboBox>
                 </Grid>
             </GroupBox>
 
@@ -105,7 +110,11 @@
                         IsEnabled="{Binding Path=IsNotMonitoring}"
                         ItemsSource="{Binding Path=DmsData.CartNames, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                         SelectedItem="{Binding Path=DatasetManager.WatcherConfigSelectedCartName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        Style="{StaticResource ComboBoxStyle}" />
+                        Style="{StaticResource ComboBoxStyle}">
+                        <cueBannerOverlay:CueBannerService.CueBanner>
+                            <TextBlock Text="Select" Margin="0" FontWeight="Regular" Style="{StaticResource TextBlockStyle}" />
+                        </cueBannerOverlay:CueBannerService.CueBanner>
+                    </ComboBox>
                     <TextBlock
                         Grid.Row="1"
                         Grid.Column="0"
@@ -119,7 +128,11 @@
                         IsEnabled="{Binding Path=IsNotMonitoring}"
                         ItemsSource="{Binding Path=DatasetManager.CartConfigNameListForCart, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                         SelectedItem="{Binding Path=DatasetManager.WatcherConfigSelectedCartConfigName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        Style="{StaticResource ComboBoxStyle}" />
+                        Style="{StaticResource ComboBoxStyle}">
+                        <cueBannerOverlay:CueBannerService.CueBanner>
+                            <TextBlock Text="Select" Margin="0" FontWeight="Regular" Style="{StaticResource TextBlockStyle}" />
+                        </cueBannerOverlay:CueBannerService.CueBanner>
+                    </ComboBox>
                     <TextBlock
                         Grid.Row="2"
                         Grid.Column="0"
@@ -133,7 +146,11 @@
                         IsEnabled="{Binding Path=IsNotMonitoring}"
                         ItemsSource="{Binding Path=DmsData.SeparationTypes, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                         SelectedItem="{Binding Path=DatasetManager.WatcherConfigSelectedSeparationType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        Style="{StaticResource ComboBoxStyle}" />
+                        Style="{StaticResource ComboBoxStyle}">
+                        <cueBannerOverlay:CueBannerService.CueBanner>
+                            <TextBlock Text="Select" Margin="0" FontWeight="Regular" Style="{StaticResource TextBlockStyle}" />
+                        </cueBannerOverlay:CueBannerService.CueBanner>
+                    </ComboBox>
                     <TextBlock
                         Grid.Row="3"
                         Grid.Column="0"
@@ -147,7 +164,11 @@
                         IsEnabled="{Binding Path=IsNotMonitoring}"
                         ItemsSource="{Binding Path=DmsData.DatasetTypes, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                         SelectedItem="{Binding Path=DatasetManager.WatcherConfigSelectedDatasetType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        Style="{StaticResource ComboBoxStyle}" />
+                        Style="{StaticResource ComboBoxStyle}">
+                        <cueBannerOverlay:CueBannerService.CueBanner>
+                            <TextBlock Text="Select" Margin="0" FontWeight="Regular" Style="{StaticResource TextBlockStyle}" />
+                        </cueBannerOverlay:CueBannerService.CueBanner>
+                    </ComboBox>
                     <TextBlock
                         Grid.Row="4"
                         Grid.Column="0"
@@ -174,7 +195,11 @@
                             FontWeight="Regular"
                             IsEnabled="{Binding Path=IsNotMonitoring}"
                             ItemsSource="{Binding Path=DmsData.ColumnData, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                            SelectedItem="{Binding DatasetManager.LCColumn}" />
+                            SelectedItem="{Binding DatasetManager.LCColumn}">
+                            <cueBannerOverlay:CueBannerService.CueBanner>
+                                <TextBlock Text="Select" Margin="0" FontWeight="Regular" Style="{StaticResource TextBlockStyle}" />
+                            </cueBannerOverlay:CueBannerService.CueBanner>
+                        </ComboBox>
 
                     </Grid>
 
@@ -192,7 +217,11 @@
                         IsEnabled="{Binding Path=IsNotMonitoring}"
                         ItemsSource="{Binding Path=DmsData.OperatorData, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                         SelectedItem="{Binding Path=DatasetManager.WatcherConfigSelectedOperator, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        Style="{StaticResource ComboBoxStyle}" />
+                        Style="{StaticResource ComboBoxStyle}">
+                        <cueBannerOverlay:CueBannerService.CueBanner>
+                            <TextBlock Text="Select" Margin="0" FontWeight="Regular" Style="{StaticResource TextBlockStyle}" />
+                        </cueBannerOverlay:CueBannerService.CueBanner>
+                    </ComboBox>
                 </Grid>
             </GroupBox>
 

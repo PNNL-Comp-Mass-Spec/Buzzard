@@ -3404,5 +3404,17 @@
             </summary>
             <returns>String representing display name</returns>
         </member>
+        <member name="T:LcmsNetSDK.WpfConversions">
+            <summary>
+            Utility functions for WPF, particularly for conversions from WinForms formatting values to WPF formatting values
+            </summary>
+        </member>
+        <member name="M:LcmsNetSDK.WpfConversions.GetWpfLength(System.String)">
+            <summary>
+            Converts a size, like what can be specified in xaml, to the pixel size.
+            </summary>
+            <param name="srcLength">Desired length, with units. Format should be like "8pt" (no space), supported units are 'px', 'in', 'cm', and 'pt', no units assumes 'px'.</param>
+            <returns></returns>
+        </member>
     </members>
 </doc>

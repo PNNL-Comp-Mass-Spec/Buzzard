@@ -9,6 +9,7 @@
     xmlns:dmsData="clr-namespace:LcmsNetSDK.Data;assembly=LcmsNetSdk"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:BuzzardWPF.ViewModels"
+    xmlns:cueBannerOverlay="clr-namespace:LcmsNetCommonControls.Controls.CueBannerOverlay;assembly=LcmsNetCommonControls"
     d:DesignHeight="267"
     d:DesignWidth="749.4"
     Background="{x:Null}"
@@ -395,7 +396,7 @@
                     SortMemberPath="Operator">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <ComboBox ItemsSource="{Binding Source={x:Reference BaseDC}, Path=DataContext.DmsData.OperatorData, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=Operator, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <ComboBox ItemsSource="{Binding Source={x:Reference BaseDC}, Path=DataContext.DmsData.OperatorData, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=Operator, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" cueBannerOverlay:CueBannerService.CueBanner="Select" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -409,7 +410,7 @@
                         <DataTemplate>
                             <TabControl SelectedIndex="{Binding Path=., Converter={StaticResource LockSwitchConverter}}" Template="{StaticResource TabControlTemplate}">
                                 <TabItem>
-                                    <ComboBox ItemsSource="{Binding Source={x:Reference BaseDC}, Path=DataContext.DmsData.DatasetTypes, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=DMSData.DatasetType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                    <ComboBox ItemsSource="{Binding Source={x:Reference BaseDC}, Path=DataContext.DmsData.DatasetTypes, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=DMSData.DatasetType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" cueBannerOverlay:CueBannerService.CueBanner="Select" />
                                 </TabItem>
                                 <TabItem>
                                     <TextBlock VerticalAlignment="Top" Text="{Binding Path=DMSData.DatasetType, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -426,7 +427,7 @@
                     SortMemberPath="LCColumn">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <ComboBox ItemsSource="{Binding Source={x:Reference BaseDC}, Path=DataContext.DmsData.ColumnData, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=LCColumn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <ComboBox ItemsSource="{Binding Source={x:Reference BaseDC}, Path=DataContext.DmsData.ColumnData, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=LCColumn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" cueBannerOverlay:CueBannerService.CueBanner="Select" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -438,7 +439,7 @@
                     SortMemberPath="Instrument">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <ComboBox ItemsSource="{Binding Source={x:Reference BaseDC}, Path=DataContext.DmsData.InstrumentData, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=Instrument, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <ComboBox ItemsSource="{Binding Source={x:Reference BaseDC}, Path=DataContext.DmsData.InstrumentData, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=Instrument, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" cueBannerOverlay:CueBannerService.CueBanner="Select" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -450,7 +451,7 @@
                     SortMemberPath="SeparationType">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <ComboBox ItemsSource="{Binding Source={x:Reference BaseDC}, Path=DataContext.DmsData.SeparationTypes, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=SeparationType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <ComboBox ItemsSource="{Binding Source={x:Reference BaseDC}, Path=DataContext.DmsData.SeparationTypes, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=SeparationType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" cueBannerOverlay:CueBannerService.CueBanner="Select" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -467,7 +468,7 @@
                     SortMemberPath="CartName">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <ComboBox ItemsSource="{Binding Source={x:Reference BaseDC}, Path=DataContext.CartNameListSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=CartName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <ComboBox ItemsSource="{Binding Source={x:Reference BaseDC}, Path=DataContext.CartNameListSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=CartName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" cueBannerOverlay:CueBannerService.CueBanner="Select" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -480,7 +481,7 @@
                     SortMemberPath="CartConfigName">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <ComboBox ItemsSource="{Binding Source={x:Reference BaseDC}, Path=DataContext.CartConfigNameListSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=CartConfigName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            <ComboBox ItemsSource="{Binding Source={x:Reference BaseDC}, Path=DataContext.CartConfigNameListSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=CartConfigName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" cueBannerOverlay:CueBannerService.CueBanner="Select">
                                 <ComboBox.Style>
                                     <Style TargetType="ComboBox">
                                         <Style.Triggers>

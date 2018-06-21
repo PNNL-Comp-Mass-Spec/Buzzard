@@ -45,6 +45,7 @@ Name: "{app}\x86"
 ; Exe and supporting libraries
 Source: "bin\Release\BuzzardWPF.exe";                                 DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\BuzzardWPF.exe.config";                          DestDir: "{app}";     Flags: ignoreversion
+Source: "bin\Release\LcmsNetCommonControls.dll";                      DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\LcmsNetDmsTools.dll";                            DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\LcmsNetSDK.dll";                                 DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\LcmsNetSQLiteTools.dll";                         DestDir: "{app}";     Flags: ignoreversion
