@@ -33,15 +33,6 @@ namespace BuzzardWPF.Management
             m_proposalUserCollections = new Dictionary<string, ReactiveList<ProposalUser>>();
             LoadProposalUsers();
 
-            InstrumentData = new ReactiveList<string>();
-            OperatorData = new ReactiveList<string>();
-            DatasetTypes = new ReactiveList<string>();
-            SeparationTypes = new ReactiveList<string>();
-
-            CartNames = new ReactiveList<string>();
-            CartConfigNames = new ReactiveList<string>();
-            ColumnData = new ReactiveList<string>();
-
             Experiments = new List<ExperimentData>();
             Datasets = new SortedSet<string>(StringComparer.CurrentCultureIgnoreCase);
 
@@ -93,33 +84,35 @@ namespace BuzzardWPF.Management
             //
             // Load Instrument Data
             //
-            var tempInstrumentData = SQLiteTools.GetInstrumentList(false);
-            if (tempInstrumentData == null)
+            using (InstrumentData.SuppressChangeNotifications())
             {
-                ApplicationLogger.LogError(0, "Instrument list retrieval returned null.");
-                InstrumentData = new ReactiveList<string>();
-            }
-            else
-            {
-                if (tempInstrumentData.Count == 0)
-                    ApplicationLogger.LogError(0, "No instruments found.");
-            }
-
-            if (tempInstrumentData != null && tempInstrumentData.Count != 0)
-            {
-                InstrumentData = new ReactiveList<string>(tempInstrumentData.Select(instDatum => instDatum.DMSName));
-
-                var instrumentDetails = new Dictionary<string, InstrumentInfo>();
-
-                foreach (var instrument in tempInstrumentData)
+                var tempInstrumentData = SQLiteTools.GetInstrumentList(false);
+                if (tempInstrumentData == null)
                 {
-                    if (!instrumentDetails.ContainsKey(instrument.DMSName))
-                    {
-                        instrumentDetails.Add(instrument.DMSName, instrument);
-                    }
+                    ApplicationLogger.LogError(0, "Instrument list retrieval returned null.");
+                    InstrumentData.Clear();
+                }
+                else
+                {
+                    if (tempInstrumentData.Count == 0)
+                        ApplicationLogger.LogError(0, "No instruments found.");
                 }
 
-                InstrumentDetails = instrumentDetails;
+                if (tempInstrumentData != null && tempInstrumentData.Count != 0)
+                {
+                    InstrumentData.Clear();
+                    InstrumentData.AddRange(tempInstrumentData.Select(instDatum => instDatum.DMSName));
+
+                    InstrumentDetails.Clear();
+
+                    foreach (var instrument in tempInstrumentData)
+                    {
+                        if (!InstrumentDetails.ContainsKey(instrument.DMSName))
+                        {
+                            InstrumentDetails.Add(instrument.DMSName, instrument);
+                        }
+                    }
+                }
             }
 
             //
@@ -129,7 +122,13 @@ namespace BuzzardWPF.Management
             if (tempUserList == null)
                 ApplicationLogger.LogError(0, "User retrieval returned null.");
             else
-                OperatorData = new ReactiveList<string>(tempUserList.Select(userDatum => userDatum.UserName));
+            {
+                using (OperatorData.SuppressChangeNotifications())
+                {
+                    OperatorData.Clear();
+                    OperatorData.AddRange(tempUserList.Select(userDatum => userDatum.UserName));
+                }
+            }
 
             //
             // Load Dataset Types
@@ -138,7 +137,13 @@ namespace BuzzardWPF.Management
             if (tempDatasetTypesList == null)
                 ApplicationLogger.LogError(0, "Dataset Types retrieval returned null.");
             else
-                DatasetTypes = new ReactiveList<string>(tempDatasetTypesList);
+            {
+                using (DatasetTypes.SuppressChangeNotifications())
+                {
+                    DatasetTypes.Clear();
+                    DatasetTypes.AddRange(tempDatasetTypesList);
+                }
+            }
 
             //
             // Load Separation Types
@@ -147,7 +152,13 @@ namespace BuzzardWPF.Management
             if (tempSeparationTypesList == null)
                 ApplicationLogger.LogError(0, "Separation types retrieval returned null.");
             else
-                SeparationTypes = new ReactiveList<string>(tempSeparationTypesList);
+            {
+                using (SeparationTypes.SuppressChangeNotifications())
+                {
+                    SeparationTypes.Clear();
+                    SeparationTypes.AddRange(tempSeparationTypesList);
+                }
+            }
 
             //
             // Load Cart Names
@@ -156,7 +167,13 @@ namespace BuzzardWPF.Management
             if (tempCartsList == null)
                 ApplicationLogger.LogError(0, "LC Cart names list retrieval returned null.");
             else
-                CartNames = new ReactiveList<string>(tempCartsList);
+            {
+                using (CartNames.SuppressChangeNotifications())
+                {
+                    CartNames.Clear();
+                    CartNames.AddRange(tempCartsList);
+                }
+            }
 
             //
             // Load Cart Config Names
@@ -165,7 +182,13 @@ namespace BuzzardWPF.Management
             if (tempCartConfigNamesList == null)
                 ApplicationLogger.LogError(0, "LC Cart config names list retrieval returned null.");
             else
-                CartConfigNames = new ReactiveList<string>(tempCartConfigNamesList);
+            {
+                using (CartConfigNames.SuppressChangeNotifications())
+                {
+                    CartConfigNames.Clear();
+                    CartConfigNames.AddRange(tempCartConfigNamesList);
+                }
+            }
 
             //
             // Load column data
@@ -175,7 +198,11 @@ namespace BuzzardWPF.Management
                 ApplicationLogger.LogError(0, "Column data list retrieval returned null.");
             else
             {
-                ColumnData = new ReactiveList<string>(tempColumnData);
+                using (ColumnData.SuppressChangeNotifications())
+                {
+                    ColumnData.Clear();
+                    ColumnData.AddRange(tempColumnData);
+                }
             }
 
             //
@@ -291,13 +318,6 @@ namespace BuzzardWPF.Management
         private List<ProposalUser> m_proposalUsers;
         private Dictionary<string, List<UserIDPIDCrossReferenceEntry>> m_pidIndexedCrossReferenceList;
         private readonly Dictionary<string, ReactiveList<ProposalUser>> m_proposalUserCollections;
-        private ReactiveList<string> m_columnData;
-        private ReactiveList<string> m_instrumentData;
-        private ReactiveList<string> m_operatorData;
-        private ReactiveList<string> m_datasetTypes;
-        private ReactiveList<string> m_separationTypes;
-        private ReactiveList<string> m_cartNames;
-        private ReactiveList<string> m_cartConfigNames;
         private SortedSet<string> m_Datasets;
         private List<ExperimentData> m_experiments;
 
@@ -632,71 +652,43 @@ namespace BuzzardWPF.Management
         /// <summary>
         /// List of DMS LC column names
         /// </summary>
-        public ReactiveList<string> ColumnData
-        {
-            get => m_columnData;
-            private set => this.RaiseAndSetIfChanged(ref m_columnData, value);
-        }
+        public ReactiveList<string> ColumnData { get; } = new ReactiveList<string>();
 
         /// <summary>
         /// List of the DMS instrument names
         /// </summary>
-        public ReactiveList<string> InstrumentData
-        {
-            get => m_instrumentData;
-            private set => this.RaiseAndSetIfChanged(ref m_instrumentData, value);
-        }
+        public ReactiveList<string> InstrumentData { get; } = new ReactiveList<string>();
 
         /// <summary>
         /// Instrument details (Name, status, source hostname, source share name, capture method
         /// </summary>
         /// <remarks>Key is instrument name, value is the details</remarks>
-        public Dictionary<string, InstrumentInfo> InstrumentDetails { get; private set; }
+        public Dictionary<string, InstrumentInfo> InstrumentDetails { get; } = new Dictionary<string, InstrumentInfo>();
 
         /// <summary>
         /// This is a list of the names of the cart Operators.
         /// </summary>
-        public ReactiveList<string> OperatorData
-        {
-            get => m_operatorData;
-            private set => this.RaiseAndSetIfChanged(ref m_operatorData, value);
-        }
+        public ReactiveList<string> OperatorData { get; } = new ReactiveList<string>();
 
         /// <summary>
         /// Dataset types
         /// </summary>
-        public ReactiveList<string> DatasetTypes
-        {
-            get => m_datasetTypes;
-            private set => this.RaiseAndSetIfChanged(ref m_datasetTypes, value);
-        }
+        public ReactiveList<string> DatasetTypes { get; } = new ReactiveList<string>();
 
         /// <summary>
         /// Separation types
         /// </summary>
-        public ReactiveList<string> SeparationTypes
-        {
-            get => m_separationTypes;
-            private set => this.RaiseAndSetIfChanged(ref m_separationTypes, value);
-        }
+        public ReactiveList<string> SeparationTypes { get; } = new ReactiveList<string>();
 
         /// <summary>
         /// Cart names
         /// </summary>
-        public ReactiveList<string> CartNames
-        {
-            get => m_cartNames;
-            private set => this.RaiseAndSetIfChanged(ref m_cartNames, value);
-        }
+        public ReactiveList<string> CartNames { get; } = new ReactiveList<string>();
 
         /// <summary>
         /// Cart config names
         /// </summary>
-        public ReactiveList<string> CartConfigNames
-        {
-            get => m_cartConfigNames;
-            private set => this.RaiseAndSetIfChanged(ref m_cartConfigNames, value);
-        }
+        public ReactiveList<string> CartConfigNames { get; } = new ReactiveList<string>();
 
         /// <summary>
         /// List of DMS dataset names
