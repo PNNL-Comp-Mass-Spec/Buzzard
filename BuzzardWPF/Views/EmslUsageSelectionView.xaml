@@ -126,7 +126,7 @@
                     DisplayMemberPath="UserName"
                     IsEnabled="{Binding Path=BoundContainer.SelectedEMSLUsageType, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource EnableProposalIDConverter}}"
                     ItemsSource="{Binding Path=ProposalUsers, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                    SelectedItemsOverride="{Binding Path=BoundContainer.SelectedEMSLProposalUsers, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    SelectedItemsOverride="{Binding Path=BoundContainer.SelectedEMSLProposalUsers}">
                     <cueBannerOverlay:CueBannerService.CueBanner>
                         <TextBlock Text="Select" Margin="0" FontWeight="Regular" Style="{StaticResource TextBlockStyle}" />
                     </cueBannerOverlay:CueBannerService.CueBanner>

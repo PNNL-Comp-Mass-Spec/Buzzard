@@ -47,7 +47,6 @@ namespace BuzzardWPF.Data
         private double m_waitTimePercentage;
 
         private bool m_PulseText;
-        private ReactiveList<ProposalUser> m_emslProposalUsers;
         private string m_interestRating;
 
         private bool m_CartConfigStatus;
@@ -67,7 +66,6 @@ namespace BuzzardWPF.Data
             WaitTimePercentage = 0;
             SecondsTillTriggerCreation = -1;
             InterestRating = "Unreviewed";
-            EMSLProposalUsers = new ReactiveList<ProposalUser>();
 
             IsFile = true;
         }
@@ -95,11 +93,7 @@ namespace BuzzardWPF.Data
 
         #region Datagrid Properties
 
-        public ReactiveList<ProposalUser> EMSLProposalUsers
-        {
-            get => m_emslProposalUsers;
-            set => this.RaiseAndSetIfChanged(ref m_emslProposalUsers, value);
-        }
+        public ReactiveList<ProposalUser> EMSLProposalUsers { get; } = new ReactiveList<ProposalUser>();
 
         public string LCColumn
         {

@@ -8,6 +8,6 @@ namespace BuzzardWPF.ViewModels
     {
         string SelectedEMSLUsageType { get; set; }
         string EMSLProposalID { get; set; }
-        ReactiveList<ProposalUser> SelectedEMSLProposalUsers { get; set; }
+        ReactiveList<ProposalUser> SelectedEMSLProposalUsers { get; }
     }
 }

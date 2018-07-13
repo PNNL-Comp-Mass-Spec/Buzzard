@@ -506,8 +506,11 @@ namespace BuzzardWPF.ViewModels
                     dataset.DMSData.EMSLUsageType = filldownData.DMSData.EMSLUsageType;
 
                 if (filldownData.ShouldUseEMSLProposalUsers)
-                    dataset.EMSLProposalUsers =
-                        new ReactiveList<ProposalUser>(filldownData.EMSLProposalUsers);
+                    using (dataset.EMSLProposalUsers.SuppressChangeNotifications())
+                    {
+                        dataset.EMSLProposalUsers.Clear();
+                        dataset.EMSLProposalUsers.AddRange(filldownData.EMSLProposalUsers);
+                    }
             }
         }
         #endregion

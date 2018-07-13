@@ -353,7 +353,7 @@
                 Delimiter="; "
                 DisplayMemberPath="UserName"
                 ItemsSource="{Binding Path=EMSLProposalUsersSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                SelectedItemsOverride="{Binding Path=Dataset.EMSLProposalUsers, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                SelectedItemsOverride="{Binding Path=Dataset.EMSLProposalUsers}"
                 Text="{Binding EmslProposalUsersText}">
                 <cueBannerOverlay:CueBannerService.CueBanner>
                     <TextBlock Text="Select" Margin="0" FontWeight="Regular" />

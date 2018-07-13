@@ -607,26 +607,21 @@ namespace BuzzardWPF.Management
         /// </summary>
         /// <param name="proposalID"></param>
         /// <param name="keys"></param>
-        /// <returns>Observable collection of matched users</returns>
-        public ReactiveList<ProposalUser> FindSavedEMSLProposalUsers(string proposalID, List<string> keys)
+        /// <returns>IEnumerable of matched users</returns>
+        public IEnumerable<ProposalUser> FindSavedEMSLProposalUsers(string proposalID, List<string> keys)
         {
             if (string.IsNullOrWhiteSpace(proposalID) || keys == null || keys.Count == 0)
-                return new ReactiveList<ProposalUser>();
+                return Enumerable.Empty<ProposalUser>();
 
             // We won't return this collection because this collection is supposed to be
             // inmutable and the items this method was designed for will be altering their
             // collections.
-            var allOfProposal_sUsers = GetProposalUsers(proposalID);
+            var allProposalUsers = GetProposalUsers(proposalID);
 
-            if (allOfProposal_sUsers == null || allOfProposal_sUsers.Count == 0)
-                return new ReactiveList<ProposalUser>();
+            if (allProposalUsers == null || allProposalUsers.Count == 0)
+                return Enumerable.Empty<ProposalUser>();
 
-            var selectedUsers = from ProposalUser u in allOfProposal_sUsers
-                                where keys.Contains(u.UserID.ToString())
-                                select u;
-
-            var result = new ReactiveList<ProposalUser>(selectedUsers);
-            return result;
+            return allProposalUsers.Where(x => keys.Contains(x.UserID.ToString()));
         }
 
         #endregion

@@ -76,12 +76,13 @@ namespace BuzzardWPF.Management
             WatcherConfigSelectedSeparationType = null;
             WatcherEmslUsage = null;
             WatcherEmslProposalID = null;
-            WatcherSelectedProposalUsers = new ReactiveList<ProposalUser>();
             TriggerFileCreationWaitTime = 5;
             MinimumFileSizeKB = 100;
 
             BindingOperations.EnableCollectionSynchronization(Datasets, lockDatasets);
             BindingOperations.EnableCollectionSynchronization(QcMonitors, lockQcMonitors);
+
+            this.WhenAnyValue(x => x.WatcherSelectedProposalUsers.Count).Subscribe(_ => SettingsChanged = true);
 
             SetupTimers();
         }
@@ -759,7 +760,6 @@ namespace BuzzardWPF.Management
         private string watcherConfigSelectedDatasetType;
         private string watcherEmslUsage;
         private string watcherEmslProposalId;
-        private ReactiveList<ProposalUser> watcherSelectedProposalUsers;
         private bool qcCreateTriggerOnDmsFail;
         private int triggerFileCreationWaitTime;
         private string userComments;
@@ -866,11 +866,7 @@ namespace BuzzardWPF.Management
             set => this.RaiseAndSetIfChangedMonitored(ref watcherEmslProposalId, value);
         }
 
-        public ReactiveList<ProposalUser> WatcherSelectedProposalUsers
-        {
-            get => watcherSelectedProposalUsers;
-            set => this.RaiseAndSetIfChangedMonitored(ref watcherSelectedProposalUsers, value);
-        }
+        public ReactiveList<ProposalUser> WatcherSelectedProposalUsers { get; } = new ReactiveList<ProposalUser>();
 
         #endregion
 
@@ -1169,16 +1165,20 @@ namespace BuzzardWPF.Management
                 }
 
                 dataset.DMSData.EMSLUsageType = emslUsageType;
-                if (!string.IsNullOrWhiteSpace(dataset.DMSData.EMSLUsageType) &&
-                    dataset.DMSData.EMSLUsageType.Equals("USER", StringComparison.OrdinalIgnoreCase))
+                using (dataset.EMSLProposalUsers.SuppressChangeNotifications())
                 {
-                    dataset.DMSData.EMSLProposalID = emslProposalId;
-                    dataset.EMSLProposalUsers = new ReactiveList<ProposalUser>(emslProposalUsers);
-                }
-                else
-                {
-                    dataset.DMSData.EMSLProposalID = null;
-                    dataset.EMSLProposalUsers = new ReactiveList<ProposalUser>();
+                    if (!string.IsNullOrWhiteSpace(dataset.DMSData.EMSLUsageType) &&
+                        dataset.DMSData.EMSLUsageType.Equals("USER", StringComparison.OrdinalIgnoreCase))
+                    {
+                        dataset.DMSData.EMSLProposalID = emslProposalId;
+                        dataset.EMSLProposalUsers.Clear();
+                        dataset.EMSLProposalUsers.AddRange(emslProposalUsers);
+                    }
+                    else
+                    {
+                        dataset.DMSData.EMSLProposalID = null;
+                        dataset.EMSLProposalUsers.Clear();
+                    }
                 }
             }
 
@@ -1408,7 +1408,11 @@ namespace BuzzardWPF.Management
             else
                 selectedUsers = Settings.Default.Watcher_EMSL_Users.Cast<string>().ToList();
 
-            WatcherSelectedProposalUsers = DMS_DataAccessor.Instance.FindSavedEMSLProposalUsers(WatcherEmslProposalID, selectedUsers);
+            using (WatcherSelectedProposalUsers.SuppressChangeNotifications())
+            {
+                WatcherSelectedProposalUsers.Clear();
+                WatcherSelectedProposalUsers.AddRange(DMS_DataAccessor.Instance.FindSavedEMSLProposalUsers(WatcherEmslProposalID, selectedUsers));
+            }
 
             UserComments = Settings.Default.WatcherConfig_UserComment;
 

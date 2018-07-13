@@ -90,11 +90,7 @@ namespace BuzzardWPF.ViewModels
             set => DatasetManager.WatcherEmslProposalID = value;
         }
 
-        public ReactiveList<ProposalUser> SelectedEMSLProposalUsers
-        {
-            get => DatasetManager.WatcherSelectedProposalUsers;
-            set => DatasetManager.WatcherSelectedProposalUsers = value;
-        }
+        public ReactiveList<ProposalUser> SelectedEMSLProposalUsers => DatasetManager.WatcherSelectedProposalUsers;
 
         #endregion
     }
