@@ -1,7 +1,7 @@
 ﻿using System;
 using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
-using LcmsNetSDK.Data;
+using LcmsNetData.Data;
 using ReactiveUI;
 
 namespace BuzzardWPF.Data

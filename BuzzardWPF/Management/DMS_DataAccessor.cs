@@ -5,9 +5,9 @@ using System.Reactive.Concurrency;
 using System.Threading;
 using System.Threading.Tasks;
 using LcmsNetDmsTools;
-using LcmsNetSDK;
-using LcmsNetSDK.Data;
-using LcmsNetSDK.Logging;
+using LcmsNetData;
+using LcmsNetData.Data;
+using LcmsNetData.Logging;
 using LcmsNetSQLiteTools;
 using ReactiveUI;
 
@@ -292,14 +292,14 @@ namespace BuzzardWPF.Management
             }
         }
 
-        public List<SampleData> LoadDMSRequestedRuns()
+        public List<SampleDataBasic> LoadDMSRequestedRuns()
         {
             // Instantiate SampleQueryData using default filters (essentially no filters)
             // Only active requested runs are retrieved
             var queryData = new SampleQueryData();
 
             // Load the samples (essentially requested runs) from DMS
-            return dmsDbTools.GetRequestedRunsFromDMS(queryData);
+            return dmsDbTools.GetRequestedRunsFromDMS<SampleDataBasic>(queryData);
         }
 
         #endregion

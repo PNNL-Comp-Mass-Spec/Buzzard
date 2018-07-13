@@ -12,14 +12,26 @@ using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
 using BuzzardWPF.Searching;
 using BuzzardWPF.ViewModels;
-using LcmsNetSDK.Logging;
+using LcmsNetData.Logging;
 using ReactiveUI;
 
 namespace BuzzardWPF
 {
-    public class MainWindowViewModel : ReactiveObject
+    public class MainWindowViewModel : ReactiveObject, IHandlesLogging
     {
         #region Constants
+
+        /// <summary>
+        /// Default error level
+        /// </summary>
+        /// <remarks>Log levels are 0 to 5, where 0 is most important and 5 is least important</remarks>
+        public const int CONST_DEFAULT_ERROR_LOG_LEVEL = 5;
+
+        /// <summary>
+        /// Default message level.
+        /// </summary>
+        /// <remarks>Log levels are 0 to 5, where 0 is most important and 5 is least important</remarks>
+        public const int CONST_DEFAULT_MESSAGE_LOG_LEVEL = 5;
 
         private const int DMS_UPDATE_INTERVAL_MINUTES = 10;
 
@@ -60,6 +72,9 @@ namespace BuzzardWPF
 
         public MainWindowViewModel()
         {
+            ErrorLevel = CONST_DEFAULT_ERROR_LOG_LEVEL;
+            MessageLevel = CONST_DEFAULT_MESSAGE_LOG_LEVEL;
+
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();
             var version = assembly.GetName().Version.ToString();
             Title = "Buzzard - v." + version;
@@ -194,6 +209,38 @@ namespace BuzzardWPF
         public QCViewModel QCVm { get; } = new QCViewModel();
         public DatasetManager DatasetManager => DatasetManager.Manager;
 
+        /// <summary>
+        /// Error message importance level (0 is most important, 5 is least important)
+        /// </summary>
+        public int ErrorLevel { get; set; }
+
+        /// <summary>
+        /// Status message importance level (0 is most important, 5 is least important)
+        /// </summary>
+        /// <remarks>
+        /// When MessageLevel is 0, only critical errors are logged
+        /// When MessageLevel is 5, all messages are logged
+        /// </remarks>
+        public int MessageLevel { get; set; }
+
+        /// <summary>
+        /// Error message importance level
+        /// </summary>
+        public LogLevel ErrorLogLevel
+        {
+            get { return ApplicationLogger.ConvertIntToLogLevel(ErrorLevel); }
+            set { ErrorLevel = (int)value; }
+        }
+
+        /// <summary>
+        /// Status message importance level
+        /// </summary>
+        public LogLevel MessageLogLevel
+        {
+            get { return ApplicationLogger.ConvertIntToLogLevel(MessageLevel); }
+            set { MessageLevel = (int)value; }
+        }
+
         public bool RemoteFolderLocationIsEnabled
         {
             get => remoteFolderLocationIsEnabled;
@@ -237,6 +284,11 @@ namespace BuzzardWPF
 
         private void ApplicationLogger_Error(int errorLevel, ErrorLoggerArgs args)
         {
+            if (errorLevel > ErrorLevel)
+            {
+                return;
+            }
+
             // Create an action to place the message string into the property that
             // holds the last message. Then place action into a call for the UI
             // thread's dipatcher.
@@ -245,10 +297,35 @@ namespace BuzzardWPF
 
         private void ApplicationLogger_Message(int messageLevel, MessageLoggerArgs args)
         {
+            if (messageLevel > MessageLevel)
+            {
+                return;
+            }
+
             // Create an action to place the message string into the property that
             // holds the last message. Then place action into a call for the UI
             // thread's dipatcher.
             RxApp.MainThreadScheduler.Schedule(() => LastStatusMessage = args.Message);
+        }
+
+        /// <summary>
+        /// Logs an error
+        /// </summary>
+        /// <param name="errorLevel">Error level</param>
+        /// <param name="args">Message arguments</param>
+        public void LogError(int errorLevel, ErrorLoggerArgs args)
+        {
+            ApplicationLogger_Error(errorLevel, args);
+        }
+
+        /// <summary>
+        /// Logs a message
+        /// </summary>
+        /// <param name="msgLevel">Message level</param>
+        /// <param name="args">Message arguments</param>
+        public void LogMessage(int msgLevel, MessageLoggerArgs args)
+        {
+            ApplicationLogger_Message(msgLevel, args);
         }
 
         #region Searching

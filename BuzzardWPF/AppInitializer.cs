@@ -7,8 +7,8 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using BuzzardWPF.Management;
-using LcmsNetSDK;
-using LcmsNetSDK.Logging;
+using LcmsNetData;
+using LcmsNetData.Logging;
 using LcmsNetSQLiteTools;
 
 namespace BuzzardWPF
@@ -16,18 +16,6 @@ namespace BuzzardWPF
     public static class AppInitializer
     {
         #region "Constants and members"
-
-        /// <summary>
-        /// Default error level
-        /// </summary>
-        /// <remarks>Log levels are 0 to 5, where 0 is most important and 5 is least important</remarks>
-        private const int CONST_DEFAULT_ERROR_LOG_LEVEL = 5;
-
-        /// <summary>
-        /// Default message level.
-        /// </summary>
-        /// <remarks>Log levels are 0 to 5, where 0 is most important and 5 is least important</remarks>
-        private const int CONST_DEFAULT_MESSAGE_LOG_LEVEL = 5;
 
         public const string PROGRAM_DATE = "May 31, 2018";
 
@@ -237,7 +225,7 @@ namespace BuzzardWPF
             CreatePath("Log");
 
             const string name = "Buzzard";
-            FileLogging.AppFolder = name;
+            FileLogger.AppFolder = name;
 
             SQLiteTools.Initialize(name);
             SQLiteTools.SetCacheLocation("BuzzardCache.que");
@@ -247,8 +235,8 @@ namespace BuzzardWPF
             //Application.SetCompatibleTextRenderingDefault(false);
 
             // Before we do anything, let's initialize the file logging capability.
-            ApplicationLogger.Error += FileLogging.LogError;
-            ApplicationLogger.Message += FileLogging.LogMessage;
+            ApplicationLogger.Error += FileLogger.Instance.LogError;
+            ApplicationLogger.Message += FileLogger.Instance.LogMessage;
 
             LogVersionNumbers();
             LogMachineInformation();
@@ -264,14 +252,6 @@ namespace BuzzardWPF
             {
                 instrumentNameAction?.Invoke(instName);
             }
-
-            // Set the logging levels (0 is most important; 5 is least important)
-            // When logLevel is 0, only critical messages are logged
-            // When logLevel is 5, all messages are logged
-            var logLevel = LCMSSettings.GetParameter("LoggingErrorLevel", CONST_DEFAULT_ERROR_LOG_LEVEL);
-            ApplicationLogger.ErrorLevel = logLevel;
-
-            ApplicationLogger.MessageLevel = CONST_DEFAULT_MESSAGE_LOG_LEVEL;
 
             ApplicationLogger.LogMessage(-1, "Checking for a new version");
 
@@ -319,10 +299,10 @@ namespace BuzzardWPF
                 var copyTriggerFiles = LCMSSettings.GetParameter("CopyTriggerFiles", false);
                 if (copyTriggerFiles)
                 {
-                    if (LcmsNetSDK.Data.TriggerFileTools.CheckLocalTriggerFiles())
+                    if (LcmsNetData.Data.TriggerFileUtils.CheckLocalTriggerFiles())
                     {
                         ApplicationLogger.LogMessage(-1, "Copying trigger files to DMS");
-                        LcmsNetSDK.Data.TriggerFileTools.MoveLocalTriggerFiles();
+                        LcmsNetData.Data.TriggerFileUtils.MoveLocalTriggerFiles();
                     }
                 }
             }
@@ -347,7 +327,7 @@ namespace BuzzardWPF
             }
             catch (Exception ex)
             {
-                FileLogging.LogError(0, new ErrorLoggerArgs("Error loading data from DMS at program startup", ex));
+                FileLogger.Instance.LogError(0, new ErrorLoggerArgs("Error loading data from DMS at program startup", ex));
             }
             finally
             {
@@ -363,7 +343,7 @@ namespace BuzzardWPF
 
                 Properties.Settings.Default.Save();
 
-                FileLogging.LogMessage(0, new MessageLoggerArgs("---------------------------------------"));
+                FileLogger.Instance.LogMessage(0, new MessageLoggerArgs("---------------------------------------"));
             }
 
             return openMainWindow;
@@ -407,10 +387,10 @@ namespace BuzzardWPF
             var exceptionMessage = string.Empty;
 
             if (ex == null)
-                FileLogging.LogError(0, new ErrorLoggerArgs(errorMessage));
+                FileLogger.Instance.LogError(0, new ErrorLoggerArgs(errorMessage));
             else
             {
-                FileLogging.LogError(0, new ErrorLoggerArgs(errorMessage, ex));
+                FileLogger.Instance.LogError(0, new ErrorLoggerArgs(errorMessage, ex));
                 exceptionMessage = ex.Message;
             }
 

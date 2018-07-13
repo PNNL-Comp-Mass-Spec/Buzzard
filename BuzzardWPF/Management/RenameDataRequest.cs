@@ -5,7 +5,7 @@ using BuzzardWPF.Data;
 using BuzzardWPF.IO;
 using BuzzardWPF.ViewModels;
 using BuzzardWPF.Views;
-using LcmsNetSDK.Logging;
+using LcmsNetData.Logging;
 
 namespace BuzzardWPF.Management
 {

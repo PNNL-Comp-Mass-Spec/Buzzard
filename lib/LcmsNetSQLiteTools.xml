@@ -94,7 +94,7 @@
             <param name="location">New path to location of queue</param>
             <remarks>If location is a filename (and not a path), then updates to use AppDataFolderName</remarks>
         </member>
-        <member name="M:LcmsNetSQLiteTools.SQLiteTools.GetQueueFromCache(LcmsNetSQLiteTools.DatabaseTableTypes)">
+        <member name="M:LcmsNetSQLiteTools.SQLiteTools.GetQueueFromCache``1(LcmsNetSQLiteTools.DatabaseTableTypes)">
             <summary>
             Retrieves a sample queue from cache database
             Connection string and database name are defined by defaults
@@ -102,7 +102,7 @@
             <param name="tableType">tableType enum specifying type of queue to retrieve</param>
             <returns>List containing queue data</returns>
         </member>
-        <member name="M:LcmsNetSQLiteTools.SQLiteTools.GetQueueFromCache(LcmsNetSQLiteTools.DatabaseTableTypes,System.String)">
+        <member name="M:LcmsNetSQLiteTools.SQLiteTools.GetQueueFromCache``1(LcmsNetSQLiteTools.DatabaseTableTypes,System.String)">
             <summary>
             Retrieves a sample queue from a SQLite database
             Overload requires connection string to be specified
@@ -165,7 +165,7 @@
             <param name="fieldNames"></param>
             <returns></returns>
         </member>
-        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SavePropertiesToCache(System.Collections.Generic.IList{LcmsNetSDK.ICacheInterface},System.String,System.String,System.Boolean)">
+        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SavePropertiesToCache(System.Collections.Generic.IList{LcmsNetData.ICacheInterface},System.String,System.String,System.Boolean)">
             <summary>
             Saves a list of properties for an object to the cache database
             </summary>
@@ -174,15 +174,15 @@
             <param name="connStr">Connection string</param>
             <param name="insertsIncludeFieldNames"></param>
         </member>
-        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveQueueToCache(System.Collections.Generic.List{LcmsNetSDK.Data.SampleData},LcmsNetSQLiteTools.DatabaseTableTypes)">
+        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveQueueToCache``1(System.Collections.Generic.List{``0},LcmsNetSQLiteTools.DatabaseTableTypes)">
             <summary>
             Saves the contents of specified sample queue to the SQLite cache file
             Connection string and database name are defined by defaults
             </summary>
-            <param name="QueueData">List of SampleData containing the sample data to save</param>
+            <param name="queueData">List of SampleData containing the sample data to save</param>
             <param name="tableType">TableTypes enum specifying which queue is being saved</param>
         </member>
-        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveQueueToCache(System.Collections.Generic.List{LcmsNetSDK.Data.SampleData},LcmsNetSQLiteTools.DatabaseTableTypes,System.String)">
+        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveQueueToCache``1(System.Collections.Generic.List{``0},LcmsNetSQLiteTools.DatabaseTableTypes,System.String)">
             <summary>
             Saves the contents of specified sample queue to an SQLite database file
             Overload requires database connection string be specified
@@ -191,21 +191,21 @@
             <param name="tableType">TableTypes enum specifying which queue is being saved</param>
             <param name="connStr">Connection string for database file</param>
         </member>
-        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveUserListToCache(System.Collections.Generic.List{LcmsNetSDK.Data.UserInfo},System.Boolean)">
+        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveUserListToCache(System.Collections.Generic.List{LcmsNetData.Data.UserInfo},System.Boolean)">
             <summary>
             Saves a list of users to cache
             </summary>
             <param name="userList">List containing user data</param>
             <param name="clearFirst">if true, the existing data will always be removed from the list; if false and <paramref name="userList"/>.Count is &lt;= to the number of existing rows, nothing is changed</param>
         </member>
-        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveExperimentListToCache(System.Collections.Generic.List{LcmsNetSDK.Data.ExperimentData},System.Boolean)">
+        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveExperimentListToCache(System.Collections.Generic.List{LcmsNetData.Data.ExperimentData},System.Boolean)">
             <summary>
             Save a list of experiments to cache
             </summary>
             <param name="expList"></param>
             <param name="clearFirst">if true, the existing data will always be removed from the list; if false and <paramref name="expList"/>.Count is &lt;= to the number of existing rows, nothing is changed</param>
         </member>
-        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveProposalUsers(System.Collections.Generic.List{LcmsNetSDK.Data.ProposalUser},System.Collections.Generic.List{LcmsNetSDK.Data.UserIDPIDCrossReferenceEntry},System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{LcmsNetSDK.Data.UserIDPIDCrossReferenceEntry}},System.Boolean)">
+        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveProposalUsers(System.Collections.Generic.List{LcmsNetData.Data.ProposalUser},System.Collections.Generic.List{LcmsNetData.Data.UserIDPIDCrossReferenceEntry},System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{LcmsNetData.Data.UserIDPIDCrossReferenceEntry}},System.Boolean)">
             <summary>
             Saves the Proposal Users list and a Proposal ID to Proposal User ID cross-reference
             list to the cache.
@@ -217,7 +217,7 @@
             </param>
             <param name="clearFirst">if true, the existing data will always be removed from the list; if false and <paramref name="users"/>.Count is &lt;= to the number of existing rows, nothing is changed</param>
         </member>
-        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveInstListToCache(System.Collections.Generic.List{LcmsNetSDK.Data.InstrumentInfo},System.Boolean)">
+        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveInstListToCache(System.Collections.Generic.List{LcmsNetData.Data.InstrumentInfo},System.Boolean)">
             <summary>
             Saves a list of instruments to cache
             </summary>

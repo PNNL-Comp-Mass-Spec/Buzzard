@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using BuzzardWPF.Properties;
-using LcmsNetSDK.Data;
+using LcmsNetData.Data;
 using ReactiveUI;
 
 namespace BuzzardWPF.Management

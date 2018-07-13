@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using LcmsNetSDK.Data;
+using LcmsNetData.Data;
 
 namespace BuzzardWPF.Data
 {

@@ -128,19 +128,19 @@
             Gets a list of instruments from DMS
             </summary>
         </member>
-        <member name="M:LcmsNetDmsTools.DMSDBTools.GetSamplesFromDMS(LcmsNetSDK.Data.SampleQueryData)">
+        <member name="M:LcmsNetDmsTools.DMSDBTools.GetSamplesFromDMS``1(LcmsNetData.Data.SampleQueryData)">
             <summary>
             Gets a list of samples (essentially requested runs) from DMS
             </summary>
             <remarks>Retrieves data from view V_Scheduled_Run_Export</remarks>
         </member>
-        <member name="M:LcmsNetDmsTools.DMSDBTools.GetRequestedRunsFromDMS(LcmsNetSDK.Data.SampleQueryData)">
+        <member name="M:LcmsNetDmsTools.DMSDBTools.GetRequestedRunsFromDMS``1(LcmsNetData.Data.SampleQueryData)">
             <summary>
             Gets a list of samples (essentially requested runs) from DMS
             </summary>
             <remarks>Retrieves data from view V_Scheduled_Run_Export</remarks>
         </member>
-        <member name="M:LcmsNetDmsTools.DMSDBTools.GetMRMFilesFromDMS(System.String,System.Collections.Generic.List{LcmsNetSDK.Data.MRMFileData})">
+        <member name="M:LcmsNetDmsTools.DMSDBTools.GetMRMFilesFromDMS(System.String,System.Collections.Generic.List{LcmsNetData.Data.MRMFileData})">
             <summary>
             Adds data for block of MRM files to file data list
             </summary>
@@ -269,49 +269,49 @@
             Indicates this item is tied to a EMSL user proposal that is not tied to a request in DMS.
             </summary>
         </member>
-        <member name="M:LcmsNetDmsTools.DMSSampleValidator.IsSampleValid(LcmsNetSDK.Data.SampleData)">
+        <member name="M:LcmsNetDmsTools.DMSSampleValidator.IsSampleValid(LcmsNetData.Data.SampleDataBasic)">
             <summary>
             Validates a sample based on DMS criteria.
             </summary>
             <param name="sample"></param>
             <returns>True if valid, false if invalid</returns>
         </member>
-        <member name="M:LcmsNetDmsTools.DMSSampleValidator.IsSampleValidDetailed(LcmsNetSDK.Data.SampleData)">
+        <member name="M:LcmsNetDmsTools.DMSSampleValidator.IsSampleValidDetailed(LcmsNetData.Data.SampleDataBasic)">
             <summary>
             Validates a sample based on DMS criteria.
             </summary>
             <param name="sample"></param>
             <returns>True if valid, false if invalid</returns>
         </member>
-        <member name="M:LcmsNetDmsTools.DMSSampleValidator.IsEMSLProposalIDValid(LcmsNetSDK.Data.SampleData)">
+        <member name="M:LcmsNetDmsTools.DMSSampleValidator.IsEMSLProposalIDValid(LcmsNetData.Data.SampleDataBasic)">
             <summary>
             Validates EUS Proposal ID
             </summary>
             <param name="sample"></param>
             <returns></returns>
         </member>
-        <member name="M:LcmsNetDmsTools.DMSSampleValidator.IsEMSLUserValid(LcmsNetSDK.Data.SampleData)">
+        <member name="M:LcmsNetDmsTools.DMSSampleValidator.IsEMSLUserValid(LcmsNetData.Data.SampleDataBasic)">
             <summary>
             Validate EUS Users
             </summary>
             <param name="sample"></param>
             <returns></returns>
         </member>
-        <member name="M:LcmsNetDmsTools.DMSSampleValidator.IsEMSLUsageTypeValid(LcmsNetSDK.Data.SampleData)">
+        <member name="M:LcmsNetDmsTools.DMSSampleValidator.IsEMSLUsageTypeValid(LcmsNetData.Data.SampleDataBasic)">
             <summary>
             Validate EUS Usage
             </summary>
             <param name="sample"></param>
             <returns></returns>
         </member>
-        <member name="M:LcmsNetDmsTools.DMSSampleValidator.IsExperimentNameValid(LcmsNetSDK.Data.SampleData)">
+        <member name="M:LcmsNetDmsTools.DMSSampleValidator.IsExperimentNameValid(LcmsNetData.Data.SampleDataBasic)">
             <summary>
             Validate experiment name
             </summary>
             <param name="sample"></param>
             <returns></returns>
         </member>
-        <member name="M:LcmsNetDmsTools.DMSSampleValidator.IsCartConfigValid(LcmsNetSDK.Data.SampleData)">
+        <member name="M:LcmsNetDmsTools.DMSSampleValidator.IsCartConfigValid(LcmsNetData.Data.SampleDataBasic)">
             <summary>
             Validate cart config setting
             </summary>

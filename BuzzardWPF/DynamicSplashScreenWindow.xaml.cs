@@ -14,8 +14,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
-using LcmsNetSDK;
-using LcmsNetSDK.Logging;
+using LcmsNetData;
+using LcmsNetData.Logging;
 
 namespace BuzzardWPF
 {
@@ -31,7 +31,7 @@ namespace BuzzardWPF
 
             ApplicationLogger.Message += ApplicationLogger_ItemLogged;
             ApplicationLogger.Error += ApplicationLogger_ItemLogged;
-            FileLogging.LogFilePathDefined += ApplicationLogger_LogFilePathDefined;
+            FileLogger.LogFilePathDefined += ApplicationLogger_LogFilePathDefined;
 
             var assem = Assembly.GetEntryAssembly();
             var assemName = assem.GetName();
@@ -113,7 +113,7 @@ namespace BuzzardWPF
             await Dispatcher.Yield();
             ApplicationLogger.Message -= ApplicationLogger_ItemLogged;
             ApplicationLogger.Error -= ApplicationLogger_ItemLogged;
-            FileLogging.LogFilePathDefined -= ApplicationLogger_LogFilePathDefined;
+            FileLogger.LogFilePathDefined -= ApplicationLogger_LogFilePathDefined;
             await Dispatcher.Yield();
             Dispatcher.Invoke(Close);
         }

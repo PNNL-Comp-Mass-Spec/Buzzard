@@ -1,0 +1,1269 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>LcmsNetData</name>
+    </assembly>
+    <members>
+        <member name="T:LcmsNetData.Configuration.CartConfiguration">
+            <summary>
+            Class that encapsulates the configuration of the cart from
+            systems to columns.
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.Configuration.CartConfiguration.MinimumSampleVolume">
+            <summary>
+            The minimum sample volume for this system.
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Configuration.CartConfiguration.NumberOfEnabledColumns">
+            <summary>
+            Gets the number of enabled columns.
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Configuration.CartConfiguration.Columns">
+            <summary>
+            Gets or sets the list of columns available.
+            </summary>
+        </member>
+        <member name="M:LcmsNetData.Configuration.CartConfiguration.BuildColumnList(System.Boolean)">
+            <summary>
+            Builds a list of columns from the cart configuration object.
+            </summary>
+            <param name="orderByFirst">Orders the list by the first selected column. e.g. list[0] = column3 iff column3.First = True</param>
+            <returns>List of columns stored in cart configuration.</returns>
+        </member>
+        <member name="P:LcmsNetData.Configuration.CartConfiguration.CartName">
+            <summary>
+            Gets or sets the name of the cart.
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Configuration.CartConfiguration.CartConfigName">
+            <summary>
+            Gets or sets the name of the cart configuration in use
+            </summary>
+        </member>
+        <member name="T:LcmsNetData.Data.ColumnData">
+            <summary>
+            Class that manages all of the information about a given column
+            </summary>
+        </member>
+        <member name="M:LcmsNetData.Data.ColumnData.#ctor">
+            <summary>
+            Default constructor.
+            </summary>
+        </member>
+        <member name="M:LcmsNetData.Data.ColumnData.Clone">
+            <summary>
+            Clone - get a deep copy
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:LcmsNetData.Data.ColumnData.DelegateFirstChanged">
+            <summary>
+            Delegate definition called if the column first value is changed.
+            </summary>
+            <param name="sender"></param>
+            <param name="first"></param>
+        </member>
+        <member name="F:LcmsNetData.Data.ColumnData.m_columnIndex">
+            <summary>
+            Index of the column.
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.Data.ColumnData.m_name">
+            <summary>
+            Name of the column
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.Data.ColumnData.m_systemIndex">
+            <summary>
+            System index of the column.
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.Data.ColumnData.m_status">
+            <summary>
+            Status of the column
+            </summary>
+        </member>
+        <member name="E:LcmsNetData.Data.ColumnData.StatusChanged">
+            <summary>
+            Fired when the status of a column changes.
+            </summary>
+        </member>
+        <member name="E:LcmsNetData.Data.ColumnData.ColorChanged">
+            <summary>
+            Fired when the color of the column changes.
+            </summary>
+        </member>
+        <member name="E:LcmsNetData.Data.ColumnData.FirstChanged">
+            <summary>
+            Fired if the first value of this column is changed.
+            </summary>
+        </member>
+        <member name="E:LcmsNetData.Data.ColumnData.NameChanged">
+            <summary>
+            An event that indicates the name of the column has changed.
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.Data.ColumnData.m_columnColor">
+            <summary>
+            Color of the column.
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.Data.ColumnData.colorString">
+            <summary>
+            Handles serialization of the column color.
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.Data.ColumnData.m_first">
+            <summary>
+            Flag indicating if this is the first column to run.
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.ColumnData.First">
+            <summary>
+            Gets or sets if the column is the first column designated to run.
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.ColumnData.Status">
+            <summary>
+            Gets or sets when the status changes.
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.ColumnData.ID">
+            <summary>
+            Gets or sets the column index.
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.ColumnData.SystemID">
+            <summary>
+            Gets or sets the system index.
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.ColumnData.Name">
+            <summary>
+            Gets or sets the name of the column.
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.ColumnData.Color">
+            <summary>
+            Gets or sets the color of the column.
+            </summary>
+        </member>
+        <member name="T:LcmsNetData.Data.ColumnStatus">
+            <summary>
+            Enumeration describing the status of a column.
+            </summary>
+        </member>
+        <member name="T:LcmsNetData.Data.ConvertVialPosition">
+            <summary>
+            Utilities for converting Vial (aka Well) position between LCMSNet and LCMS values
+            </summary>
+        </member>
+        <member name="M:LcmsNetData.Data.ConvertVialPosition.ConvertVialToString(System.Int32,System.Byte)">
+            <summary>
+            Converts a vial position in LCMS format (integer 1 - 96) to LCMSNet format (string A01 - H12)
+            Supports vials beyond 97, where vial 312 is vial Z12, then vial 313 is AA01, 314 is AA02, etc.
+            Highest vial number supported is 8424, which is ZZ12
+            </summary>
+            <param name="vialPosition">Vial position as integer</param>
+            <param name="columnsPerRow">Columns per row (default is 12)</param>
+            <returns>LCMSNet string-formatted vial position, or Z99 if an error</returns>
+            <remarks>
+            Vial 1 is position A01
+            ...
+            Vial 12 is position A12
+            Vial 13 is position B01
+            ...
+            Vial 24 is position B12
+            Vial 25 is position C01
+            ...
+            Vial 96 is position H12
+            </remarks>
+        </member>
+        <member name="M:LcmsNetData.Data.ConvertVialPosition.ConvertVialToInt(System.String,System.Byte)">
+            <summary>
+            Converts a vial position in LCMSNet format (string A1 - H12) to LCMS format (integer 1 - 96)
+            Supports positions beyond H12, where position Z12 is vial 312, then position AA01 is vial 313, AA02 is 314, etc.
+            Highest vial position supported is ZZ12, which is vial 8424
+            </summary>
+            <param name="vialPosition">Vial position as string</param>
+            <param name="columnsPerRow">Columns per row (default is 12)</param>
+            <returns>Vial position represented as an integer, or 9999 if the format of vialPosition is not recognized</returns>
+        </member>
+        <member name="M:LcmsNetData.Data.ConvertVialPosition.VerifyLCMSNetVialPosition">
+            <summary>
+            Use this function to view example column positions when columns per row is 12, 24, 36, ... 96
+            Also validates the round trip conversion from vial number to vial position then back to vial number
+            </summary>
+        </member>
+        <member name="T:LcmsNetData.Data.InstrumentInfo">
+             <summary>
+             Class to hold data about the instrument connected to the LC cart
+             </summary>
+            
+        </member>
+        <member name="P:LcmsNetData.Data.InstrumentInfo.DMSName">
+            <summary>
+            Instrument name as used in DMS
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.InstrumentInfo.CommonName">
+            <summary>
+            User-friendly name used for pick lists
+            </summary>
+            <remarks>Instrument name, then a space, then the instrument description</remarks>
+        </member>
+        <member name="P:LcmsNetData.Data.InstrumentInfo.MethodName">
+            <summary>
+            Gets or sets the name of the method used to capture data from this instrument
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.InstrumentInfo.Status">
+            <summary>
+            Gets or sets the instrument status
+            </summary>
+            <remarks>Status will be active, inactive, or offline</remarks>
+        </member>
+        <member name="P:LcmsNetData.Data.InstrumentInfo.HostName">
+            <summary>
+            Gets or sets the name of the computer that holds the data for the instrument
+            </summary>
+            <remarks>May contain a domain suffix, for example VPro02.bionet</remarks>
+        </member>
+        <member name="P:LcmsNetData.Data.InstrumentInfo.SharePath">
+            <summary>
+            Gets or sets the name of the shared folder for retrieving the instrument data
+            </summary>
+            <remarks>Typically a single folder name, like ProteomicsData\ but might contain subfolders, e.g. UserData\Nikola\AMOLF\</remarks>
+        </member>
+        <member name="M:LcmsNetData.Data.InstrumentInfo.Clone">
+            <summary>
+            Clone - make a deep copy
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LcmsNetData.Data.LcmsNetDataClassBase.GetPropertyValues">
+            <summary>
+            Gets current values for all the properties in the class in key/value format
+            </summary>
+            <returns>String dictionary containing current values of all properties</returns>
+        </member>
+        <member name="M:LcmsNetData.Data.LcmsNetDataClassBase.LoadPropertyValues(System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            Loads the class properties from a string dictionary
+            </summary>
+            <param name="propValues">String dictionary containing property names and values</param>
+        </member>
+        <member name="T:LcmsNetData.Data.MRMFileData">
+            <summary>
+            Holds MRM file data downloaded from DMS
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.MRMFileData.FileName">
+            <summary>
+            Name of MRM file
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.MRMFileData.FileContents">
+            <summary>
+            Contents of MRM file
+            </summary>
+        </member>
+        <member name="M:LcmsNetData.Data.PalData.#ctor">
+            <summary>
+            Default constructor.
+            </summary>
+        </member>
+        <member name="M:LcmsNetData.Data.PalData.Clone">
+            <summary>
+            Returns a new object reference to a cloned copy of this PAL data.
+            </summary>
+            <returns>A new object reference as a copy of this.</returns>
+        </member>
+        <member name="F:LcmsNetData.Data.PalData.CONST_DEFAULT_VIAL_NUMBER">
+            <summary>
+            Default sample vial number.  This should be invalid and force the user to update the sample information before running.
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.Data.PalData.CONST_MIN_WELLPLATE">
+            <summary>
+            Minimum wellplate number.
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.Data.PalData.CONST_MAX_WELLPLATE">
+            <summary>
+            Maximum wellplate number.
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.Data.PalData.palTray">
+            <summary>
+            Name of the PAL tray to use.
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.Data.PalData.well">
+            <summary>
+            Vial index to use.
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.PalData.Well">
+            <summary>
+            Gets or sets the vial number to pull sample from.
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.PalData.PALTray">
+            <summary>
+            Name of the PAL tray to use.
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.PalData.Method">
+            <summary>
+            Name of the PAL method to run.
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.PalData.WellPlate">
+            <summary>
+            The Wellplate name that is stored in DMS.
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.Data.SampleDataBasic.dmsData">
+            <summary>
+            DMS Data structure.
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.Data.SampleDataBasic.palData">
+            <summary>
+            Pal Data reference.
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.Data.SampleDataBasic.columnData">
+            <summary>
+            Information regarding what column the sample is to be, or did run on.
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.Data.SampleDataBasic.methodBasic">
+            <summary>
+            LC Method that controls all of the hardware via the scheduling interface - UI consistent version.
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.Data.SampleDataBasic.instrumentData">
+            <summary>
+            Instrument info.
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.SampleDataBasic.InstrumentData">
+            <summary>
+            Gets or sets the instrument object data.
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.SampleDataBasic.ActualLCMethodBasic">
+            <summary>
+            Gets or sets the experiment setup object data.
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.SampleDataBasic.LCMethodBasic">
+            <summary>
+            Gets or sets the experiment setup object data.
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.SampleDataBasic.DmsData">
+            <summary>
+            Gets or sets the list of data downloaded from DMS for this sample
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.SampleDataBasic.PAL">
+            <summary>
+            Gets or sets the pal data associated with this sample.
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.SampleDataBasic.ColumnData">
+            <summary>
+            Gets or sets the column data this sample is/was run on.
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.SampleDataBasic.Operator">
+            <summary>
+            Operator performing LC run
+            </summary>
+        </member>
+        <member name="M:LcmsNetData.Data.SampleDataBasic.GetPropertyValues">
+            <summary>
+            Gets current values for all the properties in the class in key/value format
+            </summary>
+            <returns>String dictionary containing current values of all properties</returns>
+        </member>
+        <member name="T:LcmsNetData.Data.SampleQueryData">
+            <summary>
+            Class for holding data used to query DMS for samples to run
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.Data.SampleQueryData.m_QueryParams">
+            <summary>
+            Dictionary of filters to apply when finding requested runs
+            </summary>
+            <remarks>Keys are RequestName, MinRequestNum, MaxRequestNum, BatchID, Block, Cart, or Wellplate</remarks>
+        </member>
+        <member name="P:LcmsNetData.Data.SampleQueryData.RequestName">
+            <summary>
+            Requested run name
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.SampleQueryData.MinRequestNum">
+            <summary>
+            Minimum request ID (integer)
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.SampleQueryData.MaxRequestNum">
+            <summary>
+            Maximum request ID (integer)
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.SampleQueryData.BatchID">
+            <summary>
+            Batch ID to use
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.SampleQueryData.Block">
+            <summary>
+            Block to use
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.SampleQueryData.Cart">
+            <summary>
+            Cart name (supports partial match)
+            </summary>
+        </member>
+        <member name="M:LcmsNetData.Data.SampleQueryData.#ctor">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:LcmsNetData.Data.SampleQueryData.AddQueryFilter(System.Text.StringBuilder,System.String,System.String)">
+            <summary>
+            If a specified filter is defined, append the appropriate SQL to the query builder
+            </summary>
+            <param name="queryBldr"></param>
+            <param name="sqlFilter"></param>
+            <param name="filterName"></param>
+        </member>
+        <member name="M:LcmsNetData.Data.SampleQueryData.GetValueIfFound(System.String)">
+            <summary>
+            Tests for existence of spcified key in dictionary
+            </summary>
+            <param name="dictKey">Key name</param>
+            <returns>Key value if found, otherwise empty string</returns>
+        </member>
+        <member name="M:LcmsNetData.Data.SampleQueryData.BuildSqlString">
+            <summary>
+            Build the query string for retrieving data from V_Scheduled_Run_Export
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:LcmsNetData.Data.SampleRunningStatus">
+            <summary>
+            Enumeration describing the status of a sample.
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.Data.SampleRunningStatus.Queued">
+            <summary>
+            Queued but not told to execute.
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.Data.SampleRunningStatus.Stopped">
+            <summary>
+            Stopped
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.Data.SampleRunningStatus.WaitingToRun">
+            <summary>
+            Waiting to run.
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.Data.SampleRunningStatus.Running">
+            <summary>
+            Sample is currently running.
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.Data.SampleRunningStatus.Complete">
+            <summary>
+            Sample successfully finished running.
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.Data.SampleRunningStatus.Error">
+            <summary>
+            Error occurred during the run.
+            </summary>
+        </member>
+        <member name="T:LcmsNetData.Data.DMSData">
+            <summary>
+            Dataset information supplied by or required by DMS; includes run request information
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.Data.DMSData.ValidDatasetNameRegexString">
+            <summary>
+            The matching string to ensure only valid characters exist in a dataset name
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.Data.DMSData.ValidDatasetNameCharacters">
+            <summary>
+            The list of characters allowed in a dataset name
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.Data.DMSData.NameValidationRegex">
+            <summary>
+            Regex to use to test if a dataset name only contains valid characters
+            </summary>
+        </member>
+        <member name="M:LcmsNetData.Data.DMSData.Clone">
+            <summary>
+            Clone - get a deep copy
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LcmsNetData.Data.DMSData.CloneLocked">
+            <summary>
+            Clones the data and locks it
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LcmsNetData.Data.DMSData.CloneLockedWithPath(System.String)">
+            <summary>
+            Clones the data and locks it, and sets the dataset name to the filename in <paramref name="filePath"/>
+            </summary>
+            <param name="filePath"></param>
+            <returns></returns>
+        </member>
+        <member name="P:LcmsNetData.Data.DMSData.LockData">
+            <summary>
+            When the data comes from DMS, it will be locked. This is meant to stop the user
+            from altering it. (this is not used in LCMSNet; it is used in Buzzard)
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.DMSData.SelectedToRun">
+            <summary>
+            Flag for determining if request from DMS has been selected for running
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.DMSData.RequestName">
+            <summary>
+            Name of request in DMS. Becomes sample name in LCMS and forms part
+            of dataset name sample after run
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.DMSData.DatasetName">
+            <summary>
+            Gets or sets the name of the dataset after editing the request name.
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.DMSData.RequestID">
+            <summary>
+            Numeric ID of request in DMS
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.DMSData.Experiment">
+            <summary>
+            Experiment name
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.DMSData.DatasetType">
+            <summary>
+            Dataset type (ie, HMS-MSn, HMS, etc)
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.DMSData.EMSLUsageType">
+            <summary>
+            EMSL usage type
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.DMSData.EMSLProposalID">
+            <summary>
+            EUS user proposal ID
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.DMSData.UserList">
+            <summary>
+            EUS user list
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.DMSData.CartName">
+            <summary>
+            Name of cart used for sample run
+            </summary>
+            <remarks>This is an editable field even if the DMS Request has been resolved.</remarks>
+        </member>
+        <member name="P:LcmsNetData.Data.DMSData.CartConfigName">
+            <summary>
+            Name of cart configuration for the current cart
+            </summary>
+            <remarks>This is an editable field even if the DMS Request has been resolved.</remarks>
+        </member>
+        <member name="P:LcmsNetData.Data.DMSData.Comment">
+            <summary>
+            Comment field
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.DMSData.MRMFileID">
+            <summary>
+            File ID for locating MRM file to download
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.DMSData.Block">
+            <summary>
+            Block ID for blocking/randomizing
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.DMSData.RunOrder">
+            <summary>
+            Run order for blocking/randomizing
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.DMSData.Batch">
+            <summary>
+            Batch number for blocking/randomizing
+            </summary>
+        </member>
+        <member name="M:LcmsNetData.Data.DMSData.LoadPropertyValues(System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            Loads the class properties from a string dictionary
+            </summary>
+            <param name="propValues">String dictionary containing property names and values</param>
+        </member>
+        <member name="M:LcmsNetData.Data.TriggerFileUtils.CheckLocalTriggerFiles">
+            <summary>
+            Tests for presence of local trigger files
+            </summary>
+            <returns>TRUE if trigger files present, FALSE otherwise</returns>
+        </member>
+        <member name="M:LcmsNetData.Data.TriggerFileUtils.MoveLocalTriggerFiles">
+            <summary>
+            Moves local trigger files to a remote server
+            </summary>
+        </member>
+        <member name="T:LcmsNetData.Data.UserInfo">
+            <summary>
+            Class to hold data about LcmsNet users
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.UserInfo.UserName">
+            <summary>
+            Name of user
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.UserInfo.PayrollNum">
+            <summary>
+            Payroll number (network login) of user
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.ProgressEventArgs.CurrentTask">
+            <summary>
+            Description of the current task
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.ProgressEventArgs.PercentComplete">
+            <summary>
+            Value between 0 and 100
+            </summary>
+        </member>
+        <member name="T:LcmsNetData.ICacheInterface">
+            <summary>
+            Interface for data classes that use the cache database
+            </summary>
+        </member>
+        <member name="M:LcmsNetData.NotifyPropertyChangedExtensions.RaiseAndSetIfChanged``1(LcmsNetData.INotifyPropertyChangedExt,``0@,``0,System.String)">
+            <summary>
+            If the newValue is not equal to the backingField value (using default EqualityComparer), sets backingField and raises OnPropertyChanged
+            </summary>
+            <typeparam name="TRet"></typeparam>
+            <param name="obj"></param>
+            <param name="backingField"></param>
+            <param name="newValue"></param>
+            <param name="propertyName"></param>
+            <returns>final value of backingField</returns>
+        </member>
+        <member name="M:LcmsNetData.NotifyPropertyChangedExtensions.RaiseAndSetIfChangedRetBool``1(LcmsNetData.INotifyPropertyChangedExt,``0@,``0,System.String)">
+            <summary>
+            If the newValue is not equal to the backingField value (using default EqualityComparer), sets backingField and raises OnPropertyChanged
+            </summary>
+            <typeparam name="TRet"></typeparam>
+            <param name="obj"></param>
+            <param name="backingField"></param>
+            <param name="newValue"></param>
+            <param name="propertyName"></param>
+            <returns>true if changed, false if not</returns>
+        </member>
+        <member name="M:LcmsNetData.NotifyPropertyChangedExtensions.RaiseAndSetIfChangedLockCheck``1(LcmsNetData.INotifyPropertyChangedExt,``0@,``0,System.Boolean,System.String)">
+            <summary>
+            If isLocked is false and the newValue is not equal to the backingField value (using default EqualityComparer), sets backingField and raises OnPropertyChanged
+            </summary>
+            <typeparam name="TRet"></typeparam>
+            <param name="obj"></param>
+            <param name="backingField"></param>
+            <param name="newValue"></param>
+            <param name="isLocked"></param>
+            <param name="propertyName"></param>
+            <returns>final value of backingField</returns>
+        </member>
+        <member name="M:LcmsNetData.NotifyPropertyChangedExtensions.RaiseAndSetIfChangedLockCheckRetBool``1(LcmsNetData.INotifyPropertyChangedExt,``0@,``0,System.Boolean,System.String)">
+            <summary>
+            If isLocked is false and the newValue is not equal to the backingField value (using default EqualityComparer), sets backingField and raises OnPropertyChanged
+            </summary>
+            <typeparam name="TRet"></typeparam>
+            <param name="obj"></param>
+            <param name="backingField"></param>
+            <param name="newValue"></param>
+            <param name="isLocked"></param>
+            <param name="propertyName"></param>
+            <returns>true if changed, false if not</returns>
+        </member>
+        <member name="M:LcmsNetData.NotifyPropertyChangedExtensions.RaisePropertyChanged(LcmsNetData.INotifyPropertyChangedExt,System.String)">
+            <summary>
+            Raise the PropertyChanged event for the given/current property
+            </summary>
+            <param name="obj"></param>
+            <param name="propertyName"></param>
+        </member>
+        <member name="T:LcmsNetData.LCMSSettings">
+            <summary>
+            Class to handle program settings data
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.LCMSSettings.m_Settings">
+            <summary>
+            String dictionary to hold settings data
+            </summary>
+        </member>
+        <member name="M:LcmsNetData.LCMSSettings.#cctor">
+            <summary>
+            Constructor to initialize static members
+            </summary>
+        </member>
+        <member name="M:LcmsNetData.LCMSSettings.SetParameter(System.String,System.String)">
+            <summary>
+            Adds to or changes a parameter in the string dictionary
+            </summary>
+            <param name="ItemKey">Key for item</param>
+            <param name="ItemValue">Value of item</param>
+        </member>
+        <member name="M:LcmsNetData.LCMSSettings.GetParameter(System.String)">
+            <summary>
+            Retrieves specified item from string dictionary
+            </summary>
+            <param name="itemKey">Key for item to be retrieved</param>
+            <returns>The value for the setting, or an empty string if the itemKey is not defined</returns>
+        </member>
+        <member name="M:LcmsNetData.LCMSSettings.GetParameter(System.String,System.Boolean)">
+            <summary>
+            Retrieves specified item from string dictionary, converting it to a boolean
+            </summary>
+            <param name="itemKey">Key for item to be retrieved</param>
+            <param name="defaultValue">Default value</param>
+            <returns>
+            The value for the setting, or defaultValue if the itemKey
+            is not defined or if it cannot be converted to a boolean
+            </returns>
+            <remarks>If the value is an integer, will return false if 0 or true if non-zero</remarks>
+        </member>
+        <member name="M:LcmsNetData.LCMSSettings.GetParameter(System.String,System.Int32)">
+            <summary>
+            Retrieves specified item from string dictionary, converting it to an integer
+            </summary>
+            <param name="itemKey">Key for item to be retrieved</param>
+            <param name="defaultValue">Default value</param>
+            <returns>
+            The value for the setting, or defaultValue if the itemKey
+            is not defined or if it cannot be converted to an integer
+            </returns>
+        </member>
+        <member name="M:LcmsNetData.LCMSSettings.GetParameter(System.String,System.Double)">
+            <summary>
+            Retrieves specified item from string dictionary, converting it to a double
+            </summary>
+            <param name="itemKey">Key for item to be retrieved</param>
+            <param name="defaultValue">Default value</param>
+            <returns>
+            The value for the setting, or defaultValue if the itemKey
+            is not defined or if it cannot be converted to a double
+            </returns>
+        </member>
+        <member name="T:LcmsNetData.Logging.ApplicationLogger">
+            <summary>
+            Class that marshals messages from different components to different logging and streaming capabilities.
+            </summary>
+        </member>
+        <member name="T:LcmsNetData.Logging.ApplicationLogger.DelegateErrorHandler">
+            <summary>
+            Delegate method handler defining how an error event will be called.
+            </summary>
+            <param name="errorLevel"></param>
+            <param name="args"></param>
+        </member>
+        <member name="T:LcmsNetData.Logging.ApplicationLogger.DelegateMessageHandler">
+            <summary>
+            Delegate method handler defining how a message event will be called.
+            </summary>
+            <param name="messageLevel"></param>
+            <param name="args"></param>
+        </member>
+        <member name="F:LcmsNetData.Logging.ApplicationLogger.CONST_STATUS_LEVEL_CRITICAL">
+            <summary>
+            Critical and should always be logged.
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.Logging.ApplicationLogger.CONST_STATUS_LEVEL_DETAILED">
+            <summary>
+            More detailed error levels.
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.Logging.ApplicationLogger.CONST_STATUS_LEVEL_USER">
+            <summary>
+            Less likely to need to be logged.
+            </summary>
+        </member>
+        <member name="E:LcmsNetData.Logging.ApplicationLogger.Message">
+            <summary>
+            Found when the application finds a message.
+            </summary>
+        </member>
+        <member name="E:LcmsNetData.Logging.ApplicationLogger.Error">
+            <summary>
+            Fired when the application has an error.
+            </summary>
+        </member>
+        <member name="M:LcmsNetData.Logging.ApplicationLogger.LogError(System.Int32,System.String,System.Exception,LcmsNetData.Data.SampleDataBasic)">
+            <summary>
+            Logs an error to the listening error output streams
+            </summary>
+            <param name="errorLevel">Level of the error message so more verbose errors can be filtered (0 is most important, 5 is least important)</param>
+            <param name="message">Error message</param>
+            <param name="ex">Exception</param>
+            <param name="sample">Data for a sample</param>
+        </member>
+        <member name="M:LcmsNetData.Logging.ApplicationLogger.LogError(LcmsNetData.Logging.LogLevel,System.String,System.Exception,LcmsNetData.Data.SampleDataBasic)">
+            <summary>
+            Logs an error to the listening error output streams
+            </summary>
+            <param name="errorLevel">Level of the error message so more verbose errors can be filtered</param>
+            <param name="message">Error message</param>
+            <param name="ex">Exception</param>
+            <param name="sample">Data for a sample</param>
+        </member>
+        <member name="M:LcmsNetData.Logging.ApplicationLogger.LogMessage(System.Int32,System.String,LcmsNetData.Data.SampleDataBasic)">
+            <summary>
+            Logs a message to the listening message output streams.
+            </summary>
+            <param name="messageLevel">Level of the message so more verbose messages can be filtered (0 is most important, 5 is least important)</param>
+            <param name="message">Message to log</param>
+            <param name="sample">Sample data</param>
+            <remarks>
+            When MessageLevel is 0, only critical errors are logged
+            When MessageLevel is 5, all messages are logged
+            </remarks>
+        </member>
+        <member name="M:LcmsNetData.Logging.ApplicationLogger.LogMessage(LcmsNetData.Logging.LogLevel,System.String,LcmsNetData.Data.SampleDataBasic)">
+            <summary>
+            Logs a message to the listening message output streams.
+            </summary>
+            <param name="messageLevel">Level of the message so more verbose messages can be filtered</param>
+            <param name="message">Message to log</param>
+            <param name="sample">Sample data</param>
+            <remarks>
+            When MessageLevel is 0, only critical errors are logged
+            When MessageLevel is 5, all messages are logged
+            </remarks>
+        </member>
+        <member name="T:LcmsNetData.Logging.ErrorLoggerArgs">
+            <summary>
+            Class that encapsulates an error found by a component.
+            </summary>
+        </member>
+        <member name="M:LcmsNetData.Logging.ErrorLoggerArgs.#ctor(System.String)">
+            <summary>
+            Constructor that takes the error message.
+            </summary>
+            <param name="message">Error message</param>
+        </member>
+        <member name="M:LcmsNetData.Logging.ErrorLoggerArgs.#ctor(System.String,LcmsNetData.Data.SampleDataBasic)">
+            <summary>
+            Constructor that takes the error message.
+            </summary>
+            <param name="message">Error message</param>
+            <param name="sample"></param>
+        </member>
+        <member name="M:LcmsNetData.Logging.ErrorLoggerArgs.#ctor(System.String,System.Exception)">
+            <summary>
+            Constructor that takes an error message and an exception.
+            </summary>
+            <param name="message">Error message</param>
+            <param name="ex">Exception found</param>
+        </member>
+        <member name="M:LcmsNetData.Logging.ErrorLoggerArgs.#ctor(System.String,System.Exception,LcmsNetData.Data.SampleDataBasic)">
+            <summary>
+            Constructor that takes an error message and an exception.
+            </summary>
+            <param name="message">Error message</param>
+            <param name="ex">Exception found</param>
+            <param name="sample"></param>
+        </member>
+        <member name="P:LcmsNetData.Logging.ErrorLoggerArgs.Exception">
+            <summary>
+            Gets or sets the exception associated with the error message if any.
+            </summary>
+        </member>
+        <member name="T:LcmsNetData.Logging.FileLogger">
+            <summary>
+            Logs errors and messages to a file
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.Logging.FileLogger.logFileCreated">
+            <summary>
+            Flag indicating whether a log file has been created for this program start.
+            </summary>
+        </member>
+        <member name="M:LcmsNetData.Logging.FileLogger.#ctor">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="T:LcmsNetData.Logging.FileLogger.DelegateLogPathReporter">
+            <summary>
+            Delegate method handler defining how an error event will be called.
+            </summary>
+            <param name="args"></param>
+        </member>
+        <member name="E:LcmsNetData.Logging.FileLogger.LogFilePathDefined">
+            <summary>
+            Fired when the log file path is defined
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Logging.FileLogger.LogPath">
+            <summary>
+            Gets the file log path.
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Logging.FileLogger.AppFolder">
+            <summary>
+            Gets the file log path.
+            </summary>
+        </member>
+        <member name="M:LcmsNetData.Logging.FileLogger.GetExceptionMessage(System.Exception,System.String@)">
+            <summary>
+            Unwraps nested exception messages
+            </summary>
+            <param name="ex">Input exception</param>
+            <param name="msg">Message(s) contained in exception</param>
+        </member>
+        <member name="M:LcmsNetData.Logging.FileLogger.WriteToLogFile(System.String)">
+            <summary>
+            Writes a string to the log file
+            </summary>
+            <param name="msgStr">String to write</param>
+        </member>
+        <member name="M:LcmsNetData.Logging.FileLogger.CreateLogFilePath">
+            <summary>
+            Creates a log file name
+            </summary>
+            <returns>Name and path of error log file</returns>
+        </member>
+        <member name="P:LcmsNetData.Logging.IHandlesLogging.ErrorLevel">
+            <summary>
+            Error message importance level (0 is most important, 5 is least important)
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Logging.IHandlesLogging.MessageLevel">
+            <summary>
+            Status message importance level (0 is most important, 5 is least important)
+            </summary>
+            <remarks>
+            When MessageLevel is 0, only critical errors are logged
+            When MessageLevel is 5, all messages are logged
+            </remarks>
+        </member>
+        <member name="P:LcmsNetData.Logging.IHandlesLogging.ErrorLogLevel">
+            <summary>
+            Error message importance level
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Logging.IHandlesLogging.MessageLogLevel">
+            <summary>
+            Status message importance level
+            </summary>
+        </member>
+        <member name="M:LcmsNetData.Logging.IHandlesLogging.LogError(System.Int32,LcmsNetData.Logging.ErrorLoggerArgs)">
+            <summary>
+            Logs an error
+            </summary>
+            <param name="errorLevel">Error level</param>
+            <param name="args">Message arguments</param>
+        </member>
+        <member name="M:LcmsNetData.Logging.IHandlesLogging.LogMessage(System.Int32,LcmsNetData.Logging.MessageLoggerArgs)">
+            <summary>
+            Logs a message
+            </summary>
+            <param name="msgLevel">Message level</param>
+            <param name="args">Message arguments</param>
+        </member>
+        <member name="T:LcmsNetData.Logging.LogLevel">
+            <summary>
+            Logging levels enum
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.Logging.LogLevel.Fatal">
+            <summary>
+            Errors causing program shutdown
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.Logging.LogLevel.Error">
+            <summary>
+            Errors that don't cause program shutdown, but are undesireable and probably should be shown to the user
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.Logging.LogLevel.Warning">
+            <summary>
+            Warnings or anamolies in program execution that might be of interest
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.Logging.LogLevel.Info">
+            <summary>
+            Informational messages
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.Logging.LogLevel.Debug">
+            <summary>
+            Info that will be useful when trying to debug an issue
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.Logging.LogLevel.Trace">
+            <summary>
+            Verbose info that may be useful in debugging
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.Logging.LogLevel.ExcessivelyVerbose">
+            <summary>
+            Doesn't really need to be logged
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Logging.LogWriterBase.ErrorLevel">
+            <summary>
+            Error message importance level (0 is most important, 5 is least important)
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Logging.LogWriterBase.MessageLevel">
+            <summary>
+            Status message importance level (0 is most important, 5 is least important)
+            </summary>
+            <remarks>
+            When MessageLevel is 0, only critical errors are logged
+            When MessageLevel is 5, all messages are logged
+            </remarks>
+        </member>
+        <member name="P:LcmsNetData.Logging.LogWriterBase.ErrorLogLevel">
+            <summary>
+            Error message importance level
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Logging.LogWriterBase.MessageLogLevel">
+            <summary>
+            Status message importance level
+            </summary>
+        </member>
+        <member name="M:LcmsNetData.Logging.LogWriterBase.LogError(System.Int32,LcmsNetData.Logging.ErrorLoggerArgs)">
+            <summary>
+            Logs an error
+            </summary>
+            <param name="errorLevel">Error level</param>
+            <param name="args">Message arguments</param>
+        </member>
+        <member name="M:LcmsNetData.Logging.LogWriterBase.LogMessage(System.Int32,LcmsNetData.Logging.MessageLoggerArgs)">
+            <summary>
+            Logs a message
+            </summary>
+            <param name="msgLevel">Message level</param>
+            <param name="args">Message arguments</param>
+        </member>
+        <member name="T:LcmsNetData.Logging.MessageLoggerArgs">
+            <summary>
+            Class that encapsulates a message generated by a component.
+            </summary>
+        </member>
+        <member name="M:LcmsNetData.Logging.MessageLoggerArgs.#ctor(System.String)">
+            <summary>
+            Constructor that takes the error message.
+            </summary>
+            <param name="message">Error message</param>
+        </member>
+        <member name="M:LcmsNetData.Logging.MessageLoggerArgs.#ctor(System.String,LcmsNetData.Data.SampleDataBasic)">
+            <summary>
+            Constructor that takes the error message.
+            </summary>
+            <param name="message">Error message</param>
+            <param name="sample"></param>
+        </member>
+        <member name="P:LcmsNetData.Logging.MessageLoggerArgs.Message">
+            <summary>
+            Gets or sets the error message associated with the error.
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Logging.MessageLoggerArgs.Sample">
+            <summary>
+            Gets or sets the sample data associated with this method.
+            </summary>
+        </member>
+        <member name="T:LcmsNetData.MessageBoxDisplayExtension">
+            <summary>
+            Extension method for Window involving message box
+            </summary>
+        </member>
+        <member name="M:LcmsNetData.MessageBoxDisplayExtension.ShowMessage(System.Windows.Window,System.String,System.String,System.Windows.MessageBoxButton,System.Windows.MessageBoxImage,System.Windows.MessageBoxResult,System.Windows.MessageBoxOptions)">
+            <summary>
+            Displays a message box that has a message, title bar caption, button, and icon; and that accepts a default message box result, complies with the specified options, and returns a result.
+            </summary>
+            <param name="window">Window for display context</param>
+            <param name="messageBoxText">Text to display</param>
+            <param name="caption">Title bar caption</param>
+            <param name="button">Which button(s) to display</param>
+            <param name="icon">Title bar icon</param>
+            <param name="defaultResult">default result of the message box</param>
+            <param name="options">message box options</param>
+            <returns>Result specifying what button the user clicked</returns>
+        </member>
+        <member name="M:LcmsNetData.Method.LCMethodBasic.#ctor">
+            <summary>
+            Default Constructor
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.Method.LCMethodBasic.startTime">
+            <summary>
+            Start time of the method
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.Method.LCMethodBasic.methodDuration">
+            <summary>
+            Duration of the method.
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.Method.LCMethodBasic.endTime">
+            <summary>
+            End date only calculated at call of End property to get around serialization issues.
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.Method.LCMethodBasic.actualStart">
+            <summary>
+            Actual start time of the method
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.Method.LCMethodBasic.actualEnd">
+            <summary>
+            Actual end time of the method
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Method.LCMethodBasic.Duration">
+            <summary>
+            Gets or sets the duration for this action.
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Method.LCMethodBasic.End">
+            <summary>
+            Gets the end time of the action.
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Method.LCMethodBasic.Name">
+            <summary>
+            Gets or sets the name of the Method.
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Method.LCMethodBasic.Start">
+            <summary>
+            Gets the start time of this action.
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Method.LCMethodBasic.ActualStart">
+            <summary>
+            Gets the actual start of the sample.
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Method.LCMethodBasic.ActualEnd">
+            <summary>
+            Gets the actual end time of the sample.
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Method.LCMethodBasic.ActualDuration">
+            <summary>
+            Gets the actual duration of the experiment that was run.
+            </summary>
+        </member>
+        <member name="M:LcmsNetData.Method.LCMethodBasic.SetStartTime(System.DateTime)">
+            <summary>
+            Sets the start time for the method and updates the internal event start times.
+            </summary>
+            <param name="start">Time to start the method.</param>
+        </member>
+        <member name="M:LcmsNetData.Method.LCMethodBasic.SetStartTimeAndDuration(System.DateTime,System.TimeSpan)">
+            <summary>
+            Set the method start time and duration
+            </summary>
+            <param name="start"></param>
+            <param name="duration"></param>
+        </member>
+        <member name="M:LcmsNetData.Method.LCMethodBasic.ToString">
+            <summary>
+            Returns the name of the method.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LcmsNetData.Method.LCMethodBasic.GetPropertyValues">
+            <summary>
+            Returns a string dictionary containing the key to the method rather than all of the
+            events contained within.
+            </summary>
+            <returns>StringDictionary containing the name of the LC Method</returns>
+        </member>
+        <member name="M:LcmsNetData.Method.LCMethodBasic.LoadPropertyValues(System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            Loads the name of the method and stores it.
+            </summary>
+            <param name="propValues"></param>
+        </member>
+        <member name="M:LcmsNetData.System.TimeKeeper.ConvertToTimeZone(System.DateTime,System.String)">
+            <summary>
+            Convert a DateTime object to the specified time zone
+            </summary>
+            <param name="time">a DateTime object containing the date and time to convert</param>
+            <param name="timeZoneId">a string representing the time zone to convert to</param>
+            <returns>a DateTime object containing the date and time in the requested timezone</returns>
+        </member>
+        <member name="M:LcmsNetData.System.TimeKeeper.DoDateTimesSpanDaylightSavingsTransition(System.DateTime,System.DateTime)">
+            <summary>
+            Determine if two dates cross over a daylight savings time transition
+            </summary>
+            <param name="start">DateTime object containing the starting date and time</param>
+            <param name="end">DateTime object containing the ending date and time</param>
+            <returns>true if a DST transition occurs between the two DateTimes, false otherwise</returns>
+        </member>
+        <member name="M:LcmsNetData.System.TimeKeeper.ConvertToDateTime(System.TimeZoneInfo.TransitionTime,System.Int32)">
+            <summary>
+            convert a daylight savings transition rule to a date
+            </summary>
+            <param name="transition">a TransitionTime struct for a specific TimeZoneInfo(and thus a specific timezone)</param>
+            <param name="year">An int representing the year to apply the rule to</param>
+            <returns>A DateTime object containing the exact date and time the transition occurs for the specified year</returns>
+        </member>
+        <member name="P:LcmsNetData.System.TimeKeeper.Now">
+            <summary>
+            Get current time as defined by the currently selected timezone
+            </summary>
+            <remarks>The time will be adjusted for daylight savings, as appropriate</remarks>
+        </member>
+        <member name="T:LcmsNetData.WpfConversions">
+            <summary>
+            Utility functions for WPF, particularly for conversions from WinForms formatting values to WPF formatting values
+            </summary>
+        </member>
+        <member name="M:LcmsNetData.WpfConversions.GetWpfLength(System.String)">
+            <summary>
+            Converts a size, like what can be specified in xaml, to the pixel size.
+            </summary>
+            <param name="srcLength">Desired length, with units. Format should be like "8pt" (no space), supported units are 'px', 'in', 'cm', and 'pt', no units assumes 'px'.</param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

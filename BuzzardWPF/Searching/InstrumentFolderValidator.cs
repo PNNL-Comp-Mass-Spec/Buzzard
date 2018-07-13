@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Management;
-using LcmsNetSDK.Data;
-using LcmsNetSDK.Logging;
+using LcmsNetData.Data;
+using LcmsNetData.Logging;
 
 namespace BuzzardWPF.Searching
 {

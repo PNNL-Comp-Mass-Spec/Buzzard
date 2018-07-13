@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using BuzzardWPF.Management;
 using BuzzardWPF.Searching;
-using LcmsNetSDK.Logging;
+using LcmsNetData.Logging;
 using ReactiveUI;
 
 namespace BuzzardWPF.ViewModels

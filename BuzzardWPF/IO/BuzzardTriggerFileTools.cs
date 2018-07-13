@@ -5,9 +5,9 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Xml;
 using BuzzardWPF.Data;
-using LcmsNetSDK;
-using LcmsNetSDK.Data;
-using LcmsNetSDK.Logging;
+using LcmsNetData;
+using LcmsNetData.Data;
+using LcmsNetData.Logging;
 
 namespace BuzzardWPF.IO
 {
@@ -40,7 +40,7 @@ namespace BuzzardWPF.IO
         /// <param name="dmsData"></param>
         // <returns>Trigger file XML (as a string) if success, otherwise null</returns>
         /// <remarks>In the dataset object, DatasetStatus will be set to MissingRequiredInfo if field validation fails</remarks>
-        public static string CreateTriggerString(SampleData sample, BuzzardDataset dataset, DMSData dmsData)
+        public static string CreateTriggerString(SampleDataBasic sample, BuzzardDataset dataset, DMSData dmsData)
         {
             if (!ValidateDatasetName(dataset, dmsData.DatasetName))
             {
@@ -65,7 +65,7 @@ namespace BuzzardWPF.IO
         /// <returns>Trigger file path if success, otherwise null</returns>
         /// <remarks>In the dataset object, DatasetStatus will be set to MissingRequiredInfo if field validation fails</remarks>
         public static string GenerateTriggerFileBuzzard(
-            SampleData sample,
+            SampleDataBasic sample,
             BuzzardDataset dataset,
             DMSData dmsData,
             string remoteTriggerFolderPath)
@@ -101,7 +101,7 @@ namespace BuzzardWPF.IO
         /// <param name="dmsData"></param>
         /// <returns>XML trigger file document</returns>
         /// <remarks>In the dataset object, DatasetStatus will be set to MissingRequiredInfo if field validation fails</remarks>
-        private static XmlDocument GenerateXmlDoc(SampleData sample, BuzzardDataset dataset, DMSData dmsData)
+        private static XmlDocument GenerateXmlDoc(SampleDataBasic sample, BuzzardDataset dataset, DMSData dmsData)
         {
             // Create and initialize the document
             mobject_TriggerFileContents = new XmlDocument();
@@ -211,8 +211,8 @@ namespace BuzzardWPF.IO
             AddParam(rootElement, "EMSL Proposal ID", proposal);
             AddParam(rootElement, "EMSL Usage Type", usage);
             AddParam(rootElement, "EMSL Users List", userList);
-            AddParam(rootElement, "Run Start", sample.LCMethod.ActualStart.ToString("MM/dd/yyyy HH:mm:ss"));
-            AddParam(rootElement, "Run Finish", sample.LCMethod.ActualEnd.ToString("MM/dd/yyyy HH:mm:ss"));
+            AddParam(rootElement, "Run Start", sample.LCMethodBasic.ActualStart.ToString("MM/dd/yyyy HH:mm:ss"));
+            AddParam(rootElement, "Run Finish", sample.LCMethodBasic.ActualEnd.ToString("MM/dd/yyyy HH:mm:ss"));
 
             return mobject_TriggerFileContents;
         }
@@ -251,7 +251,7 @@ namespace BuzzardWPF.IO
         /// <param name="remoteTriggerFolderPath"></param>
         private static string SaveFile(
             XmlDocument doc,
-            SampleData sample,
+            SampleDataBasic sample,
             BuzzardDataset dataset,
             string remoteTriggerFolderPath)
         {
@@ -391,13 +391,13 @@ namespace BuzzardWPF.IO
             return datasetName;
         }
 
-        public static string GetTriggerFileName(SampleData sample, string extension, BuzzardDataset dataset)
+        public static string GetTriggerFileName(SampleDataBasic sample, string extension, BuzzardDataset dataset)
         {
             var datasetName = sample.DmsData.DatasetName;
             var outFileName =
                 string.Format("{0}_{1:MM.dd.yyyy_hh.mm.ss}_{2}{3}",
                                     dataset.CartName,
-                                    sample.LCMethod.Start,
+                                    sample.LCMethodBasic.Start,
                                     datasetName,
                                     extension);
             return outFileName;

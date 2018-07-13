@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel;
-using LcmsNetSDK.Data;
+using LcmsNetData.Data;
 using ReactiveUI;
 
 namespace BuzzardWPF.ViewModels

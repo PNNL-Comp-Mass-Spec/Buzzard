@@ -3,7 +3,7 @@ using System.Reactive;
 using BuzzardWPF.Management;
 using BuzzardWPF.Searching;
 using BuzzardWPF.Views;
-using LcmsNetSDK.Data;
+using LcmsNetData.Data;
 using ReactiveUI;
 
 namespace BuzzardWPF.ViewModels

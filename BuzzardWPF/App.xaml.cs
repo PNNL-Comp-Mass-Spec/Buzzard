@@ -2,7 +2,8 @@
 using System.Threading;
 using System.Windows;
 using BuzzardWPF.Management;
-using LcmsNetSDK.Logging;
+using LcmsNetData;
+using LcmsNetData.Logging;
 using LcmsNetSQLiteTools;
 
 namespace BuzzardWPF
@@ -33,12 +34,21 @@ namespace BuzzardWPF
             if (openMainWindow)
             {
                 dmsDataAccessorInstance = DMS_DataAccessor.Instance;
+                var mainVm = new MainWindowViewModel();
                 var mainWindow = new MainWindow()
                 {
-                    DataContext = new MainWindowViewModel()
+                    DataContext = mainVm,
                 };
                 Application.Current.MainWindow = mainWindow;
                 MainWindow = mainWindow;
+
+                // Set the logging levels (0 is most important; 5 is least important)
+                // When logLevel is 0, only critical messages are logged
+                // When logLevel is 5, all messages are logged
+                var logLevel = LCMSSettings.GetParameter("LoggingErrorLevel", MainWindowViewModel.CONST_DEFAULT_ERROR_LOG_LEVEL);
+                mainVm.ErrorLevel = logLevel;
+
+                mainVm.MessageLevel = MainWindowViewModel.CONST_DEFAULT_MESSAGE_LOG_LEVEL;
 
                 // Do this here so that closing the splash screen doesn't minimize/throw to the background the main window.
                 splashScreen.LoadComplete();

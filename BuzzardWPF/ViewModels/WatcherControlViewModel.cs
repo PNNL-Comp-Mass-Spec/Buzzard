@@ -10,7 +10,7 @@ using BuzzardWPF.IO;
 using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
 using BuzzardWPF.Searching;
-using LcmsNetSDK.Logging;
+using LcmsNetData.Logging;
 using ReactiveUI;
 
 namespace BuzzardWPF.ViewModels

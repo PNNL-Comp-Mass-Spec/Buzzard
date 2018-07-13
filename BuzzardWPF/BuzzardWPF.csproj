@@ -45,13 +45,12 @@
     <ApplicationIcon>Resources\IconImage.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LcmsNetData">
+      <HintPath>..\lib\LcmsNetData.dll</HintPath>
+    </Reference>
     <Reference Include="LcmsNetDmsTools">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\LcmsNetDmsTools.dll</HintPath>
-    </Reference>
-    <Reference Include="LcmsNetSdk">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\LcmsNetSdk.dll</HintPath>
     </Reference>
     <Reference Include="LcmsNetSQLiteTools">
       <SpecificVersion>False</SpecificVersion>
@@ -160,7 +159,6 @@
     <Compile Include="Views\FillDownWindow.xaml.cs">
       <DependentUpon>FillDownWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MessageBoxDisplayExtension.cs" />
     <Compile Include="Views\QCView.xaml.cs">
       <DependentUpon>QCView.xaml</DependentUpon>
     </Compile>

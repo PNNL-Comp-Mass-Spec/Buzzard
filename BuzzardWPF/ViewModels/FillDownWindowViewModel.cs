@@ -5,8 +5,8 @@ using System.Reactive.Linq;
 using BuzzardWPF.Data;
 using BuzzardWPF.Management;
 using BuzzardWPF.Views;
-using LcmsNetSDK.Data;
-using LcmsNetSDK.Logging;
+using LcmsNetData.Data;
+using LcmsNetData.Logging;
 using ReactiveUI;
 
 namespace BuzzardWPF.ViewModels

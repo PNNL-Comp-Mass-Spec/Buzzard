@@ -11,9 +11,9 @@ using System.Windows.Data;
 using BuzzardWPF.Data;
 using BuzzardWPF.IO;
 using BuzzardWPF.Properties;
-using LcmsNetSDK;
-using LcmsNetSDK.Data;
-using LcmsNetSDK.Logging;
+using LcmsNetData;
+using LcmsNetData.Data;
+using LcmsNetData.Logging;
 using ReactiveUI;
 
 namespace BuzzardWPF.Management
@@ -216,26 +216,26 @@ namespace BuzzardWPF.Management
                 return null;
             }
 
-            var sample = new SampleData
+            var sample = new SampleDataBasic
             {
-                LCMethod = new LcmsNetSDK.Method.LCMethod()
+                LCMethodBasic = new LcmsNetData.Method.LCMethodBasic()
             };
 
             var fiDatasetFile = new FileInfo(dataset.FilePath);
 
             if (fiDatasetFile.CreationTime < fiDatasetFile.LastWriteTime)
             {
-                sample.LCMethod.ActualStart = fiDatasetFile.CreationTime;
+                sample.LCMethodBasic.ActualStart = fiDatasetFile.CreationTime;
             }
             else
             {
                 // Creation time is later than the last write time
                 // The file was likely moved or copied from the original directory
-                sample.LCMethod.ActualStart = fiDatasetFile.LastWriteTime;
+                sample.LCMethodBasic.ActualStart = fiDatasetFile.LastWriteTime;
             }
 
-            sample.LCMethod.SetStartTime(sample.LCMethod.ActualStart);
-            sample.LCMethod.ActualEnd = fiDatasetFile.LastWriteTime;
+            sample.LCMethodBasic.ActualEnd = fiDatasetFile.LastWriteTime;
+            sample.LCMethodBasic.SetStartTime(sample.LCMethodBasic.ActualStart);
             sample.DmsData.DatasetName = dataset.DMSData.DatasetName;
 
             try
