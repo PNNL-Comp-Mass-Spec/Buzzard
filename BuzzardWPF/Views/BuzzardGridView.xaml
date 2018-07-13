@@ -9,7 +9,7 @@
     xmlns:dmsData="clr-namespace:LcmsNetSDK.Data;assembly=LcmsNetSdk"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:BuzzardWPF.ViewModels"
-    xmlns:cueBannerOverlay="clr-namespace:LcmsNetCommonControls.Controls.CueBannerOverlay;assembly=LcmsNetCommonControls"
+    xmlns:cueBannerOverlay="clr-namespace:WpfExtras.CueBannerOverlay;assembly=WpfExtras"
     d:DesignHeight="267"
     d:DesignWidth="749.4"
     Background="{x:Null}"

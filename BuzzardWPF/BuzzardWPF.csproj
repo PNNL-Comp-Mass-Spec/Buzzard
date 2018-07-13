@@ -45,9 +45,6 @@
     <ApplicationIcon>Resources\IconImage.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="LcmsNetCommonControls">
-      <HintPath>..\lib\LcmsNetCommonControls.dll</HintPath>
-    </Reference>
     <Reference Include="LcmsNetDmsTools">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\LcmsNetDmsTools.dll</HintPath>
@@ -75,6 +72,9 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WpfExtras">
+      <HintPath>..\lib\WpfExtras.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -141,6 +141,7 @@
     <Compile Include="Views\BuzzardGridView.xaml.cs">
       <DependentUpon>BuzzardGridView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\CheckComboBoxOverlayable.cs" />
     <Compile Include="Views\DatasetOverwriteDialogWindow.xaml.cs">
       <DependentUpon>DatasetOverwriteDialogWindow.xaml</DependentUpon>
     </Compile>

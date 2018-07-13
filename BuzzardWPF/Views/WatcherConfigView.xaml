@@ -6,7 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:BuzzardWPF.ViewModels"
     xmlns:views="clr-namespace:BuzzardWPF.Views"
-    xmlns:cueBannerOverlay="clr-namespace:LcmsNetCommonControls.Controls.CueBannerOverlay;assembly=LcmsNetCommonControls"
+    xmlns:cueBannerOverlay="clr-namespace:WpfExtras.CueBannerOverlay;assembly=WpfExtras"
     d:DesignHeight="400"
     d:DesignWidth="1050"
     mc:Ignorable="d"

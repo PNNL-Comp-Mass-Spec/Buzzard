@@ -4,9 +4,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:toolkit="http://schemas.xceed.com/wpf/xaml/toolkit"
     xmlns:viewModels="clr-namespace:BuzzardWPF.ViewModels"
-    xmlns:cueBannerOverlay="clr-namespace:LcmsNetCommonControls.Controls.CueBannerOverlay;assembly=LcmsNetCommonControls"
+    xmlns:views="clr-namespace:BuzzardWPF.Views"
+    xmlns:cueBannerOverlay="clr-namespace:WpfExtras.CueBannerOverlay;assembly=WpfExtras"
     d:DesignHeight="152.8"
     d:DesignWidth="600"
     mc:Ignorable="d"
@@ -117,8 +117,8 @@
                     Grid.Column="0"
                     Style="{StaticResource TextBlockStyle}"
                     Text="Proposal User:" />
-                <toolkit:CheckComboBox
-                    Name="PUserSelector"
+                <views:CheckComboBoxOverlayable
+                    x:Name="PUserSelector"
                     Grid.Row="2"
                     Grid.Column="1"
                     Margin="3"
@@ -130,7 +130,7 @@
                     <cueBannerOverlay:CueBannerService.CueBanner>
                         <TextBlock Text="Select" Margin="0" FontWeight="Regular" Style="{StaticResource TextBlockStyle}" />
                     </cueBannerOverlay:CueBannerService.CueBanner>
-                </toolkit:CheckComboBox>
+                </views:CheckComboBoxOverlayable>
             </Grid>
         </GroupBox>
     </StackPanel>
