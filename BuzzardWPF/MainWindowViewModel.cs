@@ -477,8 +477,10 @@ namespace BuzzardWPF
         /// </summary>
         private void SaveSettings(bool force = true)
         {
+            // Logging each auto-save is spamming the logs, and it is a bit excessive
+            var msgLevel = force ? 0 : 6;
             // Save settings
-            ApplicationLogger.LogMessage(0, "Starting to save settings to config.");
+            ApplicationLogger.LogMessage(msgLevel, "Starting to save settings to config.");
             var settingsChanged = false;
             settingsChanged |= BuzzardGridVm.SaveSettings(force);
             settingsChanged |= WatcherControlVm.SaveSettings(force);
@@ -489,7 +491,7 @@ namespace BuzzardWPF
             {
                 Settings.Default.Save();
             }
-            ApplicationLogger.LogMessage(0, "Settings saved to config.");
+            ApplicationLogger.LogMessage(msgLevel, "Settings saved to config.");
         }
 
         /// <summary>
