@@ -1142,6 +1142,8 @@ namespace BuzzardWPF.Management
 
                     if (chosenMonitor != null)
                     {
+                        ApplicationLogger.LogMessage(0, $"QC_Upload: Matched monitor \"{chosenMonitor.DatasetNameMatch}\" (experiment \"{chosenMonitor.ExperimentName}\") to dataset name \"{dataset.DMSData.DatasetName}\"");
+
                         dataset.ExperimentName = chosenMonitor.ExperimentName;
                         dataset.DMSData.Experiment = chosenMonitor.ExperimentName;
 
@@ -1151,6 +1153,7 @@ namespace BuzzardWPF.Management
                     }
                     else
                     {
+                        ApplicationLogger.LogMessage(0, $"QC_Upload: No monitors matched, using general dataset information");
                         // No monitor matched, use the watcher information
                         emslUsageType = WatcherEmslUsage;
                         emslProposalId = WatcherEmslProposalID;
