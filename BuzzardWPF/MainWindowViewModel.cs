@@ -382,7 +382,7 @@ namespace BuzzardWPF
 
             // Lets see if the path we were given is already
             // being used as the source of a dataset
-            var alreadyPresent = BuzzardGridVm.Datasets.Any(
+            var alreadyPresent = BuzzardGridVm.Datasets.ToList().Any(
                 ds =>
                 {
                     // This dataset is most likely an empty-dummy dataset,
