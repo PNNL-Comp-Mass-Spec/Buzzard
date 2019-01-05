@@ -17,7 +17,7 @@ namespace BuzzardWPF
     {
         #region "Constants and members"
 
-        public const string PROGRAM_DATE = "May 31, 2018";
+        public const string PROGRAM_DATE = "January 4, 2019";
 
         private const string DefaultInstallerFolder = @"\\proto-5\BionetSoftware\Buzzard";
 

@@ -1,5 +1,42 @@
 Buzzard Change Log
 
+Version 1.8.1.0; January 4, 2019
+	- Create a concrete 'copy' of the datasets list when checking for existence of a dataset to avoid enumeration errors
+	- Reduce how often the watcher/monitor checks for new files or file changes (was happening ~every second, now set to happen every 30 seconds)
+	- Avoid setting watched dataset information every time the watcher notices a file change (generally only needs to be set once...)
+	- Don't report first-chance exceptions that don't contain a stack trace back to PNNL code (since we usually have exception handlers for those)
+	- Update LcmsNet DLLs - updated version has overhauled logging that runs the publishing of log messages to file/UI on a separate thread
+	- Some code rearrangement
+
+Version 1.8.0.5; August 9, 2018
+	- Update ReactiveUI from NuGet, and remove the explicit listing of packages ReactiveUI depends on
+
+Version 1.8.0.4; July 31, 2018
+	- Update LcmsNet DLLs to fix some bugs
+	- Don't write the settings auto-save messages to the log (change their log level)
+	- Log information when QC datasets are matched to a QC monitor
+
+Version 1.8.0.3; July 13, 2018
+	- Reduce possibility of DLL dependency conflicts (and remove some dependencies
+	- Update LcmsNet DLLs
+	- Reduce duplication of EMSL Proposal Users list
+	- Update Extended.Wpf.ToolKit and ReactiveUI, with System.Reactive 4.0
+
+Version 1.8.0.2; July 9, 2018
+	- Don't re-create DMS data lists on every update - re-use the existing lists
+
+Version 1.8.0.1; June 11, 2018
+	- Don't require a user to be selected when EMSL usage type is "USER"
+	- Don't store EMSL proposal/user information the the EMSL usage type isn't "USER"
+	- Change update version check to compare Version objects rather than parsing strings
+	- DMS_DataAccessor: use tasks instead of manual threads
+	- Improve the main exception handling messages, and don't shutdown on non-critical exceptions
+	- Use Linq lambda format instead of the SQL-style format
+	- Auto-save the settings every 5 minutes
+	- Add 'testing' rollout options via a separate upgrade directory, and a setting to check for updates there
+	- Add a "Select" hint to most combo boxes
+	- Some general style changes
+
 Version 1.8.0.0; May 31, 2018
 	- Refactor code to use MVVM instead of WPF code-behind
 	- User interface improvements (primarily disabling buttons when they can't do anything)
