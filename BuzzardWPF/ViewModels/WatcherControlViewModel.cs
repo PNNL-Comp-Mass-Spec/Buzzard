@@ -252,8 +252,9 @@ namespace BuzzardWPF.ViewModels
             {
                 if (enabled)
                 {
-                    // Process new/changed files once per second
-                    mFileUpdateHandler.Change(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
+                    // TODO: I already changed this from every second to every 30 seconds, and I still think that's too much - Bryson
+                    // Process new/changed files every 30 seconds
+                    mFileUpdateHandler.Change(TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(30));
                 }
                 else
                 {

@@ -470,8 +470,7 @@ namespace BuzzardWPF.Management
         {
             try
             {
-                // Find the datasets that have source data found by the
-                // file watcher.
+                // Find the datasets that have source data found by the file watcher.
                 var datasets = Datasets.Where(ds => ds.DatasetSource == DatasetSource.Watcher).ToList();
 
                 // If there aren't any, then we're done.
@@ -1053,7 +1052,6 @@ namespace BuzzardWPF.Management
                         break;
                     }
                 }
-
             }
 
             if (dataset != null)
@@ -1066,10 +1064,9 @@ namespace BuzzardWPF.Management
                     dataset.UpdateFileProperties();
 
             }
-            else if (
-                howWasItFound == DatasetSource.Searcher
-                && isArchived
-                && !IncludeArchivedItems)
+            else if (howWasItFound == DatasetSource.Searcher
+                     && isArchived
+                     && !IncludeArchivedItems)
             {
                 // Found via the searcher, and the user set the search config to not include archived items
                 // Don't create a new dataset
@@ -1086,14 +1083,11 @@ namespace BuzzardWPF.Management
                 newDatasetFound = true;
             }
 
-            //
-            // We don't really care if a dataset was found
-            // while doing a search, but we do care if it
-            // was picked up by the watcher. If the watcher
-            // picks it up, then we might have to do a bit
+            // We don't really care if a dataset was found while doing a search, but we do care if it
+            // was picked up by the watcher. If the watcher picks it up, then we might have to do a bit
             // of a delay before creating the trigger file
-            //
-            if (howWasItFound == DatasetSource.Watcher)
+            // Check if it was new or the datasetSource isn't Watcher to only set this data once.
+            if (howWasItFound == DatasetSource.Watcher && (newDatasetFound || dataset.DatasetSource != DatasetSource.Watcher))
             {
                 dataset.DatasetSource = howWasItFound;
 
@@ -1185,10 +1179,7 @@ namespace BuzzardWPF.Management
                 }
             }
 
-            //
-            // If it wasn't already in the set, then
-            // that means that this dataset is brand new
-            //
+            // If it wasn't already in the set, then that means that this dataset is brand new
             if (newDatasetFound)
             {
                 if (howWasItFound == DatasetSource.Searcher)
