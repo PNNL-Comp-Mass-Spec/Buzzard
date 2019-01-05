@@ -93,6 +93,21 @@ namespace BuzzardWPF
                 return;
             }
 
+            var ex = e.Exception;
+            var buzzardLcmsNetFound = false;
+            while (ex != null && !buzzardLcmsNetFound)
+            {
+                var stacktrace = ex.StackTrace.ToLower();
+                buzzardLcmsNetFound = stacktrace.Contains("buzzard") || stacktrace.Contains("lcmsnet");
+                ex = ex.InnerException;
+            }
+
+            // Only report unhandled first chance exceptions that occur within PNNL-written code; other exceptions we can only handle elsewhere, and we don't want to report the exceptions that we are handling.
+            if (!buzzardLcmsNetFound)
+            {
+                return;
+            }
+
             ApplicationLogger.LogError(0, "Buzzard had an unhandled non-critical error.  " + e.Exception.Message, e.Exception);
         }
 
