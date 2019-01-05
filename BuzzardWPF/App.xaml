@@ -1,8 +1,8 @@
 ﻿<Application xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             DispatcherUnhandledException="Application_DispatcherUnhandledException"
+             DispatcherUnhandledException="OnDispatcherUnhandledException"
              ShutdownMode="OnMainWindowClose"
-             Startup="Application_Startup"
-             Exit="Application_Exit"
+             Startup="ApplicationStartup"
+             Exit="ApplicationExit"
              x:Class="BuzzardWPF.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero">

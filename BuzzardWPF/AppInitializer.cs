@@ -327,7 +327,7 @@ namespace BuzzardWPF
             }
             catch (Exception ex)
             {
-                FileLogger.Instance.LogError(0, new ErrorLoggerArgs("Error loading data from DMS at program startup", ex));
+                FileLogger.Instance.LogError(0, new ErrorLoggerArgs(0, "Error loading data from DMS at program startup", ex));
             }
             finally
             {
@@ -343,7 +343,7 @@ namespace BuzzardWPF
 
                 Properties.Settings.Default.Save();
 
-                FileLogger.Instance.LogMessage(0, new MessageLoggerArgs("---------------------------------------"));
+                FileLogger.Instance.LogMessage(0, new MessageLoggerArgs(0, "---------------------------------------"));
             }
 
             return openMainWindow;
@@ -387,10 +387,10 @@ namespace BuzzardWPF
             var exceptionMessage = string.Empty;
 
             if (ex == null)
-                FileLogger.Instance.LogError(0, new ErrorLoggerArgs(errorMessage));
+                FileLogger.Instance.LogError(0, new ErrorLoggerArgs(0, errorMessage));
             else
             {
-                FileLogger.Instance.LogError(0, new ErrorLoggerArgs(errorMessage, ex));
+                FileLogger.Instance.LogError(0, new ErrorLoggerArgs(0, errorMessage, ex));
                 exceptionMessage = ex.Message;
             }
 

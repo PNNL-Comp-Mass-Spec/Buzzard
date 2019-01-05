@@ -871,6 +871,16 @@
             When MessageLevel is 5, all messages are logged
             </remarks>
         </member>
+        <member name="M:LcmsNetData.Logging.ApplicationLogger.StartUpLogging">
+            <summary>
+            Start up the separate-thread logging
+            </summary>
+        </member>
+        <member name="M:LcmsNetData.Logging.ApplicationLogger.ShutDownLogging">
+            <summary>
+            Properly shut down the separate-thread logging
+            </summary>
+        </member>
         <member name="T:LcmsNetData.Logging.ErrorLoggerArgs">
             <summary>
             Class that encapsulates an error found by a component.
@@ -904,9 +914,18 @@
             <param name="ex">Exception found</param>
             <param name="sample"></param>
         </member>
+        <member name="M:LcmsNetData.Logging.ErrorLoggerArgs.#ctor(System.Int32,System.String,System.Exception,LcmsNetData.Data.SampleDataBasic)">
+            <summary>
+            Constructor that takes an error message and an exception.
+            </summary>
+            <param name="logLevel">Error logging level</param>
+            <param name="message">Error message</param>
+            <param name="ex">Exception found</param>
+            <param name="sample"></param>
+        </member>
         <member name="P:LcmsNetData.Logging.ErrorLoggerArgs.Exception">
             <summary>
-            Gets or sets the exception associated with the error message if any.
+            Gets the exception associated with the error message if any.
             </summary>
         </member>
         <member name="T:LcmsNetData.Logging.FileLogger">
@@ -1098,14 +1117,116 @@
             <param name="message">Error message</param>
             <param name="sample"></param>
         </member>
+        <member name="M:LcmsNetData.Logging.MessageLoggerArgs.#ctor(System.Int32,System.String,LcmsNetData.Data.SampleDataBasic)">
+            <summary>
+            Constructor that takes the error message.
+            </summary>
+            <param name="logLevel">Error logging level</param>
+            <param name="message">Error message</param>
+            <param name="sample"></param>
+        </member>
         <member name="P:LcmsNetData.Logging.MessageLoggerArgs.Message">
             <summary>
-            Gets or sets the error message associated with the error.
+            Gets the error message associated with the error.
             </summary>
         </member>
         <member name="P:LcmsNetData.Logging.MessageLoggerArgs.Sample">
             <summary>
-            Gets or sets the sample data associated with this method.
+            Gets the sample data associated with this method.
+            </summary>
+        </member>
+        <member name="T:LcmsNetData.Logging.ThreadedLogger`1">
+            <summary>
+            Class to basically run the logging on another thread as a producer-consumer queue, rather than creating a new task for every log message
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="F:LcmsNetData.Logging.ThreadedLogger`1.buffer">
+            <summary>
+            This could almost be directly replaced with a BufferBlock (but I don't want to add the TPL dependency).
+            </summary>
+        </member>
+        <member name="F:LcmsNetData.Logging.ThreadedLogger`1.isShutdown">
+            <summary>
+            True if the logger has been shut down.
+            </summary>
+        </member>
+        <member name="M:LcmsNetData.Logging.ThreadedLogger`1.ConsumeAll">
+            <summary>
+            Consume all items, continuing until the queue is shutdown
+            </summary>
+        </member>
+        <member name="M:LcmsNetData.Logging.ThreadedLogger`1.Consume">
+            <summary>
+            Consume a single item, asynchronously
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LcmsNetData.Logging.ThreadedLogger`1.AddItem(`0)">
+            <summary>
+            Add a new item to the queue (produce an item)
+            </summary>
+            <param name="item"></param>
+            <returns>True if <paramref name="item"/> is null or was added; false if the logger is shutting down or shut down</returns>
+        </member>
+        <member name="M:LcmsNetData.Logging.ThreadedLogger`1.Dispose">
+            <summary>
+            Clean up
+            </summary>
+        </member>
+        <member name="M:LcmsNetData.Logging.ThreadedLogger`1.Shutdown">
+            <summary>
+            Properly close down the threaded logging
+            </summary>
+        </member>
+        <member name="M:LcmsNetData.Logging.ThreadedLogger`1.#ctor(System.Action{`0})">
+            <summary>
+            Create a consumer that will run on a separate thread than everything else for performance reasons
+            </summary>
+            <param name="actionOnConsume"></param>
+        </member>
+        <member name="T:LcmsNetData.Logging.ThreadedLogger`1.BufferQueue`1">
+            <summary>
+            Modeled after the idea of a BufferBlock, but not using a BufferBlock because that requires tracking a NuGet package.
+            </summary>
+            <typeparam name="TU"></typeparam>
+        </member>
+        <member name="P:LcmsNetData.Logging.ThreadedLogger`1.BufferQueue`1.IsComplete">
+            <summary>
+            True if the BufferQueue has been marked complete, and will accept new items
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Logging.ThreadedLogger`1.BufferQueue`1.HasItemsInQueue">
+            <summary>
+            True if there are items waiting to be consumed; only for checking in case of error
+            </summary>
+        </member>
+        <member name="M:LcmsNetData.Logging.ThreadedLogger`1.BufferQueue`1.OutputAvailableAsync">
+            <summary>
+            Returns true if there is available output, false if an error or marked complete (with no more output)
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LcmsNetData.Logging.ThreadedLogger`1.BufferQueue`1.Receive">
+            <summary>
+            Retrieve an item off of the queue
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LcmsNetData.Logging.ThreadedLogger`1.BufferQueue`1.Post(`1)">
+            <summary>
+            Add an item to the queue, notifying any consumer(s) of the available item.
+            </summary>
+            <param name="item"></param>
+        </member>
+        <member name="M:LcmsNetData.Logging.ThreadedLogger`1.BufferQueue`1.Complete">
+            <summary>
+            Mark the queue as complete, so that things will exit out properly
+            </summary>
+        </member>
+        <member name="M:LcmsNetData.Logging.ThreadedLogger`1.BufferQueue`1.Dispose">
+            <summary>
+            Clean up.
             </summary>
         </member>
         <member name="T:LcmsNetData.MessageBoxDisplayExtension">
