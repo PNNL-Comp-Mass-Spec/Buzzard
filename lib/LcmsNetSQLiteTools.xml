@@ -224,6 +224,13 @@
             <param name="instList">List of InstrumentInfo containing instrument data</param>
             <param name="clearFirst">if true, the existing data will always be removed from the list; if false and <paramref name="instList"/>.Count is &lt;= to the number of existing rows, nothing is changed</param>
         </member>
+        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveCartConfigListToCache(System.Collections.Generic.List{LcmsNetData.Data.CartConfigInfo},System.Boolean)">
+            <summary>
+            Saves a list of Cart_Configs (and associated Cart names) to cache
+            </summary>
+            <param name="cartConfigList">List containing cart config info.</param>
+            <param name="clearFirst">if true, the existing data will always be removed from the list; if false and <paramref name="cartConfigList"/>.Count is &lt;= to the number of existing rows, nothing is changed</param>
+        </member>
         <member name="M:LcmsNetSQLiteTools.SQLiteTools.ExecuteSQLiteCommand(System.String,System.String)">
             <summary>
             Executes specified SQLite command
@@ -289,6 +296,12 @@
             Wrapper around generic retrieval method specifically for cart lists
             </summary>
             <returns>List containing cart names</returns>
+        </member>
+        <member name="M:LcmsNetSQLiteTools.SQLiteTools.GetCartConfigNameMap(System.Boolean)">
+            <summary>
+            Wrapper around generic retrieval method specifically for cart config name lists
+            </summary>
+            <returns>Mapping of cart names to possible cart config names</returns>
         </member>
         <member name="M:LcmsNetSQLiteTools.SQLiteTools.GetCartConfigNameList(System.Boolean)">
             <summary>

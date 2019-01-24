@@ -54,7 +54,7 @@ Source: "bin\Release\ReactiveUI*.dll";                                DestDir: "
 Source: "bin\Release\Splat.dll";                                      DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\System.Data.SQLite.dll";                         DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\System.Drawing.Primitives.dll";                  DestDir: "{app}";     Flags: ignoreversion
-Source: "bin\Release\System.Reactive*.dll";                           DestDir: "{app}";     Flags: ignoreversion
+Source: "bin\Release\System.Reactive.dll";                            DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\System.Windows.Controls.Input.Toolkit.dll";      DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\System.Windows.Controls.Layout.Toolkit.dll";     DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\WpfExtras.dll";                                  DestDir: "{app}";     Flags: ignoreversion

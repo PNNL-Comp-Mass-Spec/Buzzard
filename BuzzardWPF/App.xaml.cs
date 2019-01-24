@@ -56,7 +56,7 @@ namespace BuzzardWPF
 
             var ex = e.Exception;
             var buzzardLcmsNetFound = false;
-            while (ex != null && !buzzardLcmsNetFound)
+            while (ex != null && ex.StackTrace != null && !buzzardLcmsNetFound)
             {
                 var stacktrace = ex.StackTrace.ToLower();
                 buzzardLcmsNetFound = stacktrace.Contains("buzzard") || stacktrace.Contains("lcmsnet");
@@ -69,7 +69,14 @@ namespace BuzzardWPF
                 return;
             }
 
-            ApplicationLogger.LogError(0, "Buzzard had an unhandled non-critical error.  " + e.Exception.Message, e.Exception);
+            try
+            {
+                ApplicationLogger.LogError(0, "Buzzard had an unhandled non-critical error.  " + e.Exception.Message, e.Exception);
+            }
+            catch
+            {
+                MessageBox.Show("Warning: Unable to log a non-critical error; error was " + e.Exception, "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
         }
 
         private void ShutdownCleanup()

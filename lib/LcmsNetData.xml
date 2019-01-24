@@ -42,6 +42,33 @@
             Gets or sets the name of the cart configuration in use
             </summary>
         </member>
+        <member name="T:LcmsNetData.Data.CartConfigInfo">
+            <summary>
+            Class to hold information about a single LC Cart Config
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.CartConfigInfo.CartConfigName">
+            <summary>
+            Name of LC Cart Config
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.CartConfigInfo.CartName">
+            <summary>
+            Name of Cart
+            </summary>
+        </member>
+        <member name="M:LcmsNetData.Data.CartConfigInfo.#ctor(System.String,System.String)">
+            <summary>
+            Constructor: Known values
+            </summary>
+            <param name="cartConfigName"></param>
+            <param name="cartName"></param>
+        </member>
+        <member name="M:LcmsNetData.Data.CartConfigInfo.#ctor">
+            <summary>
+            Constructor: for auto-population
+            </summary>
+        </member>
         <member name="T:LcmsNetData.Data.ColumnData">
             <summary>
             Class that manages all of the information about a given column
