@@ -7,7 +7,7 @@
     xmlns:views="clr-namespace:BuzzardWPF.Views"
     xmlns:viewModels="clr-namespace:BuzzardWPF.ViewModels"
     xmlns:management="clr-namespace:BuzzardWPF.Management"
-    d:DesignHeight="390"
+    d:DesignHeight="370"
     d:DesignWidth="900"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance {x:Type viewModels:QCViewModel}, IsDesignTimeCreatable=True}">
@@ -144,15 +144,5 @@
 
         <Button Grid.Row="1" Grid.Column="2" Style="{StaticResource SimpleButtonStyle}" HorizontalAlignment="Right" MinWidth="180" Content="Remove QC Monitor" Command="{Binding RemoveQcMonitorCommand}" />
 
-        <CheckBox
-            Grid.Row="2"
-            Grid.Column="0"
-            Grid.ColumnSpan="2"
-            VerticalAlignment="Center"
-            Content="Create Trigger For QC's ?"
-            FontSize="15"
-            IsChecked="{Binding Path=Manager.QcCreateTriggerOnDMSFail, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-            IsEnabled="{Binding Path=IsNotMonitoring}"
-            ToolTip="Do you want the watcher to auto-create the trigger file for datasets it finds when their DMS is unresolved?" />
     </Grid>
 </UserControl>
