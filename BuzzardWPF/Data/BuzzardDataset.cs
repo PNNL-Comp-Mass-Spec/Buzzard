@@ -294,11 +294,13 @@ namespace BuzzardWPF.Data
 
         #endregion
 
-        private long CalculateDirectorySize(string path)
+        private long GetFileDirectoryStats(string path, out DateTime lastWriteTime)
         {
+            lastWriteTime = DateTime.MinValue;
             if (File.Exists(path))
             {
                 var info = new FileInfo(path);
+                lastWriteTime = info.LastWriteTime;
                 return info.Length;
             }
             if (!Directory.Exists(path))
@@ -309,7 +311,11 @@ namespace BuzzardWPF.Data
             long sum = 0;
             foreach (var file in Directory.GetFileSystemEntries(path))
             {
-                sum += CalculateDirectorySize(file);
+                sum += GetFileDirectoryStats(file, out var innerLastWriteTime);
+                if (innerLastWriteTime > lastWriteTime)
+                {
+                    lastWriteTime = innerLastWriteTime;
+                }
             }
 
             return sum;
@@ -336,9 +342,16 @@ namespace BuzzardWPF.Data
             {
                 var info = new DirectoryInfo(FilePath);
 
-                FileSize = CalculateDirectorySize(FilePath);
+                FileSize = GetFileDirectoryStats(FilePath, out var lastWriteTime);
                 RunStart = info.CreationTime;
-                RunFinish = info.LastWriteTime;
+                if (info.LastWriteTime > lastWriteTime)
+                {
+                    RunFinish = info.LastWriteTime;
+                }
+                else
+                {
+                    RunFinish = lastWriteTime;
+                }
                 return true;
             }
 
@@ -349,61 +362,13 @@ namespace BuzzardWPF.Data
         }
 
         #region Members blindly brought over from classDataset
-
-        #region Events
-        /// <summary>
-        /// Fired when the dataset has been written to.
-        /// </summary>
-        /// <remarks>
-        /// Pulled in to stop compile time errors.
-        /// </remarks>
-        public event EventHandler LastWriteChanged;
-
-        /// <summary>
-        /// Fired when the dataset was told to be ignored for creating a trigger file.
-        /// </summary>
-        /// <remarks>
-        /// Pulled in to stop compile time errors.
-        /// </remarks>
-        public event EventHandler IgnoreChanged;
-        #endregion
-
-        #region Attributes
-        /// <summary>
-        /// Last time that the file was written to.
-        /// </summary>
-        /// <remarks>
-        /// Pulled in to stop compile time errors.
-        /// </remarks>
-        private DateTime m_lastWrite;
-
-        /// <summary>
-        /// Flag indicating whether a dataset should be ignored.
-        /// </summary>
-        /// <remarks>
-        /// Pulled in to stop compile time errors.
-        /// </remarks>
-        private bool m_mboolShouldIgnore;
-        #endregion
-
-        #region Properties
         /// <summary>
         /// Gets or sets the flag if the dataset should be ignored.
         /// </summary>
         /// <remarks>
         /// Pulled in to stop compile time errors.
         /// </remarks>
-        public bool ShouldIgnore
-        {
-            get => m_mboolShouldIgnore;
-            set
-            {
-                if (m_mboolShouldIgnore == value) return;
-                m_mboolShouldIgnore = value;
-
-                IgnoreChanged?.Invoke(this, null);
-            }
-        }
+        public bool ShouldIgnore { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the dataset
@@ -416,39 +381,6 @@ namespace BuzzardWPF.Data
             get;
             set;
         }
-
-        /// <summary>
-        /// Gets or sets the time the file was last written
-        /// </summary>
-        /// <remarks>
-        /// Pulled in to stop compile time errors.
-        /// </remarks>
-        public DateTime LastWrite
-        {
-            get => m_lastWrite;
-            set
-            {
-
-                if (value.CompareTo(m_lastWrite) != 0)
-                {
-                    m_lastWrite = value;
-                    LastWriteChanged?.Invoke(this, null);
-                }
-            }
-        }
-
-        ///// <summary>
-        ///// Gets or sets the time until the trigger file should be made.
-        ///// </summary>
-        ///// <remarks>
-        ///// Pulled in to stop compile time errors.
-        ///// </remarks>
-        //public TimeSpan Duration
-        //{
-        //    get;
-        //    set;
-        //}
-        #endregion
         #endregion
     }
 }
