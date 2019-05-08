@@ -55,11 +55,11 @@ Source: "bin\Release\Splat.dll";                                      DestDir: "
 Source: "bin\Release\System.Data.SQLite.dll";                         DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\System.Drawing.Primitives.dll";                  DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\System.Reactive.dll";                            DestDir: "{app}";     Flags: ignoreversion
+Source: "bin\Release\System.ValueTuple.dll";                          DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\System.Windows.Controls.Input.Toolkit.dll";      DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\System.Windows.Controls.Layout.Toolkit.dll";     DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\WpfExtras.dll";                                  DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\WPFToolkit.dll";                                 DestDir: "{app}";     Flags: ignoreversion
-Source: "bin\Release\Xceed.Wpf.DataGrid.dll";                         DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\Xceed.Wpf.Toolkit.dll";                          DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\x86\Sqlite.Interop.DLL";                         DestDir: "{app}\x86"; Flags: ignoreversion
 Source: "bin\Release\x64\Sqlite.Interop.DLL";                         DestDir: "{app}\x64"; Flags: ignoreversion

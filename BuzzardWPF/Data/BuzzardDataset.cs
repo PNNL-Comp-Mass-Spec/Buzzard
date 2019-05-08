@@ -294,31 +294,48 @@ namespace BuzzardWPF.Data
 
         #endregion
 
-        private long GetFileDirectoryStats(string path, out DateTime lastWriteTime)
+        private (bool Exists, long Size, int FileCount, DateTime CreationTime, DateTime LastWriteTime) GetDatasetStats()
         {
-            lastWriteTime = DateTime.MinValue;
-            if (File.Exists(path))
+            var exists = false;
+            var size = 0L;
+            var fileCount = 0;
+            var creationTime = DateTime.MinValue;
+            var lastWriteTime = DateTime.MinValue;
+            if (File.Exists(FilePath))
             {
-                var info = new FileInfo(path);
+                exists = true;
+                var info = new FileInfo(FilePath);
+
+                size = info.Length;
+                fileCount = 1;
+                creationTime = info.CreationTime;
                 lastWriteTime = info.LastWriteTime;
-                return info.Length;
             }
-            if (!Directory.Exists(path))
+            else if (Directory.Exists(FilePath))
             {
-                return 0;
-            }
+                exists = true;
+                var info = new DirectoryInfo(FilePath);
 
-            long sum = 0;
-            foreach (var file in Directory.GetFileSystemEntries(path))
-            {
-                sum += GetFileDirectoryStats(file, out var innerLastWriteTime);
-                if (innerLastWriteTime > lastWriteTime)
+                fileCount = 0;
+                size = 0;
+
+                creationTime = info.CreationTime;
+                lastWriteTime = info.LastWriteTime;
+
+                foreach (var file in info.GetFiles("*", SearchOption.AllDirectories))
                 {
-                    lastWriteTime = innerLastWriteTime;
+                    fileCount++;
+                    size += file.Length;
+
+                    if (info.LastWriteTime > lastWriteTime)
+                    {
+                        lastWriteTime = info.LastWriteTime;
+                    }
                 }
+
             }
 
-            return sum;
+            return (exists, size, fileCount, creationTime, lastWriteTime);
         }
 
         /// <summary>
@@ -328,37 +345,20 @@ namespace BuzzardWPF.Data
         /// <returns>True if the file or folder exists; otherwise false</returns>
         public bool UpdateFileProperties()
         {
-            if (File.Exists(FilePath))
+            var info = GetDatasetStats();
+            if (!info.Exists)
             {
-                var info = new FileInfo(FilePath);
-
-                FileSize = info.Length;
-                RunStart = info.CreationTime;
-                RunFinish = info.LastWriteTime;
-                return true;
+                FileSize = 0;
+                RunStart = DateTime.MinValue;
+                RunFinish = DateTime.MinValue;
+                DatasetStatus = DatasetStatus.FileNotFound;
+                return false;
             }
 
-            if (Directory.Exists(FilePath))
-            {
-                var info = new DirectoryInfo(FilePath);
-
-                FileSize = GetFileDirectoryStats(FilePath, out var lastWriteTime);
-                RunStart = info.CreationTime;
-                if (info.LastWriteTime > lastWriteTime)
-                {
-                    RunFinish = info.LastWriteTime;
-                }
-                else
-                {
-                    RunFinish = lastWriteTime;
-                }
-                return true;
-            }
-
-            FileSize = 0;
-            RunStart = DateTime.MinValue;
-            RunFinish = DateTime.MinValue;
-            return false;
+            FileSize = info.Size;
+            RunStart = info.CreationTime;
+            RunFinish = info.LastWriteTime;
+            return true;
         }
 
         #region Members blindly brought over from classDataset
