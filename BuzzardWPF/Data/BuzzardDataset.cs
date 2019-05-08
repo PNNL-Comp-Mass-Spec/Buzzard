@@ -307,7 +307,7 @@ namespace BuzzardWPF.Data
             }
 
             long sum = 0;
-            foreach (var file in Directory.GetFiles(path))
+            foreach (var file in Directory.GetFileSystemEntries(path))
             {
                 sum += CalculateDirectorySize(file);
             }
