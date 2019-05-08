@@ -27,14 +27,6 @@ namespace BuzzardWPF.Management
         public const string EXPERIMENT_NAME_DESCRIPTION = "Experiment";
         public const string QC_MONITORS_DESCRIPTION = "QC Monitor(s) (or uncheck 'Create Trigger For QC's ?')";
 
-        #region Events
-        /// <summary>
-        /// Fired when datasets are loaded.
-        /// </summary>
-        public event EventHandler DatasetsLoaded;
-
-        #endregion
-
         #region Attributes
 
         /// <summary>
@@ -95,7 +87,7 @@ namespace BuzzardWPF.Management
 
         #region Loading Data
 
-        public async Task LoadDmsCache()
+        public async Task LoadRequestedRunsCache()
         {
             lock (this)
             {
@@ -107,7 +99,7 @@ namespace BuzzardWPF.Management
                 loadingDmsData = true;
             }
 
-            await Task.Run(() => LoadDmsData()).ConfigureAwait(false);
+            await Task.Run(LoadRequestedRuns).ConfigureAwait(false);
 
             lock (this)
             {
@@ -118,7 +110,7 @@ namespace BuzzardWPF.Management
         /// <summary>
         /// Loads active requested runs from DMS
         /// </summary>
-        public void LoadDmsData()
+        public void LoadRequestedRuns()
         {
             var currentTask = "Initializing";
 
@@ -177,8 +169,8 @@ namespace BuzzardWPF.Management
                 }
 
                 currentTask = "Raise event DatasetsLoaded";
-                LastUpdated = string.Format("Cache Last Updated: {0}", DateTime.Now);
-                DatasetsLoaded?.Invoke(this, null);
+                var lastUpdatedTime = DateTime.Now;
+                RxApp.MainThreadScheduler.Schedule(() => RequestedRunsLastUpdated = lastUpdatedTime);
             }
             catch (Exception ex)
             {
@@ -187,7 +179,11 @@ namespace BuzzardWPF.Management
             }
         }
 
-        public string LastUpdated { get; set; }
+        public DateTime RequestedRunsLastUpdated
+        {
+            get => requestedRunsLastUpdated;
+            private set => this.RaiseAndSetIfChanged(ref requestedRunsLastUpdated, value);
+        }
 
         #endregion
 
@@ -763,6 +759,7 @@ namespace BuzzardWPF.Management
         private int triggerFileCreationWaitTime;
         private string userComments;
         private bool includeArchivedItems;
+        private DateTime requestedRunsLastUpdated;
 
         /// <summary>
         /// This item contains a copy of the SelectedCartName value of

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Concurrency;
+using System.Reactive.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using LcmsNetDmsTools;
@@ -36,8 +38,11 @@ namespace BuzzardWPF.Management
             Experiments = new List<ExperimentData>();
             Datasets = new SortedSet<string>(StringComparer.CurrentCultureIgnoreCase);
 
-            mLastSQLiteUpdate = DateTime.UtcNow;
-            mLastLoadFromCache = DateTime.UtcNow.AddMinutes(-60);
+            LastSqliteCacheUpdateUtc = DateTime.UtcNow;
+            LastLoadFromSqliteCacheUtc = DateTime.UtcNow.AddMinutes(-60);
+
+            lastSqliteCacheUpdate = this.WhenAnyValue(x => x.LastSqliteCacheUpdateUtc).ObserveOn(RxApp.MainThreadScheduler).Select(x => x.ToLocalTime()).ToProperty(this, x => x.LastSqliteCacheUpdate);
+            lastLoadFromSqliteCache = this.WhenAnyValue(x => x.LastLoadFromSqliteCacheUtc).ObserveOn(RxApp.MainThreadScheduler).Select(x => x.ToLocalTime()).ToProperty(this, x => x.LastLoadFromSqliteCache);
 
             mDataRefreshIntervalHours = 6;
 
@@ -61,7 +66,7 @@ namespace BuzzardWPF.Management
         {
             if (mAutoUpdateTimer == null)
             {
-                mAutoUpdateTimer = new Timer(AutoUpdateTimer_Tick, this, TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(30));
+                mAutoUpdateTimer = new Timer(AutoUpdateTimer_Tick, this, TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(5));
             }
         }
 
@@ -76,10 +81,8 @@ namespace BuzzardWPF.Management
         /// <remarks>When forceLoad is false, will not re-load the data from the cache if it was last loaded in the last 60 seconds</remarks>
         public void LoadDMSDataFromCache(bool forceLoad = false)
         {
-            if (DateTime.UtcNow.Subtract(mLastLoadFromCache).TotalMinutes < 1 && !forceLoad)
+            if (DateTime.UtcNow.Subtract(LastLoadFromSqliteCacheUtc).TotalMinutes < 1 && !forceLoad)
                 return;
-
-            mLastLoadFromCache = DateTime.UtcNow;
 
             //
             // Load Instrument Data
@@ -238,6 +241,8 @@ namespace BuzzardWPF.Management
                 Datasets = datasetSortedSet;
             }
 
+            LastLoadFromSqliteCacheUtc = DateTime.UtcNow;
+
             // Now that data has been loaded, enable the timer that will auto-update the data every mDataRefreshIntervalHours hours
             StartAutoUpdateTimer();
         }
@@ -256,7 +261,6 @@ namespace BuzzardWPF.Management
                 return;
             }
 
-            mLastSQLiteUpdate = DateTime.UtcNow;
             RxApp.MainThreadScheduler.Schedule(() => LoadDMSDataFromCache(true));
 
             mIsUpdating = false;
@@ -265,7 +269,7 @@ namespace BuzzardWPF.Management
         /// <summary>
         /// Force updating the SQLite cache database with instrument, experiment, dataset, etc. info
         /// </summary>
-        public async Task UpdateCacheNow(string callingFunction = "unknown")
+        public async Task UpdateCacheNow([CallerMemberName] string callingFunction = "unknown")
         {
             lock (m_cacheLoadingSync)
             {
@@ -306,19 +310,25 @@ namespace BuzzardWPF.Management
 
         public static DMS_DataAccessor Instance { get; }
 
+        public DateTime LastSqliteCacheUpdate => lastSqliteCacheUpdate.Value;
+
+        public DateTime LastLoadFromSqliteCache => lastLoadFromSqliteCache.Value;
+
         #region Member Variables
 
         private Timer mAutoUpdateTimer;
 
         private float mDataRefreshIntervalHours;
-        private DateTime mLastSQLiteUpdate;
-        private DateTime mLastLoadFromCache;
+        private DateTime lastSqliteCacheUpdateUtc;
+        private DateTime lastLoadFromSqliteCacheUtc;
         private readonly DMSDBTools dmsDbTools;
+
+        private readonly ObservableAsPropertyHelper<DateTime> lastSqliteCacheUpdate;
+        private readonly ObservableAsPropertyHelper<DateTime> lastLoadFromSqliteCache;
 
         private List<ProposalUser> m_proposalUsers;
         private Dictionary<string, List<UserIDPIDCrossReferenceEntry>> m_pidIndexedCrossReferenceList;
         private readonly Dictionary<string, ReactiveList<ProposalUser>> m_proposalUserCollections;
-        private SortedSet<string> m_Datasets;
         private List<ExperimentData> m_experiments;
 
         private readonly object m_cacheLoadingSync = new object();
@@ -328,18 +338,30 @@ namespace BuzzardWPF.Management
 
         #region Private Methods
 
+        private DateTime LastSqliteCacheUpdateUtc
+        {
+            get => lastSqliteCacheUpdateUtc;
+            set => this.RaiseAndSetIfChanged(ref lastSqliteCacheUpdateUtc, value);
+        }
+
+        private DateTime LastLoadFromSqliteCacheUtc
+        {
+            get => lastLoadFromSqliteCacheUtc;
+            set => this.RaiseAndSetIfChanged(ref lastLoadFromSqliteCacheUtc, value);
+        }
+
         private async void AutoUpdateTimer_Tick(object state)
         {
             if (DataRefreshIntervalHours <= 0)
                 return;
 
-            if (!(DateTime.UtcNow.Subtract(mLastSQLiteUpdate).TotalHours >= DataRefreshIntervalHours))
+            if (!(DateTime.UtcNow.Subtract(LastSqliteCacheUpdateUtc).TotalHours >= DataRefreshIntervalHours))
             {
                 return;
             }
 
             // Set the Last Update time to now to prevent this function from calling UpdateCacheNow repeatedly if the DMS update takes over 30 seconds
-            mLastSQLiteUpdate = DateTime.UtcNow;
+            LastSqliteCacheUpdateUtc = DateTime.UtcNow;
 
             await UpdateCacheNow("AutoUpdateTimer_Tick");
         }
@@ -361,6 +383,7 @@ namespace BuzzardWPF.Management
 
                 dmsDbTools.LoadCacheFromDMS();
 
+                LastSqliteCacheUpdateUtc = DateTime.UtcNow;
                 return true;
             }
             catch (Exception ex)
@@ -640,7 +663,6 @@ namespace BuzzardWPF.Management
                     value = 0.5f;
 
                 mDataRefreshIntervalHours = value;
-
             }
         }
 
@@ -689,11 +711,7 @@ namespace BuzzardWPF.Management
         /// List of DMS dataset names
         /// </summary>
         /// <remarks>Sorted set for fast lookups (not-case sensitive)</remarks>
-        public SortedSet<string> Datasets
-        {
-            get => m_Datasets;
-            private set => this.RaiseAndSetIfChanged(ref m_Datasets, value);
-        }
+        public SortedSet<string> Datasets { get; private set; }
 
         /// <summary>
         /// List of DMS experiment names

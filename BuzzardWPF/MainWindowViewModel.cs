@@ -33,7 +33,7 @@ namespace BuzzardWPF
         /// <remarks>Log levels are 0 to 5, where 0 is most important and 5 is least important</remarks>
         public const int CONST_DEFAULT_MESSAGE_LOG_LEVEL = 5;
 
-        private const int DMS_UPDATE_INTERVAL_MINUTES = 10;
+        public const int DMS_UPDATE_INTERVAL_MINUTES = 10;
 
         public const string DEFAULT_TRIGGER_FOLDER_PATH = @"\\proto-5\BionetXfer\Run_Complete_Trigger";
 
@@ -61,7 +61,6 @@ namespace BuzzardWPF
 
         private BitmapImage m_CurrentImage;
 
-        private string m_lastUpdated;
         private bool remoteFolderLocationIsEnabled;
         private readonly object lockEmslUsageTypesSource = new object();
         private readonly Timer settingsSaveTimer;
@@ -81,17 +80,6 @@ namespace BuzzardWPF
 
             StateSingleton.WatchingStateChanged += StateSingleton_WatchingStateChanged;
             // StateSingleton.StateChanged += StateSingleton_StateChanged;
-
-            // This gives the dataset manager a way to talk to the main window
-            // in case it needs to. One example is adding items to the dataset
-            // collection. We need to make sure we only change that collection
-            // from the UI thread, or anything bound to it will throw a fit and
-            // crash the progam. So, we'll just use the main window's Dispatcher
-            // to make sure changes are done in the correct thread. We could
-            // just pass the dispatcher along, but this way we can access other
-            // parts of the main window if they are ever needed in the future.
-            // -FCT
-            DatasetManager.DatasetsLoaded += Manager_DatasetsLoaded;
 
             m_firstTimeLoading = true;
 
@@ -130,7 +118,6 @@ namespace BuzzardWPF
             WatcherControlVm.MonitoringToggled += SearchConfigVm.MonitoringToggleHandler;
 
             LoadImages();
-            LastUpdated = DatasetManager.LastUpdated;
             ApplicationLogger.LogMessage(0, "Ready");
 
             if (Environment.MachineName.ToLower() == "monroe5" || Environment.MachineName.ToLower() == "we27655")
@@ -145,11 +132,6 @@ namespace BuzzardWPF
 
             // Auto-save settings every 5 minutes, on a background thread
             settingsSaveTimer = new Timer(SaveSettings_Tick, this, TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(5));
-        }
-
-        private void Manager_DatasetsLoaded(object sender, EventArgs e)
-        {
-            LastUpdated = DatasetManager.LastUpdated;
         }
 
         private void StateSingleton_WatchingStateChanged(object sender, EventArgs e)
@@ -208,6 +190,7 @@ namespace BuzzardWPF
         public WatcherConfigViewModel WatcherConfigVm { get; } = new WatcherConfigViewModel();
         public QCViewModel QCVm { get; } = new QCViewModel();
         public DatasetManager DatasetManager => DatasetManager.Manager;
+        public DMS_DataAccessor DMSData => DMS_DataAccessor.Instance;
 
         /// <summary>
         /// Error message importance level (0 is most important, 5 is least important)
@@ -272,12 +255,6 @@ namespace BuzzardWPF
         {
             get => m_lastStatusMessage;
             set => this.RaiseAndSetIfChanged(ref m_lastStatusMessage, value);
-        }
-
-        public string LastUpdated
-        {
-            get => m_lastUpdated;
-            set => this.RaiseAndSetIfChanged(ref m_lastUpdated, value);
         }
 
         #endregion
@@ -591,7 +568,7 @@ namespace BuzzardWPF
             }
 
             // Load active requested runs from DMS
-            await DatasetManager.LoadDmsCache();
+            await DatasetManager.LoadRequestedRunsCache();
 
             // Do not call DMS_DataAccessor.Instance.UpdateCacheNow()
             // That class has its own timer for updating the data
@@ -608,7 +585,7 @@ namespace BuzzardWPF
             await DMS_DataAccessor.Instance.UpdateCacheNow("ForceDmsReload");
 
             // Load active requested runs from DMS
-            await DatasetManager.LoadDmsCache();
+            await DatasetManager.LoadRequestedRunsCache();
         }
 
         private void UseTestFolder()

@@ -259,13 +259,38 @@
                                     Content="Select folder ..."
                                     Style="{StaticResource SimpleButtonStyle}" />
 
-                                <Label
-                                    Grid.Row="1"
-                                    Grid.RowSpan="3"
-                                    Grid.Column="1"
-                                    Margin="9.8,10"
-                                    Content="{Binding LastUpdated, FallbackValue='DMS Cache Last Update Time'}"
-                                    Foreground="Gray" />
+                                <Grid Grid.Row="1" Grid.Column="0" Grid.RowSpan="3" Grid.ColumnSpan="2" Margin="30,0" VerticalAlignment="Center">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Margin="3" HorizontalAlignment="Right" Foreground="Gray" Text="Cache Updated from DMS: " />
+                                    <TextBlock Grid.Row="0" Grid.Column="1" Margin="3" HorizontalAlignment="Left" Foreground="Gray" Text="{Binding DMSData.LastSqliteCacheUpdate, Mode=OneWay}" />
+                                    <TextBlock Grid.Row="0" Grid.Column="2" Margin="3" HorizontalAlignment="Left" Foreground="Gray">
+                                        <Run Text="(every" />
+                                        <Run Text="{Binding DMSData.DataRefreshIntervalHours, Mode=OneWay, StringFormat={}{0:0.#}}" />
+                                        <Run Text="hours)" />
+                                    </TextBlock>
+
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Margin="3" HorizontalAlignment="Right" Foreground="Gray" Text="Cache Loaded into memory: " />
+                                    <TextBlock Grid.Row="1" Grid.Column="1" Margin="3" HorizontalAlignment="Left" Foreground="Gray" Text="{Binding DMSData.LastLoadFromSqliteCache, Mode=OneWay}" />
+
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Margin="3" HorizontalAlignment="Left" Foreground="Gray" Text="Requested Runs loaded from DMS: " />
+                                    <TextBlock Grid.Row="2" Grid.Column="1" Margin="3" HorizontalAlignment="Left" Foreground="Gray" Text="{Binding DatasetManager.RequestedRunsLastUpdated, Mode=OneWay}" />
+                                    <TextBlock Grid.Row="2" Grid.Column="2" Margin="3" HorizontalAlignment="Left" Foreground="Gray">
+                                        <Run Text="(every" />
+                                        <Run Text="{Binding Mode=OneWay, Source={x:Static buzzardWpf:MainWindowViewModel.DMS_UPDATE_INTERVAL_MINUTES}}" />
+                                        <Run Text="minutes)" />
+                                    </TextBlock>
+                                </Grid>
 
                                 <Button
                                     Grid.Row="1"
