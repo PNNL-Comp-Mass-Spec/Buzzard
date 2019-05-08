@@ -455,8 +455,8 @@ namespace BuzzardWPF.Management
 
         private void SetupTimers()
         {
-            // Update every 500 msec
-            mScannedDatasetTimer = new Timer(ScannedDatasetTimer_Tick, this, 500, 500);
+            // Update every 5 seconds
+            mScannedDatasetTimer = new Timer(ScannedDatasetTimer_Tick, this, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5));
         }
 
         /// <summary>
