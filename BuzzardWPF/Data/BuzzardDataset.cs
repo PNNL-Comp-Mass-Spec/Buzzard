@@ -339,9 +339,9 @@ namespace BuzzardWPF.Data
                     fileCount++;
                     size += file.Length;
 
-                    if (info.LastWriteTime > lastWriteTime)
+                    if (file.LastWriteTime > lastWriteTime)
                     {
-                        lastWriteTime = info.LastWriteTime;
+                        lastWriteTime = file.LastWriteTime;
                     }
                 }
 
