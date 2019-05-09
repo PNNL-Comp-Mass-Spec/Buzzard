@@ -13,13 +13,12 @@ using BuzzardWPF.Data;
 using BuzzardWPF.IO;
 using BuzzardWPF.Management;
 using BuzzardWPF.Views;
-using LcmsNetData.Data;
 using LcmsNetData.Logging;
 using ReactiveUI;
 
 namespace BuzzardWPF.ViewModels
 {
-    public class BuzzardGridViewModel : ReactiveObject
+    public class DatasetsViewModel : ReactiveObject
     {
         #region Attributes
 
@@ -36,7 +35,7 @@ namespace BuzzardWPF.ViewModels
         #endregion
 
         #region Initialize
-        public BuzzardGridViewModel()
+        public DatasetsViewModel()
         {
             ShowGridItemDetail = false;
 

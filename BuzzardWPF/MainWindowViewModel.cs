@@ -97,7 +97,7 @@ namespace BuzzardWPF
 
             BindingOperations.EnableCollectionSynchronization(emslUsageTypesSource, lockEmslUsageTypesSource);
 
-            BuzzardGridVm.EmslUsageTypesSource = emslUsageTypesSource;
+            DatasetsVm.EmslUsageTypesSource = emslUsageTypesSource;
 
             if (!DMS_DataAccessor.Instance.CartNames.Contains("unknown"))
             {
@@ -184,7 +184,7 @@ namespace BuzzardWPF
         /// </summary>
         public string Title { get; }
 
-        public BuzzardGridViewModel BuzzardGridVm { get; } = new BuzzardGridViewModel();
+        public DatasetsViewModel DatasetsVm { get; } = new DatasetsViewModel();
         public SearchConfigViewModel SearchConfigVm { get; }
         public WatcherControlViewModel WatcherControlVm { get; } = new WatcherControlViewModel();
         public WatcherConfigViewModel WatcherConfigVm { get; } = new WatcherConfigViewModel();
@@ -359,7 +359,7 @@ namespace BuzzardWPF
 
             // Lets see if the path we were given is already
             // being used as the source of a dataset
-            var alreadyPresent = BuzzardGridVm.Datasets.ToList().Any(
+            var alreadyPresent = DatasetsVm.Datasets.ToList().Any(
                 ds =>
                 {
                     // This dataset is most likely an empty-dummy dataset,
@@ -459,7 +459,7 @@ namespace BuzzardWPF
             // Save settings
             ApplicationLogger.LogMessage(msgLevel, "Starting to save settings to config.");
             var settingsChanged = false;
-            settingsChanged |= BuzzardGridVm.SaveSettings(force);
+            settingsChanged |= DatasetsVm.SaveSettings(force);
             settingsChanged |= WatcherControlVm.SaveSettings(force);
             settingsChanged |= SearchConfigVm.SaveSettings(force);
             settingsChanged |= QCVm.SaveSettings(force);
@@ -487,7 +487,7 @@ namespace BuzzardWPF
                 //BuzzardWPF.Properties.Settings.Default.Reset();
 
                 ApplicationLogger.LogMessage(0, "Loading settings from config.");
-                BuzzardGridVm.LoadSettings();
+                DatasetsVm.LoadSettings();
                 DatasetManager.LoadSettings();
                 WatcherControlVm.LoadSettings();
                 SearchConfigVm.LoadSettings();

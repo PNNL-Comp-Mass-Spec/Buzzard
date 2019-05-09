@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="BuzzardWPF.Views.BuzzardGridView"
+    x:Class="BuzzardWPF.Views.DatasetsView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:componentModel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
@@ -14,7 +14,7 @@
     d:DesignWidth="749.4"
     Background="{x:Null}"
     mc:Ignorable="d"
-    d:DataContext="{d:DesignInstance {x:Type viewModels:BuzzardGridViewModel}, IsDesignTimeCreatable=True}">
+    d:DataContext="{d:DesignInstance {x:Type viewModels:DatasetsViewModel}, IsDesignTimeCreatable=True}">
     <UserControl.Resources>
         <converters:BooleanToDataGridVisibilityModeConverter x:Key="boolConverter" />
         <BooleanToVisibilityConverter x:Key="BoolToVis" />

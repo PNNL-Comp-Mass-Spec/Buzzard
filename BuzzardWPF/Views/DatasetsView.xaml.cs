@@ -19,11 +19,11 @@ using BuzzardWPF.ViewModels;
 namespace BuzzardWPF.Views
 {
     /// <summary>
-    /// Interaction logic for BuzzardGridView.xaml
+    /// Interaction logic for DatasetsView.xaml
     /// </summary>
-    public partial class BuzzardGridView : UserControl
+    public partial class DatasetsView : UserControl
     {
-        public BuzzardGridView()
+        public DatasetsView()
         {
             InitializeComponent();
         }
@@ -51,7 +51,7 @@ namespace BuzzardWPF.Views
         /// <param name="e"></param>
         private void DatasetDataGrid_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var dc = this.DataContext as BuzzardGridViewModel;
+            var dc = this.DataContext as DatasetsViewModel;
             if (dc == null)
             {
                 return;

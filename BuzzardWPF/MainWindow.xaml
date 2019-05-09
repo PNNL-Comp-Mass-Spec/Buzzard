@@ -350,7 +350,7 @@
                 Height="3"
                 HorizontalAlignment="Stretch"
                 Background="Gray" />
-            <views:BuzzardGridView DataContext="{Binding BuzzardGridVm}" Grid.Row="2" />
+            <views:DatasetsView DataContext="{Binding DatasetsVm}" Grid.Row="2" />
         </Grid>
 
         <StatusBar
