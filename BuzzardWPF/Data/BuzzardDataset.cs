@@ -337,14 +337,16 @@ namespace BuzzardWPF.Data
                 foreach (var file in info.GetFiles("*", SearchOption.AllDirectories))
                 {
                     fileCount++;
-                    size += file.Length;
 
                     if (file.LastWriteTime > lastWriteTime)
                     {
                         lastWriteTime = file.LastWriteTime;
                     }
-                }
 
+                    // For some reason, 'file' does not get a refreshed size, but the LastWriteTime does get updated
+                    var fileInfo = new FileInfo(file.FullName);
+                    size += fileInfo.Length;
+                }
             }
 
             return (exists, size, fileCount, creationTime, lastWriteTime);
