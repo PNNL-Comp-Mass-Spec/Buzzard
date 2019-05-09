@@ -35,7 +35,7 @@ namespace BuzzardWPF.Data
         /// <summary>
         /// Pending creation of trigger file.
         /// </summary>
-        [Description("Pending: Trigger File")]
+        [Description("Pending")]
         Pending,
         /// <summary>
         /// Trigger file was sent.
