@@ -5,7 +5,7 @@ using System.Windows.Media;
 
 namespace BuzzardWPF.Converters
 {
-    public class RedudantRequestBackgroundConverter
+    public class RedundantRequestBackgroundConverter
         : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

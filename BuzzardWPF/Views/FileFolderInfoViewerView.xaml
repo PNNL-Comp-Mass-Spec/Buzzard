@@ -11,7 +11,7 @@
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance {x:Type viewModels:FileFolderInfoViewerViewModel}, IsDesignTimeCreatable=True}">
     <UserControl.Resources>
-        <converters:ByteToKBConverter x:Key="FileSizeConverter" />
+        <converters:ByteFileSizeConverter x:Key="FileSizeConverter" />
 
         <Style TargetType="TextBlock">
             <Setter Property="FontSize" Value="13" />

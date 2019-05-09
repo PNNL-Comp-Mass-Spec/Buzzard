@@ -18,7 +18,8 @@
     <UserControl.Resources>
         <converters:BooleanToDataGridVisibilityModeConverter x:Key="boolConverter" />
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
-        <converters:ByteToKBConverter x:Key="FileSizeConverter" />
+        <converters:ByteFileSizeConverter x:Key="FileSizeConverter" />
+        <converters:EnumDescriptionConverter x:Key="EnumDescriptionConverter" />
         <converters:TabLockSwitchConverter x:Key="LockSwitchConverter" />
         <converters:WaitTimeToProgressValueConverter x:Key="ProgressBarConverter" />
         <converters:WaitTimeTextConverter x:Key="WaitTimeTextConverter" />
@@ -75,7 +76,7 @@
             ShadowDepth="5"
             Color="DarkGray" />
 
-        <converters:RedudantRequestBackgroundConverter x:Key="RedundantBackgroundConverter" />
+        <converters:RedundantRequestBackgroundConverter x:Key="RedundantBackgroundConverter" />
 
         <DataTemplate x:Key="EMSLUserTemplate" DataType="dmsData:ProposalUser">
             <TextBlock Margin="2,2,6,2" Text="{Binding Path=UserName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -279,7 +280,7 @@
                     Visibility="Collapsed" />
 
                 <DataGridTextColumn
-                    Binding="{Binding DatasetStatus}"
+                    Binding="{Binding DatasetStatus, Converter={StaticResource EnumDescriptionConverter}}"
                     Header="Status"
                     IsReadOnly="True" />
                 <DataGridTextColumn
@@ -506,7 +507,15 @@
                 <DataGridTextColumn
                     Binding="{Binding Path=FileSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource FileSizeConverter}}"
                     Header="File Size"
-                    IsReadOnly="True" />
+                    IsReadOnly="True">
+                    <DataGridTextColumn.CellStyle>
+                        <Style TargetType="DataGridCell" BasedOn="{StaticResource DataGridCellStyle}">
+                            <Style.Setters>
+                                <Setter Property="TextBlock.TextAlignment" Value="Right" />
+                            </Style.Setters>
+                        </Style>
+                    </DataGridTextColumn.CellStyle>
+                </DataGridTextColumn>
                 <DataGridTextColumn
                     Binding="{Binding Extension}"
                     Header="Extension"
