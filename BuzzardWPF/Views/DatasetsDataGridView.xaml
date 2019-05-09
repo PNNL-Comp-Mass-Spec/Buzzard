@@ -54,6 +54,13 @@
             </Style.Triggers>
 
             <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="ContextMenu">
+                <Setter.Value>
+                    <ContextMenu>
+                        <MenuItem Header="Monitor Dataset" IsChecked="{Binding IsMonitored, Mode=OneWay}" Command="{Binding ToggleMonitoringCommand}"></MenuItem>
+                    </ContextMenu>
+                </Setter.Value>
+            </Setter>
         </Style>
 
         <DropShadowEffect

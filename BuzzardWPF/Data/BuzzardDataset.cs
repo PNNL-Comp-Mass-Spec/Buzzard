@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Reactive;
+using System.Reactive.Linq;
 using BuzzardWPF.Management;
 using LcmsNetData.Data;
 using ReactiveUI;
@@ -51,6 +53,7 @@ namespace BuzzardWPF.Data
 
         private bool m_CartConfigStatus;
         private DateTime lastRecordedLastWriteTime;
+        private readonly ObservableAsPropertyHelper<bool> isMonitored;
 
         #endregion
 
@@ -69,6 +72,8 @@ namespace BuzzardWPF.Data
             InterestRating = "Unreviewed";
 
             IsFile = true;
+            isMonitored = this.WhenAnyValue(x => x.DatasetSource).Select(x => x == DatasetSource.Watcher).ToProperty(this, x => x.IsMonitored);
+            ToggleMonitoringCommand = ReactiveCommand.Create(ToggleMonitoring);
         }
         #endregion
 
@@ -136,6 +141,10 @@ namespace BuzzardWPF.Data
             get => m_datasetSource;
             set => this.RaiseAndSetIfChanged(ref m_datasetSource, value);
         }
+
+        public bool IsMonitored => isMonitored.Value;
+
+        public ReactiveCommand<Unit, Unit> ToggleMonitoringCommand { get; }
 
         public string ExperimentName
         {
@@ -375,6 +384,18 @@ namespace BuzzardWPF.Data
         {
             var info = GetDatasetStats();
             return (info.Exists, info.Size, info.FileCount);
+        }
+
+        private void ToggleMonitoring()
+        {
+            if (DatasetSource == DatasetSource.Searcher)
+            {
+                DatasetSource = DatasetSource.Watcher;
+            }
+            else
+            {
+                DatasetSource = DatasetSource.Searcher;
+            }
         }
 
         #region Members blindly brought over from classDataset
