@@ -82,5 +82,10 @@ namespace BuzzardWPF.Data
         /// </summary>
         [Description("Dataset Already in DMS")]
         DatasetAlreadyInDMS,
+        /// <summary>
+        /// Pending - waiting for file to stop changing
+        /// </summary>
+        [Description("Pending: File not stable")]
+        PendingFileStable,
     }
 }

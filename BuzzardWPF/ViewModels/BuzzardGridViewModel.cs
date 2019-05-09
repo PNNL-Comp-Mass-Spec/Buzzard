@@ -667,19 +667,6 @@ namespace BuzzardWPF.ViewModels
             }
         }
 
-        private KeyValuePair<int, long> GetFileStats(DirectoryInfo diFolder)
-        {
-            var fileCount = 0;
-            long fileSizeTotal = 0;
-
-            foreach (var file in diFolder.GetFiles("*", SearchOption.AllDirectories))
-            {
-                fileCount++;
-                fileSizeTotal += file.Length;
-            }
-            return new KeyValuePair<int, long>(fileCount, fileSizeTotal);
-        }
-
         private void MarkAborted(List<BuzzardDataset> selectedDatasets)
         {
             foreach (var dataset in selectedDatasets)
@@ -753,38 +740,19 @@ namespace BuzzardWPF.ViewModels
 
             var stableDatasets = new List<BuzzardDataset>();
 
-            // Values in this dictionary are the length of the file, in bytes
-            var filesToVerify = new Dictionary<BuzzardDataset, long>();
-
-            // Values in this dictionary are KeyValuePairs of <totalFileCount, totalFileSize>
-            var foldersToVerify = new Dictionary<BuzzardDataset, KeyValuePair<int, long>>();
+            // Values: Dataset exists (file or directory), size (in bytes), number of files
+            var datasetsToVerify = new Dictionary<BuzzardDataset, (bool Exists, long Size, int FileCount)>();
 
             foreach (var dataset in selectedDatasets)
             {
-
-                if (dataset.IsFile)
+                var stats = dataset.GetFileStats();
+                if (!stats.Exists)
                 {
-                    var fiFile = new FileInfo(dataset.FilePath);
-                    if (!fiFile.Exists)
-                    {
-                        dataset.DatasetStatus = DatasetStatus.FileNotFound;
-                        continue;
-                    }
-                    filesToVerify.Add(dataset, fiFile.Length);
+                    dataset.DatasetStatus = DatasetStatus.FileNotFound;
+                    continue;
                 }
-                else
-                {
-                    var diFolder = new DirectoryInfo(dataset.FilePath);
-                    if (!diFolder.Exists)
-                    {
-                        dataset.DatasetStatus = DatasetStatus.FileNotFound;
-                        continue;
-                    }
 
-                    var fileCountAndSize = GetFileStats(diFolder);
-
-                    foldersToVerify.Add(dataset, fileCountAndSize);
-                }
+                datasetsToVerify.Add(dataset, stats);
 
                 dataset.DatasetStatus = DatasetStatus.ValidatingStable;
             }
@@ -813,36 +781,15 @@ namespace BuzzardWPF.ViewModels
                 }
             }
 
-            foreach (var entry in filesToVerify)
+            foreach (var entry in datasetsToVerify)
             {
-                var fiFile = new FileInfo(entry.Key.FilePath);
-                if (fiFile.Exists)
+                var stats = entry.Key.GetFileStats();
+                if (stats.Exists)
                 {
-                    if (fiFile.Length == entry.Value)
-                        stableDatasets.Add(entry.Key);
-                    else
+                    if (stats.Equals(entry.Value))
                     {
-                        entry.Key.DatasetStatus = DatasetStatus.FileSizeChanged;
-                    }
-                }
-                else
-                {
-                    entry.Key.DatasetStatus = DatasetStatus.FileNotFound;
-                }
-            }
-
-            foreach (var entry in foldersToVerify)
-            {
-                var diFolder = new DirectoryInfo(entry.Key.FilePath);
-                if (diFolder.Exists)
-                {
-                    var fileCountAndSizeAtStart = entry.Value;
-
-                    var fileCountAndSizeNow = GetFileStats(diFolder);
-
-                    if (fileCountAndSizeNow.Key == fileCountAndSizeAtStart.Key &&
-                        fileCountAndSizeNow.Value == fileCountAndSizeAtStart.Value)
                         stableDatasets.Add(entry.Key);
+                    }
                     else
                     {
                         entry.Key.DatasetStatus = DatasetStatus.FileSizeChanged;

@@ -50,6 +50,7 @@ namespace BuzzardWPF.Data
         private string m_interestRating;
 
         private bool m_CartConfigStatus;
+        private DateTime lastRecordedLastWriteTime;
 
         #endregion
 
@@ -287,6 +288,8 @@ namespace BuzzardWPF.Data
             private set => this.RaiseAndSetIfChanged(ref m_fileSize, value);
         }
 
+        public DateTime FileLastChangedUtc { get; private set; }
+
         /// <summary>
         /// True if the dataset is a single file, otherwise false
         /// </summary>
@@ -352,13 +355,26 @@ namespace BuzzardWPF.Data
                 RunStart = DateTime.MinValue;
                 RunFinish = DateTime.MinValue;
                 DatasetStatus = DatasetStatus.FileNotFound;
+                FileLastChangedUtc = DateTime.UtcNow;
                 return false;
             }
 
+            if (FileSize != info.Size || lastRecordedLastWriteTime != info.LastWriteTime)
+            {
+                FileLastChangedUtc = DateTime.UtcNow;
+            }
+
+            lastRecordedLastWriteTime = info.LastWriteTime;
             FileSize = info.Size;
             RunStart = info.CreationTime;
             RunFinish = info.LastWriteTime;
             return true;
+        }
+
+        public (bool Exists, long Size, int FileCount) GetFileStats()
+        {
+            var info = GetDatasetStats();
+            return (info.Exists, info.Size, info.FileCount);
         }
 
         #region Members blindly brought over from classDataset

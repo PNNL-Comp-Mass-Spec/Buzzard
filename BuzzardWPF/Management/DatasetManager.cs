@@ -498,7 +498,6 @@ namespace BuzzardWPF.Management
 
                     try
                     {
-
                         var hasTriggerFileSent = false;
 
                         // Also make sure that the trigger file does not exist on the server...
@@ -523,13 +522,23 @@ namespace BuzzardWPF.Management
                             continue;
                         }
 
-                        if (dataset.DatasetStatus == DatasetStatus.FileNotFound)
-                            dataset.DatasetStatus = DatasetStatus.Pending;
-
                         if ((dataset.FileSize / 1024d) < MinimumFileSizeKB)
                         {
                             dataset.DatasetStatus = DatasetStatus.PendingFileSize;
                             continue;
+                        }
+
+                        if (DateTime.UtcNow.Subtract(dataset.FileLastChangedUtc).TotalSeconds < 60)
+                        {
+                            dataset.DatasetStatus = DatasetStatus.PendingFileStable;
+                            continue;
+                        }
+
+                        if (dataset.DatasetStatus == DatasetStatus.FileNotFound ||
+                            dataset.DatasetStatus == DatasetStatus.PendingFileSize ||
+                            dataset.DatasetStatus == DatasetStatus.PendingFileStable)
+                        {
+                            dataset.DatasetStatus = DatasetStatus.Pending;
                         }
 
                         var timeWaited = now - dataset.RunFinish;
