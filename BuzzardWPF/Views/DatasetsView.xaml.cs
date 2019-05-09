@@ -13,8 +13,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using BuzzardWPF.Data;
-using BuzzardWPF.ViewModels;
 
 namespace BuzzardWPF.Views
 {
@@ -33,7 +31,7 @@ namespace BuzzardWPF.Views
         /// </summary>
         private void SelectNoDatasets_Click(object sender, RoutedEventArgs e)
         {
-            DatasetDataGrid.SelectedIndex = -1;
+            DatasetsDataGrid.SelectNoDatasets_Click(sender, e);
         }
 
         /// <summary>
@@ -41,30 +39,7 @@ namespace BuzzardWPF.Views
         /// </summary>
         private void SelectAllDatasets_Click(object sender, RoutedEventArgs e)
         {
-            DatasetDataGrid.SelectAll();
-        }
-
-        /// <summary>
-        /// Provide a version of "SelectedItems" one-way-to-source binding
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void DatasetDataGrid_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            var dc = this.DataContext as DatasetsViewModel;
-            if (dc == null)
-            {
-                return;
-            }
-
-            var selector = sender as MultiSelector;
-            if (selector == null)
-            {
-                return;
-            }
-
-            dc.SelectedDatasets.Clear();
-            dc.SelectedDatasets.AddRange(selector.SelectedItems.Cast<BuzzardDataset>());
+            DatasetsDataGrid.SelectAllDatasets_Click(sender, e);
         }
     }
 }

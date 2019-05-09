@@ -127,8 +127,8 @@
     <Compile Include="Searching\SearchConfig.cs" />
     <Compile Include="Searching\SearchEventArgs.cs" />
     <Compile Include="Searching\StartStopEventArgs.cs" />
-    <Compile Include="ViewModels\DatasetsViewModel.cs" />
     <Compile Include="ViewModels\DatasetOverwriteDialogViewModel.cs" />
+    <Compile Include="ViewModels\DatasetsViewModel.cs" />
     <Compile Include="ViewModels\EmslUsageSelectionViewModel.cs" />
     <Compile Include="ViewModels\ExperimentsViewerViewModel.cs" />
     <Compile Include="ViewModels\FileFolderInfoViewerViewModel.cs" />
@@ -138,12 +138,15 @@
     <Compile Include="ViewModels\SearchConfigViewModel.cs" />
     <Compile Include="ViewModels\WatcherConfigViewModel.cs" />
     <Compile Include="ViewModels\WatcherControlViewModel.cs" />
-    <Compile Include="Views\DatasetsView.xaml.cs">
-      <DependentUpon>DatasetsView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\CheckComboBoxOverlayable.cs" />
     <Compile Include="Views\DatasetOverwriteDialogWindow.xaml.cs">
       <DependentUpon>DatasetOverwriteDialogWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DatasetsDataGridView.xaml.cs">
+      <DependentUpon>DatasetsDataGridView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DatasetsView.xaml.cs">
+      <DependentUpon>DatasetsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\EmslUsageSelectionView.xaml.cs">
       <DependentUpon>EmslUsageSelectionView.xaml</DependentUpon>
@@ -181,11 +184,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\DatasetsView.xaml">
+    <Page Include="Views\DatasetOverwriteDialogWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\DatasetOverwriteDialogWindow.xaml">
+    <Page Include="Views\DatasetsDataGridView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DatasetsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
