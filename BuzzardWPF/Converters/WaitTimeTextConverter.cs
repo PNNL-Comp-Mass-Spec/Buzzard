@@ -63,6 +63,9 @@ namespace BuzzardWPF.Converters
                     case DatasetStatus.DatasetAlreadyInDMS:
                         returnValue = "Already in DMS";
                         break;
+                    case DatasetStatus.PendingFileStable:
+                        returnValue = "Waiting for stable file";
+                        break;
                 }
 
                 if (!string.IsNullOrWhiteSpace(returnValue))

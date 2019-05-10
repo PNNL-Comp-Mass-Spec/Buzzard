@@ -24,6 +24,10 @@ namespace BuzzardWPF.Converters
                 {
                     returnValue = 100;
                 }
+                else if (status == DatasetStatus.PendingFileStable)
+                {
+                    returnValue = 0;
+                }
                 else
                 {
                     var setSource = (DatasetSource)values[2];

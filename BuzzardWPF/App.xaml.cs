@@ -87,6 +87,7 @@ namespace BuzzardWPF
                 splashScreen.LoadComplete();
             }
 
+            DatasetManager.Manager.Dispose();
             sqliteToolsInstance.Dispose();
             dmsDataAccessorInstance?.Dispose();
             ShutDownLogging();

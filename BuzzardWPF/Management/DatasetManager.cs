@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
@@ -21,7 +22,7 @@ namespace BuzzardWPF.Management
     /// <summary>
     /// Manages a list of datasets
     /// </summary>
-    public class DatasetManager : ReactiveObject, IStoredSettingsMonitor
+    public class DatasetManager : ReactiveObject, IStoredSettingsMonitor, IDisposable
     {
         public const string PREVIEW_TRIGGERFILE_FLAG = "Nonexistent_Fake_TriggerFile.xmL";
         public const string EXPERIMENT_NAME_DESCRIPTION = "Experiment";
@@ -42,6 +43,8 @@ namespace BuzzardWPF.Management
         private static Dictionary<string, bool> mTriggerFolderContents;
 
         private Timer mScannedDatasetTimer;
+        private Timer mTriggerCountdownTimer;
+        private readonly ConcurrentDictionary<BuzzardDataset, bool> triggerCountdownDatasets = new ConcurrentDictionary<BuzzardDataset, bool>(3, 10);
 
         private static readonly string[] INTEREST_RATING_ARRAY = { "Unreviewed", "Not Released", "Released", "Rerun (Good Data)", "Rerun (Superseded)" };
         public static readonly ReactiveList<string> INTEREST_RATINGS_COLLECTION;
@@ -457,12 +460,14 @@ namespace BuzzardWPF.Management
         {
             // Update every 5 seconds
             mScannedDatasetTimer = new Timer(ScannedDatasetTimer_Tick, this, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5));
+            // Update countdown every half second
+            mTriggerCountdownTimer = new Timer(CountdownTimer_Tick, this, TimeSpan.FromSeconds(0.5), TimeSpan.FromSeconds(0.5));
         }
 
         /// <summary>
         /// This will keep the UI components of the Datasets that are found by the scanner up to date.
         /// </summary>
-        void ScannedDatasetTimer_Tick(object state)
+        private void ScannedDatasetTimer_Tick(object state)
         {
             try
             {
@@ -476,7 +481,6 @@ namespace BuzzardWPF.Management
                 var now = DateTime.Now;
                 var timeToWait = new TimeSpan(0, TriggerFileCreationWaitTime, 0);
 
-                var totalSecondsToWait = TriggerFileCreationWaitTime * 60;
                 var datasetsToCheck = datasets.Where(item =>
                     item.DatasetStatus != DatasetStatus.TriggerFileSent &&
                     item.DatasetStatus != DatasetStatus.Ignored &&
@@ -544,27 +548,13 @@ namespace BuzzardWPF.Management
                         var timeWaited = now - dataset.RunFinish;
                         if (timeWaited >= timeToWait)
                         {
+                            triggerCountdownDatasets.TryRemove(dataset, out _);
                             CreateTriggerFileForDataset(dataset);
                         }
                         else
                         {
-                            // If it's not time to create the trigger file, then update
-                            // the display telling the user when it will be created.
-                            var secondsLeft = totalSecondsToWait - timeWaited.TotalSeconds;
-                            var percentWaited = 100 * timeWaited.TotalSeconds / totalSecondsToWait;
-                            var secondsLeftInt = Convert.ToInt32(secondsLeft);
-
-                            var pulseIt = secondsLeftInt > dataset.SecondsTillTriggerCreation;
-
-                            dataset.SecondsTillTriggerCreation = Convert.ToInt32(secondsLeft);
-                            dataset.WaitTimePercentage = percentWaited;
-                            if (pulseIt)
-                            {
-                                dataset.PulseText = true;
-                                dataset.PulseText = false;
-                            }
+                            triggerCountdownDatasets.TryAdd(dataset, true);
                         }
-
                     }
                     catch (Exception ex)
                     {
@@ -584,6 +574,48 @@ namespace BuzzardWPF.Management
                        0,
                        "Exception in ScannedDatasetTimer_Tick (general)", ex);
             }
+        }
+
+        /// <summary>
+        /// This will keep the trigger file creation timers updated every second.
+        /// </summary>
+        private void CountdownTimer_Tick(object state)
+        {
+            RxApp.MainThreadScheduler.Schedule(() =>
+            {
+                var now = DateTime.Now;
+                var totalSecondsToWait = TriggerFileCreationWaitTime * 60;
+                foreach (var dataset in triggerCountdownDatasets.Keys)
+                {
+                    var timeWaited = now - dataset.RunFinish;
+
+                    // If it's not time to create the trigger file, then update
+                    // the display telling the user when it will be created.
+                    var secondsLeft = Math.Max(totalSecondsToWait - timeWaited.TotalSeconds, 0);
+                    var percentWaited = 100 * timeWaited.TotalSeconds / totalSecondsToWait;
+                    var secondsLeftInt = Convert.ToInt32(secondsLeft);
+
+                    var pulseIt = secondsLeftInt > dataset.SecondsTillTriggerCreation;
+
+                    dataset.SecondsTillTriggerCreation = Convert.ToInt32(secondsLeft);
+                    dataset.WaitTimePercentage = percentWaited;
+
+                    if (pulseIt)
+                    {
+                        dataset.PulseText = true;
+                        dataset.PulseText = false;
+                    }
+
+                    if (dataset.DatasetStatus == DatasetStatus.TriggerFileSent ||
+                        dataset.DatasetStatus == DatasetStatus.PendingFileStable ||
+                        dataset.DatasetSource == DatasetSource.Searcher ||
+                        totalSecondsToWait - timeWaited.TotalSeconds < 0)
+                    {
+                        // Different reasons to remove this from the list; if it actually should be here, it will be re-added within 10 seconds
+                        triggerCountdownDatasets.TryRemove(dataset, out var _);
+                    }
+                }
+            });
         }
 
         private void CreateTriggerFileForDataset(BuzzardDataset dataset)
@@ -1496,6 +1528,12 @@ namespace BuzzardWPF.Management
             }
 
             return setting;
+        }
+
+        public void Dispose()
+        {
+            mScannedDatasetTimer?.Dispose();
+            mTriggerCountdownTimer?.Dispose();
         }
     }
 }
