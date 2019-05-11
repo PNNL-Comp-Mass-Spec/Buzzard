@@ -4,7 +4,7 @@ using ReactiveUI;
 
 namespace BuzzardWPF.ViewModels
 {
-    public interface IEmslUsvUser : INotifyPropertyChanged
+    public interface IEmslUsageData : INotifyPropertyChanged
     {
         string EMSLUsageType { get; set; }
         string EMSLProposalID { get; set; }

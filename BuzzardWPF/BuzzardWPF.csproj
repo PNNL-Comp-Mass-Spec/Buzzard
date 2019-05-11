@@ -133,7 +133,7 @@
     <Compile Include="ViewModels\ExperimentsViewerViewModel.cs" />
     <Compile Include="ViewModels\FileFolderInfoViewerViewModel.cs" />
     <Compile Include="ViewModels\FillDownWindowViewModel.cs" />
-    <Compile Include="ViewModels\IEmslUsvUser.cs" />
+    <Compile Include="ViewModels\IEmslUsageData.cs" />
     <Compile Include="ViewModels\QCViewModel.cs" />
     <Compile Include="ViewModels\SearchConfigViewModel.cs" />
     <Compile Include="ViewModels\WatcherConfigViewModel.cs" />

@@ -12,7 +12,7 @@ using ReactiveUI;
 
 namespace BuzzardWPF.ViewModels
 {
-    public class QCViewModel : ReactiveObject, IEmslUsvUser, IStoredSettingsMonitor
+    public class QCViewModel : ReactiveObject, IEmslUsageData, IStoredSettingsMonitor
     {
         #region Initialize
         public QCViewModel()

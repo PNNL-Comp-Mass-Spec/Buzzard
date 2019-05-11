@@ -8,7 +8,7 @@ using ReactiveUI;
 
 namespace BuzzardWPF.ViewModels
 {
-    public class WatcherConfigViewModel : ReactiveObject, IEmslUsvUser
+    public class WatcherConfigViewModel : ReactiveObject, IEmslUsageData
     {
         #region Initialization
         public WatcherConfigViewModel()

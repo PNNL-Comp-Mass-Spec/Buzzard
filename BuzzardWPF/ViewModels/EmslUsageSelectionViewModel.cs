@@ -26,7 +26,7 @@ namespace BuzzardWPF.ViewModels
             "USER"
         };
 
-        private IEmslUsvUser m_boundContainer;
+        private IEmslUsageData m_boundContainer;
         private ReactiveList<string> m_usageTypesSource;
         private ReactiveList<string> m_availablePIDs;
         private ReactiveList<ProposalUser> m_ProposalUsers;
@@ -59,7 +59,7 @@ namespace BuzzardWPF.ViewModels
         #endregion
 
         #region Properties
-        public IEmslUsvUser BoundContainer
+        public IEmslUsageData BoundContainer
         {
             get => m_boundContainer;
             set
