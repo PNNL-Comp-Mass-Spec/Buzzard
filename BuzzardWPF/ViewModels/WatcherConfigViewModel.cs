@@ -19,9 +19,9 @@ namespace BuzzardWPF.ViewModels
 
             SelectExperimentCommand = ReactiveCommand.Create(SelectExperiment);
 
-            DatasetManager.WhenAnyValue(x => x.WatcherEmslUsage).Subscribe(x => this.RaisePropertyChanged(nameof(SelectedEMSLUsageType)));
+            DatasetManager.WhenAnyValue(x => x.WatcherEmslUsage).Subscribe(x => this.RaisePropertyChanged(nameof(EMSLUsageType)));
             DatasetManager.WhenAnyValue(x => x.WatcherEmslProposalID).Subscribe(x => this.RaisePropertyChanged(nameof(EMSLProposalID)));
-            DatasetManager.WhenAnyValue(x => x.WatcherSelectedProposalUsers).Subscribe(x => this.RaisePropertyChanged(nameof(SelectedEMSLProposalUsers)));
+            DatasetManager.WhenAnyValue(x => x.WatcherSelectedProposalUsers).Subscribe(x => this.RaisePropertyChanged(nameof(EMSLProposalUsers)));
         }
 
         #endregion
@@ -78,7 +78,7 @@ namespace BuzzardWPF.ViewModels
 
         #region IEmslUsvUser Members
 
-        public string SelectedEMSLUsageType
+        public string EMSLUsageType
         {
             get => DatasetManager.WatcherEmslUsage;
             set => DatasetManager.WatcherEmslUsage = value;
@@ -90,7 +90,7 @@ namespace BuzzardWPF.ViewModels
             set => DatasetManager.WatcherEmslProposalID = value;
         }
 
-        public ReactiveList<ProposalUser> SelectedEMSLProposalUsers => DatasetManager.WatcherSelectedProposalUsers;
+        public ReactiveList<ProposalUser> EMSLProposalUsers => DatasetManager.WatcherSelectedProposalUsers;
 
         #endregion
     }

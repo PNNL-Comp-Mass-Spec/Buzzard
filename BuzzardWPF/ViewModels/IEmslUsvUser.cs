@@ -6,8 +6,8 @@ namespace BuzzardWPF.ViewModels
 {
     public interface IEmslUsvUser : INotifyPropertyChanged
     {
-        string SelectedEMSLUsageType { get; set; }
+        string EMSLUsageType { get; set; }
         string EMSLProposalID { get; set; }
-        ReactiveList<ProposalUser> SelectedEMSLProposalUsers { get; }
+        ReactiveList<ProposalUser> EMSLProposalUsers { get; }
     }
 }

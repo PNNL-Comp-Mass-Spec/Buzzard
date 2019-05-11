@@ -19,14 +19,14 @@ namespace BuzzardWPF.ViewModels
         {
             EmslUsageSelectionVm.BoundContainer = this;
 
-            SelectedEMSLUsageType = EmslUsageSelectionVm.UsageTypesSource[1];
+            EMSLUsageType = EmslUsageSelectionVm.UsageTypesSource[1];
             EMSLProposalID = null;
             ExperimentName = null;
 
             isNotMonitoring = true;
 
             SelectExperimentCommand = ReactiveCommand.Create(SelectExperiment);
-            AddQcMonitorCommand = ReactiveCommand.Create(AddQcMonitor, this.WhenAnyValue(x => x.ExperimentName, x => x.DatasetNameMatch, x => x.SelectedEMSLUsageType, x => x.EMSLProposalID, x => x.SelectedEMSLProposalUsers, x => x.SelectedEMSLProposalUsers.Count, x => x.Manager.QcMonitors).Select(
+            AddQcMonitorCommand = ReactiveCommand.Create(AddQcMonitor, this.WhenAnyValue(x => x.ExperimentName, x => x.DatasetNameMatch, x => x.EMSLUsageType, x => x.EMSLProposalID, x => x.EMSLProposalUsers, x => x.EMSLProposalUsers.Count, x => x.Manager.QcMonitors).Select(
                 x =>
                 {
                     var musts = !string.IsNullOrWhiteSpace(x.Item1) && !string.IsNullOrWhiteSpace(x.Item2) && !string.IsNullOrWhiteSpace(x.Item3);
@@ -55,7 +55,7 @@ namespace BuzzardWPF.ViewModels
             RemoveQcMonitorCommand = ReactiveCommand.Create(RemoveQcMonitor, this.WhenAnyValue(x => x.SelectedQcMonitor).Select(x => x != null));
 
             this.WhenAnyValue(x => x.ExperimentName).Subscribe(x => DatasetNameMatch = x);
-            this.WhenAnyValue(x => x.SelectedEMSLProposalUsers.Count).Subscribe(_ => SettingsChanged = true);
+            this.WhenAnyValue(x => x.EMSLProposalUsers.Count).Subscribe(_ => SettingsChanged = true);
         }
         #endregion
 
@@ -77,7 +77,7 @@ namespace BuzzardWPF.ViewModels
 
         public bool SettingsChanged { get; set; }
 
-        public string SelectedEMSLUsageType
+        public string EMSLUsageType
         {
             get => selectedEMSLUsageType;
             set => this.RaiseAndSetIfChangedMonitored(ref selectedEMSLUsageType, value);
@@ -97,7 +97,7 @@ namespace BuzzardWPF.ViewModels
 
         public DatasetManager Manager => DatasetManager.Manager;
 
-        public ReactiveList<ProposalUser> SelectedEMSLProposalUsers { get; } = new ReactiveList<ProposalUser>();
+        public ReactiveList<ProposalUser> EMSLProposalUsers { get; } = new ReactiveList<ProposalUser>();
 
         public string DatasetNameMatch
         {
@@ -149,16 +149,16 @@ namespace BuzzardWPF.ViewModels
             var qcMonitor = new QcMonitorData
             {
                 ExperimentName = ExperimentName,
-                EmslUsageType = SelectedEMSLUsageType,
+                EmslUsageType = EMSLUsageType,
                 DatasetNameMatch = DatasetNameMatch
             };
 
-            if (SelectedEMSLUsageType.Equals("USER", StringComparison.OrdinalIgnoreCase))
+            if (EMSLUsageType.Equals("USER", StringComparison.OrdinalIgnoreCase))
             {
                 qcMonitor.EmslProposalId = EMSLProposalID;
                 using (qcMonitor.EmslProposalUsers.SuppressChangeNotifications())
                 {
-                    qcMonitor.EmslProposalUsers.AddRange(SelectedEMSLProposalUsers);
+                    qcMonitor.EmslProposalUsers.AddRange(EMSLProposalUsers);
                 }
             }
 
@@ -197,10 +197,10 @@ namespace BuzzardWPF.ViewModels
             // Still save the changes here...
             Settings.Default.QC_ExperimentName = ExperimentName;
             Settings.Default.QC_ProposalID = EMSLProposalID;
-            Settings.Default.QC_SelectedUsageType = SelectedEMSLUsageType;
+            Settings.Default.QC_SelectedUsageType = EMSLUsageType;
 
             var selectedEMSLUsers = new System.Collections.Specialized.StringCollection();
-            foreach (var user in SelectedEMSLProposalUsers)
+            foreach (var user in EMSLProposalUsers)
                 selectedEMSLUsers.Add(user.UserID.ToString());
 
             Settings.Default.QC_EMSL_Users = selectedEMSLUsers;
@@ -214,7 +214,7 @@ namespace BuzzardWPF.ViewModels
         {
             ExperimentName = Settings.Default.QC_ExperimentName;
             EMSLProposalID = Settings.Default.QC_ProposalID;
-            SelectedEMSLUsageType = Settings.Default.QC_SelectedUsageType;
+            EMSLUsageType = Settings.Default.QC_SelectedUsageType;
 
             List<string> selectedUsers;
             if (Settings.Default.QC_EMSL_Users == null)
@@ -222,10 +222,10 @@ namespace BuzzardWPF.ViewModels
             else
                 selectedUsers = Settings.Default.QC_EMSL_Users.Cast<string>().ToList();
 
-            using (SelectedEMSLProposalUsers.SuppressChangeNotifications())
+            using (EMSLProposalUsers.SuppressChangeNotifications())
             {
-                SelectedEMSLProposalUsers.Clear();
-                SelectedEMSLProposalUsers.AddRange(DMS_DataAccessor.Instance.FindSavedEMSLProposalUsers(EMSLProposalID, selectedUsers));
+                EMSLProposalUsers.Clear();
+                EMSLProposalUsers.AddRange(DMS_DataAccessor.Instance.FindSavedEMSLProposalUsers(EMSLProposalID, selectedUsers));
             }
 
             if (!string.IsNullOrWhiteSpace(ExperimentName) && string.IsNullOrWhiteSpace(Settings.Default.QC_Monitors))
@@ -233,7 +233,7 @@ namespace BuzzardWPF.ViewModels
                 var monitor = new QcMonitorData()
                 {
                     ExperimentName = ExperimentName,
-                    EmslUsageType = SelectedEMSLUsageType,
+                    EmslUsageType = EMSLUsageType,
                     DatasetNameMatch = "*"
                 };
 
@@ -242,7 +242,7 @@ namespace BuzzardWPF.ViewModels
                     monitor.EmslProposalId = EMSLProposalID;
                     using (monitor.EmslProposalUsers.SuppressChangeNotifications())
                     {
-                        monitor.EmslProposalUsers.AddRange(SelectedEMSLProposalUsers);
+                        monitor.EmslProposalUsers.AddRange(EMSLProposalUsers);
                     }
                 }
 

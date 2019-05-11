@@ -40,7 +40,7 @@ namespace BuzzardWPF.ViewModels
             UsageTypesSource = new ReactiveList<string>(EMSL_USAGE_TYPES);
             AvailablePIDs = DMS_DataAccessor.Instance.ProposalIDs;
 
-            this.WhenAnyValue(x => x.BoundContainer.SelectedEMSLProposalUsers, x => x.BoundContainer.SelectedEMSLProposalUsers.Count).ObserveOn(RxApp.MainThreadScheduler).Subscribe(x => UpdateSelectedUsersText());
+            this.WhenAnyValue(x => x.BoundContainer.EMSLProposalUsers, x => x.BoundContainer.EMSLProposalUsers.Count).ObserveOn(RxApp.MainThreadScheduler).Subscribe(x => UpdateSelectedUsersText());
         }
 
         static EmslUsageSelectionViewModel()
@@ -116,7 +116,7 @@ namespace BuzzardWPF.ViewModels
             {
                 ProposalUsers = DMS_DataAccessor.Instance.GetProposalUsers(BoundContainer.EMSLProposalID);
 
-                BoundContainer?.SelectedEMSLProposalUsers.Clear();
+                BoundContainer?.EMSLProposalUsers.Clear();
                 ProposalUsersText = string.Empty;
             }
         }
@@ -146,13 +146,13 @@ namespace BuzzardWPF.ViewModels
         /// </summary>
         public void UpdateSelectedUsersText()
         {
-            if (BoundContainer?.SelectedEMSLProposalUsers == null)
+            if (BoundContainer?.EMSLProposalUsers == null)
             {
                 return;
             }
 
             var userString = string.Empty;
-            foreach (var user in BoundContainer.SelectedEMSLProposalUsers)
+            foreach (var user in BoundContainer.EMSLProposalUsers)
             {
                 userString += user.UserName + "; ";
             }

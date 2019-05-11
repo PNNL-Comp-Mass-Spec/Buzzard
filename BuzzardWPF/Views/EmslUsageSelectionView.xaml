@@ -68,7 +68,7 @@
                     MinWidth="125"
                     Margin="0,3,3.4,3"
                     ItemsSource="{Binding Path=UsageTypesSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                    SelectedItem="{Binding Path=BoundContainer.SelectedEMSLUsageType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    SelectedItem="{Binding Path=BoundContainer.EMSLUsageType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     Style="{StaticResource ComboBoxStyle}" />
 
                 <TextBlock
@@ -87,7 +87,7 @@
                         Grid.Column="0"
                         Height="32"
                         Margin="2,2,5,2"
-                        IsEnabled="{Binding Path=BoundContainer.SelectedEMSLUsageType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource EnableProposalIDConverter}}"
+                        IsEnabled="{Binding Path=BoundContainer.EMSLUsageType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource EnableProposalIDConverter}}"
                         RenderTransformOrigin="0.5,0.5"
                         Style="{StaticResource TextBoxStyle}"
                         Text="{Binding Path=BoundContainer.EMSLProposalID, Mode=TwoWay, UpdateSourceTrigger=LostFocus}">
@@ -104,7 +104,7 @@
                         Grid.Row="0"
                         Grid.Column="1"
                         Margin="0,3,3.4,3"
-                        IsEnabled="{Binding Path=BoundContainer.SelectedEMSLUsageType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource EnableProposalIDConverter}}"
+                        IsEnabled="{Binding Path=BoundContainer.EMSLUsageType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource EnableProposalIDConverter}}"
                         ItemsSource="{Binding Path=AvailablePIDs, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                         SelectedItem="{Binding BoundContainer.EMSLProposalID}">
                         <cueBannerOverlay:CueBannerService.CueBanner>
@@ -124,9 +124,9 @@
                     Margin="3"
                     Delimiter="; "
                     DisplayMemberPath="UserName"
-                    IsEnabled="{Binding Path=BoundContainer.SelectedEMSLUsageType, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource EnableProposalIDConverter}}"
+                    IsEnabled="{Binding Path=BoundContainer.EMSLUsageType, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource EnableProposalIDConverter}}"
                     ItemsSource="{Binding Path=ProposalUsers, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                    SelectedItemsOverride="{Binding Path=BoundContainer.SelectedEMSLProposalUsers}">
+                    SelectedItemsOverride="{Binding Path=BoundContainer.EMSLProposalUsers}">
                     <cueBannerOverlay:CueBannerService.CueBanner>
                         <TextBlock Text="Select" Margin="0" FontWeight="Regular" Style="{StaticResource TextBlockStyle}" />
                     </cueBannerOverlay:CueBannerService.CueBanner>
