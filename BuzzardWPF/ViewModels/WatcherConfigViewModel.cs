@@ -3,25 +3,20 @@ using System.Reactive;
 using BuzzardWPF.Management;
 using BuzzardWPF.Searching;
 using BuzzardWPF.Views;
-using LcmsNetData.Data;
 using ReactiveUI;
 
 namespace BuzzardWPF.ViewModels
 {
-    public class WatcherConfigViewModel : ReactiveObject, IEmslUsageData
+    public class WatcherConfigViewModel : ReactiveObject
     {
         #region Initialization
         public WatcherConfigViewModel()
         {
             isNotMonitoring = true;
 
-            EmslUsageSelectionVm.BoundContainer = this;
+            EmslUsageSelectionVm.BoundContainer = WatcherMetadata;
 
             SelectExperimentCommand = ReactiveCommand.Create(SelectExperiment);
-
-            DatasetManager.WhenAnyValue(x => x.WatcherEmslUsage).Subscribe(x => this.RaisePropertyChanged(nameof(EMSLUsageType)));
-            DatasetManager.WhenAnyValue(x => x.WatcherEmslProposalID).Subscribe(x => this.RaisePropertyChanged(nameof(EMSLProposalID)));
-            DatasetManager.WhenAnyValue(x => x.WatcherSelectedProposalUsers).Subscribe(x => this.RaisePropertyChanged(nameof(EMSLProposalUsers)));
         }
 
         #endregion
@@ -33,6 +28,8 @@ namespace BuzzardWPF.ViewModels
         public ReactiveCommand<Unit, Unit> SelectExperimentCommand { get; }
 
         public DatasetManager DatasetManager => DatasetManager.Manager;
+
+        public WatcherMetadata WatcherMetadata => DatasetManager.WatcherMetadata;
 
         public DMS_DataAccessor DmsData => DMS_DataAccessor.Instance;
 
@@ -62,7 +59,7 @@ namespace BuzzardWPF.ViewModels
             if (stop)
                 return;
 
-            DatasetManager.ExperimentName = dialogVm.SelectedExperiment.Experiment;
+            DatasetManager.WatcherMetadata.ExperimentName = dialogVm.SelectedExperiment.Experiment;
         }
 
         /// <summary>
@@ -74,24 +71,6 @@ namespace BuzzardWPF.ViewModels
         {
             IsNotMonitoring = !e.Monitoring;
         }
-        #endregion
-
-        #region IEmslUsvUser Members
-
-        public string EMSLUsageType
-        {
-            get => DatasetManager.WatcherEmslUsage;
-            set => DatasetManager.WatcherEmslUsage = value;
-        }
-
-        public string EMSLProposalID
-        {
-            get => DatasetManager.WatcherEmslProposalID;
-            set => DatasetManager.WatcherEmslProposalID = value;
-        }
-
-        public ReactiveList<ProposalUser> EMSLProposalUsers => DatasetManager.WatcherSelectedProposalUsers;
-
         #endregion
     }
 }

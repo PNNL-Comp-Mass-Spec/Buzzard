@@ -46,7 +46,7 @@ namespace BuzzardWPF.ViewModels
 
             CartConfigNameListSource = new ReactiveList<string>();
 
-            DatasetManager.WhenAnyValue(x => x.WatcherConfigSelectedCartName).Subscribe(UpdateCartConfigNames);
+            DatasetManager.WatcherMetadata.WhenAnyValue(x => x.CartName).Subscribe(UpdateCartConfigNames);
 
             InvertShowDetailsCommand = ReactiveCommand.Create(InvertShowDetails);
             ClearAllDatasetsCommand = ReactiveCommand.Create(ClearAllDatasets, Datasets.WhenAnyValue(x => x.Count).Select(x => x > 0).ObserveOn(RxApp.MainThreadScheduler));
@@ -457,7 +457,7 @@ namespace BuzzardWPF.ViewModels
 
             if (filldownData.ShouldUseCart)
             {
-                DatasetManager.WatcherConfigSelectedCartName = filldownData.CartName;
+                DatasetManager.WatcherMetadata.CartName = filldownData.CartName;
             }
 
             foreach (var dataset in selectedDatasets)
