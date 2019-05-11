@@ -26,10 +26,10 @@ namespace BuzzardWPF.ViewModels
             "USER"
         };
 
-        private IEmslUsageData m_boundContainer;
-        private ReactiveList<string> m_usageTypesSource;
-        private ReactiveList<string> m_availablePIDs;
-        private ReactiveList<ProposalUser> m_ProposalUsers;
+        private IEmslUsageData boundContainer;
+        private ReactiveList<string> usageTypesSource;
+        private ReactiveList<string> availableProposalIDs;
+        private ReactiveList<ProposalUser> proposalUsers;
         private string proposalUsersText;
 
         #endregion
@@ -38,7 +38,7 @@ namespace BuzzardWPF.ViewModels
         public EmslUsageSelectionViewModel()
         {
             UsageTypesSource = new ReactiveList<string>(EMSL_USAGE_TYPES);
-            AvailablePIDs = DMS_DataAccessor.Instance.ProposalIDs;
+            AvailableProposalIDs = DMS_DataAccessor.Instance.ProposalIDs;
 
             this.WhenAnyValue(x => x.BoundContainer.EMSLProposalUsers, x => x.BoundContainer.EMSLProposalUsers.Count).ObserveOn(RxApp.MainThreadScheduler).Subscribe(x => UpdateSelectedUsersText());
         }
@@ -61,23 +61,23 @@ namespace BuzzardWPF.ViewModels
         #region Properties
         public IEmslUsageData BoundContainer
         {
-            get => m_boundContainer;
+            get => boundContainer;
             set
             {
-                if (m_boundContainer != value)
+                if (boundContainer != value)
                 {
-                    if (m_boundContainer != null)
-                        m_boundContainer.PropertyChanged -= BoundContainer_PropertyChanged;
+                    if (boundContainer != null)
+                        boundContainer.PropertyChanged -= BoundContainer_PropertyChanged;
 
-                    m_boundContainer = value;
+                    boundContainer = value;
                     this.RaisePropertyChanged();
 
-                    if (m_boundContainer != null)
+                    if (boundContainer != null)
                     {
-                        if (!string.IsNullOrWhiteSpace(m_boundContainer.EMSLProposalID))
+                        if (!string.IsNullOrWhiteSpace(boundContainer.EMSLProposalID))
                             ProposalUsers = DMS_DataAccessor.Instance.GetProposalUsers(BoundContainer.EMSLProposalID);
 
-                        m_boundContainer.PropertyChanged += BoundContainer_PropertyChanged;
+                        boundContainer.PropertyChanged += BoundContainer_PropertyChanged;
                     }
                 }
             }
@@ -85,20 +85,20 @@ namespace BuzzardWPF.ViewModels
 
         public ReactiveList<string> UsageTypesSource
         {
-            get => m_usageTypesSource;
-            set => this.RaiseAndSetIfChanged(ref m_usageTypesSource, value);
+            get => usageTypesSource;
+            set => this.RaiseAndSetIfChanged(ref usageTypesSource, value);
         }
 
-        public ReactiveList<string> AvailablePIDs
+        public ReactiveList<string> AvailableProposalIDs
         {
-            get => m_availablePIDs;
-            set => this.RaiseAndSetIfChanged(ref m_availablePIDs, value);
+            get => availableProposalIDs;
+            set => this.RaiseAndSetIfChanged(ref availableProposalIDs, value);
         }
 
         public ReactiveList<ProposalUser> ProposalUsers
         {
-            get => m_ProposalUsers;
-            set => this.RaiseAndSetIfChanged(ref m_ProposalUsers, value);
+            get => proposalUsers;
+            set => this.RaiseAndSetIfChanged(ref proposalUsers, value);
         }
 
         public string ProposalUsersText
