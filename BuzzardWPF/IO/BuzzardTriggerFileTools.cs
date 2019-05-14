@@ -12,7 +12,7 @@ using LcmsNetData.Logging;
 namespace BuzzardWPF.IO
 {
     /// <summary>
-    /// This class is a variation of LCMSNetDataClasses.TriggerFileTools, that has been
+    /// This class is a variation of LCMSNetSDK.Data.TriggerFileTools, that has been
     /// modified to work with datasets that
     /// </summary>
     public class BuzzardTriggerFileTools
@@ -475,6 +475,5 @@ namespace BuzzardWPF.IO
 
             return true;
         }
-
     }
 }

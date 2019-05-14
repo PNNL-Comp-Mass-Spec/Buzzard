@@ -607,7 +607,6 @@ namespace BuzzardWPF.Management
 
             try
             {
-
                 if (!dataset.DMSData.LockData)
                 {
                     ResolveDms(dataset, true);
@@ -747,83 +746,6 @@ namespace BuzzardWPF.Management
             set => this.RaiseAndSetIfChangedMonitored(ref qcCreateTriggerOnDmsFail, value);
         }
 
-        #endregion
-
-        #region Dataset RunTime Updates
-        //private void m_fileSystemWatcher_Deleted(object sender, FileSystemEventArgs e)
-        //{
-        //    // It's ok to update if a temp file is deleted, but if a file is deleted
-        //    // because we're moving a dataset, then we don't update
-        //    //BuzzardDataset datasetToUpdate = FindDataset(e.FullPath);
-
-        //    //if (datasetToUpdate != null)
-        //    //    datasetToUpdate.RunFinish = DateTime.Now;
-        //}
-
-        //private void m_fileSystemWatcher_Created(object sender, FileSystemEventArgs e)
-        //{
-        //    BuzzardDataset datasetToUpdate = FindDataset(e.FullPath);
-
-        //    if (datasetToUpdate != null && !e.Name.StartsWith("x_", StringComparison.OrdinalIgnoreCase))
-        //        datasetToUpdate.RunFinish = DateTime.Now;
-        //}
-
-        //private void m_fileSystemWatcher_Changed(object sender, FileSystemEventArgs e)
-        //{
-        //    BuzzardDataset datasetToUpdate = FindDataset(e.FullPath);
-
-        //    if (datasetToUpdate != null)
-        //        datasetToUpdate.RunFinish = DateTime.Now;
-        //}
-
-        /// <summary>
-        /// This method is used to find a dataset that a file corresponds to.
-        /// If a dataset is a directory type that contains this file, then that
-        /// dataset will be returned. If a dataset is file type that is that
-        /// file, then the dataset will be returned. If no dataset is found, then
-        /// a null value will be returned.
-        /// </summary>
-        [Obsolete("Unused")]
-        private BuzzardDataset FindDataset(string fullPath)
-        {
-            if (string.IsNullOrWhiteSpace(fullPath))
-                return null;
-
-            // If there's no file or directory, then we won't really find anything
-            if (!Directory.Exists(fullPath) && !File.Exists(fullPath))
-                return null;
-
-            fullPath = Path.GetFullPath(fullPath);
-            BuzzardDataset result = null;
-            var pathSep = Path.DirectorySeparatorChar.ToString();
-
-            foreach (var dataset in Datasets)
-            {
-                if (dataset.DatasetSource == DatasetSource.Searcher)
-                    continue;
-
-                var datasetPath = Path.GetFullPath(dataset.FilePath);
-
-                if (fullPath.Equals(datasetPath, StringComparison.OrdinalIgnoreCase))
-                {
-                    result = dataset;
-                    break;
-                }
-                if (Directory.Exists(datasetPath))
-                {
-                    if (!datasetPath.EndsWith(pathSep))
-                        datasetPath += pathSep;
-
-                    if (fullPath.StartsWith(datasetPath, StringComparison.OrdinalIgnoreCase))
-                    {
-                        result = dataset;
-                        break;
-                    }
-                }
-            }
-
-            return result;
-        }
         #endregion
 
         private void AddTriggerFiles(DirectoryInfo diTriggerFolder, bool inSuccessFolder)
