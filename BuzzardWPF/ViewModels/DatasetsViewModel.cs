@@ -224,9 +224,9 @@ namespace BuzzardWPF.ViewModels
         {
             if (dataset.NotOnlyDatasource)
             {
-                var otherSets = (from BuzzardDataset ds in Datasets
-                    where ds.DMSData.DatasetName.Equals(dataset.DMSData.DatasetName, StringComparison.OrdinalIgnoreCase)
-                    select ds).ToList();
+                var otherSets = Datasets.Where(ds =>
+                        ds.DMSData.DatasetName.Equals(dataset.DMSData.DatasetName, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
 
                 if (otherSets.Count < 2)
                     RxApp.MainThreadScheduler.Schedule(() =>
@@ -593,9 +593,7 @@ namespace BuzzardWPF.ViewModels
                 // the Datasets that didn't get their DMSData
                 // from DMS. Then try to resolve it.
                 //
-                var needsDmsResolved = from BuzzardDataset dataset in selectedDatasets
-                                       where !dataset.DMSData.LockData
-                                       select dataset;
+                var needsDmsResolved = selectedDatasets.Where(x => !x.DMSData.LockData);
 
                 DatasetManager.ResolveDms(needsDmsResolved);
 

@@ -8,9 +8,8 @@ namespace BuzzardWPF.Management
     {
         public static List<string> GetCartConfigNamesForCart(string cartName)
         {
-            var cartConfigNames = (from item in DMS_DataAccessor.Instance.CartConfigNames
-                                   where item.StartsWith(cartName, StringComparison.OrdinalIgnoreCase)
-                                   select item).ToList();
+            var cartConfigNames = DMS_DataAccessor.Instance.CartConfigNames
+                .Where(x => x.StartsWith(cartName, StringComparison.OrdinalIgnoreCase)).ToList();
 
             if (!string.Equals(cartName, "No_Cart", StringComparison.OrdinalIgnoreCase))
             {

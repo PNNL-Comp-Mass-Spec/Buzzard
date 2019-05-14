@@ -473,9 +473,7 @@ namespace BuzzardWPF.Management
                 uniqueifier++;
             }
 
-            var query = from item in proposalUserToIDMap orderby item.Key select item.Value;
-            return query.ToList();
-
+            return proposalUserToIDMap.OrderBy(item => item.Key).Select(item => item.Value).ToList();
         }
 
         /// <summary>
@@ -552,7 +550,7 @@ namespace BuzzardWPF.Management
             {
                 if (returnAllWhenEmpty)
                 {
-                    var query = (from item in m_proposalUsers orderby item.UserName select item);
+                    var query = m_proposalUsers.OrderBy(item => item.UserName);
                     newUserCollection = new ReactiveList<ProposalUser>(query);
                 }
                 else
@@ -582,15 +580,12 @@ namespace BuzzardWPF.Management
                 {
                     // The dictionary has already grouped the cross references by PID, so we just need
                     // to get the UIDs that are in that group.
-                    var uIDs = from UserIDPIDCrossReferenceEntry xRef in crossReferenceList
-                               select xRef.UserID;
+                    var uIDs = crossReferenceList.Select(xRef => xRef.UserID);
                     var hashedUIDs = new HashSet<int>(uIDs);
 
                     // Get the users based on the given UIDs.
-                    var singleProposalUsers = from ProposalUser user in m_proposalUsers
-                                              where hashedUIDs.Contains(user.UserID)
-                                              orderby user.UserName
-                                              select user;
+                    var singleProposalUsers = m_proposalUsers.Where(user => hashedUIDs.Contains(user.UserID))
+                                                             .OrderBy(user => user.UserName);
 
                     // Create the user collection and set it for future use.
                     newUserCollection = new ReactiveList<ProposalUser>(singleProposalUsers);

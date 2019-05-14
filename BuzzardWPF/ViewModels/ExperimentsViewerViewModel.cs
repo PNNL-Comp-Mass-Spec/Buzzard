@@ -61,21 +61,10 @@ namespace BuzzardWPF.ViewModels
 
             // Building lists that we can use to narrow down the
             // number of experiments to insert into the UI
-            var x = (from ExperimentData exp in m_experimentList
-                     select exp.Researcher.Trim()).Distinct(stringEqualityDeterminer);
-            m_researcherList = new List<string>(x);
-
-            x = (from ExperimentData exp in m_experimentList
-                 select exp.Organism.Trim()).Distinct(stringEqualityDeterminer);
-            m_organismNameList = new List<string>(x);
-
-            x = (from ExperimentData exp in m_experimentList
-                 select exp.Experiment.Trim()).Distinct(stringEqualityDeterminer);
-            m_experimentNameList = new List<string>(x);
-
-            x = (from ExperimentData exp in m_experimentList
-                 select exp.Reason).Distinct(stringEqualityDeterminer);
-            m_reason = new List<string>(x);
+            m_researcherList = m_experimentList.Select(x => x.Researcher.Trim()).Distinct(stringEqualityDeterminer).ToList();
+            m_organismNameList = m_experimentList.Select(x => x.Organism.Trim()).Distinct(stringEqualityDeterminer).ToList();
+            m_experimentNameList = m_experimentList.Select(x => x.Experiment.Trim()).Distinct(stringEqualityDeterminer).ToList();
+            m_reason = m_experimentList.Select(x => x.Reason).Distinct(stringEqualityDeterminer).ToList();
 
             m_experimentNameList.Sort();
             m_organismNameList.Sort();
@@ -192,7 +181,7 @@ namespace BuzzardWPF.ViewModels
         }
 
         /// <summary>
-        /// Searches for experiments that meet-up to the selected filter and
+        /// Searches for experiments that match the selected filter and
         /// filter screen.
         /// </summary>
         private void Search()
@@ -200,44 +189,36 @@ namespace BuzzardWPF.ViewModels
             Experiments = null;
             var filterOption = SelectedFilterOption;
 
-            IEnumerable<ExperimentData> x = null;
+            IEnumerable<ExperimentData> matches = null;
 
             try
             {
                 switch (filterOption)
                 {
                     case FilterOption.Researcher:
-                        x = from ExperimentData exp in m_experimentList
-                            where exp.Researcher.StartsWith(FilterText, StringComparison.OrdinalIgnoreCase)
-                            select exp;
+                        matches = m_experimentList.Where(exp => exp.Researcher.StartsWith(FilterText, StringComparison.OrdinalIgnoreCase));
                         break;
 
                     case FilterOption.Experiment:
-                        x = from ExperimentData exp in m_experimentList
-                            where exp.Experiment.StartsWith(FilterText, StringComparison.OrdinalIgnoreCase)
-                            select exp;
+                        matches = m_experimentList.Where(exp => exp.Experiment.StartsWith(FilterText, StringComparison.OrdinalIgnoreCase));
                         break;
 
                     case FilterOption.Organism:
-                        x = from ExperimentData exp in m_experimentList
-                            where exp.Organism.StartsWith(FilterText, StringComparison.OrdinalIgnoreCase)
-                            select exp;
+                        matches = m_experimentList.Where(exp => exp.Organism.StartsWith(FilterText, StringComparison.OrdinalIgnoreCase));
                         break;
 
                     case FilterOption.Reason:
-                        x = from ExperimentData exp in m_experimentList
-                            where exp.Reason != null && exp.Reason.StartsWith(FilterText, StringComparison.OrdinalIgnoreCase)
-                            select exp;
+                        matches = m_experimentList.Where(exp => exp.Reason != null && exp.Reason.StartsWith(FilterText, StringComparison.OrdinalIgnoreCase));
                         break;
 
                     default:
                         break;
                 }
 
-                if (x == null)
+                if (matches == null)
                     return;
 
-                var tempRef = new ReactiveList<ExperimentData>(x);
+                var tempRef = new ReactiveList<ExperimentData>(matches);
                 Experiments = tempRef;
             }
             catch (Exception ex)

@@ -38,7 +38,7 @@ namespace BuzzardWPF.IO
         /// <param name="sample"></param>
         /// <param name="dataset"></param>
         /// <param name="dmsData"></param>
-        // <returns>Trigger file XML (as a string) if success, otherwise null</returns>
+        /// <returns>Trigger file XML (as a string) if success, otherwise null</returns>
         /// <remarks>In the dataset object, DatasetStatus will be set to MissingRequiredInfo if field validation fails</remarks>
         public static string CreateTriggerString(SampleDataBasic sample, BuzzardDataset dataset, DMSData dmsData)
         {
