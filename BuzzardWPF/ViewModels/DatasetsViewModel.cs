@@ -186,17 +186,17 @@ namespace BuzzardWPF.ViewModels
             {
                 var isRedundantName = false;
                 // If both request names are empty, then they are the same.
-                if (string.IsNullOrWhiteSpace(ds.DMSData.DatasetName) && string.IsNullOrWhiteSpace(dataset.DMSData.DatasetName))
+                if (string.IsNullOrWhiteSpace(ds.DmsData.DatasetName) && string.IsNullOrWhiteSpace(dataset.DmsData.DatasetName))
                 {
                     isRedundantName = true;
                 }
                 // If only one request name is empty, then they are not the same
                 // and move on to checking the next one.
-                else if (string.IsNullOrWhiteSpace(ds.DMSData.DatasetName) || string.IsNullOrWhiteSpace(dataset.DMSData.DatasetName))
+                else if (string.IsNullOrWhiteSpace(ds.DmsData.DatasetName) || string.IsNullOrWhiteSpace(dataset.DmsData.DatasetName))
                 {
                 }
                 // Both request names are the same
-                else if (ds.DMSData.DatasetName.Equals(dataset.DMSData.DatasetName, StringComparison.OrdinalIgnoreCase))
+                else if (ds.DmsData.DatasetName.Equals(dataset.DmsData.DatasetName, StringComparison.OrdinalIgnoreCase))
                 {
                     // If ds and dataset are the same Dataset object, then it doesn't
                     // matter that they have the same DatasetName value.
@@ -225,7 +225,7 @@ namespace BuzzardWPF.ViewModels
             if (dataset.NotOnlyDatasource)
             {
                 var otherSets = Datasets.Where(ds =>
-                        ds.DMSData.DatasetName.Equals(dataset.DMSData.DatasetName, StringComparison.OrdinalIgnoreCase))
+                        ds.DmsData.DatasetName.Equals(dataset.DmsData.DatasetName, StringComparison.OrdinalIgnoreCase))
                     .ToList();
 
                 if (otherSets.Count < 2)
@@ -278,7 +278,7 @@ namespace BuzzardWPF.ViewModels
                 {
                     ApplicationLogger.LogError(
                         0,
-                        string.Format("Dataset {0} has no associated data.", dataset.DMSData.DatasetName));
+                        string.Format("Dataset {0} has no associated data.", dataset.DmsData.DatasetName));
 
                     continue;
                 }
@@ -468,7 +468,7 @@ namespace BuzzardWPF.ViewModels
                     dataset.CartConfigName = filldownData.CartConfigName;
                 }
                 if (filldownData.ShouldUseDatasetType)
-                    dataset.DMSData.DatasetType = filldownData.DMSData.DatasetType;
+                    dataset.DmsData.DatasetType = filldownData.DmsData.DatasetType;
 
                 if (filldownData.ShouldUseInstrumentType)
                     dataset.Instrument = filldownData.Instrument;
@@ -499,10 +499,10 @@ namespace BuzzardWPF.ViewModels
                 // related to eachother when it comes to use.
                 // -FCT
                 if (filldownData.ShouldUseEMSLProposalID)
-                    dataset.DMSData.EMSLProposalID = filldownData.DMSData.EMSLProposalID;
+                    dataset.DmsData.EMSLProposalID = filldownData.DmsData.EMSLProposalID;
 
                 if (filldownData.ShouldUseEMSLUsageType)
-                    dataset.DMSData.EMSLUsageType = filldownData.DMSData.EMSLUsageType;
+                    dataset.DmsData.EMSLUsageType = filldownData.DmsData.EMSLUsageType;
 
                 if (filldownData.ShouldUseEMSLProposalUsers)
                     using (dataset.EMSLProposalUsers.SuppressChangeNotifications())
@@ -593,7 +593,7 @@ namespace BuzzardWPF.ViewModels
                 // the Datasets that didn't get their DMSData
                 // from DMS. Then try to resolve it.
                 //
-                var needsDmsResolved = selectedDatasets.Where(x => !x.DMSData.LockData);
+                var needsDmsResolved = selectedDatasets.Where(x => !x.DmsData.LockData);
 
                 DatasetManager.ResolveDms(needsDmsResolved);
 

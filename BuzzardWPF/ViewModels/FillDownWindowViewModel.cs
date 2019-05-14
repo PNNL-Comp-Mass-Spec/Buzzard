@@ -92,7 +92,7 @@ namespace BuzzardWPF.ViewModels
                     if (m_dataset != null)
                     {
                         m_dataset.PropertyChanged += DatasetPropertyChanged;
-                        DatasetDMS = m_dataset.DMSData;
+                        DatasetDMS = m_dataset.DmsData;
                     }
 
                     FillInEMSLProposalStuff();
@@ -185,7 +185,7 @@ namespace BuzzardWPF.ViewModels
         {
             if (e.PropertyName == "DMSData")
             {
-                DatasetDMS = Dataset.DMSData;
+                DatasetDMS = Dataset.DmsData;
             }
         }
 

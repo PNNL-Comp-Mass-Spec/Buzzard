@@ -113,7 +113,7 @@
                             Grid.Column="1"
                             Margin="2,2,8,2"
                             VerticalAlignment="Center"
-                            Text="{Binding Path=DMSData.EMSLUsageType}" />
+                            Text="{Binding Path=DmsData.EMSLUsageType}" />
                         <Label
                             Grid.Column="2"
                             Margin="2"
@@ -125,7 +125,7 @@
                             Grid.Column="3"
                             Margin="2,2,8,2"
                             VerticalAlignment="Center"
-                            Text="{Binding Path=DMSData.EMSLProposalID}" />
+                            Text="{Binding Path=DmsData.EMSLProposalID}" />
                         <Label
                             Grid.Column="4"
                             Margin="2"
@@ -180,7 +180,7 @@
         <DataGrid.Columns>
             <!--  Dataset Information  -->
             <DataGridTextColumn
-                Binding="{Binding Path=DMSData.RequestID}"
+                Binding="{Binding Path=DmsData.RequestID}"
                 Header="Request ID"
                 IsReadOnly="True" />
             <DataGridTemplateColumn
@@ -198,7 +198,7 @@
                 </DataGridTemplateColumn.CellTemplate>
             </DataGridTemplateColumn>
             <DataGridTextColumn
-                Binding="{Binding Path=DMSData.RequestName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource RequestNameConverter}}"
+                Binding="{Binding Path=DmsData.RequestName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource RequestNameConverter}}"
                 Header="Request Name"
                 IsReadOnly="True" />
 

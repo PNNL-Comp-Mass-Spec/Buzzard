@@ -14,7 +14,7 @@ namespace BuzzardWPF.Converters
             if (dataset == null)
                 return 0;
 
-            if (dataset.DMSData.LockData)
+            if (dataset.DmsData.LockData)
                 return 1;
             return 0;
         }

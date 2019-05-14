@@ -174,7 +174,7 @@ namespace BuzzardWPF.IO
             var userList = string.Empty;
             var proposal = string.Empty;
 
-            if (dataset.DMSData.LockData)
+            if (dataset.DmsData.LockData)
             {
                 if (sample.DmsData.RequestID <= 0)
                 {
@@ -187,8 +187,8 @@ namespace BuzzardWPF.IO
             {
                 if (sample.DmsData.RequestID <= 0)
                 {
-                    proposal = dataset.DMSData.EMSLProposalID;
-                    usage = dataset.DMSData.EMSLUsageType;
+                    proposal = dataset.DmsData.EMSLProposalID;
+                    usage = dataset.DmsData.EMSLUsageType;
 
                     if (dataset.EMSLProposalUsers == null || dataset.EMSLProposalUsers.Count == 0)
                     {

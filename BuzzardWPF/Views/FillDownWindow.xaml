@@ -150,7 +150,7 @@
                 Grid.Column="2"
                 Margin="2"
                 ItemsSource="{Binding Path=DatasetTypesSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                SelectedValue="{Binding Path=Dataset.DMSData.DatasetType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                SelectedValue="{Binding Path=Dataset.DmsData.DatasetType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                 <cueBannerOverlay:CueBannerService.CueBanner>
                     <TextBlock Text="Select" Margin="0" FontWeight="Regular" />
                 </cueBannerOverlay:CueBannerService.CueBanner>
@@ -299,7 +299,7 @@
                 Grid.Column="2"
                 Margin="2"
                 ItemsSource="{Binding Path=EmslUsageTypeSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                SelectedValue="{Binding Path=Dataset.DMSData.EMSLUsageType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                SelectedValue="{Binding Path=Dataset.DmsData.EMSLUsageType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                 <cueBannerOverlay:CueBannerService.CueBanner>
                     <TextBlock Text="Select" Margin="0" FontWeight="Regular" />
                 </cueBannerOverlay:CueBannerService.CueBanner>
@@ -323,13 +323,13 @@
                 <TextBox
                     Grid.Column="0"
                     Margin="2"
-                    Text="{Binding Path=Dataset.DMSData.EMSLProposalID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    Text="{Binding Path=Dataset.DmsData.EMSLProposalID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 <ComboBox
                     Grid.Column="1"
                     Margin="2"
                     ItemsSource="{Binding Path=EMSLProposalIDs, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                    SelectedItem="{Binding Dataset.DMSData.EMSLProposalID}">
+                    SelectedItem="{Binding Dataset.DmsData.EMSLProposalID}">
                     <cueBannerOverlay:CueBannerService.CueBanner>
                         <TextBlock Text="Select" Margin="0" FontWeight="Regular" />
                     </cueBannerOverlay:CueBannerService.CueBanner>

@@ -44,7 +44,7 @@ namespace BuzzardWPF.Data
             ShouldUseComment = true;
 
             // Monitors for propertyChanged events
-            this.WhenAnyValue(x => x.DMSData, x => x.DMSData.DatasetType, x => x.DMSData.EMSLUsageType, x => x.DMSData.EMSLProposalID)
+            this.WhenAnyValue(x => x.DmsData, x => x.DmsData.DatasetType, x => x.DmsData.EMSLUsageType, x => x.DmsData.EMSLProposalID)
                 .Subscribe(x => SettingsChanged = true);
             this.WhenAnyValue(x => x.Comment, x => x.Operator, x => x.SeparationType, x => x.LCColumn, x => x.Instrument)
                 .Subscribe(x => SettingsChanged = true);
@@ -141,15 +141,15 @@ namespace BuzzardWPF.Data
 
             Settings.Default.FilldownComment = Comment;
             Settings.Default.FilldownOperator = Operator;
-            Settings.Default.FilldownDatasetType = DMSData.DatasetType;
+            Settings.Default.FilldownDatasetType = DmsData.DatasetType;
             Settings.Default.FilldownSeparationType = SeparationType;
             Settings.Default.FilldownColumn = LCColumn;
             Settings.Default.FilldownInstrument = Instrument;
             Settings.Default.FilldownCart = CartName;
             Settings.Default.FilldownCartConfig = CartConfigName;
             Settings.Default.FilldownInterest = InterestRating;
-            Settings.Default.FilldownEMSLUsage = DMSData.EMSLUsageType;
-            Settings.Default.FilldownEMSLProposal = DMSData.EMSLProposalID;
+            Settings.Default.FilldownEMSLUsage = DmsData.EMSLUsageType;
+            Settings.Default.FilldownEMSLProposal = DmsData.EMSLProposalID;
             Settings.Default.FilldownExperimentName = ExperimentName;
 
             return true;
@@ -167,14 +167,14 @@ namespace BuzzardWPF.Data
             InterestRating = Settings.Default.FilldownInterest;
             ExperimentName = Settings.Default.FilldownExperimentName;
 
-            if (DMSData == null)
+            if (DmsData == null)
             {
-                DMSData = new DMSData();
+                DmsData = new DMSData();
             }
 
-            DMSData.EMSLUsageType = Settings.Default.FilldownEMSLUsage;
-            DMSData.EMSLProposalID = Settings.Default.FilldownEMSLProposal;
-            DMSData.DatasetType = Settings.Default.FilldownDatasetType;
+            DmsData.EMSLUsageType = Settings.Default.FilldownEMSLUsage;
+            DmsData.EMSLProposalID = Settings.Default.FilldownEMSLProposal;
+            DmsData.DatasetType = Settings.Default.FilldownDatasetType;
         }
     }
 }

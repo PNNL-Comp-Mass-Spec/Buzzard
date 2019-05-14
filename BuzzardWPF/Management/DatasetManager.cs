@@ -225,7 +225,7 @@ namespace BuzzardWPF.Management
 
             sample.LCMethodBasic.ActualEnd = fiDatasetFile.LastWriteTime;
             sample.LCMethodBasic.SetStartTime(sample.LCMethodBasic.ActualStart);
-            sample.DmsData.DatasetName = dataset.DMSData.DatasetName;
+            sample.DmsData.DatasetName = dataset.DmsData.DatasetName;
 
             try
             {
@@ -233,7 +233,7 @@ namespace BuzzardWPF.Management
                     return null;
 
                 if (string.IsNullOrWhiteSpace(dataset.Name))
-                    dataset.Name = string.Copy(dataset.DMSData.DatasetName);
+                    dataset.Name = string.Copy(dataset.DmsData.DatasetName);
 
                 if (string.IsNullOrWhiteSpace(dataset.Name))
                 {
@@ -253,7 +253,7 @@ namespace BuzzardWPF.Management
                           dataset.DatasetStatus == DatasetStatus.ValidatingStable))
                         dataset.DatasetStatus = DatasetStatus.Pending;
 
-                    var triggerXML = BuzzardTriggerFileTools.CreateTriggerString(sample, dataset, dataset.DMSData);
+                    var triggerXML = BuzzardTriggerFileTools.CreateTriggerString(sample, dataset, dataset.DmsData);
 
                     if (dataset.DatasetStatus == DatasetStatus.MissingRequiredInfo)
                         return null;
@@ -262,7 +262,7 @@ namespace BuzzardWPF.Management
                 }
 
                 ApplicationLogger.LogMessage(0, string.Format("Creating Trigger File: {0} for {1}", DateTime.Now, dataset.Name));
-                var triggerFilePath = BuzzardTriggerFileTools.GenerateTriggerFileBuzzard(sample, dataset, dataset.DMSData, Manager.TriggerFileLocation);
+                var triggerFilePath = BuzzardTriggerFileTools.GenerateTriggerFileBuzzard(sample, dataset, dataset.DmsData, Manager.TriggerFileLocation);
 
                 if (string.IsNullOrEmpty(triggerFilePath))
                     return null;
@@ -334,7 +334,7 @@ namespace BuzzardWPF.Management
                 return;
             }
 
-            if (dataset.DMSData != null && !forceUpdate)
+            if (dataset.DmsData != null && !forceUpdate)
             {
                 // Update the DMS info every 2 minutes
                 if (DateTime.UtcNow.Subtract(dataset.DMSDataLastUpdate).TotalMinutes < 2)
@@ -386,7 +386,7 @@ namespace BuzzardWPF.Management
 
                 // Match found
                 RxApp.MainThreadScheduler.Schedule(() => {
-                dataset.DMSData = data.CloneLockedWithPath(dataset.FilePath);
+                dataset.DmsData = data.CloneLockedWithPath(dataset.FilePath);
                 dataset.DMSDataLastUpdate = DateTime.UtcNow;
                 });
             }
@@ -490,7 +490,7 @@ namespace BuzzardWPF.Management
                         // Also make sure that the trigger file does not exist on the server...
                         foreach (var filePath in TriggerDirectoryContents.Keys.ToList())
                         {
-                            if (filePath.ToLower().Contains(dataset.DMSData.DatasetName.ToLower()))
+                            if (filePath.ToLower().Contains(dataset.DmsData.DatasetName.ToLower()))
                             {
                                 hasTriggerFileSent = true;
                                 break;
@@ -607,7 +607,7 @@ namespace BuzzardWPF.Management
 
             try
             {
-                if (!dataset.DMSData.LockData)
+                if (!dataset.DmsData.LockData)
                 {
                     ResolveDms(dataset, true);
                 }
@@ -621,7 +621,7 @@ namespace BuzzardWPF.Management
                 }
                 else
                 {
-                    if (!dataset.DMSData.LockData && !CreateTriggerOnDMSFail)
+                    if (!dataset.DmsData.LockData && !CreateTriggerOnDMSFail)
                     {
                         return;
                     }
@@ -870,7 +870,7 @@ namespace BuzzardWPF.Management
                 dataset.CaptureSubfolderPath = captureSubfolderPath;
                 dataset.Comment = WatcherMetadata.UserComments;
 
-                BuzzardTriggerFileTools.ValidateDatasetName(dataset, dataset.DMSData.DatasetName);
+                BuzzardTriggerFileTools.ValidateDatasetName(dataset, dataset.DmsData.DatasetName);
 
                 newDatasetFound = true;
             }
@@ -899,8 +899,8 @@ namespace BuzzardWPF.Management
                 if (string.IsNullOrWhiteSpace(dataset.SeparationType))
                     dataset.SeparationType = WatcherMetadata.SeparationType;
 
-                if (string.IsNullOrWhiteSpace(dataset.DMSData.DatasetType))
-                    dataset.DMSData.DatasetType = WatcherMetadata.DatasetType;
+                if (string.IsNullOrWhiteSpace(dataset.DmsData.DatasetType))
+                    dataset.DmsData.DatasetType = WatcherMetadata.DatasetType;
 
                 if (string.IsNullOrWhiteSpace(dataset.Operator))
                     dataset.Operator = WatcherMetadata.InstrumentOperator;
@@ -920,7 +920,7 @@ namespace BuzzardWPF.Management
                 if (dataset.IsQC)
                 {
                     // use data from the first QC monitor with a dataset name match
-                    var chosenMonitor = QcMonitors.FirstOrDefault(x => dataset.DMSData.DatasetName.StartsWith(x.DatasetNameMatch, StringComparison.OrdinalIgnoreCase));
+                    var chosenMonitor = QcMonitors.FirstOrDefault(x => dataset.DmsData.DatasetName.StartsWith(x.DatasetNameMatch, StringComparison.OrdinalIgnoreCase));
                     if (chosenMonitor == null && QcMonitors.Any(x => x.MatchesAny))
                     {
                         chosenMonitor = QcMonitors.First(x => x.MatchesAny);
@@ -928,10 +928,10 @@ namespace BuzzardWPF.Management
 
                     if (chosenMonitor != null)
                     {
-                        ApplicationLogger.LogMessage(0, $"QC_Upload: Matched monitor \"{chosenMonitor.DatasetNameMatch}\" (experiment \"{chosenMonitor.ExperimentName}\") to dataset name \"{dataset.DMSData.DatasetName}\"");
+                        ApplicationLogger.LogMessage(0, $"QC_Upload: Matched monitor \"{chosenMonitor.DatasetNameMatch}\" (experiment \"{chosenMonitor.ExperimentName}\") to dataset name \"{dataset.DmsData.DatasetName}\"");
 
                         dataset.ExperimentName = chosenMonitor.ExperimentName;
-                        dataset.DMSData.Experiment = chosenMonitor.ExperimentName;
+                        dataset.DmsData.Experiment = chosenMonitor.ExperimentName;
 
                         emslUsageType = chosenMonitor.EmslUsageType;
                         emslProposalId = chosenMonitor.EmslProposalId;
@@ -953,19 +953,19 @@ namespace BuzzardWPF.Management
                     emslProposalUsers = WatcherMetadata.EMSLProposalUsers;
                 }
 
-                dataset.DMSData.EMSLUsageType = emslUsageType;
+                dataset.DmsData.EMSLUsageType = emslUsageType;
                 using (dataset.EMSLProposalUsers.SuppressChangeNotifications())
                 {
-                    if (!string.IsNullOrWhiteSpace(dataset.DMSData.EMSLUsageType) &&
-                        dataset.DMSData.EMSLUsageType.Equals("USER", StringComparison.OrdinalIgnoreCase))
+                    if (!string.IsNullOrWhiteSpace(dataset.DmsData.EMSLUsageType) &&
+                        dataset.DmsData.EMSLUsageType.Equals("USER", StringComparison.OrdinalIgnoreCase))
                     {
-                        dataset.DMSData.EMSLProposalID = emslProposalId;
+                        dataset.DmsData.EMSLProposalID = emslProposalId;
                         dataset.EMSLProposalUsers.Clear();
                         dataset.EMSLProposalUsers.AddRange(emslProposalUsers);
                     }
                     else
                     {
-                        dataset.DMSData.EMSLProposalID = null;
+                        dataset.DmsData.EMSLProposalID = null;
                         dataset.EMSLProposalUsers.Clear();
                     }
                 }
@@ -981,7 +981,7 @@ namespace BuzzardWPF.Management
                     var hasTriggerFileSent = false;
                     foreach (var filePath in TriggerDirectoryContents.Keys)
                     {
-                        if (filePath.ToLower().Contains(dataset.DMSData.DatasetName.ToLower()))
+                        if (filePath.ToLower().Contains(dataset.DmsData.DatasetName.ToLower()))
                         {
                             hasTriggerFileSent = true;
                             break;

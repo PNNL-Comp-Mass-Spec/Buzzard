@@ -60,7 +60,7 @@ namespace BuzzardWPF.Data
         #region Initialization
         public BuzzardDataset()
         {
-            DMSData = new DMSData();
+            DmsData = new DMSData();
             DMSDataLastUpdate = DateTime.UtcNow.Subtract(new TimeSpan(1, 0, 0));
 
             NotOnlyDatasource = false;
@@ -129,7 +129,7 @@ namespace BuzzardWPF.Data
         {
             get
             {
-                if (DMSData.LockData)
+                if (DmsData.LockData)
                     return DMSStatus.DMSResolved;
 
                 return DMSStatus.NoDMSRequest;
@@ -199,7 +199,7 @@ namespace BuzzardWPF.Data
             set => this.RaiseAndSetIfChanged(ref m_cartConfigName, value, x => ValidateCartConfig());
         }
 
-        public DMSData DMSData
+        public DMSData DmsData
         {
             get => m_dmsData;
             set => this.RaiseAndSetIfChanged(ref m_dmsData, value, x => this.RaisePropertyChanged(nameof(DMSStatus)));
