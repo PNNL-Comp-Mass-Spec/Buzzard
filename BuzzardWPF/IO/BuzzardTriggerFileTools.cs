@@ -123,14 +123,14 @@ namespace BuzzardWPF.IO
 
             var lstFieldsToVerify = new Dictionary<string, string>
             {
-                {"Dataset name", dmsData.DatasetName},
-                {"Experiment name", experimentName},
-                {"Instrument name", dataset.Instrument},
+                {"Dataset Name", dmsData.DatasetName},
+                {"Experiment Name", experimentName},
+                {"Instrument Name", dataset.Instrument},
                 {"Separation Type", dataset.SeparationType},
-                {"LC Cart", dataset.CartName},
+                {"LC Cart Name", dataset.CartName},
                 {"LC Cart Config", dataset.CartConfigName},
                 {"LC Column", dataset.LCColumn},
-                {"Operator name", dataset.Operator},
+                {"Operator (PRN)", dataset.Operator},
             };
 
             // Validate that the key fields are defined
