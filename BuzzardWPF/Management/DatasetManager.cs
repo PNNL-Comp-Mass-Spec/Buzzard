@@ -191,12 +191,13 @@ namespace BuzzardWPF.Management
         /// <remarks>In the dataset object, DatasetStatus will be set to MissingRequiredInfo if field validation fails</remarks>
         public static string CreateTriggerFileBuzzard(BuzzardDataset dataset, bool forceSend, bool preview)
         {
-            if (dataset.ShouldIgnore)
-            {
-                dataset.DatasetStatus = DatasetStatus.Ignored;
-                dataset.TriggerCreationWarning = "Skipped since DatasetStatus set to Ignored";
-                return null;
-            }
+            // dataset.ShouldIgnore was never set
+            //if (dataset.ShouldIgnore)
+            //{
+            //    dataset.DatasetStatus = DatasetStatus.Ignored;
+            //    dataset.TriggerCreationWarning = "Skipped since DatasetStatus set to Ignored";
+            //    return null;
+            //}
 
             if (dataset.DatasetStatus == DatasetStatus.DatasetAlreadyInDMS)
             {

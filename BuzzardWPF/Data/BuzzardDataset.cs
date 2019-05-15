@@ -406,15 +406,5 @@ namespace BuzzardWPF.Data
                 DatasetSource = DatasetSource.Searcher;
             }
         }
-
-        #region Members blindly brought over from classDataset
-        /// <summary>
-        /// Gets or sets the flag if the dataset should be ignored.
-        /// </summary>
-        /// <remarks>
-        /// Pulled in to stop compile time errors.
-        /// </remarks>
-        public bool ShouldIgnore { get; set; }
-        #endregion
     }
 }
