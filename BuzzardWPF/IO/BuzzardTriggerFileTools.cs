@@ -33,19 +33,18 @@ namespace BuzzardWPF.IO
         /// <summary>
         /// Generates the trigger file text, but does not save a file
         /// </summary>
-        /// <param name="sample"></param>
         /// <param name="dataset"></param>
         /// <param name="dmsData"></param>
         /// <returns>Trigger file XML (as a string) if success, otherwise null</returns>
         /// <remarks>In the dataset object, DatasetStatus will be set to MissingRequiredInfo if field validation fails</remarks>
-        public static string CreateTriggerString(SampleDataBasic sample, BuzzardDataset dataset, DMSData dmsData)
+        public static string CreateTriggerString(BuzzardDataset dataset, DMSData dmsData)
         {
             if (!ValidateDatasetName(dataset, dmsData.DatasetName))
             {
                 return null;
             }
 
-            var data = GenerateXmlDoc(sample, dataset, dmsData);
+            var data = GenerateXmlDoc(dataset, dmsData);
 
             if (dataset.DatasetStatus == DatasetStatus.MissingRequiredInfo)
                 return null;
@@ -56,14 +55,12 @@ namespace BuzzardWPF.IO
         /// <summary>
         /// Generates a trigger file for a sample
         /// </summary>
-        /// <param name="sample">Sample object</param>
         /// <param name="dataset">Dataset object</param>
         /// <param name="dmsData">DMS metadata objet</param>
         /// <param name="remoteTriggerFolderPath">Target folder</param>
         /// <returns>Trigger file path if success, otherwise null</returns>
         /// <remarks>In the dataset object, DatasetStatus will be set to MissingRequiredInfo if field validation fails</remarks>
         public static string GenerateTriggerFileBuzzard(
-            SampleDataBasic sample,
             BuzzardDataset dataset,
             DMSData dmsData,
             string remoteTriggerFolderPath)
@@ -71,7 +68,7 @@ namespace BuzzardWPF.IO
             var createTriggerFiles = LCMSSettings.GetParameter("CreateTriggerFiles", false);
             if (!createTriggerFiles)
             {
-                var msg = "Generate Trigger File: Sample " + sample.DmsData.DatasetName + ", Trigger file creation disabled";
+                var msg = "Generate Trigger File: Sample " + dataset.DmsData.DatasetName + ", Trigger file creation disabled";
                 ApplicationLogger.LogMessage(0, msg);
                 return null;
             }
@@ -82,24 +79,23 @@ namespace BuzzardWPF.IO
             }
 
             // Create an XML document containing the trigger file's contents
-            var triggerFileContents = GenerateXmlDoc(sample, dataset, dmsData);
+            var triggerFileContents = GenerateXmlDoc(dataset, dmsData);
 
             if (dataset.DatasetStatus == DatasetStatus.MissingRequiredInfo)
                 return null;
 
             // Write the document to the file
-            return SaveFile(triggerFileContents, sample, dataset, remoteTriggerFolderPath);
+            return SaveFile(triggerFileContents, dataset, remoteTriggerFolderPath);
         }
 
         /// <summary>
         /// Generates the XML-formatted trigger file contents
         /// </summary>
-        /// <param name="sample">sample object for sample that was run</param>
         /// <param name="dataset">Dataset object</param>
         /// <param name="dmsData"></param>
         /// <returns>XML trigger file document</returns>
         /// <remarks>In the dataset object, DatasetStatus will be set to MissingRequiredInfo if field validation fails</remarks>
-        private static XmlDocument GenerateXmlDoc(SampleDataBasic sample, BuzzardDataset dataset, DMSData dmsData)
+        private static XmlDocument GenerateXmlDoc(BuzzardDataset dataset, DMSData dmsData)
         {
             // Create and initialize the document
             var triggerFileContents = new XmlDocument();
@@ -160,8 +156,6 @@ namespace BuzzardWPF.IO
             AddParam(rootElement, "LC Cart Name", TrimWhitespace(dataset.CartName));
             AddParam(rootElement, "LC Cart Config", TrimWhitespace(dataset.CartConfigName));
             AddParam(rootElement, "LC Column", TrimWhitespace(dataset.LCColumn));
-            //AddParam(rootElement, "Wellplate Number", TrimWhitespace(sample.PAL.WellPlate));
-            //AddParam(rootElement, "Well Number", TrimWhitespace(sample.PAL.Well.ToString(CultureInfo.InvariantCulture)));
             AddParam(rootElement, "Dataset Type", TrimWhitespace(dmsData.DatasetType));
             AddParam(rootElement, "Operator (PRN)", TrimWhitespace(dataset.Operator));
 
@@ -174,7 +168,7 @@ namespace BuzzardWPF.IO
 
             if (dataset.DmsData.LockData)
             {
-                if (sample.DmsData.RequestID <= 0)
+                if (dataset.DmsData.RequestID <= 0)
                 {
                     usage = dmsData.EMSLUsageType;
                     userList = dmsData.UserList;
@@ -183,7 +177,7 @@ namespace BuzzardWPF.IO
             }
             else
             {
-                if (sample.DmsData.RequestID <= 0)
+                if (dataset.DmsData.RequestID <= 0)
                 {
                     proposal = dataset.DmsData.EMSLProposalID;
                     usage = dataset.DmsData.EMSLUsageType;
@@ -209,8 +203,8 @@ namespace BuzzardWPF.IO
             AddParam(rootElement, "EMSL Proposal ID", proposal);
             AddParam(rootElement, "EMSL Usage Type", usage);
             AddParam(rootElement, "EMSL Users List", userList);
-            AddParam(rootElement, "Run Start", sample.LCMethodBasic.ActualStart.ToString("MM/dd/yyyy HH:mm:ss"));
-            AddParam(rootElement, "Run Finish", sample.LCMethodBasic.ActualEnd.ToString("MM/dd/yyyy HH:mm:ss"));
+            AddParam(rootElement, "Run Start", dataset.RunStart.ToString("MM/dd/yyyy HH:mm:ss"));
+            AddParam(rootElement, "Run Finish", dataset.RunFinish.ToString("MM/dd/yyyy HH:mm:ss"));
 
             return triggerFileContents;
         }
@@ -244,17 +238,15 @@ namespace BuzzardWPF.IO
         /// Write the trigger file to remoteTriggerFolderPath, or to the local trigger file path if CopyTriggerFiles=False
         /// </summary>
         /// <param name="doc">XML document to be written</param>
-        /// <param name="sample">Name of the sample this trigger file is for</param>
         /// <param name="dataset">Dataset object</param>
         /// <param name="remoteTriggerFolderPath"></param>
         private static string SaveFile(
             XmlDocument doc,
-            SampleDataBasic sample,
             BuzzardDataset dataset,
             string remoteTriggerFolderPath)
         {
-            var datasetName = sample.DmsData.DatasetName;
-            var outFileName = GetTriggerFileName(sample, ".xml", dataset);
+            var datasetName = dataset.DmsData.DatasetName;
+            var outFileName = GetTriggerFileName(dataset, ".xml");
 
             try
             {
@@ -267,7 +259,7 @@ namespace BuzzardWPF.IO
                     var outputFile = new FileStream(remoteFilePath, FileMode.Create, FileAccess.Write);
                     doc.Save(outputFile);
                     outputFile.Close();
-                    ApplicationLogger.LogMessage(0, "Remote trigger file created for sample " + sample.DmsData.DatasetName);
+                    ApplicationLogger.LogMessage(0, "Remote trigger file created for sample " + dataset.DmsData.DatasetName);
 
                     // File successfully created remotedly, so exit the procedure
                     return remoteFilePath;
@@ -389,13 +381,13 @@ namespace BuzzardWPF.IO
             return datasetName;
         }
 
-        public static string GetTriggerFileName(SampleDataBasic sample, string extension, BuzzardDataset dataset)
+        public static string GetTriggerFileName(BuzzardDataset dataset, string extension)
         {
-            var datasetName = sample.DmsData.DatasetName;
+            var datasetName = dataset.DmsData.DatasetName;
             var outFileName =
                 string.Format("{0}_{1:MM.dd.yyyy_hh.mm.ss}_{2}{3}",
                                     dataset.CartName,
-                                    sample.LCMethodBasic.Start,
+                                    dataset.RunStart,
                                     datasetName,
                                     extension);
             return outFileName;

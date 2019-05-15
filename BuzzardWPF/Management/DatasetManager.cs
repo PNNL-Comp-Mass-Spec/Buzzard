@@ -205,27 +205,7 @@ namespace BuzzardWPF.Management
                 return null;
             }
 
-            var sample = new SampleDataBasic
-            {
-                LCMethodBasic = new LcmsNetData.Method.LCMethodBasic()
-            };
-
-            var fiDatasetFile = new FileInfo(dataset.FilePath);
-
-            if (fiDatasetFile.CreationTime < fiDatasetFile.LastWriteTime)
-            {
-                sample.LCMethodBasic.ActualStart = fiDatasetFile.CreationTime;
-            }
-            else
-            {
-                // Creation time is later than the last write time
-                // The file was likely moved or copied from the original directory
-                sample.LCMethodBasic.ActualStart = fiDatasetFile.LastWriteTime;
-            }
-
-            sample.LCMethodBasic.ActualEnd = fiDatasetFile.LastWriteTime;
-            sample.LCMethodBasic.SetStartTime(sample.LCMethodBasic.ActualStart);
-            sample.DmsData.DatasetName = dataset.DmsData.DatasetName;
+            dataset.UpdateFileProperties();
 
             try
             {
@@ -253,7 +233,7 @@ namespace BuzzardWPF.Management
                           dataset.DatasetStatus == DatasetStatus.ValidatingStable))
                         dataset.DatasetStatus = DatasetStatus.Pending;
 
-                    var triggerXML = BuzzardTriggerFileTools.CreateTriggerString(sample, dataset, dataset.DmsData);
+                    var triggerXML = BuzzardTriggerFileTools.CreateTriggerString(dataset, dataset.DmsData);
 
                     if (dataset.DatasetStatus == DatasetStatus.MissingRequiredInfo)
                         return null;
@@ -262,7 +242,7 @@ namespace BuzzardWPF.Management
                 }
 
                 ApplicationLogger.LogMessage(0, string.Format("Creating Trigger File: {0} for {1}", DateTime.Now, dataset.Name));
-                var triggerFilePath = BuzzardTriggerFileTools.GenerateTriggerFileBuzzard(sample, dataset, dataset.DmsData, Manager.TriggerFileLocation);
+                var triggerFilePath = BuzzardTriggerFileTools.GenerateTriggerFileBuzzard(dataset, dataset.DmsData, Manager.TriggerFileLocation);
 
                 if (string.IsNullOrEmpty(triggerFilePath))
                     return null;

@@ -379,6 +379,13 @@ namespace BuzzardWPF.Data
             FileSize = info.Size;
             RunStart = info.CreationTime;
             RunFinish = info.LastWriteTime;
+
+            if (info.CreationTime > info.LastWriteTime)
+            {
+                // Sanity check for moved datasets.
+                RunStart = info.LastWriteTime;
+            }
+
             return true;
         }
 
