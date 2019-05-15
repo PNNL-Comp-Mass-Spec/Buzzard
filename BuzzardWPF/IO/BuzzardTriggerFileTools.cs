@@ -28,8 +28,6 @@ namespace BuzzardWPF.IO
         /// </summary>
         public const int MAXIMUM_DATASET_NAME_LENGTH = 80;
 
-        private static XmlDocument mobject_TriggerFileContents;
-
         private static readonly Regex mInValidChar = new Regex(@"[^a-z0-9_-]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         /// <summary>
@@ -84,13 +82,13 @@ namespace BuzzardWPF.IO
             }
 
             // Create an XML document containing the trigger file's contents
-            mobject_TriggerFileContents = GenerateXmlDoc(sample, dataset, dmsData);
+            var triggerFileContents = GenerateXmlDoc(sample, dataset, dmsData);
 
             if (dataset.DatasetStatus == DatasetStatus.MissingRequiredInfo)
                 return null;
 
             // Write the document to the file
-            return SaveFile(mobject_TriggerFileContents, sample, dataset, remoteTriggerFolderPath);
+            return SaveFile(triggerFileContents, sample, dataset, remoteTriggerFolderPath);
         }
 
         /// <summary>
@@ -104,7 +102,7 @@ namespace BuzzardWPF.IO
         private static XmlDocument GenerateXmlDoc(SampleDataBasic sample, BuzzardDataset dataset, DMSData dmsData)
         {
             // Create and initialize the document
-            mobject_TriggerFileContents = new XmlDocument();
+            var triggerFileContents = new XmlDocument();
 
             string experimentName;
 
@@ -137,7 +135,7 @@ namespace BuzzardWPF.IO
             foreach (var dataField in lstFieldsToVerify)
             {
                 if (!ValidateFieldDefined(dataset, dataField.Key, dataField.Value))
-                    return mobject_TriggerFileContents;
+                    return triggerFileContents;
             }
 
             if (dataset.DatasetStatus == DatasetStatus.MissingRequiredInfo)
@@ -146,12 +144,12 @@ namespace BuzzardWPF.IO
                 dataset.DatasetStatus = DatasetStatus.Pending;
             }
 
-            var docDeclaration = mobject_TriggerFileContents.CreateXmlDeclaration("1.0", null, null);
-            mobject_TriggerFileContents.AppendChild(docDeclaration);
+            var docDeclaration = triggerFileContents.CreateXmlDeclaration("1.0", null, null);
+            triggerFileContents.AppendChild(docDeclaration);
 
             // Add dataset (Root) element
-            var rootElement = mobject_TriggerFileContents.CreateElement("Dataset");
-            mobject_TriggerFileContents.AppendChild(rootElement);
+            var rootElement = triggerFileContents.CreateElement("Dataset");
+            triggerFileContents.AppendChild(rootElement);
 
             // Add the parameters
             AddParam(rootElement, "Dataset Name", dmsData.DatasetName);
@@ -162,8 +160,8 @@ namespace BuzzardWPF.IO
             AddParam(rootElement, "LC Cart Name", TrimWhitespace(dataset.CartName));
             AddParam(rootElement, "LC Cart Config", TrimWhitespace(dataset.CartConfigName));
             AddParam(rootElement, "LC Column", TrimWhitespace(dataset.LCColumn));
-            AddParam(rootElement, "Wellplate Number", TrimWhitespace(sample.PAL.WellPlate));
-            AddParam(rootElement, "Well Number", TrimWhitespace(sample.PAL.Well.ToString(CultureInfo.InvariantCulture)));
+            //AddParam(rootElement, "Wellplate Number", TrimWhitespace(sample.PAL.WellPlate));
+            //AddParam(rootElement, "Well Number", TrimWhitespace(sample.PAL.Well.ToString(CultureInfo.InvariantCulture)));
             AddParam(rootElement, "Dataset Type", TrimWhitespace(dmsData.DatasetType));
             AddParam(rootElement, "Operator (PRN)", TrimWhitespace(dataset.Operator));
 
@@ -214,27 +212,27 @@ namespace BuzzardWPF.IO
             AddParam(rootElement, "Run Start", sample.LCMethodBasic.ActualStart.ToString("MM/dd/yyyy HH:mm:ss"));
             AddParam(rootElement, "Run Finish", sample.LCMethodBasic.ActualEnd.ToString("MM/dd/yyyy HH:mm:ss"));
 
-            return mobject_TriggerFileContents;
+            return triggerFileContents;
         }
 
         /// <summary>
         /// Adds a trigger file parameter to the XML document defining the file contents
         /// </summary>
-        /// <param name="Parent">Parent element to add the parameter to</param>
+        /// <param name="parent">Parent element to add the parameter to</param>
         /// <param name="paramName">Name of the parameter to add</param>
         /// <param name="paramValue">Value of the parameter</param>
-        private static void AddParam(XmlNode Parent, string paramName, string paramValue)
+        private static void AddParam(XmlNode parent, string paramName, string paramValue)
         {
             try
             {
-                var newElement = mobject_TriggerFileContents.CreateElement("Parameter");
-                var nameAttr = mobject_TriggerFileContents.CreateAttribute("Name");
+                var newElement = parent.OwnerDocument.CreateElement("Parameter");
+                var nameAttr = parent.OwnerDocument.CreateAttribute("Name");
                 nameAttr.Value = paramName;
                 newElement.Attributes.Append(nameAttr);
-                var valueAttr = mobject_TriggerFileContents.CreateAttribute("Value");
+                var valueAttr = parent.OwnerDocument.CreateAttribute("Value");
                 valueAttr.Value = paramValue;
                 newElement.Attributes.Append(valueAttr);
-                Parent.AppendChild(newElement);
+                parent.AppendChild(newElement);
             }
             catch (Exception ex)
             {
