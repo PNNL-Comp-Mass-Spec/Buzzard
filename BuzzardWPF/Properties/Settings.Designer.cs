@@ -97,6 +97,18 @@ namespace BuzzardWPF.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool CopyTriggerFiles {
+            get {
+                return ((bool)(this["CopyTriggerFiles"]));
+            }
+            set {
+                this["CopyTriggerFiles"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool TurdAlert {
             get {
@@ -110,24 +122,180 @@ namespace BuzzardWPF.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool CopyTriggerFiles {
+        public bool UpgradeSettings {
             get {
-                return ((bool)(this["CopyTriggerFiles"]));
+                return ((bool)(this["UpgradeSettings"]));
             }
             set {
-                this["CopyTriggerFiles"] = value;
+                this["UpgradeSettings"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UpgradeWithTestVersion {
+            get {
+                return ((bool)(this["UpgradeWithTestVersion"]));
+            }
+            set {
+                this["UpgradeWithTestVersion"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsTestVersion {
+            get {
+                return ((bool)(this["IsTestVersion"]));
+            }
+            set {
+                this["IsTestVersion"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string WatcherConfig_SelectedInstrument {
+        public string FilldownCart {
             get {
-                return ((string)(this["WatcherConfig_SelectedInstrument"]));
+                return ((string)(this["FilldownCart"]));
             }
             set {
-                this["WatcherConfig_SelectedInstrument"] = value;
+                this["FilldownCart"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string FilldownCartConfig {
+            get {
+                return ((string)(this["FilldownCartConfig"]));
+            }
+            set {
+                this["FilldownCartConfig"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string FilldownColumn {
+            get {
+                return ((string)(this["FilldownColumn"]));
+            }
+            set {
+                this["FilldownColumn"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string FilldownComment {
+            get {
+                return ((string)(this["FilldownComment"]));
+            }
+            set {
+                this["FilldownComment"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string FilldownDatasetType {
+            get {
+                return ((string)(this["FilldownDatasetType"]));
+            }
+            set {
+                this["FilldownDatasetType"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string FilldownEMSLProposal {
+            get {
+                return ((string)(this["FilldownEMSLProposal"]));
+            }
+            set {
+                this["FilldownEMSLProposal"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string FilldownEMSLUsage {
+            get {
+                return ((string)(this["FilldownEMSLUsage"]));
+            }
+            set {
+                this["FilldownEMSLUsage"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string FilldownExperimentName {
+            get {
+                return ((string)(this["FilldownExperimentName"]));
+            }
+            set {
+                this["FilldownExperimentName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string FilldownInstrument {
+            get {
+                return ((string)(this["FilldownInstrument"]));
+            }
+            set {
+                this["FilldownInstrument"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string FilldownInterest {
+            get {
+                return ((string)(this["FilldownInterest"]));
+            }
+            set {
+                this["FilldownInterest"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string FilldownOperator {
+            get {
+                return ((string)(this["FilldownOperator"]));
+            }
+            set {
+                this["FilldownOperator"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string FilldownSeparationType {
+            get {
+                return ((string)(this["FilldownSeparationType"]));
+            }
+            set {
+                this["FilldownSeparationType"] = value;
             }
         }
         
@@ -158,12 +326,24 @@ namespace BuzzardWPF.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string WatcherConfig_SelectedSeperationType {
+        public string WatcherConfig_LCColumn {
             get {
-                return ((string)(this["WatcherConfig_SelectedSeperationType"]));
+                return ((string)(this["WatcherConfig_LCColumn"]));
             }
             set {
-                this["WatcherConfig_SelectedSeperationType"] = value;
+                this["WatcherConfig_LCColumn"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string WatcherConfig_UserComment {
+            get {
+                return ((string)(this["WatcherConfig_UserComment"]));
+            }
+            set {
+                this["WatcherConfig_UserComment"] = value;
             }
         }
         
@@ -182,72 +362,35 @@ namespace BuzzardWPF.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string WatcherConfig_SelectedOperator {
+        public string Watcher_EMSL_ProposalID {
             get {
-                return ((string)(this["WatcherConfig_SelectedOperator"]));
+                return ((string)(this["Watcher_EMSL_ProposalID"]));
             }
             set {
-                this["WatcherConfig_SelectedOperator"] = value;
+                this["Watcher_EMSL_ProposalID"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
-        public string Watcher_WatchDir {
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string Watcher_EMSL_UsageType {
             get {
-                return ((string)(this["Watcher_WatchDir"]));
+                return ((string)(this["Watcher_EMSL_UsageType"]));
             }
             set {
-                this["Watcher_WatchDir"] = value;
+                this["Watcher_EMSL_UsageType"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("TopDirectoryOnly")]
-        public global::System.IO.SearchOption Watcher_SearchType {
+        public global::System.Collections.Specialized.StringCollection Watcher_EMSL_Users {
             get {
-                return ((global::System.IO.SearchOption)(this["Watcher_SearchType"]));
+                return ((global::System.Collections.Specialized.StringCollection)(this["Watcher_EMSL_Users"]));
             }
             set {
-                this["Watcher_SearchType"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(".raw")]
-        public string Watcher_FilePattern {
-            get {
-                return ((string)(this["Watcher_FilePattern"]));
-            }
-            set {
-                this["Watcher_FilePattern"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("15")]
-        public int Watcher_WaitTime {
-            get {
-                return ((int)(this["Watcher_WaitTime"]));
-            }
-            set {
-                this["Watcher_WaitTime"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool WatcherConfig_CreateTriggerOnDMS_Fail {
-            get {
-                return ((bool)(this["WatcherConfig_CreateTriggerOnDMS_Fail"]));
-            }
-            set {
-                this["WatcherConfig_CreateTriggerOnDMS_Fail"] = value;
+                this["Watcher_EMSL_Users"] = value;
             }
         }
         
@@ -266,24 +409,71 @@ namespace BuzzardWPF.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string WatcherConfig_LCColumn {
+        public string WatcherConfig_SelectedInstrument {
             get {
-                return ((string)(this["WatcherConfig_LCColumn"]));
+                return ((string)(this["WatcherConfig_SelectedInstrument"]));
             }
             set {
-                this["WatcherConfig_LCColumn"] = value;
+                this["WatcherConfig_SelectedInstrument"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool Searcher_IncludeArchivedItems {
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string WatcherConfig_SelectedOperator {
             get {
-                return ((bool)(this["Searcher_IncludeArchivedItems"]));
+                return ((string)(this["WatcherConfig_SelectedOperator"]));
             }
             set {
-                this["Searcher_IncludeArchivedItems"] = value;
+                this["WatcherConfig_SelectedOperator"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string WatcherConfig_SelectedSeperationType {
+            get {
+                return ((string)(this["WatcherConfig_SelectedSeperationType"]));
+            }
+            set {
+                this["WatcherConfig_SelectedSeperationType"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string QC_ProposalID {
+            get {
+                return ((string)(this["QC_ProposalID"]));
+            }
+            set {
+                this["QC_ProposalID"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string QC_SelectedUsageType {
+            get {
+                return ((string)(this["QC_SelectedUsageType"]));
+            }
+            set {
+                this["QC_SelectedUsageType"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringCollection QC_EMSL_Users {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["QC_EMSL_Users"]));
+            }
+            set {
+                this["QC_EMSL_Users"] = value;
             }
         }
         
@@ -302,214 +492,12 @@ namespace BuzzardWPF.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string QC_SelectedUsageType {
+        public string QC_Monitors {
             get {
-                return ((string)(this["QC_SelectedUsageType"]));
+                return ((string)(this["QC_Monitors"]));
             }
             set {
-                this["QC_SelectedUsageType"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string QC_ProposalID {
-            get {
-                return ((string)(this["QC_ProposalID"]));
-            }
-            set {
-                this["QC_ProposalID"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool QC_CreateTriggerOnDMS_Fail {
-            get {
-                return ((bool)(this["QC_CreateTriggerOnDMS_Fail"]));
-            }
-            set {
-                this["QC_CreateTriggerOnDMS_Fail"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string Watcher_EMSL_UsageType {
-            get {
-                return ((string)(this["Watcher_EMSL_UsageType"]));
-            }
-            set {
-                this["Watcher_EMSL_UsageType"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string Watcher_EMSL_ProposalID {
-            get {
-                return ((string)(this["Watcher_EMSL_ProposalID"]));
-            }
-            set {
-                this["Watcher_EMSL_ProposalID"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::System.Collections.Specialized.StringCollection Watcher_EMSL_Users {
-            get {
-                return ((global::System.Collections.Specialized.StringCollection)(this["Watcher_EMSL_Users"]));
-            }
-            set {
-                this["Watcher_EMSL_Users"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::System.Collections.Specialized.StringCollection QC_EMSL_Users {
-            get {
-                return ((global::System.Collections.Specialized.StringCollection)(this["QC_EMSL_Users"]));
-            }
-            set {
-                this["QC_EMSL_Users"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string FilldownOperator {
-            get {
-                return ((string)(this["FilldownOperator"]));
-            }
-            set {
-                this["FilldownOperator"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string FilldownDatasetType {
-            get {
-                return ((string)(this["FilldownDatasetType"]));
-            }
-            set {
-                this["FilldownDatasetType"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string FilldownSeparationType {
-            get {
-                return ((string)(this["FilldownSeparationType"]));
-            }
-            set {
-                this["FilldownSeparationType"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string FilldownColumn {
-            get {
-                return ((string)(this["FilldownColumn"]));
-            }
-            set {
-                this["FilldownColumn"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string FilldownInstrument {
-            get {
-                return ((string)(this["FilldownInstrument"]));
-            }
-            set {
-                this["FilldownInstrument"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string FilldownCart {
-            get {
-                return ((string)(this["FilldownCart"]));
-            }
-            set {
-                this["FilldownCart"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string FilldownInterest {
-            get {
-                return ((string)(this["FilldownInterest"]));
-            }
-            set {
-                this["FilldownInterest"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string FilldownEMSLUsage {
-            get {
-                return ((string)(this["FilldownEMSLUsage"]));
-            }
-            set {
-                this["FilldownEMSLUsage"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string FilldownEMSLProposal {
-            get {
-                return ((string)(this["FilldownEMSLProposal"]));
-            }
-            set {
-                this["FilldownEMSLProposal"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string FilldownExperimentName {
-            get {
-                return ((string)(this["FilldownExperimentName"]));
-            }
-            set {
-                this["FilldownExperimentName"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string FilldownComment {
-            get {
-                return ((string)(this["FilldownComment"]));
-            }
-            set {
-                this["FilldownComment"] = value;
+                this["QC_Monitors"] = value;
             }
         }
         
@@ -551,66 +539,6 @@ namespace BuzzardWPF.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2014-01-01")]
-        public global::System.DateTime SearchDateFrom {
-            get {
-                return ((global::System.DateTime)(this["SearchDateFrom"]));
-            }
-            set {
-                this["SearchDateFrom"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2030-01-01")]
-        public global::System.DateTime SearchDateTo {
-            get {
-                return ((global::System.DateTime)(this["SearchDateTo"]));
-            }
-            set {
-                this["SearchDateTo"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("100")]
-        public int Watcher_FileSize {
-            get {
-                return ((int)(this["Watcher_FileSize"]));
-            }
-            set {
-                this["Watcher_FileSize"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string WatcherConfig_UserComment {
-            get {
-                return ((string)(this["WatcherConfig_UserComment"]));
-            }
-            set {
-                this["WatcherConfig_UserComment"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool UpgradeSettings {
-            get {
-                return ((bool)(this["UpgradeSettings"]));
-            }
-            set {
-                this["UpgradeSettings"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("100")]
         public int SearchMinimumSizeKB {
             get {
@@ -635,6 +563,90 @@ namespace BuzzardWPF.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2014-01-01")]
+        public global::System.DateTime SearchDateFrom {
+            get {
+                return ((global::System.DateTime)(this["SearchDateFrom"]));
+            }
+            set {
+                this["SearchDateFrom"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2030-01-01")]
+        public global::System.DateTime SearchDateTo {
+            get {
+                return ((global::System.DateTime)(this["SearchDateTo"]));
+            }
+            set {
+                this["SearchDateTo"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool Searcher_IncludeArchivedItems {
+            get {
+                return ((bool)(this["Searcher_IncludeArchivedItems"]));
+            }
+            set {
+                this["Searcher_IncludeArchivedItems"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
+        public string Watcher_WatchDir {
+            get {
+                return ((string)(this["Watcher_WatchDir"]));
+            }
+            set {
+                this["Watcher_WatchDir"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("TopDirectoryOnly")]
+        public global::System.IO.SearchOption Watcher_SearchType {
+            get {
+                return ((global::System.IO.SearchOption)(this["Watcher_SearchType"]));
+            }
+            set {
+                this["Watcher_SearchType"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(".raw")]
+        public string Watcher_FilePattern {
+            get {
+                return ((string)(this["Watcher_FilePattern"]));
+            }
+            set {
+                this["Watcher_FilePattern"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public int Watcher_FileSize {
+            get {
+                return ((int)(this["Watcher_FileSize"]));
+            }
+            set {
+                this["Watcher_FileSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool Watcher_MatchFolders {
             get {
@@ -647,49 +659,37 @@ namespace BuzzardWPF.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string FilldownCartConfig {
+        [global::System.Configuration.DefaultSettingValueAttribute("15")]
+        public int Watcher_WaitTime {
             get {
-                return ((string)(this["FilldownCartConfig"]));
+                return ((int)(this["Watcher_WaitTime"]));
             }
             set {
-                this["FilldownCartConfig"] = value;
+                this["Watcher_WaitTime"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string QC_Monitors {
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool QC_CreateTriggerOnDMS_Fail {
             get {
-                return ((string)(this["QC_Monitors"]));
+                return ((bool)(this["QC_CreateTriggerOnDMS_Fail"]));
             }
             set {
-                this["QC_Monitors"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool UpgradeWithTestVersion {
-            get {
-                return ((bool)(this["UpgradeWithTestVersion"]));
-            }
-            set {
-                this["UpgradeWithTestVersion"] = value;
+                this["QC_CreateTriggerOnDMS_Fail"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool IsTestVersion {
+        public bool WatcherConfig_CreateTriggerOnDMS_Fail {
             get {
-                return ((bool)(this["IsTestVersion"]));
+                return ((bool)(this["WatcherConfig_CreateTriggerOnDMS_Fail"]));
             }
             set {
-                this["IsTestVersion"] = value;
+                this["WatcherConfig_CreateTriggerOnDMS_Fail"] = value;
             }
         }
     }
