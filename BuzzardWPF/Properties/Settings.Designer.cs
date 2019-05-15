@@ -12,7 +12,7 @@ namespace BuzzardWPF.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.7.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.0.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -37,18 +37,6 @@ namespace BuzzardWPF.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool AutoMonitor {
-            get {
-                return ((bool)(this["AutoMonitor"]));
-            }
-            set {
-                this["AutoMonitor"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Mprptq3v")]
         public string DMSPwd {
             get {
@@ -61,18 +49,6 @@ namespace BuzzardWPF.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool CreateTriggerFiles {
-            get {
-                return ((bool)(this["CreateTriggerFiles"]));
-            }
-            set {
-                this["CreateTriggerFiles"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("DMS5")]
         public string DMSVersion {
             get {
@@ -80,18 +56,6 @@ namespace BuzzardWPF.Properties {
             }
             set {
                 this["DMSVersion"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("c:\\my documents\\Error")]
-        public string ErrorPath {
-            get {
-                return ((string)(this["ErrorPath"]));
-            }
-            set {
-                this["ErrorPath"] = value;
             }
         }
         
@@ -140,42 +104,6 @@ namespace BuzzardWPF.Properties {
             }
             set {
                 this["TurdAlert"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("m:\\data")]
-        public string WatchDirectory {
-            get {
-                return ((string)(this["WatchDirectory"]));
-            }
-            set {
-                this["WatchDirectory"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(".MS")]
-        public string WatchExtension {
-            get {
-                return ((string)(this["WatchExtension"]));
-            }
-            set {
-                this["WatchExtension"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool WriteTriggerFiles {
-            get {
-                return ((bool)(this["WriteTriggerFiles"]));
-            }
-            set {
-                this["WriteTriggerFiles"] = value;
             }
         }
         
@@ -642,17 +570,6 @@ namespace BuzzardWPF.Properties {
             }
             set {
                 this["SearchDateTo"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::System.DateTime Setting {
-            get {
-                return ((global::System.DateTime)(this["Setting"]));
-            }
-            set {
-                this["Setting"] = value;
             }
         }
         

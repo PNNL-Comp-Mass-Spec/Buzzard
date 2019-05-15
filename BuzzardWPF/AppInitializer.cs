@@ -334,12 +334,6 @@ namespace BuzzardWPF
                 //Properties.Settings.Default.InstName                = LCMSSettings.GetParameter("InstName");
                 //Properties.Settings.Default.Operator                = LCMSSettings.GetParameter("Operator");
                 //Properties.Settings.Default.CacheFileName           = LCMSSettings.GetParameter("CacheFileName");
-                //Properties.Settings.Default.SeparationType          = LCMSSettings.GetParameter("SeparationType");
-                //Properties.Settings.Default.AutoMonitor             = Convert.ToBoolean(LCMSSettings.GetParameter("AutoMonitor"));
-                //Properties.Settings.Default.Duration                = Convert.ToInt32(LCMSSettings.GetParameter("Duration"));
-                //Properties.Settings.Default.WatchExtension          = LCMSSettings.GetParameter("WatchExtension");
-                //Properties.Settings.Default.WatchDirectory          = LCMSSettings.GetParameter("WatchDirectory");
-                //Properties.Settings.Default.SearchType              = LCMSSettings.GetParameter("SearchType");
 
                 Properties.Settings.Default.Save();
 

@@ -5,20 +5,11 @@
     <Setting Name="CacheFileName" Type="System.String" Scope="User">
       <Value Profile="(Default)">offlinecache.db3</Value>
     </Setting>
-    <Setting Name="AutoMonitor" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
     <Setting Name="DMSPwd" Type="System.String" Scope="User">
       <Value Profile="(Default)">Mprptq3v</Value>
     </Setting>
-    <Setting Name="CreateTriggerFiles" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
     <Setting Name="DMSVersion" Type="System.String" Scope="User">
       <Value Profile="(Default)">DMS5</Value>
-    </Setting>
-    <Setting Name="ErrorPath" Type="System.String" Scope="User">
-      <Value Profile="(Default)">c:\my documents\Error</Value>
     </Setting>
     <Setting Name="FirstTime" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
@@ -31,15 +22,6 @@
     </Setting>
     <Setting Name="TurdAlert" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="WatchDirectory" Type="System.String" Scope="User">
-      <Value Profile="(Default)">m:\data</Value>
-    </Setting>
-    <Setting Name="WatchExtension" Type="System.String" Scope="User">
-      <Value Profile="(Default)">.MS</Value>
-    </Setting>
-    <Setting Name="WriteTriggerFiles" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="CopyTriggerFiles" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
@@ -157,9 +139,6 @@
     </Setting>
     <Setting Name="SearchDateTo" Type="System.DateTime" Scope="User">
       <Value Profile="(Default)">2030-01-01</Value>
-    </Setting>
-    <Setting Name="Setting" Type="System.DateTime" Scope="User">
-      <Value Profile="(Default)" />
     </Setting>
     <Setting Name="Watcher_FileSize" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">100</Value>

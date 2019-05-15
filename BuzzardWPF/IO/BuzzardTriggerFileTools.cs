@@ -62,13 +62,14 @@ namespace BuzzardWPF.IO
             BuzzardDataset dataset,
             string remoteTriggerFolderPath)
         {
-            var createTriggerFiles = LCMSSettings.GetParameter("CreateTriggerFiles", false);
-            if (!createTriggerFiles)
-            {
-                var msg = "Generate Trigger File: Sample " + dataset.DmsData.DatasetName + ", Trigger file creation disabled";
-                ApplicationLogger.LogMessage(0, msg);
-                return null;
-            }
+            // Setting 'CopyTriggerFiles' allows us to still create trigger files without uploading them
+            //var createTriggerFiles = LCMSSettings.GetParameter("CreateTriggerFiles", false);
+            //if (!createTriggerFiles)
+            //{
+            //    var msg = "Generate Trigger File: Sample " + dataset.DmsData.DatasetName + ", Trigger file creation disabled";
+            //    ApplicationLogger.LogMessage(0, msg);
+            //    return null;
+            //}
 
             if (!ValidateDatasetName(dataset))
             {
