@@ -34,17 +34,16 @@ namespace BuzzardWPF.IO
         /// Generates the trigger file text, but does not save a file
         /// </summary>
         /// <param name="dataset"></param>
-        /// <param name="dmsData"></param>
         /// <returns>Trigger file XML (as a string) if success, otherwise null</returns>
         /// <remarks>In the dataset object, DatasetStatus will be set to MissingRequiredInfo if field validation fails</remarks>
-        public static string CreateTriggerString(BuzzardDataset dataset, DMSData dmsData)
+        public static string CreateTriggerString(BuzzardDataset dataset)
         {
-            if (!ValidateDatasetName(dataset, dmsData.DatasetName))
+            if (!ValidateDatasetName(dataset))
             {
                 return null;
             }
 
-            var data = GenerateXmlDoc(dataset, dmsData);
+            var data = GenerateXmlDoc(dataset);
 
             if (dataset.DatasetStatus == DatasetStatus.MissingRequiredInfo)
                 return null;
@@ -56,13 +55,11 @@ namespace BuzzardWPF.IO
         /// Generates a trigger file for a sample
         /// </summary>
         /// <param name="dataset">Dataset object</param>
-        /// <param name="dmsData">DMS metadata objet</param>
         /// <param name="remoteTriggerFolderPath">Target folder</param>
         /// <returns>Trigger file path if success, otherwise null</returns>
         /// <remarks>In the dataset object, DatasetStatus will be set to MissingRequiredInfo if field validation fails</remarks>
         public static string GenerateTriggerFileBuzzard(
             BuzzardDataset dataset,
-            DMSData dmsData,
             string remoteTriggerFolderPath)
         {
             var createTriggerFiles = LCMSSettings.GetParameter("CreateTriggerFiles", false);
@@ -73,13 +70,13 @@ namespace BuzzardWPF.IO
                 return null;
             }
 
-            if (!ValidateDatasetName(dataset, dmsData.DatasetName))
+            if (!ValidateDatasetName(dataset))
             {
                 return null;
             }
 
             // Create an XML document containing the trigger file's contents
-            var triggerFileContents = GenerateXmlDoc(dataset, dmsData);
+            var triggerFileContents = GenerateXmlDoc(dataset);
 
             if (dataset.DatasetStatus == DatasetStatus.MissingRequiredInfo)
                 return null;
@@ -92,13 +89,13 @@ namespace BuzzardWPF.IO
         /// Generates the XML-formatted trigger file contents
         /// </summary>
         /// <param name="dataset">Dataset object</param>
-        /// <param name="dmsData"></param>
         /// <returns>XML trigger file document</returns>
         /// <remarks>In the dataset object, DatasetStatus will be set to MissingRequiredInfo if field validation fails</remarks>
-        private static XmlDocument GenerateXmlDoc(BuzzardDataset dataset, DMSData dmsData)
+        private static XmlDocument GenerateXmlDoc(BuzzardDataset dataset)
         {
             // Create and initialize the document
             var triggerFileContents = new XmlDocument();
+            var dmsData = dataset.DmsData;
 
             string experimentName;
 
@@ -410,11 +407,10 @@ namespace BuzzardWPF.IO
         /// Validate that the dataset name is at least 6 characters in length and does not contain spaces
         /// </summary>
         /// <param name="dataset"></param>
-        /// <param name="datasetName"></param>
         /// <returns>True if valid, false if problems</returns>
-        public static bool ValidateDatasetName(BuzzardDataset dataset, string datasetName)
+        public static bool ValidateDatasetName(BuzzardDataset dataset)
         {
-
+            var datasetName = dataset.DmsData.DatasetName;
             if (string.IsNullOrWhiteSpace(datasetName) || datasetName.Length < MINIMUM_DATASET_NAME_LENGTH)
             {
                 dataset.DatasetStatus = DatasetStatus.MissingRequiredInfo;

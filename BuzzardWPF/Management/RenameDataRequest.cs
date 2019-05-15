@@ -100,10 +100,6 @@ namespace BuzzardWPF.Management
 
         private void FinalizeRename()
         {
-            if (string.IsNullOrWhiteSpace(Dataset.Name))
-                Dataset.Name = string.Copy(Dataset.DmsData.DatasetName);
-
-            Dataset.Name = FixName(SourceDataPath, Dataset.Name);
             Dataset.DmsData.DatasetName = FixName(SourceDataPath, Dataset.DmsData.DatasetName);
 
             Dataset.DatasetStatus = DatasetStatus.Pending;

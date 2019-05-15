@@ -415,18 +415,6 @@ namespace BuzzardWPF.Data
         /// Pulled in to stop compile time errors.
         /// </remarks>
         public bool ShouldIgnore { get; set; }
-
-        /// <summary>
-        /// Gets or sets the name of the dataset
-        /// </summary>
-        /// <remarks>
-        /// Pulled in to stop compile time errors.
-        /// </remarks>
-        public string Name
-        {
-            get;
-            set;
-        }
         #endregion
     }
 }

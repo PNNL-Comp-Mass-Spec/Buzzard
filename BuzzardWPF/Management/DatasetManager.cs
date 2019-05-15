@@ -212,17 +212,14 @@ namespace BuzzardWPF.Management
                 if (dataset.DatasetStatus == DatasetStatus.TriggerFileSent && !forceSend && !preview)
                     return null;
 
-                if (string.IsNullOrWhiteSpace(dataset.Name))
-                    dataset.Name = string.Copy(dataset.DmsData.DatasetName);
-
-                if (string.IsNullOrWhiteSpace(dataset.Name))
+                if (string.IsNullOrWhiteSpace(dataset.DmsData.DatasetName))
                 {
                     dataset.DatasetStatus = DatasetStatus.MissingRequiredInfo;
                     dataset.TriggerCreationWarning = "Dataset name is empty";
                     return null;
                 }
 
-                if (!BuzzardTriggerFileTools.ValidateDatasetName(dataset, dataset.Name))
+                if (!BuzzardTriggerFileTools.ValidateDatasetName(dataset))
                 {
                     return null;
                 }
@@ -233,7 +230,7 @@ namespace BuzzardWPF.Management
                           dataset.DatasetStatus == DatasetStatus.ValidatingStable))
                         dataset.DatasetStatus = DatasetStatus.Pending;
 
-                    var triggerXML = BuzzardTriggerFileTools.CreateTriggerString(dataset, dataset.DmsData);
+                    var triggerXML = BuzzardTriggerFileTools.CreateTriggerString(dataset);
 
                     if (dataset.DatasetStatus == DatasetStatus.MissingRequiredInfo)
                         return null;
@@ -241,13 +238,13 @@ namespace BuzzardWPF.Management
                     return PREVIEW_TRIGGERFILE_FLAG;
                 }
 
-                ApplicationLogger.LogMessage(0, string.Format("Creating Trigger File: {0} for {1}", DateTime.Now, dataset.Name));
-                var triggerFilePath = BuzzardTriggerFileTools.GenerateTriggerFileBuzzard(dataset, dataset.DmsData, Manager.TriggerFileLocation);
+                ApplicationLogger.LogMessage(0, string.Format("Creating Trigger File: {0} for {1}", DateTime.Now, dataset.DmsData.DatasetName));
+                var triggerFilePath = BuzzardTriggerFileTools.GenerateTriggerFileBuzzard(dataset, Manager.TriggerFileLocation);
 
                 if (string.IsNullOrEmpty(triggerFilePath))
                     return null;
 
-                ApplicationLogger.LogMessage(0, string.Format("Saved Trigger File: {0} for {1}", DateTime.Now, dataset.Name));
+                ApplicationLogger.LogMessage(0, string.Format("Saved Trigger File: {0} for {1}", DateTime.Now, dataset.DmsData.DatasetName));
                 dataset.DatasetStatus = DatasetStatus.TriggerFileSent;
                 dataset.TriggerCreationWarning = string.Empty;
 
@@ -453,7 +450,7 @@ namespace BuzzardWPF.Management
                 RxApp.MainThreadScheduler.Schedule(() => {
                 foreach (var dataset in datasetsToCheck)
                 {
-                    var datasetName = dataset.Name;
+                    var datasetName = dataset.DmsData.DatasetName;
 
                     if (DMS_DataAccessor.Instance.Datasets.Contains(datasetName))
                     {
@@ -583,7 +580,7 @@ namespace BuzzardWPF.Management
 
         private void CreateTriggerFileForDataset(BuzzardDataset dataset)
         {
-            var datasetName = dataset.Name;
+            var datasetName = dataset.DmsData.DatasetName;
 
             try
             {
@@ -850,7 +847,7 @@ namespace BuzzardWPF.Management
                 dataset.CaptureSubfolderPath = captureSubfolderPath;
                 dataset.Comment = WatcherMetadata.UserComments;
 
-                BuzzardTriggerFileTools.ValidateDatasetName(dataset, dataset.DmsData.DatasetName);
+                BuzzardTriggerFileTools.ValidateDatasetName(dataset);
 
                 newDatasetFound = true;
             }
