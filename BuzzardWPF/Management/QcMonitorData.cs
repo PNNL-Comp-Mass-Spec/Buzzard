@@ -99,7 +99,7 @@ namespace BuzzardWPF.Management
 
         public static IEnumerable<QcMonitorData> LoadSettings()
         {
-            var savedMonitors = Settings.Default.QC_Monitors;
+            var savedMonitors = Settings.Default.WatcherQCMonitors;
             if (string.IsNullOrWhiteSpace(savedMonitors))
             {
                 yield break;
@@ -116,7 +116,7 @@ namespace BuzzardWPF.Management
 
         public static void SaveSettings(IEnumerable<QcMonitorData> qcMonitors)
         {
-            Settings.Default.QC_Monitors = string.Join("/", qcMonitors.Select(x => x.SaveToString()));
+            Settings.Default.WatcherQCMonitors = string.Join("/", qcMonitors.Select(x => x.SaveToString()));
         }
     }
 }

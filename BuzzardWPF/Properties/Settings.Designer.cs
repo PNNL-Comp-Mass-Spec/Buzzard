@@ -122,12 +122,12 @@ namespace BuzzardWPF.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool UpgradeSettings {
+        public bool SettingsUpgradeRequired {
             get {
-                return ((bool)(this["UpgradeSettings"]));
+                return ((bool)(this["SettingsUpgradeRequired"]));
             }
             set {
-                this["UpgradeSettings"] = value;
+                this["SettingsUpgradeRequired"] = value;
             }
         }
         
@@ -230,12 +230,23 @@ namespace BuzzardWPF.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string FilldownEMSLUsage {
+        public string FilldownEMSLUsageType {
             get {
-                return ((string)(this["FilldownEMSLUsage"]));
+                return ((string)(this["FilldownEMSLUsageType"]));
             }
             set {
-                this["FilldownEMSLUsage"] = value;
+                this["FilldownEMSLUsageType"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringCollection FilldownEMSLUsers {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["FilldownEMSLUsers"]));
+            }
+            set {
+                this["FilldownEMSLUsers"] = value;
             }
         }
         
@@ -302,202 +313,202 @@ namespace BuzzardWPF.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string WatcherConfig_SelectedCartName {
+        public string WatcherCartName {
             get {
-                return ((string)(this["WatcherConfig_SelectedCartName"]));
+                return ((string)(this["WatcherCartName"]));
             }
             set {
-                this["WatcherConfig_SelectedCartName"] = value;
+                this["WatcherCartName"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string WatcherConfig_SelectedCartConfigName {
+        public string WatcherCartConfigName {
             get {
-                return ((string)(this["WatcherConfig_SelectedCartConfigName"]));
+                return ((string)(this["WatcherCartConfigName"]));
             }
             set {
-                this["WatcherConfig_SelectedCartConfigName"] = value;
+                this["WatcherCartConfigName"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string WatcherConfig_LCColumn {
+        public string WatcherColumn {
             get {
-                return ((string)(this["WatcherConfig_LCColumn"]));
+                return ((string)(this["WatcherColumn"]));
             }
             set {
-                this["WatcherConfig_LCColumn"] = value;
+                this["WatcherColumn"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string WatcherConfig_UserComment {
+        public string WatcherComment {
             get {
-                return ((string)(this["WatcherConfig_UserComment"]));
+                return ((string)(this["WatcherComment"]));
             }
             set {
-                this["WatcherConfig_UserComment"] = value;
+                this["WatcherComment"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string WatcherConfig_SelectedColumnData {
+        public string WatcherDatasetType {
             get {
-                return ((string)(this["WatcherConfig_SelectedColumnData"]));
+                return ((string)(this["WatcherDatasetType"]));
             }
             set {
-                this["WatcherConfig_SelectedColumnData"] = value;
+                this["WatcherDatasetType"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string Watcher_EMSL_ProposalID {
+        public string WatcherEMSLProposalID {
             get {
-                return ((string)(this["Watcher_EMSL_ProposalID"]));
+                return ((string)(this["WatcherEMSLProposalID"]));
             }
             set {
-                this["Watcher_EMSL_ProposalID"] = value;
+                this["WatcherEMSLProposalID"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string Watcher_EMSL_UsageType {
+        public string WatcherEMSLUsageType {
             get {
-                return ((string)(this["Watcher_EMSL_UsageType"]));
+                return ((string)(this["WatcherEMSLUsageType"]));
             }
             set {
-                this["Watcher_EMSL_UsageType"] = value;
+                this["WatcherEMSLUsageType"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::System.Collections.Specialized.StringCollection Watcher_EMSL_Users {
+        public global::System.Collections.Specialized.StringCollection WatcherEMSLUsers {
             get {
-                return ((global::System.Collections.Specialized.StringCollection)(this["Watcher_EMSL_Users"]));
+                return ((global::System.Collections.Specialized.StringCollection)(this["WatcherEMSLUsers"]));
             }
             set {
-                this["Watcher_EMSL_Users"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string WatcherConfig_ExperimentName {
-            get {
-                return ((string)(this["WatcherConfig_ExperimentName"]));
-            }
-            set {
-                this["WatcherConfig_ExperimentName"] = value;
+                this["WatcherEMSLUsers"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string WatcherConfig_SelectedInstrument {
+        public string WatcherExperimentName {
             get {
-                return ((string)(this["WatcherConfig_SelectedInstrument"]));
+                return ((string)(this["WatcherExperimentName"]));
             }
             set {
-                this["WatcherConfig_SelectedInstrument"] = value;
+                this["WatcherExperimentName"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string WatcherConfig_SelectedOperator {
+        public string WatcherInstrument {
             get {
-                return ((string)(this["WatcherConfig_SelectedOperator"]));
+                return ((string)(this["WatcherInstrument"]));
             }
             set {
-                this["WatcherConfig_SelectedOperator"] = value;
+                this["WatcherInstrument"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string WatcherConfig_SelectedSeperationType {
+        public string WatcherOperator {
             get {
-                return ((string)(this["WatcherConfig_SelectedSeperationType"]));
+                return ((string)(this["WatcherOperator"]));
             }
             set {
-                this["WatcherConfig_SelectedSeperationType"] = value;
+                this["WatcherOperator"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string QC_ProposalID {
+        public string WatcherSeparationType {
             get {
-                return ((string)(this["QC_ProposalID"]));
+                return ((string)(this["WatcherSeparationType"]));
             }
             set {
-                this["QC_ProposalID"] = value;
+                this["WatcherSeparationType"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string QC_SelectedUsageType {
+        public string WatcherQCEMSLProposalID {
             get {
-                return ((string)(this["QC_SelectedUsageType"]));
+                return ((string)(this["WatcherQCEMSLProposalID"]));
             }
             set {
-                this["QC_SelectedUsageType"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::System.Collections.Specialized.StringCollection QC_EMSL_Users {
-            get {
-                return ((global::System.Collections.Specialized.StringCollection)(this["QC_EMSL_Users"]));
-            }
-            set {
-                this["QC_EMSL_Users"] = value;
+                this["WatcherQCEMSLProposalID"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string QC_ExperimentName {
+        public string WatcherQCEMSLUsageType {
             get {
-                return ((string)(this["QC_ExperimentName"]));
+                return ((string)(this["WatcherQCEMSLUsageType"]));
             }
             set {
-                this["QC_ExperimentName"] = value;
+                this["WatcherQCEMSLUsageType"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringCollection WatcherQCEMSLUsers {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["WatcherQCEMSLUsers"]));
+            }
+            set {
+                this["WatcherQCEMSLUsers"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string QC_Monitors {
+        public string WatcherQCExperimentName {
             get {
-                return ((string)(this["QC_Monitors"]));
+                return ((string)(this["WatcherQCExperimentName"]));
             }
             set {
-                this["QC_Monitors"] = value;
+                this["WatcherQCExperimentName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string WatcherQCMonitors {
+            get {
+                return ((string)(this["WatcherQCMonitors"]));
+            }
+            set {
+                this["WatcherQCMonitors"] = value;
             }
         }
         
@@ -672,24 +683,24 @@ namespace BuzzardWPF.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool QC_CreateTriggerOnDMS_Fail {
+        public bool WatcherQCCreateTriggerOnDMSFail {
             get {
-                return ((bool)(this["QC_CreateTriggerOnDMS_Fail"]));
+                return ((bool)(this["WatcherQCCreateTriggerOnDMSFail"]));
             }
             set {
-                this["QC_CreateTriggerOnDMS_Fail"] = value;
+                this["WatcherQCCreateTriggerOnDMSFail"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool WatcherConfig_CreateTriggerOnDMS_Fail {
+        public bool WatcherCreateTriggerOnDMSFail {
             get {
-                return ((bool)(this["WatcherConfig_CreateTriggerOnDMS_Fail"]));
+                return ((bool)(this["WatcherCreateTriggerOnDMSFail"]));
             }
             set {
-                this["WatcherConfig_CreateTriggerOnDMS_Fail"] = value;
+                this["WatcherCreateTriggerOnDMSFail"] = value;
             }
         }
     }

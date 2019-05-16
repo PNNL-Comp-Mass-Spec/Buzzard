@@ -26,7 +26,7 @@
     <Setting Name="TurdAlert" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="UpgradeSettings" Type="System.Boolean" Scope="User">
+    <Setting Name="SettingsUpgradeRequired" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="UpgradeWithTestVersion" Type="System.Boolean" Scope="User">
@@ -53,7 +53,10 @@
     <Setting Name="FilldownEMSLProposal" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="FilldownEMSLUsage" Type="System.String" Scope="User">
+    <Setting Name="FilldownEMSLUsageType" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="FilldownEMSLUsers" Type="System.Collections.Specialized.StringCollection" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="FilldownExperimentName" Type="System.String" Scope="User">
@@ -71,55 +74,55 @@
     <Setting Name="FilldownSeparationType" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="WatcherConfig_SelectedCartName" Type="System.String" Scope="User">
+    <Setting Name="WatcherCartName" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="WatcherConfig_SelectedCartConfigName" Type="System.String" Scope="User">
+    <Setting Name="WatcherCartConfigName" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="WatcherConfig_LCColumn" Type="System.String" Scope="User">
+    <Setting Name="WatcherColumn" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="WatcherConfig_UserComment" Type="System.String" Scope="User">
+    <Setting Name="WatcherComment" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="WatcherConfig_SelectedColumnData" Type="System.String" Scope="User">
+    <Setting Name="WatcherDatasetType" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="Watcher_EMSL_ProposalID" Type="System.String" Scope="User">
+    <Setting Name="WatcherEMSLProposalID" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="Watcher_EMSL_UsageType" Type="System.String" Scope="User">
+    <Setting Name="WatcherEMSLUsageType" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="Watcher_EMSL_Users" Type="System.Collections.Specialized.StringCollection" Scope="User">
+    <Setting Name="WatcherEMSLUsers" Type="System.Collections.Specialized.StringCollection" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="WatcherConfig_ExperimentName" Type="System.String" Scope="User">
+    <Setting Name="WatcherExperimentName" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="WatcherConfig_SelectedInstrument" Type="System.String" Scope="User">
+    <Setting Name="WatcherInstrument" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="WatcherConfig_SelectedOperator" Type="System.String" Scope="User">
+    <Setting Name="WatcherOperator" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="WatcherConfig_SelectedSeperationType" Type="System.String" Scope="User">
+    <Setting Name="WatcherSeparationType" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="QC_ProposalID" Type="System.String" Scope="User">
+    <Setting Name="WatcherQCEMSLProposalID" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="QC_SelectedUsageType" Type="System.String" Scope="User">
+    <Setting Name="WatcherQCEMSLUsageType" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="QC_EMSL_Users" Type="System.Collections.Specialized.StringCollection" Scope="User">
+    <Setting Name="WatcherQCEMSLUsers" Type="System.Collections.Specialized.StringCollection" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="QC_ExperimentName" Type="System.String" Scope="User">
+    <Setting Name="WatcherQCExperimentName" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="QC_Monitors" Type="System.String" Scope="User">
+    <Setting Name="WatcherQCMonitors" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="SearchPath" Type="System.String" Scope="User">
@@ -164,10 +167,10 @@
     <Setting Name="Watcher_WaitTime" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">15</Value>
     </Setting>
-    <Setting Name="QC_CreateTriggerOnDMS_Fail" Type="System.Boolean" Scope="User">
+    <Setting Name="WatcherQCCreateTriggerOnDMSFail" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="WatcherConfig_CreateTriggerOnDMS_Fail" Type="System.Boolean" Scope="User">
+    <Setting Name="WatcherCreateTriggerOnDMSFail" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>

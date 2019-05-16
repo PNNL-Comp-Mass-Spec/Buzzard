@@ -120,6 +120,7 @@
     <Compile Include="Management\RenameDataRequest.cs" />
     <Compile Include="Management\StateSingleton.cs" />
     <Compile Include="Management\WatcherMetadata.cs" />
+    <Compile Include="Properties\SettingsUpgradeHandler.cs" />
     <Compile Include="Searching\DatasetFoundEventArgs.cs" />
     <Compile Include="Searching\ErrorEventArgs.cs" />
     <Compile Include="Searching\FileSearchBuzzardier.cs" />

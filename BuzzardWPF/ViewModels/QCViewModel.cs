@@ -195,15 +195,15 @@ namespace BuzzardWPF.ViewModels
             }
 
             // Still save the changes here...
-            Settings.Default.QC_ExperimentName = ExperimentName;
-            Settings.Default.QC_ProposalID = EMSLProposalID;
-            Settings.Default.QC_SelectedUsageType = EMSLUsageType;
+            Settings.Default.WatcherQCExperimentName = ExperimentName;
+            Settings.Default.WatcherQCEMSLProposalID = EMSLProposalID;
+            Settings.Default.WatcherQCEMSLUsageType = EMSLUsageType;
 
             var selectedEMSLUsers = new System.Collections.Specialized.StringCollection();
             foreach (var user in EMSLProposalUsers)
                 selectedEMSLUsers.Add(user.UserID.ToString());
 
-            Settings.Default.QC_EMSL_Users = selectedEMSLUsers;
+            Settings.Default.WatcherQCEMSLUsers = selectedEMSLUsers;
 
             SettingsChanged = false;
 
@@ -212,15 +212,15 @@ namespace BuzzardWPF.ViewModels
 
         public void LoadSettings()
         {
-            ExperimentName = Settings.Default.QC_ExperimentName;
-            EMSLProposalID = Settings.Default.QC_ProposalID;
-            EMSLUsageType = Settings.Default.QC_SelectedUsageType;
+            ExperimentName = Settings.Default.WatcherQCExperimentName;
+            EMSLProposalID = Settings.Default.WatcherQCEMSLProposalID;
+            EMSLUsageType = Settings.Default.WatcherQCEMSLUsageType;
 
             List<string> selectedUsers;
-            if (Settings.Default.QC_EMSL_Users == null)
+            if (Settings.Default.WatcherQCEMSLUsers == null)
                 selectedUsers = new List<string>();
             else
-                selectedUsers = Settings.Default.QC_EMSL_Users.Cast<string>().ToList();
+                selectedUsers = Settings.Default.WatcherQCEMSLUsers.Cast<string>().ToList();
 
             using (EMSLProposalUsers.SuppressChangeNotifications())
             {
@@ -228,7 +228,7 @@ namespace BuzzardWPF.ViewModels
                 EMSLProposalUsers.AddRange(DMS_DataAccessor.Instance.FindSavedEMSLProposalUsers(EMSLProposalID, selectedUsers));
             }
 
-            if (!string.IsNullOrWhiteSpace(ExperimentName) && string.IsNullOrWhiteSpace(Settings.Default.QC_Monitors))
+            if (!string.IsNullOrWhiteSpace(ExperimentName) && string.IsNullOrWhiteSpace(Settings.Default.WatcherQCMonitors))
             {
                 var monitor = new QcMonitorData()
                 {

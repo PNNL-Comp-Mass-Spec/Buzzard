@@ -196,23 +196,23 @@ namespace BuzzardWPF.Management
                 return false;
             }
 
-            Settings.Default.WatcherConfig_SelectedCartName = CartName;
-            Settings.Default.WatcherConfig_SelectedCartConfigName = CartConfigName;
-            Settings.Default.WatcherConfig_SelectedColumnData = DatasetType;
-            Settings.Default.WatcherConfig_SelectedInstrument = Instrument;
-            Settings.Default.WatcherConfig_SelectedOperator = InstrumentOperator;
-            Settings.Default.WatcherConfig_ExperimentName = ExperimentName;
-            Settings.Default.WatcherConfig_LCColumn = LCColumn;
-            Settings.Default.WatcherConfig_UserComment = UserComments;
-            Settings.Default.WatcherConfig_SelectedSeperationType = SeparationType;
-            Settings.Default.Watcher_EMSL_UsageType = EMSLUsageType;
-            Settings.Default.Watcher_EMSL_ProposalID = EMSLProposalID;
+            Settings.Default.WatcherCartName = CartName;
+            Settings.Default.WatcherCartConfigName = CartConfigName;
+            Settings.Default.WatcherDatasetType = DatasetType;
+            Settings.Default.WatcherInstrument = Instrument;
+            Settings.Default.WatcherOperator = InstrumentOperator;
+            Settings.Default.WatcherExperimentName = ExperimentName;
+            Settings.Default.WatcherColumn = LCColumn;
+            Settings.Default.WatcherComment = UserComments;
+            Settings.Default.WatcherSeparationType = SeparationType;
+            Settings.Default.WatcherEMSLUsageType = EMSLUsageType;
+            Settings.Default.WatcherEMSLProposalID = EMSLProposalID;
 
             var selectedEmslUsers = new StringCollection();
             foreach (var user in EMSLProposalUsers)
                 selectedEmslUsers.Add(user.UserID.ToString());
 
-            Settings.Default.Watcher_EMSL_Users = selectedEmslUsers;
+            Settings.Default.WatcherEMSLUsers = selectedEmslUsers;
 
             SettingsChanged = false;
 
@@ -221,15 +221,15 @@ namespace BuzzardWPF.Management
 
         public void LoadSettings()
         {
-            ExperimentName = Settings.Default.WatcherConfig_ExperimentName;
-            EMSLUsageType = Settings.Default.Watcher_EMSL_UsageType;
-            EMSLProposalID = Settings.Default.Watcher_EMSL_ProposalID;
+            ExperimentName = Settings.Default.WatcherExperimentName;
+            EMSLUsageType = Settings.Default.WatcherEMSLUsageType;
+            EMSLProposalID = Settings.Default.WatcherEMSLProposalID;
 
             List<string> selectedUsers;
-            if (Settings.Default.Watcher_EMSL_Users == null)
+            if (Settings.Default.WatcherEMSLUsers == null)
                 selectedUsers = new List<string>();
             else
-                selectedUsers = Settings.Default.Watcher_EMSL_Users.Cast<string>().ToList();
+                selectedUsers = Settings.Default.WatcherEMSLUsers.Cast<string>().ToList();
 
             using (EMSLProposalUsers.SuppressChangeNotifications())
             {
@@ -237,7 +237,7 @@ namespace BuzzardWPF.Management
                 EMSLProposalUsers.AddRange(DMS_DataAccessor.Instance.FindSavedEMSLProposalUsers(EMSLProposalID, selectedUsers));
             }
 
-            UserComments = Settings.Default.WatcherConfig_UserComment;
+            UserComments = Settings.Default.WatcherComment;
 
             /*
              * The following settings need to be checked before being applied
@@ -245,37 +245,37 @@ namespace BuzzardWPF.Management
              * collections that act as their sources.
              */
             CartName = CheckSetting(
-                Settings.Default.WatcherConfig_SelectedCartName,
+                Settings.Default.WatcherCartName,
                 DMS_DataAccessor.Instance.CartNames,
                 "Cart");
 
             CartConfigName = CheckSetting(
-                Settings.Default.WatcherConfig_SelectedCartConfigName,
+                Settings.Default.WatcherCartConfigName,
                 CartConfigNameListForCart,
                 "CartConfig");
 
             DatasetType = CheckSetting(
-                Settings.Default.WatcherConfig_SelectedColumnData,
+                Settings.Default.WatcherDatasetType,
                 DMS_DataAccessor.Instance.DatasetTypes,
                 "Column Type");
 
             Instrument = CheckSetting(
-                Settings.Default.WatcherConfig_SelectedInstrument,
+                Settings.Default.WatcherInstrument,
                 DMS_DataAccessor.Instance.InstrumentData,
                 "Instrument");
 
             InstrumentOperator = CheckSetting(
-                Settings.Default.WatcherConfig_SelectedOperator,
+                Settings.Default.WatcherOperator,
                 DMS_DataAccessor.Instance.OperatorData,
                 "Operator");
 
             SeparationType = CheckSetting(
-                Settings.Default.WatcherConfig_SelectedSeperationType,
+                Settings.Default.WatcherSeparationType,
                 DMS_DataAccessor.Instance.SeparationTypes,
                 "Separation Type");
 
             LCColumn = CheckSetting(
-                Settings.Default.WatcherConfig_LCColumn,
+                Settings.Default.WatcherColumn,
                 DMS_DataAccessor.Instance.ColumnData,
                 "LC Column");
 

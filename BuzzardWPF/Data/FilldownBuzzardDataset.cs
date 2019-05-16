@@ -148,7 +148,7 @@ namespace BuzzardWPF.Data
             Settings.Default.FilldownCart = CartName;
             Settings.Default.FilldownCartConfig = CartConfigName;
             Settings.Default.FilldownInterest = InterestRating;
-            Settings.Default.FilldownEMSLUsage = DmsData.EMSLUsageType;
+            Settings.Default.FilldownEMSLUsageType = DmsData.EMSLUsageType;
             Settings.Default.FilldownEMSLProposal = DmsData.EMSLProposalID;
             Settings.Default.FilldownExperimentName = ExperimentName;
 
@@ -172,7 +172,7 @@ namespace BuzzardWPF.Data
                 DmsData = new DMSData();
             }
 
-            DmsData.EMSLUsageType = Settings.Default.FilldownEMSLUsage;
+            DmsData.EMSLUsageType = Settings.Default.FilldownEMSLUsageType;
             DmsData.EMSLProposalID = Settings.Default.FilldownEMSLProposal;
             DmsData.DatasetType = Settings.Default.FilldownDatasetType;
         }

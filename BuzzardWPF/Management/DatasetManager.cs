@@ -1106,9 +1106,9 @@ namespace BuzzardWPF.Management
             Settings.Default.Searcher_IncludeArchivedItems = IncludeArchivedItems;
 
             Settings.Default.TriggerFileFolder = TriggerFileLocation;
-            Settings.Default.QC_CreateTriggerOnDMS_Fail = QcCreateTriggerOnDMSFail;
+            Settings.Default.WatcherQCCreateTriggerOnDMSFail = QcCreateTriggerOnDMSFail;
 
-            Settings.Default.WatcherConfig_CreateTriggerOnDMS_Fail = CreateTriggerOnDMSFail;
+            Settings.Default.WatcherCreateTriggerOnDMSFail = CreateTriggerOnDMSFail;
             Settings.Default.Watcher_MatchFolders = MatchFolders;
             Settings.Default.Watcher_FileSize = MinimumFileSizeKB;
             Settings.Default.Watcher_WaitTime = TriggerFileCreationWaitTime;
@@ -1130,9 +1130,9 @@ namespace BuzzardWPF.Management
             IncludeArchivedItems = Settings.Default.Searcher_IncludeArchivedItems;
 
             TriggerFileLocation = Settings.Default.TriggerFileFolder;
-            QcCreateTriggerOnDMSFail = Settings.Default.QC_CreateTriggerOnDMS_Fail;
+            QcCreateTriggerOnDMSFail = Settings.Default.WatcherQCCreateTriggerOnDMSFail;
 
-            if (!string.IsNullOrWhiteSpace(Settings.Default.QC_Monitors))
+            if (!string.IsNullOrWhiteSpace(Settings.Default.WatcherQCMonitors))
             {
                 using (QcMonitors.SuppressChangeNotifications())
                 {
@@ -1140,7 +1140,7 @@ namespace BuzzardWPF.Management
                 }
             }
 
-            CreateTriggerOnDMSFail = Settings.Default.WatcherConfig_CreateTriggerOnDMS_Fail;
+            CreateTriggerOnDMSFail = Settings.Default.WatcherCreateTriggerOnDMSFail;
             MatchFolders = Settings.Default.Watcher_MatchFolders;
             MinimumFileSizeKB = Settings.Default.Watcher_FileSize;
             TriggerFileCreationWaitTime = Settings.Default.Watcher_WaitTime;

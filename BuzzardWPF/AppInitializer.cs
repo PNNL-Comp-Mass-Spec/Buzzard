@@ -35,13 +35,12 @@ namespace BuzzardWPF
             // C:\Users\username\appdata\local\PNNL\BuzzardWPF.exe_Url_yufs4k44bouk50s0nygwhsc1xpnayiku\1.7.13.4\user.config
 
             // Possibly upgrade the settings from a previous version
-            if (Properties.Settings.Default.UpgradeSettings)
+            if (Properties.Settings.Default.SettingsUpgradeRequired)
             {
                 // User settings for this version was not found
                 // Try to upgrade from the previous version
                 Properties.Settings.Default.Upgrade();
-                Properties.Settings.Default.Reload();
-                Properties.Settings.Default.UpgradeSettings = false;
+                Properties.Settings.Default.SettingsUpgradeRequired = false;
             }
 
             var propColl = Properties.Settings.Default.Properties;
