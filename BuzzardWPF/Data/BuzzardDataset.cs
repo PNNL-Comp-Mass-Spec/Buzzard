@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using BuzzardWPF.Management;
@@ -74,6 +75,7 @@ namespace BuzzardWPF.Data
             IsFile = true;
             isMonitored = this.WhenAnyValue(x => x.DatasetSource).Select(x => x == DatasetSource.Watcher).ToProperty(this, x => x.IsMonitored);
             ToggleMonitoringCommand = ReactiveCommand.Create(ToggleMonitoring);
+            this.WhenAnyValue(x => x.EMSLProposalUsers, x => x.EMSLProposalUsers.Count).Subscribe(_ => SetEMSLUsersList());
         }
         #endregion
 
@@ -305,6 +307,11 @@ namespace BuzzardWPF.Data
         public bool IsFile { get; set; }
 
         #endregion
+
+        private void SetEMSLUsersList()
+        {
+            DmsData.UserList = string.Join(",", EMSLProposalUsers.Select(x => x.UserID));
+        }
 
         private (bool Exists, long Size, int FileCount, DateTime CreationTime, DateTime LastWriteTime) GetDatasetStats()
         {

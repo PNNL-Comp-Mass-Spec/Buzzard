@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Linq;
 using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
 using LcmsNetData.Data;
@@ -152,6 +155,12 @@ namespace BuzzardWPF.Data
             Settings.Default.FilldownEMSLProposal = DmsData.EMSLProposalID;
             Settings.Default.FilldownExperimentName = ExperimentName;
 
+            var selectedEmslUsers = new StringCollection();
+            foreach (var user in EMSLProposalUsers)
+                selectedEmslUsers.Add(user.UserID.ToString());
+
+            Settings.Default.FilldownEMSLUsers = selectedEmslUsers;
+
             return true;
         }
 
@@ -175,6 +184,18 @@ namespace BuzzardWPF.Data
             DmsData.EMSLUsageType = Settings.Default.FilldownEMSLUsageType;
             DmsData.EMSLProposalID = Settings.Default.FilldownEMSLProposal;
             DmsData.DatasetType = Settings.Default.FilldownDatasetType;
+
+            List<string> selectedUsers;
+            if (Settings.Default.FilldownEMSLUsers == null)
+                selectedUsers = new List<string>();
+            else
+                selectedUsers = Settings.Default.FilldownEMSLUsers.Cast<string>().ToList();
+
+            using (EMSLProposalUsers.SuppressChangeNotifications())
+            {
+                EMSLProposalUsers.Clear();
+                EMSLProposalUsers.AddRange(DMS_DataAccessor.Instance.FindSavedEMSLProposalUsers(DmsData.EMSLProposalID, selectedUsers));
+            }
         }
     }
 }

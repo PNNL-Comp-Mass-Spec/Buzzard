@@ -164,37 +164,11 @@ namespace BuzzardWPF.IO
             var userList = string.Empty;
             var proposal = string.Empty;
 
-            if (dataset.DmsData.LockData)
+            if (dataset.DmsData.RequestID <= 0)
             {
-                if (dataset.DmsData.RequestID <= 0)
-                {
-                    usage = dmsData.EMSLUsageType;
-                    userList = dmsData.UserList;
-                    proposal = dmsData.EMSLProposalID;
-                }
-            }
-            else
-            {
-                if (dataset.DmsData.RequestID <= 0)
-                {
-                    proposal = dataset.DmsData.EMSLProposalID;
-                    usage = dataset.DmsData.EMSLUsageType;
-
-                    if (dataset.EMSLProposalUsers == null || dataset.EMSLProposalUsers.Count == 0)
-                    {
-                        userList = string.Empty;
-                    }
-                    else
-                    {
-                        for (var i = 0; i < dataset.EMSLProposalUsers.Count; i++)
-                        {
-                            userList += dataset.EMSLProposalUsers[i].UserID +
-                                (i < dataset.EMSLProposalUsers.Count - 1 ?
-                                 "," :
-                                 "");
-                        }
-                    }
-                }
+                proposal = dataset.DmsData.EMSLProposalID;
+                usage = dataset.DmsData.EMSLUsageType;
+                userList = dmsData.UserList;
             }
 
             AddParam(rootElement, "Request", dmsData.RequestID.ToString(CultureInfo.InvariantCulture));
