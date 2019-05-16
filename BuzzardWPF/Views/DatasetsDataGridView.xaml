@@ -187,13 +187,13 @@
                 CanUserSort="True"
                 Header="Dataset Name"
                 SortDirection="Ascending"
-                SortMemberPath="DMSData.DatasetName">
+                SortMemberPath="DmsData.DatasetName">
                 <DataGridTemplateColumn.CellTemplate>
                     <DataTemplate>
                         <TextBlock
                             VerticalAlignment="Top"
                             Foreground="{Binding Path=NotOnlyDatasource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource RedundantBackgroundConverter}}"
-                            Text="{Binding Path=DMSData.DatasetName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                            Text="{Binding Path=DmsData.DatasetName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                     </DataTemplate>
                 </DataGridTemplateColumn.CellTemplate>
             </DataGridTemplateColumn>
@@ -341,15 +341,15 @@
                 CanUserSort="True"
                 Header="Dataset Type"
                 SortDirection="Ascending"
-                SortMemberPath="DMSData.DatasetType">
+                SortMemberPath="DmsData.DatasetType">
                 <DataGridTemplateColumn.CellTemplate>
                     <DataTemplate>
                         <TabControl SelectedIndex="{Binding Path=., Converter={StaticResource LockSwitchConverter}}" Template="{StaticResource TabControlTemplate}">
                             <TabItem>
-                                <ComboBox ItemsSource="{Binding Source={StaticResource BaseDC}, Path=Data.DmsData.DatasetTypes, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=DMSData.DatasetType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" cueBannerOverlay:CueBannerService.CueBanner="Select" />
+                                <ComboBox ItemsSource="{Binding Source={StaticResource BaseDC}, Path=Data.DmsData.DatasetTypes, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=DmsData.DatasetType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" cueBannerOverlay:CueBannerService.CueBanner="Select" />
                             </TabItem>
                             <TabItem>
-                                <TextBlock VerticalAlignment="Top" Text="{Binding Path=DMSData.DatasetType, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBlock VerticalAlignment="Top" Text="{Binding Path=DmsData.DatasetType, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                             </TabItem>
                         </TabControl>
                     </DataTemplate>

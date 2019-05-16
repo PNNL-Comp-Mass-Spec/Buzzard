@@ -183,7 +183,7 @@ namespace BuzzardWPF.ViewModels
         #region Event Handlers
         private void DatasetPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "DMSData")
+            if (e.PropertyName == "DmsData")
             {
                 DatasetDMS = Dataset.DmsData;
             }
