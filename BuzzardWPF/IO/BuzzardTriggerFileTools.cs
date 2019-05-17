@@ -174,6 +174,14 @@ namespace BuzzardWPF.IO
             return triggerFileContents;
         }
 
+        private static string TrimWhitespace(string metadata)
+        {
+            if (string.IsNullOrWhiteSpace(metadata))
+                return string.Empty;
+
+            return metadata.Trim();
+        }
+
         /// <summary>
         /// Adds a trigger file parameter to the XML document defining the file contents
         /// </summary>
@@ -197,6 +205,18 @@ namespace BuzzardWPF.IO
             {
                 ApplicationLogger.LogError(0, "Exception creating trigger file", ex);
             }
+        }
+
+        public static string GetTriggerFileName(BuzzardDataset dataset, string extension)
+        {
+            var datasetName = dataset.DmsData.DatasetName;
+            var outFileName =
+                string.Format("{0}_{1:MM.dd.yyyy_hh.mm.ss}_{2}{3}",
+                    dataset.DmsData.CartName,
+                    dataset.RunStart,
+                    datasetName,
+                    extension);
+            return outFileName;
         }
 
         /// <summary>
@@ -346,29 +366,9 @@ namespace BuzzardWPF.IO
             return datasetName;
         }
 
-        public static string GetTriggerFileName(BuzzardDataset dataset, string extension)
-        {
-            var datasetName = dataset.DmsData.DatasetName;
-            var outFileName =
-                string.Format("{0}_{1:MM.dd.yyyy_hh.mm.ss}_{2}{3}",
-                                    dataset.DmsData.CartName,
-                                    dataset.RunStart,
-                                    datasetName,
-                                    extension);
-            return outFileName;
-        }
-
         public static bool NameHasInvalidCharacters(string datasetFileOrFolderName)
         {
             return mInValidChar.IsMatch(datasetFileOrFolderName);
-        }
-
-        private static string TrimWhitespace(string metadata)
-        {
-            if (string.IsNullOrWhiteSpace(metadata))
-                return string.Empty;
-
-            return metadata.Trim();
         }
 
         /// <summary>
