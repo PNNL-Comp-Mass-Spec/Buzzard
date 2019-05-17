@@ -320,7 +320,7 @@
 
             <DataGridTextColumn
                 Width="115"
-                Binding="{Binding ExperimentName}"
+                Binding="{Binding DmsData.Experiment}"
                 Header="Experiment Name"
                 IsReadOnly="True" />
 
@@ -392,7 +392,7 @@
                 </DataGridTemplateColumn.CellTemplate>
             </DataGridTemplateColumn>
             <DataGridTextColumn
-                Binding="{Binding CartName}"
+                Binding="{Binding DmsData.CartName}"
                 Header="Cart"
                 IsReadOnly="True" />
             <!--
@@ -417,7 +417,7 @@
                 SortMemberPath="CartConfigName">
                 <DataGridTemplateColumn.CellTemplate>
                     <DataTemplate>
-                        <ComboBox ItemsSource="{Binding Source={StaticResource BaseDC}, Path=Data.CartConfigNameListSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=CartConfigName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" cueBannerOverlay:CueBannerService.CueBanner="Select">
+                        <ComboBox ItemsSource="{Binding Source={StaticResource BaseDC}, Path=Data.CartConfigNameListSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=DmsData.CartConfigName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" cueBannerOverlay:CueBannerService.CueBanner="Select">
                             <ComboBox.Style>
                                 <Style TargetType="ComboBox">
                                     <Style.Triggers>

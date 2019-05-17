@@ -52,7 +52,7 @@ namespace BuzzardWPF.ViewModels
             UseAllCommand = ReactiveCommand.Create(() => ShouldUseAllSettings(true));
             UseNoneCommand = ReactiveCommand.Create(() => ShouldUseAllSettings(false));
 
-            this.WhenAnyValue(x => x.Dataset.CartName).ObserveOn(RxApp.MainThreadScheduler).Subscribe(LoadCartConfigsForCart);
+            this.WhenAnyValue(x => x.Dataset.DmsData.CartName).ObserveOn(RxApp.MainThreadScheduler).Subscribe(LoadCartConfigsForCart);
         }
 
         #region Properties
@@ -213,7 +213,7 @@ namespace BuzzardWPF.ViewModels
                 return;
 
             var selectedExperiment = dialogVm.SelectedExperiment;
-            Dataset.ExperimentName = selectedExperiment.Experiment;
+            Dataset.DmsData.Experiment = selectedExperiment.Experiment;
         }
 
         #endregion
@@ -269,7 +269,6 @@ namespace BuzzardWPF.ViewModels
             {
                 CartConfigNameListSource.Add(item);
             }
-
         }
         #endregion
     }

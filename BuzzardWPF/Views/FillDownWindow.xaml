@@ -243,7 +243,7 @@
                 Grid.Column="2"
                 Margin="2"
                 ItemsSource="{Binding Path=CartNameListSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                SelectedItem="{Binding Path=Dataset.CartName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                SelectedItem="{Binding Path=Dataset.DmsData.CartName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                 <cueBannerOverlay:CueBannerService.CueBanner>
                     <TextBlock Text="Select" Margin="0" FontWeight="Regular" />
                 </cueBannerOverlay:CueBannerService.CueBanner>
@@ -259,7 +259,7 @@
                 Grid.Column="2"
                 Margin="2"
                 ItemsSource="{Binding Path=CartConfigNameListSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                SelectedValue="{Binding Path=Dataset.CartConfigName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                SelectedValue="{Binding Path=Dataset.DmsData.CartConfigName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                 <cueBannerOverlay:CueBannerService.CueBanner>
                     <TextBlock Text="Select" Margin="0" FontWeight="Regular" />
                 </cueBannerOverlay:CueBannerService.CueBanner>
@@ -374,7 +374,7 @@
                 Grid.Column="2"
                 Margin="2"
                 FontSize="15"
-                Text="{Binding Path=Dataset.ExperimentName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                Text="{Binding Path=Dataset.DmsData.Experiment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <Button
                 Grid.Row="12"
                 Grid.Column="2"

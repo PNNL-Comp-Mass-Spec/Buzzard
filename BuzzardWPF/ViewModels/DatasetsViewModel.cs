@@ -99,7 +99,7 @@ namespace BuzzardWPF.ViewModels
             // Update the Cart name for datasets already in the grid
             foreach (var dataset in Datasets)
             {
-                dataset.CartName = cartName;
+                dataset.DmsData.CartName = cartName;
             }
         }
 
@@ -392,7 +392,7 @@ namespace BuzzardWPF.ViewModels
             //
             foreach (var dataset in selectedItems)
             {
-                dataset.ExperimentName = experiment.Experiment;
+                dataset.DmsData.Experiment = experiment.Experiment;
             }
 
             //
@@ -457,15 +457,15 @@ namespace BuzzardWPF.ViewModels
 
             if (filldownData.ShouldUseCart)
             {
-                DatasetManager.WatcherMetadata.CartName = filldownData.CartName;
+                DatasetManager.WatcherMetadata.CartName = filldownData.DmsData.CartName;
             }
 
             foreach (var dataset in selectedDatasets)
             {
                 if (filldownData.ShouldUseCart)
                 {
-                    dataset.CartName = filldownData.CartName;
-                    dataset.CartConfigName = filldownData.CartConfigName;
+                    dataset.DmsData.CartName = filldownData.DmsData.CartName;
+                    dataset.DmsData.CartConfigName = filldownData.DmsData.CartConfigName;
                 }
                 if (filldownData.ShouldUseDatasetType)
                     dataset.DmsData.DatasetType = filldownData.DmsData.DatasetType;
@@ -480,7 +480,7 @@ namespace BuzzardWPF.ViewModels
                     dataset.SeparationType = filldownData.SeparationType;
 
                 if (filldownData.ShouldUseExperimentName)
-                    dataset.ExperimentName = filldownData.ExperimentName;
+                    dataset.DmsData.Experiment = filldownData.DmsData.Experiment;
 
                 if (filldownData.ShouldUseLCColumn)
                 {

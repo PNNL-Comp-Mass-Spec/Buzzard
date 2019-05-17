@@ -98,13 +98,6 @@ namespace BuzzardWPF.IO
             var triggerFileContents = new XmlDocument();
             var dmsData = dataset.DmsData;
 
-            string experimentName;
-
-            if (dmsData.LockData || string.IsNullOrWhiteSpace(dataset.ExperimentName))
-                experimentName = dmsData.Experiment;
-            else
-                experimentName = dataset.ExperimentName;
-
             var comment = dmsData.Comment;
 
             if (string.Compare(dataset.Comment, "HailWhiteshoes", StringComparison.CurrentCultureIgnoreCase) == 0)
@@ -116,11 +109,11 @@ namespace BuzzardWPF.IO
             var lstFieldsToVerify = new Dictionary<string, string>
             {
                 {"Dataset Name", dmsData.DatasetName},
-                {"Experiment Name", experimentName},
+                {"Experiment Name", dataset.DmsData.Experiment},
                 {"Instrument Name", dataset.Instrument},
                 {"Separation Type", dataset.SeparationType},
-                {"LC Cart Name", dataset.CartName},
-                {"LC Cart Config", dataset.CartConfigName},
+                {"LC Cart Name", dataset.DmsData.CartName},
+                {"LC Cart Config", dataset.DmsData.CartConfigName},
                 {"LC Column", dataset.LCColumn},
                 {"Operator (PRN)", dataset.Operator},
             };
@@ -147,12 +140,12 @@ namespace BuzzardWPF.IO
 
             // Add the parameters
             AddParam(rootElement, "Dataset Name", dmsData.DatasetName);
-            AddParam(rootElement, "Experiment Name", TrimWhitespace(experimentName));
+            AddParam(rootElement, "Experiment Name", TrimWhitespace(dataset.DmsData.Experiment));
             AddParam(rootElement, "Instrument Name", TrimWhitespace(dataset.Instrument));
             AddParam(rootElement, "Capture Subfolder", TrimWhitespace(dataset.CaptureSubfolderPath));
             AddParam(rootElement, "Separation Type", TrimWhitespace(dataset.SeparationType));
-            AddParam(rootElement, "LC Cart Name", TrimWhitespace(dataset.CartName));
-            AddParam(rootElement, "LC Cart Config", TrimWhitespace(dataset.CartConfigName));
+            AddParam(rootElement, "LC Cart Name", TrimWhitespace(dataset.DmsData.CartName));
+            AddParam(rootElement, "LC Cart Config", TrimWhitespace(dataset.DmsData.CartConfigName));
             AddParam(rootElement, "LC Column", TrimWhitespace(dataset.LCColumn));
             AddParam(rootElement, "Dataset Type", TrimWhitespace(dmsData.DatasetType));
             AddParam(rootElement, "Operator (PRN)", TrimWhitespace(dataset.Operator));
@@ -358,7 +351,7 @@ namespace BuzzardWPF.IO
             var datasetName = dataset.DmsData.DatasetName;
             var outFileName =
                 string.Format("{0}_{1:MM.dd.yyyy_hh.mm.ss}_{2}{3}",
-                                    dataset.CartName,
+                                    dataset.DmsData.CartName,
                                     dataset.RunStart,
                                     datasetName,
                                     extension);

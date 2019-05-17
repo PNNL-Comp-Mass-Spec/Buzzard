@@ -17,15 +17,12 @@ namespace BuzzardWPF.Data
         private string m_instrument;
         private string m_operator;
         private string m_separationType;
-        private string m_cartName;
-        private string m_cartConfigName;
 
         private DMSData m_dmsData;
 
         private bool m_notOnlySource;
         private DatasetSource m_datasetSource;
         private TriggerFileStatus m_triggerFileStatus;
-        private string m_experimentName;
         private string m_comment = string.Empty;
         private string m_lcColumn;
         private string mCaptureSubfolderPath = string.Empty;
@@ -76,6 +73,8 @@ namespace BuzzardWPF.Data
             isMonitored = this.WhenAnyValue(x => x.DatasetSource).Select(x => x == DatasetSource.Watcher).ToProperty(this, x => x.IsMonitored);
             ToggleMonitoringCommand = ReactiveCommand.Create(ToggleMonitoring);
             this.WhenAnyValue(x => x.EMSLProposalUsers, x => x.EMSLProposalUsers.Count).Subscribe(_ => SetEMSLUsersList());
+            this.WhenAnyValue(x => x.DmsData, x => x.DmsData.CartName, x => x.DmsData.CartConfigName)
+                .ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ => ValidateCartConfig());
         }
         #endregion
 
@@ -148,12 +147,6 @@ namespace BuzzardWPF.Data
 
         public ReactiveCommand<Unit, Unit> ToggleMonitoringCommand { get; }
 
-        public string ExperimentName
-        {
-            get => m_experimentName;
-            set => this.RaiseAndSetIfChanged(ref m_experimentName, value);
-        }
-
         public bool IsQC
         {
             get => m_isQC;
@@ -187,18 +180,6 @@ namespace BuzzardWPF.Data
         {
             get => m_separationType;
             set => this.RaiseAndSetIfChanged(ref m_separationType, value);
-        }
-
-        public string CartName
-        {
-            get => m_cartName;
-            set => this.RaiseAndSetIfChanged(ref m_cartName, value, x => ValidateCartConfig());
-        }
-
-        public string CartConfigName
-        {
-            get => m_cartConfigName;
-            set => this.RaiseAndSetIfChanged(ref m_cartConfigName, value, x => ValidateCartConfig());
         }
 
         public DMSData DmsData
@@ -243,17 +224,17 @@ namespace BuzzardWPF.Data
 
         private void ValidateCartConfig()
         {
-            if (m_cartConfigName != null)
+            if (DmsData?.CartConfigName != null)
             {
-                if (string.IsNullOrWhiteSpace(m_cartName))
+                if (string.IsNullOrWhiteSpace(DmsData.CartName))
                 {
                     CartConfigError = false;
                     return;
                 }
 
-                if (DMS_DataAccessor.Instance.CartConfigNameMap.TryGetValue(m_cartName, out var list))
+                if (DMS_DataAccessor.Instance.CartConfigNameMap.TryGetValue(DmsData.CartName, out var list))
                 {
-                    CartConfigError = !list.Contains(m_cartConfigName);
+                    CartConfigError = !list.Contains(DmsData.CartConfigName);
                 }
             }
         }

@@ -22,8 +22,11 @@ namespace BuzzardWPF.Management
             var dataset = new BuzzardDataset
             {
                 FilePath = path,
-                CartName = DatasetManager.Manager.WatcherMetadata.CartName,
-                DmsData = {DatasetName = BuzzardTriggerFileTools.GetDatasetNameFromFilePath(path)}
+                DmsData =
+                {
+                    DatasetName = BuzzardTriggerFileTools.GetDatasetNameFromFilePath(path),
+                    CartName = DatasetManager.Manager.WatcherMetadata.CartName
+                }
             };
 
             if (dataset.DmsData.DatasetName.StartsWith("qc_", StringComparison.OrdinalIgnoreCase) ||

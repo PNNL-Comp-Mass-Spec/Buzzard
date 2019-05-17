@@ -868,11 +868,11 @@ namespace BuzzardWPF.Management
                 if (string.IsNullOrWhiteSpace(dataset.Instrument))
                     dataset.Instrument = WatcherMetadata.Instrument;
 
-                if (string.IsNullOrWhiteSpace(dataset.CartName))
-                    dataset.CartName = WatcherMetadata.CartName;
+                if (string.IsNullOrWhiteSpace(dataset.DmsData.CartName))
+                    dataset.DmsData.CartName = WatcherMetadata.CartName;
 
-                if (string.IsNullOrWhiteSpace(dataset.CartConfigName))
-                    dataset.CartConfigName = WatcherMetadata.CartConfigName;
+                if (string.IsNullOrWhiteSpace(dataset.DmsData.CartConfigName))
+                    dataset.DmsData.CartConfigName = WatcherMetadata.CartConfigName;
 
                 if (string.IsNullOrWhiteSpace(dataset.SeparationType))
                     dataset.SeparationType = WatcherMetadata.SeparationType;
@@ -883,8 +883,8 @@ namespace BuzzardWPF.Management
                 if (string.IsNullOrWhiteSpace(dataset.Operator))
                     dataset.Operator = WatcherMetadata.InstrumentOperator;
 
-                if (string.IsNullOrWhiteSpace(dataset.ExperimentName))
-                    dataset.ExperimentName = WatcherMetadata.ExperimentName;
+                if (string.IsNullOrWhiteSpace(dataset.DmsData.Experiment))
+                    dataset.DmsData.Experiment = WatcherMetadata.ExperimentName;
 
                 if (string.IsNullOrWhiteSpace(dataset.LCColumn))
                     dataset.LCColumn = WatcherMetadata.LCColumn;
@@ -908,7 +908,6 @@ namespace BuzzardWPF.Management
                     {
                         ApplicationLogger.LogMessage(0, $"QC_Upload: Matched monitor \"{chosenMonitor.DatasetNameMatch}\" (experiment \"{chosenMonitor.ExperimentName}\") to dataset name \"{dataset.DmsData.DatasetName}\"");
 
-                        dataset.ExperimentName = chosenMonitor.ExperimentName;
                         dataset.DmsData.Experiment = chosenMonitor.ExperimentName;
 
                         emslUsageType = chosenMonitor.EmslUsageType;
