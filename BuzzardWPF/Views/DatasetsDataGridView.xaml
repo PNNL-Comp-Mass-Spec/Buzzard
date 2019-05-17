@@ -360,10 +360,10 @@
                 CanUserSort="True"
                 Header="LC Column"
                 SortDirection="Ascending"
-                SortMemberPath="LCColumn">
+                SortMemberPath="ColumnName">
                 <DataGridTemplateColumn.CellTemplate>
                     <DataTemplate>
-                        <ComboBox ItemsSource="{Binding Source={StaticResource BaseDC}, Path=Data.DmsData.ColumnData, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=LCColumn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" cueBannerOverlay:CueBannerService.CueBanner="Select" />
+                        <ComboBox ItemsSource="{Binding Source={StaticResource BaseDC}, Path=Data.DmsData.ColumnData, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=ColumnName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" cueBannerOverlay:CueBannerService.CueBanner="Select" />
                     </DataTemplate>
                 </DataGridTemplateColumn.CellTemplate>
             </DataGridTemplateColumn>
@@ -372,10 +372,10 @@
                 CanUserSort="True"
                 Header="Instrument Name"
                 SortDirection="Ascending"
-                SortMemberPath="Instrument">
+                SortMemberPath="InstrumentName">
                 <DataGridTemplateColumn.CellTemplate>
                     <DataTemplate>
-                        <ComboBox ItemsSource="{Binding Source={StaticResource BaseDC}, Path=Data.DmsData.InstrumentData, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=Instrument, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" cueBannerOverlay:CueBannerService.CueBanner="Select" />
+                        <ComboBox ItemsSource="{Binding Source={StaticResource BaseDC}, Path=Data.DmsData.InstrumentData, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=InstrumentName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" cueBannerOverlay:CueBannerService.CueBanner="Select" />
                     </DataTemplate>
                 </DataGridTemplateColumn.CellTemplate>
             </DataGridTemplateColumn>
@@ -468,7 +468,7 @@
                 Header="Source Data Path"
                 IsReadOnly="True" />
             <DataGridTextColumn
-                Binding="{Binding CaptureSubfolderPath}"
+                Binding="{Binding CaptureSubdirectoryPath}"
                 Header="Relative Parent Path"
                 IsReadOnly="True" />
         </DataGrid.Columns>

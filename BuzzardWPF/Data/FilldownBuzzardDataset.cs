@@ -51,7 +51,7 @@ namespace BuzzardWPF.Data
             // Monitors for propertyChanged events
             this.WhenAnyValue(x => x.DmsData, x => x.DmsData.DatasetType, x => x.DmsData.EMSLUsageType, x => x.DmsData.EMSLProposalID)
                 .Subscribe(x => SettingsChanged = true);
-            this.WhenAnyValue(x => x.Comment, x => x.Operator, x => x.SeparationType, x => x.LCColumn, x => x.Instrument)
+            this.WhenAnyValue(x => x.Comment, x => x.Operator, x => x.SeparationType, x => x.ColumnName, x => x.InstrumentName)
                 .Subscribe(x => SettingsChanged = true);
             this.WhenAnyValue(x => x.DmsData.CartName, x => x.DmsData.CartConfigName, x => x.InterestRating, x => x.DmsData.Experiment)
                 .Subscribe(x => SettingsChanged = true);
@@ -148,8 +148,8 @@ namespace BuzzardWPF.Data
             Settings.Default.FilldownOperator = Operator;
             Settings.Default.FilldownDatasetType = DmsData.DatasetType;
             Settings.Default.FilldownSeparationType = SeparationType;
-            Settings.Default.FilldownColumn = LCColumn;
-            Settings.Default.FilldownInstrument = Instrument;
+            Settings.Default.FilldownColumn = ColumnName;
+            Settings.Default.FilldownInstrument = InstrumentName;
             Settings.Default.FilldownCart = DmsData.CartName;
             Settings.Default.FilldownCartConfig = DmsData.CartConfigName;
             Settings.Default.FilldownInterest = InterestRating;
@@ -176,8 +176,8 @@ namespace BuzzardWPF.Data
             Comment = Settings.Default.FilldownComment;
             Operator = Settings.Default.FilldownOperator;
             SeparationType = Settings.Default.FilldownSeparationType;
-            LCColumn = Settings.Default.FilldownColumn;
-            Instrument = Settings.Default.FilldownInstrument;
+            ColumnName = Settings.Default.FilldownColumn;
+            InstrumentName = Settings.Default.FilldownInstrument;
             DmsData.CartName = Settings.Default.FilldownCart;
             DmsData.CartConfigName = Settings.Default.FilldownCartConfig;
             InterestRating = Settings.Default.FilldownInterest;

@@ -438,9 +438,9 @@ namespace BuzzardWPF.ViewModels
             var filldownData = filldownWindowVm.Dataset;
 
             if (filldownData.ShouldUseLCColumn &&
-                !DmsData.ColumnData.Contains(filldownData.LCColumn))
+                !DmsData.ColumnData.Contains(filldownData.ColumnName))
             {
-                MessageBox.Show("Unknown LC column: " + filldownData.LCColumn +
+                MessageBox.Show("Unknown LC column: " + filldownData.ColumnName +
                                 "; please use the dropdown to select a valid column name");
                 return;
             }
@@ -471,7 +471,7 @@ namespace BuzzardWPF.ViewModels
                     dataset.DmsData.DatasetType = filldownData.DmsData.DatasetType;
 
                 if (filldownData.ShouldUseInstrumentType)
-                    dataset.Instrument = filldownData.Instrument;
+                    dataset.InstrumentName = filldownData.InstrumentName;
 
                 if (filldownData.ShouldUseOperator)
                     dataset.Operator = filldownData.Operator;
@@ -484,7 +484,7 @@ namespace BuzzardWPF.ViewModels
 
                 if (filldownData.ShouldUseLCColumn)
                 {
-                    dataset.LCColumn = filldownData.LCColumn;
+                    dataset.ColumnName = filldownData.ColumnName;
                 }
 
                 if (filldownData.ShouldUseInterestRating)

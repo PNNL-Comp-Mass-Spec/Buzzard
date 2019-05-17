@@ -14,7 +14,7 @@ namespace BuzzardWPF.Data
         #region Attributes
         private string filePath;
 
-        private string instrument;
+        private string instrumentName;
         private string instrumentOperator;
         private string separationType;
 
@@ -24,8 +24,8 @@ namespace BuzzardWPF.Data
         private DatasetSource datasetSource;
         private TriggerFileStatus triggerFileStatus;
         private string comment = string.Empty;
-        private string lcColumn;
-        private string captureSubfolderPath = string.Empty;
+        private string columnName;
+        private string captureSubdirectoryPath = string.Empty;
 
         private bool isQC;
 
@@ -102,10 +102,10 @@ namespace BuzzardWPF.Data
 
         public ReactiveList<ProposalUser> EMSLProposalUsers { get; } = new ReactiveList<ProposalUser>();
 
-        public string LCColumn
+        public string ColumnName
         {
-            get => lcColumn;
-            set => this.RaiseAndSetIfChanged(ref lcColumn, value);
+            get => columnName;
+            set => this.RaiseAndSetIfChanged(ref columnName, value);
         }
 
         public string Comment
@@ -114,10 +114,10 @@ namespace BuzzardWPF.Data
             set => this.RaiseAndSetIfChanged(ref comment, value);
         }
 
-        public string CaptureSubfolderPath
+        public string CaptureSubdirectoryPath
         {
-            get => captureSubfolderPath;
-            set => this.RaiseAndSetIfChanged(ref captureSubfolderPath, value);
+            get => captureSubdirectoryPath;
+            set => this.RaiseAndSetIfChanged(ref captureSubdirectoryPath, value);
         }
 
         public TriggerFileStatus TriggerFileStatus
@@ -164,10 +164,10 @@ namespace BuzzardWPF.Data
             set => this.RaiseAndSetIfChanged(ref notOnlySource, value);
         }
 
-        public string Instrument
+        public string InstrumentName
         {
-            get => instrument;
-            set => this.RaiseAndSetIfChanged(ref instrument, value);
+            get => instrumentName;
+            set => this.RaiseAndSetIfChanged(ref instrumentName, value);
         }
 
         public string Operator

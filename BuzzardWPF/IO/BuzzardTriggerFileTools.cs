@@ -110,11 +110,11 @@ namespace BuzzardWPF.IO
             {
                 {"Dataset Name", dmsData.DatasetName},
                 {"Experiment Name", dataset.DmsData.Experiment},
-                {"Instrument Name", dataset.Instrument},
+                {"Instrument Name", dataset.InstrumentName},
                 {"Separation Type", dataset.SeparationType},
                 {"LC Cart Name", dataset.DmsData.CartName},
                 {"LC Cart Config", dataset.DmsData.CartConfigName},
-                {"LC Column", dataset.LCColumn},
+                {"LC Column", dataset.ColumnName},
                 {"Operator (PRN)", dataset.Operator},
             };
 
@@ -141,12 +141,12 @@ namespace BuzzardWPF.IO
             // Add the parameters
             AddParam(rootElement, "Dataset Name", dmsData.DatasetName);
             AddParam(rootElement, "Experiment Name", TrimWhitespace(dataset.DmsData.Experiment));
-            AddParam(rootElement, "Instrument Name", TrimWhitespace(dataset.Instrument));
-            AddParam(rootElement, "Capture Subfolder", TrimWhitespace(dataset.CaptureSubfolderPath));
+            AddParam(rootElement, "Instrument Name", TrimWhitespace(dataset.InstrumentName));
+            AddParam(rootElement, "Capture Subfolder", TrimWhitespace(dataset.CaptureSubdirectoryPath));
             AddParam(rootElement, "Separation Type", TrimWhitespace(dataset.SeparationType));
             AddParam(rootElement, "LC Cart Name", TrimWhitespace(dataset.DmsData.CartName));
             AddParam(rootElement, "LC Cart Config", TrimWhitespace(dataset.DmsData.CartConfigName));
-            AddParam(rootElement, "LC Column", TrimWhitespace(dataset.LCColumn));
+            AddParam(rootElement, "LC Column", TrimWhitespace(dataset.ColumnName));
             AddParam(rootElement, "Dataset Type", TrimWhitespace(dmsData.DatasetType));
             AddParam(rootElement, "Operator (PRN)", TrimWhitespace(dataset.Operator));
 

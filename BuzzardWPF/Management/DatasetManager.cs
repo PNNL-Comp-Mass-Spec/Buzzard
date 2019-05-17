@@ -809,7 +809,7 @@ namespace BuzzardWPF.Management
 
                             dataset = datasetEntry;
                             dataset.FilePath = datasetFileOrFolderPath;
-                            dataset.CaptureSubfolderPath = captureSubfolderPath;
+                            dataset.CaptureSubdirectoryPath = captureSubfolderPath;
                             dataset.UpdateFileProperties();
                             break;
                         }
@@ -838,7 +838,7 @@ namespace BuzzardWPF.Management
             if (dataset != null)
             {
 
-                dataset.CaptureSubfolderPath = captureSubfolderPath;
+                dataset.CaptureSubdirectoryPath = captureSubfolderPath;
                 if (isArchived)
                     dataset.FilePath = datasetFileOrFolderPath;
                 else
@@ -856,7 +856,7 @@ namespace BuzzardWPF.Management
             else
             {
                 dataset = DatasetFactory.LoadDataset(datasetFileOrFolderPath);
-                dataset.CaptureSubfolderPath = captureSubfolderPath;
+                dataset.CaptureSubdirectoryPath = captureSubfolderPath;
                 dataset.Comment = WatcherMetadata.UserComments;
 
                 BuzzardTriggerFileTools.ValidateDatasetName(dataset);
@@ -876,8 +876,8 @@ namespace BuzzardWPF.Management
                 // we want to fill this in with information that was set
                 // in the watcher config tool. Yet, we don't want to
                 // overwrite something that was set by the user.
-                if (string.IsNullOrWhiteSpace(dataset.Instrument))
-                    dataset.Instrument = WatcherMetadata.Instrument;
+                if (string.IsNullOrWhiteSpace(dataset.InstrumentName))
+                    dataset.InstrumentName = WatcherMetadata.Instrument;
 
                 if (string.IsNullOrWhiteSpace(dataset.DmsData.CartName))
                     dataset.DmsData.CartName = WatcherMetadata.CartName;
@@ -897,8 +897,8 @@ namespace BuzzardWPF.Management
                 if (string.IsNullOrWhiteSpace(dataset.DmsData.Experiment))
                     dataset.DmsData.Experiment = WatcherMetadata.ExperimentName;
 
-                if (string.IsNullOrWhiteSpace(dataset.LCColumn))
-                    dataset.LCColumn = WatcherMetadata.LCColumn;
+                if (string.IsNullOrWhiteSpace(dataset.ColumnName))
+                    dataset.ColumnName = WatcherMetadata.LCColumn;
 
                 string emslUsageType;
                 string emslProposalId;

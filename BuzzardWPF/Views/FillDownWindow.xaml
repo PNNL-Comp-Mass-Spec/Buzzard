@@ -195,13 +195,13 @@
                 <TextBox
                     Grid.Column="0"
                     Margin="2"
-                    Text="{Binding Path=Dataset.LCColumn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    Text="{Binding Path=Dataset.ColumnName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 <ComboBox
                     Grid.Column="1"
                     Margin="2"
                     ItemsSource="{Binding Path=LCColumnSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                    SelectedItem="{Binding Dataset.LCColumn}">
+                    SelectedItem="{Binding Dataset.ColumnName}">
                     <cueBannerOverlay:CueBannerService.CueBanner>
                         <TextBlock Text="Select" Margin="0" FontWeight="Regular" />
                     </cueBannerOverlay:CueBannerService.CueBanner>
@@ -223,7 +223,7 @@
                 Grid.Column="2"
                 Margin="2"
                 ItemsSource="{Binding Path=InstrumentSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                SelectedValue="{Binding Path=Dataset.Instrument, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                SelectedValue="{Binding Path=Dataset.InstrumentName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                 <cueBannerOverlay:CueBannerService.CueBanner>
                     <TextBlock Text="Select" Margin="0" FontWeight="Regular" />
                 </cueBannerOverlay:CueBannerService.CueBanner>
