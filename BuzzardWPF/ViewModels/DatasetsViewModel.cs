@@ -492,7 +492,7 @@ namespace BuzzardWPF.ViewModels
 
                 if (filldownData.ShouldUseComment)
                 {
-                    dataset.Comment = filldownData.Comment;
+                    dataset.DmsData.CommentAddition = filldownData.DmsData.CommentAddition;
                 }
 
                 // We might have to add a few extra checks on these guys since they're

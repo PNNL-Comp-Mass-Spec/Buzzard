@@ -402,7 +402,7 @@
                 Grid.Column="2"
                 Margin="2,2,2,6"
                 FontSize="15"
-                Text="{Binding Path=Dataset.Comment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                Text="{Binding Path=Dataset.DmsData.CommentAddition, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
         </Grid>
     </DockPanel>

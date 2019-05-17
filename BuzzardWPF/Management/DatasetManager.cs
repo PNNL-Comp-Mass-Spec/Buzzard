@@ -857,7 +857,7 @@ namespace BuzzardWPF.Management
             {
                 dataset = DatasetFactory.LoadDataset(datasetFileOrFolderPath);
                 dataset.CaptureSubdirectoryPath = captureSubfolderPath;
-                dataset.Comment = WatcherMetadata.UserComments;
+                dataset.DmsData.CommentAddition = WatcherMetadata.UserComments;
 
                 BuzzardTriggerFileTools.ValidateDatasetName(dataset);
 

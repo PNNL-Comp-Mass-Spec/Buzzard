@@ -21,7 +21,6 @@ namespace BuzzardWPF.Data
         private bool notOnlySource;
         private DatasetSource datasetSource;
         private TriggerFileStatus triggerFileStatus;
-        private string comment = string.Empty;
         private string columnName;
         private string captureSubdirectoryPath = string.Empty;
 
@@ -106,12 +105,6 @@ namespace BuzzardWPF.Data
         {
             get => columnName;
             set => this.RaiseAndSetIfChanged(ref columnName, value);
-        }
-
-        public string Comment
-        {
-            get => comment;
-            set => this.RaiseAndSetIfChanged(ref comment, value);
         }
 
         public string CaptureSubdirectoryPath

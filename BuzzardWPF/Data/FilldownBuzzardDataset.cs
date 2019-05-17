@@ -49,7 +49,7 @@ namespace BuzzardWPF.Data
             // Monitors for propertyChanged events
             this.WhenAnyValue(x => x.DmsData, x => x.DmsData.DatasetType, x => x.DmsData.EMSLUsageType, x => x.DmsData.EMSLProposalID)
                 .Subscribe(x => SettingsChanged = true);
-            this.WhenAnyValue(x => x.Comment, x => x.Operator, x => x.SeparationType, x => x.ColumnName, x => x.InstrumentName)
+            this.WhenAnyValue(x => x.DmsData.CommentAddition, x => x.Operator, x => x.SeparationType, x => x.ColumnName, x => x.InstrumentName)
                 .Subscribe(x => SettingsChanged = true);
             this.WhenAnyValue(x => x.DmsData.CartName, x => x.DmsData.CartConfigName, x => x.InterestRating, x => x.DmsData.Experiment)
                 .Subscribe(x => SettingsChanged = true);
@@ -142,7 +142,7 @@ namespace BuzzardWPF.Data
                 return false;
             }
 
-            Settings.Default.FilldownComment = Comment;
+            Settings.Default.FilldownComment = DmsData.CommentAddition;
             Settings.Default.FilldownOperator = Operator;
             Settings.Default.FilldownDatasetType = DmsData.DatasetType;
             Settings.Default.FilldownSeparationType = SeparationType;
@@ -166,7 +166,7 @@ namespace BuzzardWPF.Data
 
         public void LoadSettings()
         {
-            Comment = Settings.Default.FilldownComment;
+            DmsData.CommentAddition = Settings.Default.FilldownComment;
             Operator = Settings.Default.FilldownOperator;
             SeparationType = Settings.Default.FilldownSeparationType;
             ColumnName = Settings.Default.FilldownColumn;

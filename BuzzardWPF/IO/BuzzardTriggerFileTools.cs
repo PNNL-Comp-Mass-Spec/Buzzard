@@ -98,13 +98,11 @@ namespace BuzzardWPF.IO
             var triggerFileContents = new XmlDocument();
             var dmsData = dataset.DmsData;
 
-            var comment = dmsData.Comment;
+            if (string.Compare(dataset.DmsData.CommentAddition, "HailWhiteshoes", StringComparison.CurrentCultureIgnoreCase) == 0)
+                dataset.DmsData.CommentAddition = string.Empty;
 
-            if (string.Compare(dataset.Comment, "HailWhiteshoes", StringComparison.CurrentCultureIgnoreCase) == 0)
-                dataset.Comment = string.Empty;
-
-            if (!string.IsNullOrWhiteSpace(dataset.Comment))
-                comment += " Buzzard: " + dataset.Comment;
+            if (!string.IsNullOrWhiteSpace(dataset.DmsData.CommentAddition))
+                dataset.DmsData.CommentAdditionPrefix = "Buzzard: ";
 
             var lstFieldsToVerify = new Dictionary<string, string>
             {
@@ -150,7 +148,7 @@ namespace BuzzardWPF.IO
             AddParam(rootElement, "Dataset Type", TrimWhitespace(dmsData.DatasetType));
             AddParam(rootElement, "Operator (PRN)", TrimWhitespace(dataset.Operator));
 
-            AddParam(rootElement, "Comment", TrimWhitespace(comment));
+            AddParam(rootElement, "Comment", TrimWhitespace(dmsData.CommentComplete));
             AddParam(rootElement, "Interest Rating", TrimWhitespace(dataset.InterestRating));
 
             var usage = string.Empty;
