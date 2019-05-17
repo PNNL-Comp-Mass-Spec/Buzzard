@@ -193,6 +193,15 @@ namespace BuzzardWPF.Management
                 }
             }
 
+            // Load CartConfigNameMap
+            var tempCartConfigNameMap = SQLiteTools.GetCartConfigNameMap(false);
+            if (tempCartConfigNameMap == null)
+                ApplicationLogger.LogError(0, "LC Cart config names map retrieval returned null.");
+            else
+            {
+                CartConfigNameMap = tempCartConfigNameMap;
+            }
+
             //
             // Load column data
             //
@@ -701,6 +710,11 @@ namespace BuzzardWPF.Management
         /// Cart config names
         /// </summary>
         public ReactiveList<string> CartConfigNames { get; } = new ReactiveList<string>();
+
+        /// <summary>
+        /// Key is cart name, value is list of valid cart config names for that cart.
+        /// </summary>
+        public Dictionary<string, List<string>> CartConfigNameMap { get; private set; } = new Dictionary<string, List<string>>();
 
         /// <summary>
         /// List of DMS dataset names

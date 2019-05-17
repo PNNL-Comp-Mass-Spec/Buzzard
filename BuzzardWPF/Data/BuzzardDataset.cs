@@ -245,9 +245,16 @@ namespace BuzzardWPF.Data
         {
             if (m_cartConfigName != null)
             {
-                CartConfigStatus = !string.IsNullOrEmpty(m_cartName) &&
-                                        !m_cartConfigName.StartsWith("Unknown", StringComparison.OrdinalIgnoreCase) &&
-                                        !m_cartConfigName.StartsWith(m_cartName, StringComparison.OrdinalIgnoreCase);
+                if (string.IsNullOrWhiteSpace(m_cartName))
+                {
+                    CartConfigStatus = false;
+                    return;
+                }
+
+                if (DMS_DataAccessor.Instance.CartConfigNameMap.TryGetValue(m_cartName, out var list))
+                {
+                    CartConfigStatus = !list.Contains(m_cartConfigName);
+                }
             }
         }
 
