@@ -40,10 +40,12 @@ namespace BuzzardWPF.IO
                 return null;
             }
 
-            var data = VerifyAndGenerateXmlDoc(dataset);
-
-            if (dataset.DatasetStatus == DatasetStatus.MissingRequiredInfo)
+            if (!VerifyDataset(dataset) || dataset.DatasetStatus == DatasetStatus.MissingRequiredInfo)
+            {
                 return null;
+            }
+
+            var data = GenerateXmlDoc(dataset);
 
             return data.ToString();
         }
@@ -54,42 +56,30 @@ namespace BuzzardWPF.IO
         /// <param name="dataset">Dataset object</param>
         /// <returns>Trigger file path if success, otherwise null</returns>
         /// <remarks>In the dataset object, DatasetStatus will be set to MissingRequiredInfo if field validation fails</remarks>
-        public static string GenerateTriggerFileBuzzard(BuzzardDataset dataset)
+        public static string VerifyAndGenerateTriggerFile(BuzzardDataset dataset)
         {
-            // Setting 'CopyTriggerFiles' allows us to still create trigger files without uploading them
-            //var createTriggerFiles = LCMSSettings.GetParameter("CreateTriggerFiles", false);
-            //if (!createTriggerFiles)
-            //{
-            //    var msg = "Generate Trigger File: Sample " + dataset.DmsData.DatasetName + ", Trigger file creation disabled";
-            //    ApplicationLogger.LogMessage(0, msg);
-            //    return null;
-            //}
-
             if (!ValidateDatasetName(dataset))
             {
                 return null;
             }
 
-            // Create an XML document containing the trigger file's contents
-            var triggerFileContents = VerifyAndGenerateXmlDoc(dataset);
-
-            if (dataset.DatasetStatus == DatasetStatus.MissingRequiredInfo)
+            if (!VerifyDataset(dataset) || dataset.DatasetStatus == DatasetStatus.MissingRequiredInfo)
+            {
                 return null;
+            }
 
-            // Write the document to the file
-            return SaveFile(triggerFileContents, dataset);
+            return GenerateTriggerFile(dataset);
         }
 
         /// <summary>
-        /// Generates the XML-formatted trigger file contents
+        /// Verifies that the dataset has necessary and valid data.
         /// </summary>
         /// <param name="dataset">Dataset object</param>
-        /// <returns>XML trigger file document</returns>
+        /// <returns>True if valid</returns>
         /// <remarks>In the dataset object, DatasetStatus will be set to MissingRequiredInfo if field validation fails</remarks>
-        private static XmlDocument VerifyAndGenerateXmlDoc(BuzzardDataset dataset)
+        private static bool VerifyDataset(BuzzardDataset dataset)
         {
             // Create and initialize the document
-            var triggerFileContents = new XmlDocument();
             var dmsData = dataset.DmsData;
 
             if (string.Compare(dataset.DmsData.CommentAddition, "HailWhiteshoes", StringComparison.CurrentCultureIgnoreCase) == 0)
@@ -114,7 +104,7 @@ namespace BuzzardWPF.IO
             foreach (var dataField in lstFieldsToVerify)
             {
                 if (!ValidateFieldDefined(dataset, dataField.Key, dataField.Value))
-                    return triggerFileContents;
+                    return false;
             }
 
             if (dataset.DatasetStatus == DatasetStatus.MissingRequiredInfo)
@@ -123,7 +113,7 @@ namespace BuzzardWPF.IO
                 dataset.DatasetStatus = DatasetStatus.Pending;
             }
 
-            return GenerateXmlDoc(dataset);
+            return true;
         }
 
         public static string GetCaptureSubfolderPath(string baseFolderPath, string datasetFileOrFolderPath)
