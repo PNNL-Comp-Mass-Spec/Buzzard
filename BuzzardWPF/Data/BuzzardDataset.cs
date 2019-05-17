@@ -9,7 +9,7 @@ using ReactiveUI;
 
 namespace BuzzardWPF.Data
 {
-    public class BuzzardDataset : ReactiveObject
+    public class BuzzardDataset : ReactiveObject, ITriggerFileData
     {
         #region Attributes
         private string filePath;
@@ -17,8 +17,6 @@ namespace BuzzardWPF.Data
         private string instrumentName;
         private string instrumentOperator;
         private string separationType;
-
-        private DMSData dmsData;
 
         private bool notOnlySource;
         private DatasetSource datasetSource;
@@ -32,10 +30,9 @@ namespace BuzzardWPF.Data
         /// <summary>
         /// Status of the dataset.
         /// </summary>
-        /// <remarks>
-        /// Pulled in to stop compile time errors.
-        /// </remarks>
         private DatasetStatus status;
+
+        private readonly ObservableAsPropertyHelper<DMSStatus> dmsStatus;
 
         private string triggerCreationWarning;
 
@@ -75,6 +72,9 @@ namespace BuzzardWPF.Data
             this.WhenAnyValue(x => x.EMSLProposalUsers, x => x.EMSLProposalUsers.Count).Subscribe(_ => SetEMSLUsersList());
             this.WhenAnyValue(x => x.DmsData, x => x.DmsData.CartName, x => x.DmsData.CartConfigName)
                 .ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ => ValidateCartConfig());
+            dmsStatus = this.WhenAnyValue(x => x.DmsData, x => x.DmsData.LockData)
+                .Select(x => x.Item2 ? DMSStatus.DMSResolved : DMSStatus.NoDMSRequest)
+                .ToProperty(this, x => x.DMSStatus);
         }
         #endregion
 
@@ -126,16 +126,7 @@ namespace BuzzardWPF.Data
             set => this.RaiseAndSetIfChanged(ref triggerFileStatus, value);
         }
 
-        public DMSStatus DMSStatus
-        {
-            get
-            {
-                if (DmsData.LockData)
-                    return DMSStatus.DMSResolved;
-
-                return DMSStatus.NoDMSRequest;
-            }
-        }
+        public DMSStatus DMSStatus => dmsStatus.Value;
 
         public DatasetSource DatasetSource
         {
@@ -182,11 +173,7 @@ namespace BuzzardWPF.Data
             set => this.RaiseAndSetIfChanged(ref separationType, value);
         }
 
-        public DMSData DmsData
-        {
-            get => dmsData;
-            set => this.RaiseAndSetIfChanged(ref dmsData, value, x => this.RaisePropertyChanged(nameof(DMSStatus)));
-        }
+        public DMSData DmsData { get; }
 
         public DateTime DMSDataLastUpdate { get; set; }
 

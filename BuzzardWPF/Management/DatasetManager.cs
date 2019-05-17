@@ -369,7 +369,7 @@ namespace BuzzardWPF.Management
 
                 // Match found
                 RxApp.MainThreadScheduler.Schedule(() => {
-                dataset.DmsData = data.CloneLockedWithPath(dataset.FilePath);
+                dataset.DmsData.CopyValuesAndLockWithNewPath(data, dataset.FilePath);
                 dataset.DMSDataLastUpdate = DateTime.UtcNow;
                 });
             }

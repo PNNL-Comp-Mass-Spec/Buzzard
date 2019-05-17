@@ -270,6 +270,66 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="T:LcmsNetData.Data.ITriggerFileData">
+            <summary>
+            Provides data for creating trigger files
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.ITriggerFileData.DmsData">
+            <summary>
+            DMS Data: Request ID, Dataset Name, etc.
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.ITriggerFileData.RunStart">
+            <summary>
+            Time when the Acquisition started
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.ITriggerFileData.RunFinish">
+            <summary>
+            Time when the Acquisition ended
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.ITriggerFileData.ColumnName">
+            <summary>
+            Name of the column used (as entered in DMS)
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.ITriggerFileData.InstrumentName">
+            <summary>
+            Name of the instrument (as entered in DMS)
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.ITriggerFileData.SeparationType">
+            <summary>
+            Separation type used (as entered in DMS)
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.ITriggerFileData.Operator">
+            <summary>
+            Name of operator (as entered in DMS)
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.ITriggerFileData.CaptureSubdirectoryPath">
+            <summary>
+            Subdirectory containing the dataset
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.ITriggerFileData.InterestRating">
+            <summary>
+            DMS interest rating (or 'Unreviewed')
+            </summary>
+        </member>
+        <member name="T:LcmsNetData.Data.ITriggerFilePalData">
+            <summary>
+            Provides data for creating trigger files, including Well Plate data
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.ITriggerFilePalData.PAL">
+            <summary>
+            Autosampler information, specifically Well Plate Number and Well Number
+            </summary>
+        </member>
         <member name="M:LcmsNetData.Data.LcmsNetDataClassBase.GetPropertyValues">
             <summary>
             Gets current values for all the properties in the class in key/value format
@@ -413,6 +473,27 @@
             Operator performing LC run
             </summary>
         </member>
+        <member name="P:LcmsNetData.Data.SampleDataBasic.RunStart">
+            <inheritdoc />
+        </member>
+        <member name="P:LcmsNetData.Data.SampleDataBasic.RunFinish">
+            <inheritdoc />
+        </member>
+        <member name="P:LcmsNetData.Data.SampleDataBasic.ColumnName">
+            <inheritdoc />
+        </member>
+        <member name="P:LcmsNetData.Data.SampleDataBasic.InstrumentName">
+            <inheritdoc />
+        </member>
+        <member name="P:LcmsNetData.Data.SampleDataBasic.SeparationType">
+            <inheritdoc />
+        </member>
+        <member name="P:LcmsNetData.Data.SampleDataBasic.CaptureSubdirectoryPath">
+            <inheritdoc />
+        </member>
+        <member name="P:LcmsNetData.Data.SampleDataBasic.InterestRating">
+            <inheritdoc />
+        </member>
         <member name="M:LcmsNetData.Data.SampleDataBasic.GetPropertyValues">
             <summary>
             Gets current values for all the properties in the class in key/value format
@@ -547,18 +628,13 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:LcmsNetData.Data.DMSData.CloneLocked">
+        <member name="M:LcmsNetData.Data.DMSData.CopyValuesAndLockWithNewPath(LcmsNetData.Data.DMSData,System.String)">
             <summary>
-            Clones the data and locks it
+            Copies the data and locks this object, and sets the dataset name to the filename in <paramref name="filePath"/>
+            Used in Buzzard
             </summary>
-            <returns></returns>
-        </member>
-        <member name="M:LcmsNetData.Data.DMSData.CloneLockedWithPath(System.String)">
-            <summary>
-            Clones the data and locks it, and sets the dataset name to the filename in <paramref name="filePath"/>
-            </summary>
+            <param name="other"></param>
             <param name="filePath"></param>
-            <returns></returns>
         </member>
         <member name="P:LcmsNetData.Data.DMSData.LockData">
             <summary>
@@ -629,6 +705,21 @@
             Comment field
             </summary>
         </member>
+        <member name="P:LcmsNetData.Data.DMSData.CommentComplete">
+            <summary>
+            The full comment, including the addition and addition prefix
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.DMSData.CommentAddition">
+            <summary>
+            Additional comment. Used by Buzzard to add comment information to datasets matched to run requests.
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.DMSData.CommentAdditionPrefix">
+            <summary>
+            Additional comment prefix. Used by Buzzard, output before CommentAddition.
+            </summary>
+        </member>
         <member name="P:LcmsNetData.Data.DMSData.MRMFileID">
             <summary>
             File ID for locating MRM file to download
@@ -655,13 +746,60 @@
             </summary>
             <param name="propValues">String dictionary containing property names and values</param>
         </member>
-        <member name="M:LcmsNetData.Data.TriggerFileUtils.CheckLocalTriggerFiles">
+        <member name="T:LcmsNetData.Data.TriggerFileTools">
+            <summary>
+            Tools for generation of trigger files
+            </summary>
+        </member>
+        <member name="M:LcmsNetData.Data.TriggerFileTools.GenerateTriggerFile(LcmsNetData.Data.ITriggerFileData)">
+            <summary>
+            Generates a trigger file for a sample
+            </summary>
+            <param name="sample"></param>
+        </member>
+        <member name="M:LcmsNetData.Data.TriggerFileTools.GenerateXmlDoc(LcmsNetData.Data.ITriggerFileData)">
+            <summary>
+            Generates the XML-formatted trigger file contents
+            </summary>
+            <param name="sample">sample object for sample that was run</param>
+        </member>
+        <member name="M:LcmsNetData.Data.TriggerFileTools.ConvertTimeLocalToUtc(System.DateTime)">
+            <summary>
+            Converts a string representing a local time to UTC time
+            </summary>
+            <param name="localTime">Local time</param>
+            <returns></returns>
+        </member>
+        <member name="M:LcmsNetData.Data.TriggerFileTools.AddParam(System.Xml.XmlElement,System.String,System.String)">
+            <summary>
+            Adds a trigger file parameter to the XML document defining the file contents
+            </summary>
+            <param name="parent">Parent element to add the parameter to</param>
+            <param name="paramName">Name of the parameter to add</param>
+            <param name="paramValue">Value of the parameter</param>
+        </member>
+        <member name="M:LcmsNetData.Data.TriggerFileTools.GetTriggerFileName(LcmsNetData.Data.ITriggerFileData,System.String)">
+            <summary>
+            Get the trigger file name for the provided dataset
+            </summary>
+            <param name="sample"></param>
+            <param name="extension"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LcmsNetData.Data.TriggerFileTools.SaveFile(System.Xml.XmlDocument,LcmsNetData.Data.ITriggerFileData)">
+            <summary>
+            Write the trigger file
+            </summary>
+            <param name="doc">XML document to be written</param>
+            <param name="sample">Name of the sample this trigger file is for</param>
+        </member>
+        <member name="M:LcmsNetData.Data.TriggerFileTools.CheckLocalTriggerFiles">
             <summary>
             Tests for presence of local trigger files
             </summary>
             <returns>TRUE if trigger files present, FALSE otherwise</returns>
         </member>
-        <member name="M:LcmsNetData.Data.TriggerFileUtils.MoveLocalTriggerFiles">
+        <member name="M:LcmsNetData.Data.TriggerFileTools.MoveLocalTriggerFiles">
             <summary>
             Moves local trigger files to a remote server
             </summary>
@@ -680,6 +818,18 @@
             <summary>
             Payroll number (network login) of user
             </summary>
+        </member>
+        <member name="T:LcmsNetData.EnumExtensions">
+            <summary>
+            Extensions for enum types
+            </summary>
+        </member>
+        <member name="M:LcmsNetData.EnumExtensions.GetEnumDescription(System.Enum)">
+            <summary>
+            Get the description from the description attribute of the enum value
+            </summary>
+            <param name="value"></param>
+            <returns>Description from description attribute; if it doesn't exist, returns <paramref name="value"/>.ToString()</returns>
         </member>
         <member name="F:LcmsNetData.ProgressEventArgs.CurrentTask">
             <summary>
@@ -1370,6 +1520,70 @@
             Loads the name of the method and stores it.
             </summary>
             <param name="propValues"></param>
+        </member>
+        <member name="P:LcmsNetData.System.PersistDataPaths.AppName">
+            <summary>
+            Name of the app - used for ProgramData directory name
+            </summary>
+        </member>
+        <member name="M:LcmsNetData.System.PersistDataPaths.SetAppName(System.String)">
+            <summary>
+            Sets the app name to a non-default value
+            </summary>
+            <param name="appName"></param>
+        </member>
+        <member name="P:LcmsNetData.System.PersistDataPaths.ProgramExeDirectory">
+            <summary>
+            The directory where the exe file is located, and where data may have been persisted before
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.System.PersistDataPaths.ProgramDataPath">
+            <summary>
+            Path to the ProgramData directory for this program
+            </summary>
+        </member>
+        <member name="M:LcmsNetData.System.PersistDataPaths.GetFileSavePath(System.String)">
+            <summary>
+            Get the path where the file should be saved
+            </summary>
+            <param name="fileSubPath"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LcmsNetData.System.PersistDataPaths.GetFileLoadPath(System.String)">
+            <summary>
+            Get the full path of the provided file subPath that exists
+            </summary>
+            <param name="fileSubPath"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LcmsNetData.System.PersistDataPaths.GetDirectorySavePath(System.String)">
+            <summary>
+            Get the path where the directory should be located
+            </summary>
+            <param name="directorySubPath"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LcmsNetData.System.PersistDataPaths.GetDirectoryLoadPath(System.String)">
+            <summary>
+            Get the full path of the provided directory subPath that exists
+            </summary>
+            <param name="directorySubPath"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LcmsNetData.System.PersistDataPaths.GetDirectoryLoadPathCheckContents(System.String)">
+            <summary>
+            Get the full path of the provided directory subPath that exists
+            </summary>
+            <param name="directorySubPath"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LcmsNetData.System.PersistDataPaths.GetDirectoryLoadPathCheckFiles(System.String,System.String)">
+            <summary>
+            Get the full path of the provided directory subPath that exists
+            </summary>
+            <param name="directorySubPath"></param>
+            <param name="fileFilter">file filter string</param>
+            <returns></returns>
         </member>
         <member name="M:LcmsNetData.System.TimeKeeper.ConvertToTimeZone(System.DateTime,System.String)">
             <summary>

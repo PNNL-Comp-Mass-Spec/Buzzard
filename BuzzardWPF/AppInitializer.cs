@@ -302,10 +302,10 @@ namespace BuzzardWPF
                 var copyTriggerFiles = LCMSSettings.GetParameter("CopyTriggerFiles", false);
                 if (copyTriggerFiles)
                 {
-                    if (LcmsNetData.Data.TriggerFileUtils.CheckLocalTriggerFiles())
+                    if (LcmsNetData.Data.TriggerFileTools.CheckLocalTriggerFiles())
                     {
                         ApplicationLogger.LogMessage(-1, "Copying trigger files to DMS");
-                        LcmsNetData.Data.TriggerFileUtils.MoveLocalTriggerFiles();
+                        LcmsNetData.Data.TriggerFileTools.MoveLocalTriggerFiles();
                     }
                 }
             }

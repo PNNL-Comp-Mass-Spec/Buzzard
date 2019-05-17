@@ -46,8 +46,6 @@ namespace BuzzardWPF.Data
             ShouldUseEMSLProposalUsers = true;
             ShouldUseComment = true;
 
-            DmsData = new DMSData();
-
             // Monitors for propertyChanged events
             this.WhenAnyValue(x => x.DmsData, x => x.DmsData.DatasetType, x => x.DmsData.EMSLUsageType, x => x.DmsData.EMSLProposalID)
                 .Subscribe(x => SettingsChanged = true);
@@ -168,11 +166,6 @@ namespace BuzzardWPF.Data
 
         public void LoadSettings()
         {
-            if (DmsData == null)
-            {
-                DmsData = new DMSData();
-            }
-
             Comment = Settings.Default.FilldownComment;
             Operator = Settings.Default.FilldownOperator;
             SeparationType = Settings.Default.FilldownSeparationType;
