@@ -245,7 +245,7 @@ namespace BuzzardWPF.Management
                 }
 
                 ApplicationLogger.LogMessage(0, string.Format("Creating Trigger File: {0} for {1}", DateTime.Now, dataset.DmsData.DatasetName));
-                var triggerFilePath = BuzzardTriggerFileTools.GenerateTriggerFileBuzzard(dataset, Manager.TriggerFileLocation);
+                var triggerFilePath = BuzzardTriggerFileTools.VerifyAndGenerateTriggerFile(dataset);
 
                 if (string.IsNullOrEmpty(triggerFilePath))
                     return null;

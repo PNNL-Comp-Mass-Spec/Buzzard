@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Xml;
 using BuzzardWPF.Data;
-using LcmsNetData;
 using LcmsNetData.Data;
-using LcmsNetData.Logging;
 
 namespace BuzzardWPF.IO
 {
@@ -15,7 +12,7 @@ namespace BuzzardWPF.IO
     /// This class is a variation of LCMSNetSDK.Data.TriggerFileTools, that has been
     /// modified to work with datasets that
     /// </summary>
-    public class BuzzardTriggerFileTools
+    public class BuzzardTriggerFileTools : TriggerFileTools
     {
         /// <summary>
         /// Minimum dataset name length
@@ -43,7 +40,7 @@ namespace BuzzardWPF.IO
                 return null;
             }
 
-            var data = GenerateXmlDoc(dataset);
+            var data = VerifyAndGenerateXmlDoc(dataset);
 
             if (dataset.DatasetStatus == DatasetStatus.MissingRequiredInfo)
                 return null;
@@ -55,12 +52,9 @@ namespace BuzzardWPF.IO
         /// Generates a trigger file for a sample
         /// </summary>
         /// <param name="dataset">Dataset object</param>
-        /// <param name="remoteTriggerFolderPath">Target folder</param>
         /// <returns>Trigger file path if success, otherwise null</returns>
         /// <remarks>In the dataset object, DatasetStatus will be set to MissingRequiredInfo if field validation fails</remarks>
-        public static string GenerateTriggerFileBuzzard(
-            BuzzardDataset dataset,
-            string remoteTriggerFolderPath)
+        public static string GenerateTriggerFileBuzzard(BuzzardDataset dataset)
         {
             // Setting 'CopyTriggerFiles' allows us to still create trigger files without uploading them
             //var createTriggerFiles = LCMSSettings.GetParameter("CreateTriggerFiles", false);
@@ -77,13 +71,13 @@ namespace BuzzardWPF.IO
             }
 
             // Create an XML document containing the trigger file's contents
-            var triggerFileContents = GenerateXmlDoc(dataset);
+            var triggerFileContents = VerifyAndGenerateXmlDoc(dataset);
 
             if (dataset.DatasetStatus == DatasetStatus.MissingRequiredInfo)
                 return null;
 
             // Write the document to the file
-            return SaveFile(triggerFileContents, dataset, remoteTriggerFolderPath);
+            return SaveFile(triggerFileContents, dataset);
         }
 
         /// <summary>
@@ -92,7 +86,7 @@ namespace BuzzardWPF.IO
         /// <param name="dataset">Dataset object</param>
         /// <returns>XML trigger file document</returns>
         /// <remarks>In the dataset object, DatasetStatus will be set to MissingRequiredInfo if field validation fails</remarks>
-        private static XmlDocument GenerateXmlDoc(BuzzardDataset dataset)
+        private static XmlDocument VerifyAndGenerateXmlDoc(BuzzardDataset dataset)
         {
             // Create and initialize the document
             var triggerFileContents = new XmlDocument();
@@ -129,170 +123,7 @@ namespace BuzzardWPF.IO
                 dataset.DatasetStatus = DatasetStatus.Pending;
             }
 
-            var docDeclaration = triggerFileContents.CreateXmlDeclaration("1.0", null, null);
-            triggerFileContents.AppendChild(docDeclaration);
-
-            // Add dataset (Root) element
-            var rootElement = triggerFileContents.CreateElement("Dataset");
-            triggerFileContents.AppendChild(rootElement);
-
-            // Add the parameters
-            AddParam(rootElement, "Dataset Name", dmsData.DatasetName);
-            AddParam(rootElement, "Experiment Name", TrimWhitespace(dataset.DmsData.Experiment));
-            AddParam(rootElement, "Instrument Name", TrimWhitespace(dataset.InstrumentName));
-            AddParam(rootElement, "Capture Subfolder", TrimWhitespace(dataset.CaptureSubdirectoryPath));
-            AddParam(rootElement, "Separation Type", TrimWhitespace(dataset.SeparationType));
-            AddParam(rootElement, "LC Cart Name", TrimWhitespace(dataset.DmsData.CartName));
-            AddParam(rootElement, "LC Cart Config", TrimWhitespace(dataset.DmsData.CartConfigName));
-            AddParam(rootElement, "LC Column", TrimWhitespace(dataset.ColumnName));
-            AddParam(rootElement, "Dataset Type", TrimWhitespace(dmsData.DatasetType));
-            AddParam(rootElement, "Operator (PRN)", TrimWhitespace(dataset.Operator));
-
-            AddParam(rootElement, "Comment", TrimWhitespace(dmsData.CommentComplete));
-            AddParam(rootElement, "Interest Rating", TrimWhitespace(dataset.InterestRating));
-
-            var usage = string.Empty;
-            var userList = string.Empty;
-            var proposal = string.Empty;
-
-            if (dataset.DmsData.RequestID <= 0)
-            {
-                proposal = dataset.DmsData.EMSLProposalID;
-                usage = dataset.DmsData.EMSLUsageType;
-                userList = dmsData.UserList;
-            }
-
-            AddParam(rootElement, "Request", dmsData.RequestID.ToString(CultureInfo.InvariantCulture));
-            AddParam(rootElement, "EMSL Proposal ID", proposal);
-            AddParam(rootElement, "EMSL Usage Type", usage);
-            AddParam(rootElement, "EMSL Users List", userList);
-            AddParam(rootElement, "Run Start", dataset.RunStart.ToString("MM/dd/yyyy HH:mm:ss"));
-            AddParam(rootElement, "Run Finish", dataset.RunFinish.ToString("MM/dd/yyyy HH:mm:ss"));
-
-            return triggerFileContents;
-        }
-
-        private static string TrimWhitespace(string metadata)
-        {
-            if (string.IsNullOrWhiteSpace(metadata))
-                return string.Empty;
-
-            return metadata.Trim();
-        }
-
-        /// <summary>
-        /// Adds a trigger file parameter to the XML document defining the file contents
-        /// </summary>
-        /// <param name="parent">Parent element to add the parameter to</param>
-        /// <param name="paramName">Name of the parameter to add</param>
-        /// <param name="paramValue">Value of the parameter</param>
-        private static void AddParam(XmlNode parent, string paramName, string paramValue)
-        {
-            try
-            {
-                var newElement = parent.OwnerDocument.CreateElement("Parameter");
-                var nameAttr = parent.OwnerDocument.CreateAttribute("Name");
-                nameAttr.Value = paramName;
-                newElement.Attributes.Append(nameAttr);
-                var valueAttr = parent.OwnerDocument.CreateAttribute("Value");
-                valueAttr.Value = paramValue;
-                newElement.Attributes.Append(valueAttr);
-                parent.AppendChild(newElement);
-            }
-            catch (Exception ex)
-            {
-                ApplicationLogger.LogError(0, "Exception creating trigger file", ex);
-            }
-        }
-
-        public static string GetTriggerFileName(BuzzardDataset dataset, string extension)
-        {
-            var datasetName = dataset.DmsData.DatasetName;
-            var outFileName =
-                string.Format("{0}_{1:MM.dd.yyyy_hh.mm.ss}_{2}{3}",
-                    dataset.DmsData.CartName,
-                    dataset.RunStart,
-                    datasetName,
-                    extension);
-            return outFileName;
-        }
-
-        /// <summary>
-        /// Write the trigger file to remoteTriggerFolderPath, or to the local trigger file path if CopyTriggerFiles=False
-        /// </summary>
-        /// <param name="doc">XML document to be written</param>
-        /// <param name="dataset">Dataset object</param>
-        /// <param name="remoteTriggerFolderPath"></param>
-        private static string SaveFile(
-            XmlDocument doc,
-            BuzzardDataset dataset,
-            string remoteTriggerFolderPath)
-        {
-            var datasetName = dataset.DmsData.DatasetName;
-            var outFileName = GetTriggerFileName(dataset, ".xml");
-
-            try
-            {
-                var copyTriggerFiles = LCMSSettings.GetParameter("CopyTriggerFiles", false);
-                if (copyTriggerFiles)
-                {
-                    var remoteFilePath = Path.Combine(remoteTriggerFolderPath, outFileName);
-
-                    // Attempt to write the trigger file to a remote server
-                    var outputFile = new FileStream(remoteFilePath, FileMode.Create, FileAccess.Write);
-                    doc.Save(outputFile);
-                    outputFile.Close();
-                    ApplicationLogger.LogMessage(0, "Remote trigger file created for sample " + dataset.DmsData.DatasetName);
-
-                    // File successfully created remotedly, so exit the procedure
-                    return remoteFilePath;
-                }
-
-                // Skip remote file creation since CopyTriggerFiles is false
-                var msg = "Generate Trigger File: Sample " + datasetName + ", Remote trigger file copy disabled";
-                ApplicationLogger.LogMessage(0, msg);
-            }
-            catch (Exception ex)
-            {
-                // If remote write failed, log and try to write locally
-                var msg = "Remote trigger file copy failed, dataset " + datasetName + ". Creating file locally.";
-                ApplicationLogger.LogError(0, msg, ex);
-            }
-
-            // Write trigger file to local folder
-            var localTriggerFolderPath = Path.Combine(LCMSSettings.GetParameter("ApplicationPath"), "TriggerFiles");
-
-            // If local folder doen't exist, then create it
-            if (!Directory.Exists(localTriggerFolderPath))
-            {
-                try
-                {
-                    Directory.CreateDirectory(localTriggerFolderPath);
-                }
-                catch (Exception ex)
-                {
-                    ApplicationLogger.LogError(0, "Exception creating local trigger file folder", ex);
-                    return string.Empty;
-                }
-            }
-
-            var localTriggerFilePath = Path.Combine(localTriggerFolderPath, outFileName);
-            try
-            {
-                var outputFile = new FileStream(localTriggerFilePath, FileMode.Create, FileAccess.Write);
-                doc.Save(outputFile);
-                outputFile.Close();
-                ApplicationLogger.LogMessage(0, "Local trigger file created for dataset " + datasetName);
-                return localTriggerFilePath;
-            }
-            catch (Exception ex)
-            {
-                // If local write failed, log it
-                var msg = "Error creating local trigger file for dataset " + datasetName;
-                ApplicationLogger.LogError(0, msg, ex);
-                return string.Empty;
-            }
-
+            return GenerateXmlDoc(dataset);
         }
 
         public static string GetCaptureSubfolderPath(string baseFolderPath, string datasetFileOrFolderPath)
