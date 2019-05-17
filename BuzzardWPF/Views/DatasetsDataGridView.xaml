@@ -421,7 +421,7 @@
                             <ComboBox.Style>
                                 <Style TargetType="ComboBox">
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Path=CartConfigStatus}" Value="True">
+                                        <DataTrigger Binding="{Binding Path=CartConfigError}" Value="True">
                                             <Setter Property="Background" Value="HotPink" />
                                         </DataTrigger>
                                     </Style.Triggers>

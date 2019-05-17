@@ -52,7 +52,7 @@ namespace BuzzardWPF.Data
         private bool m_PulseText;
         private string m_interestRating;
 
-        private bool m_CartConfigStatus;
+        private bool cartConfigError;
         private DateTime lastRecordedLastWriteTime;
         private readonly ObservableAsPropertyHelper<bool> isMonitored;
 
@@ -235,10 +235,10 @@ namespace BuzzardWPF.Data
 
         #endregion
 
-        public bool CartConfigStatus
+        public bool CartConfigError
         {
-            get => m_CartConfigStatus;
-            set => this.RaiseAndSetIfChanged(ref m_CartConfigStatus, value);
+            get => cartConfigError;
+            set => this.RaiseAndSetIfChanged(ref cartConfigError, value);
         }
 
         private void ValidateCartConfig()
@@ -247,13 +247,13 @@ namespace BuzzardWPF.Data
             {
                 if (string.IsNullOrWhiteSpace(m_cartName))
                 {
-                    CartConfigStatus = false;
+                    CartConfigError = false;
                     return;
                 }
 
                 if (DMS_DataAccessor.Instance.CartConfigNameMap.TryGetValue(m_cartName, out var list))
                 {
-                    CartConfigStatus = !list.Contains(m_cartConfigName);
+                    CartConfigError = !list.Contains(m_cartConfigName);
                 }
             }
         }
