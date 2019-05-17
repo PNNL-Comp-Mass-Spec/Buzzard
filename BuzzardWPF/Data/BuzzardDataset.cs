@@ -12,22 +12,22 @@ namespace BuzzardWPF.Data
     public class BuzzardDataset : ReactiveObject
     {
         #region Attributes
-        private string m_filePath;
+        private string filePath;
 
-        private string m_instrument;
-        private string m_operator;
-        private string m_separationType;
+        private string instrument;
+        private string instrumentOperator;
+        private string separationType;
 
-        private DMSData m_dmsData;
+        private DMSData dmsData;
 
-        private bool m_notOnlySource;
-        private DatasetSource m_datasetSource;
-        private TriggerFileStatus m_triggerFileStatus;
-        private string m_comment = string.Empty;
-        private string m_lcColumn;
-        private string mCaptureSubfolderPath = string.Empty;
+        private bool notOnlySource;
+        private DatasetSource datasetSource;
+        private TriggerFileStatus triggerFileStatus;
+        private string comment = string.Empty;
+        private string lcColumn;
+        private string captureSubfolderPath = string.Empty;
 
-        private bool m_isQC;
+        private bool isQC;
 
         /// <summary>
         /// Status of the dataset.
@@ -35,19 +35,19 @@ namespace BuzzardWPF.Data
         /// <remarks>
         /// Pulled in to stop compile time errors.
         /// </remarks>
-        private DatasetStatus m_status;
+        private DatasetStatus status;
 
-        private string m_TriggerCreationWarning;
+        private string triggerCreationWarning;
 
-        private long m_fileSize;
-        private DateTime m_runStart;
-        private DateTime m_runFinish;
+        private long fileSize;
+        private DateTime runStart;
+        private DateTime runFinish;
 
-        private int m_secondsRemainingTillTriggerCreation;
-        private double m_waitTimePercentage;
+        private int secondsUntilTriggerCreation;
+        private double waitTimePercentage;
 
-        private bool m_PulseText;
-        private string m_interestRating;
+        private bool pulseText;
+        private string interestRating;
 
         private bool cartConfigError;
         private DateTime lastRecordedLastWriteTime;
@@ -81,20 +81,20 @@ namespace BuzzardWPF.Data
         #region UI data place holders
         public bool PulseText
         {
-            get => m_PulseText;
-            set => this.RaiseAndSetIfChanged(ref m_PulseText, value);
+            get => pulseText;
+            set => this.RaiseAndSetIfChanged(ref pulseText, value);
         }
 
         public int SecondsTillTriggerCreation
         {
-            get => m_secondsRemainingTillTriggerCreation;
-            set => this.RaiseAndSetIfChanged(ref m_secondsRemainingTillTriggerCreation, value);
+            get => secondsUntilTriggerCreation;
+            set => this.RaiseAndSetIfChanged(ref secondsUntilTriggerCreation, value);
         }
 
         public double WaitTimePercentage
         {
-            get => m_waitTimePercentage;
-            set => this.RaiseAndSetIfChanged(ref m_waitTimePercentage, value);
+            get => waitTimePercentage;
+            set => this.RaiseAndSetIfChanged(ref waitTimePercentage, value);
         }
         #endregion
 
@@ -104,26 +104,26 @@ namespace BuzzardWPF.Data
 
         public string LCColumn
         {
-            get => m_lcColumn;
-            set => this.RaiseAndSetIfChanged(ref m_lcColumn, value);
+            get => lcColumn;
+            set => this.RaiseAndSetIfChanged(ref lcColumn, value);
         }
 
         public string Comment
         {
-            get => m_comment;
-            set => this.RaiseAndSetIfChanged(ref m_comment, value);
+            get => comment;
+            set => this.RaiseAndSetIfChanged(ref comment, value);
         }
 
         public string CaptureSubfolderPath
         {
-            get => mCaptureSubfolderPath;
-            set => this.RaiseAndSetIfChanged(ref mCaptureSubfolderPath, value);
+            get => captureSubfolderPath;
+            set => this.RaiseAndSetIfChanged(ref captureSubfolderPath, value);
         }
 
         public TriggerFileStatus TriggerFileStatus
         {
-            get => m_triggerFileStatus;
-            set => this.RaiseAndSetIfChanged(ref m_triggerFileStatus, value);
+            get => triggerFileStatus;
+            set => this.RaiseAndSetIfChanged(ref triggerFileStatus, value);
         }
 
         public DMSStatus DMSStatus
@@ -139,8 +139,8 @@ namespace BuzzardWPF.Data
 
         public DatasetSource DatasetSource
         {
-            get => m_datasetSource;
-            set => this.RaiseAndSetIfChanged(ref m_datasetSource, value);
+            get => datasetSource;
+            set => this.RaiseAndSetIfChanged(ref datasetSource, value);
         }
 
         public bool IsMonitored => isMonitored.Value;
@@ -149,8 +149,8 @@ namespace BuzzardWPF.Data
 
         public bool IsQC
         {
-            get => m_isQC;
-            set => this.RaiseAndSetIfChanged(ref m_isQC, value);
+            get => isQC;
+            set => this.RaiseAndSetIfChanged(ref isQC, value);
         }
 
         /// <summary>
@@ -160,40 +160,40 @@ namespace BuzzardWPF.Data
         /// </summary>
         public bool NotOnlyDatasource
         {
-            get => m_notOnlySource;
-            set => this.RaiseAndSetIfChanged(ref m_notOnlySource, value);
+            get => notOnlySource;
+            set => this.RaiseAndSetIfChanged(ref notOnlySource, value);
         }
 
         public string Instrument
         {
-            get => m_instrument;
-            set => this.RaiseAndSetIfChanged(ref m_instrument, value);
+            get => instrument;
+            set => this.RaiseAndSetIfChanged(ref instrument, value);
         }
 
         public string Operator
         {
-            get => m_operator;
-            set => this.RaiseAndSetIfChanged(ref m_operator, value);
+            get => instrumentOperator;
+            set => this.RaiseAndSetIfChanged(ref instrumentOperator, value);
         }
 
         public string SeparationType
         {
-            get => m_separationType;
-            set => this.RaiseAndSetIfChanged(ref m_separationType, value);
+            get => separationType;
+            set => this.RaiseAndSetIfChanged(ref separationType, value);
         }
 
         public DMSData DmsData
         {
-            get => m_dmsData;
-            set => this.RaiseAndSetIfChanged(ref m_dmsData, value, x => this.RaisePropertyChanged(nameof(DMSStatus)));
+            get => dmsData;
+            set => this.RaiseAndSetIfChanged(ref dmsData, value, x => this.RaisePropertyChanged(nameof(DMSStatus)));
         }
 
         public DateTime DMSDataLastUpdate { get; set; }
 
         public string InterestRating
         {
-            get => m_interestRating;
-            set => this.RaiseAndSetIfChanged(ref m_interestRating, value);
+            get => interestRating;
+            set => this.RaiseAndSetIfChanged(ref interestRating, value);
         }
 
         /// <summary>
@@ -204,14 +204,14 @@ namespace BuzzardWPF.Data
         /// </remarks>
         public DatasetStatus DatasetStatus
         {
-            get => m_status;
-            set => this.RaiseAndSetIfChanged(ref m_status, value);
+            get => status;
+            set => this.RaiseAndSetIfChanged(ref status, value);
         }
 
         public string TriggerCreationWarning
         {
-            get => m_TriggerCreationWarning;
-            set => this.RaiseAndSetIfChanged(ref m_TriggerCreationWarning, value);
+            get => triggerCreationWarning;
+            set => this.RaiseAndSetIfChanged(ref triggerCreationWarning, value);
         }
 
         #endregion
@@ -242,8 +242,8 @@ namespace BuzzardWPF.Data
         #region File Properties
         public string FilePath
         {
-            get => m_filePath;
-            set => this.RaiseAndSetIfChanged(ref m_filePath, value, x =>
+            get => filePath;
+            set => this.RaiseAndSetIfChanged(ref filePath, value, x =>
             {
                 this.RaisePropertyChanged(nameof(Extension));
                 UpdateFileProperties();
@@ -265,26 +265,26 @@ namespace BuzzardWPF.Data
 
         public DateTime RunStart
         {
-            get => m_runStart;
-            private set => this.RaiseAndSetIfChanged(ref m_runStart, value);
+            get => runStart;
+            private set => this.RaiseAndSetIfChanged(ref runStart, value);
         }
 
         public DateTime RunFinish
         {
-            get => m_runFinish;
+            get => runFinish;
             set
             {
-                if (m_runFinish < value)
+                if (runFinish < value)
                 {
-                    this.RaiseAndSetIfChanged(ref m_runFinish, value);
+                    this.RaiseAndSetIfChanged(ref runFinish, value);
                 }
             }
         }
 
         public long FileSize
         {
-            get => m_fileSize;
-            private set => this.RaiseAndSetIfChanged(ref m_fileSize, value);
+            get => fileSize;
+            private set => this.RaiseAndSetIfChanged(ref fileSize, value);
         }
 
         public DateTime FileLastChangedUtc { get; private set; }
