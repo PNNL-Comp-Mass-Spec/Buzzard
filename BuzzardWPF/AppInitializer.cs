@@ -66,6 +66,10 @@ namespace BuzzardWPF
             var fi = new FileInfo(Assembly.GetEntryAssembly().Location);
             LCMSSettings.SetParameter("ApplicationPath", fi.DirectoryName);
 
+            Properties.Settings.Default.PropertyChanged += (sender, args) =>
+            {
+                LCMSSettings.SetParameter(args.PropertyName, Properties.Settings.Default[args.PropertyName]?.ToString());
+            };
         }
 
         #endregion
