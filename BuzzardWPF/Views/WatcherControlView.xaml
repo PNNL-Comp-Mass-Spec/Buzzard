@@ -69,7 +69,7 @@
             FontSize="16"
             IsEnabled="{Binding Path=IsNotMonitoring}"
             ItemsSource="{Binding DirectorySelectorOptionsList}"
-            Text="{Binding Path=DirectoryToWatch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            Text="{Binding Path=Config.DirectoryPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
         <Button
             Grid.Row="0"
@@ -99,7 +99,7 @@
             VerticalContentAlignment="Center"
             IsEnabled="{Binding Path=IsNotMonitoring}"
             ItemsSource="{Binding SearchDepthOptions}"
-            SelectedItem="{Binding Path=WatchDepth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            SelectedItem="{Binding Path=Config.SearchDepth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
         <Button
             Grid.Row="1"
@@ -130,7 +130,7 @@
             VerticalContentAlignment="Center"
             FontSize="15"
             IsEnabled="{Binding Path=IsNotMonitoring}"
-            Text="{Binding Path=Extension, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            Text="{Binding Path=Config.FileExtension, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
         <CheckBox
             Grid.Row="2"
@@ -140,7 +140,7 @@
             VerticalAlignment="Center"
             Content="Match Folders"
             FontSize="15"
-            IsChecked="{Binding Path=DatasetManager.MatchFolders, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            IsChecked="{Binding Path=Config.MatchFolders, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
             IsEnabled="{Binding Path=IsNotMonitoring}" />
 
         <Label
@@ -164,7 +164,7 @@
             IsEnabled="{Binding Path=IsNotMonitoring}"
             Maximum="2000000"
             Minimum="5"
-            Value="{Binding Path=DatasetManager.MinimumFileSizeKB, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            Value="{Binding Path=Config.MinimumSizeKB, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
         <Button
             Grid.Row="3"

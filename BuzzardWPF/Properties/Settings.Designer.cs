@@ -610,66 +610,6 @@ namespace BuzzardWPF.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("C:\\")]
-        public string Watcher_WatchDir {
-            get {
-                return ((string)(this["Watcher_WatchDir"]));
-            }
-            set {
-                this["Watcher_WatchDir"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("TopDirectoryOnly")]
-        public global::System.IO.SearchOption Watcher_SearchType {
-            get {
-                return ((global::System.IO.SearchOption)(this["Watcher_SearchType"]));
-            }
-            set {
-                this["Watcher_SearchType"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(".raw")]
-        public string Watcher_FilePattern {
-            get {
-                return ((string)(this["Watcher_FilePattern"]));
-            }
-            set {
-                this["Watcher_FilePattern"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("100")]
-        public int Watcher_FileSize {
-            get {
-                return ((int)(this["Watcher_FileSize"]));
-            }
-            set {
-                this["Watcher_FileSize"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool Watcher_MatchFolders {
-            get {
-                return ((bool)(this["Watcher_MatchFolders"]));
-            }
-            set {
-                this["Watcher_MatchFolders"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("15")]
         public int Watcher_WaitTime {
             get {

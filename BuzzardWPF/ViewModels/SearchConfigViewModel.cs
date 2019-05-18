@@ -20,11 +20,6 @@ namespace BuzzardWPF.ViewModels
 
         private bool mIsNotMonitoring;
 
-        /// <summary>
-        /// Configuration for searching for files.
-        /// </summary>
-        private SearchConfig mConfig;
-
         readonly Ookii.Dialogs.Wpf.VistaFolderBrowserDialog m_folderDialog;
         private string[] directoryPathOptions;
 
@@ -50,7 +45,6 @@ namespace BuzzardWPF.ViewModels
             datasetSearcher = datasetSearcherImpl;
 
             m_folderDialog = new Ookii.Dialogs.Wpf.VistaFolderBrowserDialog { ShowNewFolderButton = true };
-            mConfig = new SearchConfig();
 
             // Combo box for the search types.
             SearchDepthOptions = new ReactiveList<SearchOption>
@@ -68,7 +62,7 @@ namespace BuzzardWPF.ViewModels
             StopSearchCommand = ReactiveCommand.Create(StopSearch, this.WhenAnyValue(x => x.Searching).ObserveOn(RxApp.MainThreadScheduler));
             ResetDateRangeCommand = ReactiveCommand.Create(ResetDateRange);
 
-            this.WhenAnyValue(x => x.mConfig.DirectoryPath).ObserveOn(RxApp.MainThreadScheduler).Subscribe(x => SetDirectoryPathOptions());
+            this.WhenAnyValue(x => x.Config.DirectoryPath).ObserveOn(RxApp.MainThreadScheduler).Subscribe(x => SetDirectoryPathOptions());
         }
 
         #region Properties
@@ -90,11 +84,10 @@ namespace BuzzardWPF.ViewModels
 
         public DatasetManager DatasetManager => DatasetManager.Manager;
 
-        public SearchConfig Config
-        {
-            get => mConfig;
-            set => this.RaiseAndSetIfChanged(ref mConfig, value);
-        }
+        /// <summary>
+        /// Configuration for searching for files.
+        /// </summary>
+        public SearchConfig Config => DatasetManager.Config;
 
         public bool IsCreatingTriggerFiles
         {
@@ -215,7 +208,7 @@ namespace BuzzardWPF.ViewModels
                 DatasetManager.Datasets.Clear();
             }
             searchCancelToken = new CancellationTokenSource();
-            await datasetSearcher.SearchAsync(mConfig, searchCancelToken);
+            await datasetSearcher.SearchAsync(Config, searchCancelToken);
             Searching = false;
         }
 
@@ -263,15 +256,6 @@ namespace BuzzardWPF.ViewModels
         #endregion
 
         #region Methods
-        public bool SaveSettings(bool force = false)
-        {
-            return Config.SaveSettings(force);
-        }
-
-        public void LoadSettings()
-        {
-            Config.LoadSettings();
-        }
 
         /// <summary>
         /// Enables / disables the controls based on e.Monitoring

@@ -122,12 +122,19 @@ namespace BuzzardWPF.Searching
             set => this.RaiseAndSetIfChangedMonitored(ref mEndDate, value);
         }
 
+        /// <summary>
+        /// Set to True to allow folders to be selected as Datasets
+        /// </summary>
         public bool MatchFolders
         {
             get => mMatchFolders;
             set => this.RaiseAndSetIfChangedMonitored(ref mMatchFolders, value);
         }
 
+        /// <summary>
+        /// Gets or sets the minimum file size (in KB) for permitting trigger file creation
+        /// Monitor: This is the minimum size for a dataset to be considered for trigger file creation
+        /// </summary>
         public int MinimumSizeKB
         {
             get => mMinimumSizeKB;

@@ -32,6 +32,7 @@ namespace BuzzardWPF.Properties
                     continue;
                 }
 
+                // Only try to upgrade settings that are not the default value
                 var previousValue = GetPreviousVersion(oldSetting.Property.Name);
                 var valueDefault = false;
                 if (string.IsNullOrWhiteSpace(previousValue?.ToString()))
@@ -60,6 +61,7 @@ namespace BuzzardWPF.Properties
                     valueDefault = true;
                 }
 
+                // Only overwrite the upgrade setting if it is still the default value
                 var setting = Properties[oldSetting.UpgradeName.Name];
                 if (!valueDefault && setting != null)
                 {
@@ -89,6 +91,13 @@ namespace BuzzardWPF.Properties
             public SettingUpgradeNameAttribute(string name)
             {
                 Name = name;
+            }
+        }
+
+        private class SettingCombinedNameAttribute : SettingUpgradeNameAttribute
+        {
+            public SettingCombinedNameAttribute(string name) : base(name)
+            {
             }
         }
 
@@ -283,6 +292,51 @@ namespace BuzzardWPF.Properties
         [SettingUpgradeName(nameof(WatcherCreateTriggerOnDMSFail))]
         // ReSharper disable once UnusedMember.Global
         public bool WatcherConfig_CreateTriggerOnDMS_Fail { get; set; }
+
+        [UserScopedSetting]
+        [DebuggerNonUserCode]
+        [DefaultSettingValue("C:\\")]
+        [NoSettingsVersionUpgrade]
+        [Obsolete("Use " + nameof(SearchPath), true)]
+        [SettingCombinedName(nameof(SearchPath))]
+        // ReSharper disable once UnusedMember.Global
+        public string Watcher_WatchDir { get; set; }
+
+        [UserScopedSetting]
+        [DebuggerNonUserCode]
+        [DefaultSettingValue("TopDirectoryOnly")]
+        [NoSettingsVersionUpgrade]
+        [Obsolete("Use " + nameof(SearchDirectoryOptions), true)]
+        [SettingCombinedName(nameof(SearchDirectoryOptions))]
+        // ReSharper disable once UnusedMember.Global
+        public global::System.IO.SearchOption Watcher_SearchType { get; set; }
+
+        [UserScopedSetting]
+        [DebuggerNonUserCode]
+        [DefaultSettingValue(".raw")]
+        [NoSettingsVersionUpgrade]
+        [Obsolete("Use " + nameof(SearchExtension), true)]
+        [SettingCombinedName(nameof(SearchExtension))]
+        // ReSharper disable once UnusedMember.Global
+        public string Watcher_FilePattern { get; set; }
+
+        [UserScopedSetting]
+        [DebuggerNonUserCode]
+        [DefaultSettingValue("100")]
+        [NoSettingsVersionUpgrade]
+        [Obsolete("Use " + nameof(SearchMinimumSizeKB), true)]
+        [SettingCombinedName(nameof(SearchMinimumSizeKB))]
+        // ReSharper disable once UnusedMember.Global
+        public int Watcher_FileSize { get; set; }
+
+        [UserScopedSetting]
+        [DebuggerNonUserCode]
+        [DefaultSettingValue("False")]
+        [NoSettingsVersionUpgrade]
+        [Obsolete("Use " + nameof(Search_MatchFolders), true)]
+        [SettingCombinedName(nameof(Search_MatchFolders))]
+        // ReSharper disable once UnusedMember.Global
+        public bool Watcher_MatchFolders { get; set; }
 
         #endregion
     }

@@ -149,21 +149,6 @@
     <Setting Name="Searcher_IncludeArchivedItems" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="Watcher_WatchDir" Type="System.String" Scope="User">
-      <Value Profile="(Default)">C:\</Value>
-    </Setting>
-    <Setting Name="Watcher_SearchType" Type="System.IO.SearchOption" Scope="User">
-      <Value Profile="(Default)">TopDirectoryOnly</Value>
-    </Setting>
-    <Setting Name="Watcher_FilePattern" Type="System.String" Scope="User">
-      <Value Profile="(Default)">.raw</Value>
-    </Setting>
-    <Setting Name="Watcher_FileSize" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">100</Value>
-    </Setting>
-    <Setting Name="Watcher_MatchFolders" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
     <Setting Name="Watcher_WaitTime" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">15</Value>
     </Setting>

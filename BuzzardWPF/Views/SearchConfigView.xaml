@@ -50,6 +50,7 @@
             VerticalContentAlignment="Center"
             FilterMode="StartsWith"
             FontSize="16"
+            IsEnabled="{Binding Path=IsNotMonitoring}"
             ItemsSource="{Binding DirectoryPathOptions}"
             Text="{Binding Path=Config.DirectoryPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
             <my:AutoCompleteBox.ContextMenu>
@@ -99,6 +100,7 @@
             Grid.ColumnSpan="2"
             Margin="5"
             VerticalContentAlignment="Center"
+            IsEnabled="{Binding Path=IsNotMonitoring}"
             ItemsSource="{Binding SearchDepthOptions}"
             SelectedItem="{Binding Path=Config.SearchDepth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         <Label
@@ -146,6 +148,7 @@
             VerticalAlignment="Center"
             VerticalContentAlignment="Center"
             FontSize="15"
+            IsEnabled="{Binding Path=IsNotMonitoring}"
             Text="{Binding Path=Config.FileExtension, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
         <CheckBox
@@ -191,7 +194,8 @@
             VerticalAlignment="Center"
             Content="Match Folders"
             FontSize="15"
-            IsChecked="{Binding Path=Config.MatchFolders, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            IsChecked="{Binding Path=Config.MatchFolders, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            IsEnabled="{Binding Path=IsNotMonitoring}" />
 
         <Button
             Grid.Row="2"

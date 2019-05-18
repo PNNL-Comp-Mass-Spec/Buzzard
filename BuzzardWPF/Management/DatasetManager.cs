@@ -12,6 +12,7 @@ using System.Windows.Data;
 using BuzzardWPF.Data;
 using BuzzardWPF.IO;
 using BuzzardWPF.Properties;
+using BuzzardWPF.Searching;
 using LcmsNetData;
 using LcmsNetData.Data;
 using LcmsNetData.Logging;
@@ -63,7 +64,6 @@ namespace BuzzardWPF.Management
             Datasets = new ReactiveList<BuzzardDataset>();
 
             TriggerFileCreationWaitTime = 5;
-            MinimumFileSizeKB = 100;
 
             BindingOperations.EnableCollectionSynchronization(Datasets, lockDatasets);
             BindingOperations.EnableCollectionSynchronization(QcMonitors, lockQcMonitors);
@@ -492,7 +492,7 @@ namespace BuzzardWPF.Management
                             continue;
                         }
 
-                        if ((dataset.FileSize / 1024d) < MinimumFileSizeKB)
+                        if ((dataset.FileSize / 1024d) < Config.MinimumSizeKB)
                         {
                             dataset.DatasetStatus = DatasetStatus.PendingFileSize;
                             continue;
@@ -648,13 +648,9 @@ namespace BuzzardWPF.Management
         }
 
         /// <summary>
-        /// Set to True to allow folders to be selected as Datasets
+        /// The search/watcher config common parameters
         /// </summary>
-        public bool MatchFolders
-        {
-            get => matchFolders;
-            set => this.RaiseAndSetIfChangedMonitored(ref matchFolders, value);
-        }
+        public SearchConfig Config { get; } = new SearchConfig();
 
         #endregion
 
@@ -693,19 +689,8 @@ namespace BuzzardWPF.Management
             set => this.RaiseAndSetIfChangedMonitored(ref triggerFileCreationWaitTime, value);
         }
 
-        /// <summary>
-        /// Gets or sets the minimum file size (in KB) before starting the timer for trigger file creation
-        /// </summary>
-        public int MinimumFileSizeKB
-        {
-            get => minimumFileSizeKb;
-            set => this.RaiseAndSetIfChangedMonitored(ref minimumFileSizeKb, value);
-        }
-
         private string triggerFileLocation;
         private bool createTriggerOnDmsFail;
-        private bool matchFolders;
-        private int minimumFileSizeKb;
         private bool qcCreateTriggerOnDmsFail;
         private int triggerFileCreationWaitTime;
         private bool includeArchivedItems;
@@ -1119,8 +1104,6 @@ namespace BuzzardWPF.Management
             Settings.Default.WatcherQCCreateTriggerOnDMSFail = QcCreateTriggerOnDMSFail;
 
             Settings.Default.WatcherCreateTriggerOnDMSFail = CreateTriggerOnDMSFail;
-            Settings.Default.Watcher_MatchFolders = MatchFolders;
-            Settings.Default.Watcher_FileSize = MinimumFileSizeKB;
             Settings.Default.Watcher_WaitTime = TriggerFileCreationWaitTime;
 
             if (QcMonitors.Any())
@@ -1128,6 +1111,7 @@ namespace BuzzardWPF.Management
                 QcMonitorData.SaveSettings(QcMonitors);
             }
 
+            Config.SaveSettings(force);
             WatcherMetadata.SaveSettings(force);
 
             SettingsChanged = false;
@@ -1151,10 +1135,9 @@ namespace BuzzardWPF.Management
             }
 
             CreateTriggerOnDMSFail = Settings.Default.WatcherCreateTriggerOnDMSFail;
-            MatchFolders = Settings.Default.Watcher_MatchFolders;
-            MinimumFileSizeKB = Settings.Default.Watcher_FileSize;
             TriggerFileCreationWaitTime = Settings.Default.Watcher_WaitTime;
 
+            Config.LoadSettings();
             WatcherMetadata.LoadSettings();
 
             SettingsChanged = false;

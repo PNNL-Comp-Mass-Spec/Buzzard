@@ -460,8 +460,6 @@ namespace BuzzardWPF
             ApplicationLogger.LogMessage(msgLevel, "Starting to save settings to config.");
             var settingsChanged = false;
             settingsChanged |= DatasetsVm.SaveSettings(force);
-            settingsChanged |= WatcherControlVm.SaveSettings(force);
-            settingsChanged |= SearchConfigVm.SaveSettings(force);
             settingsChanged |= QCVm.SaveSettings(force);
             settingsChanged |= DatasetManager.SaveSettings(force);
             if (settingsChanged || force)
@@ -489,8 +487,6 @@ namespace BuzzardWPF
                 ApplicationLogger.LogMessage(0, "Loading settings from config.");
                 DatasetsVm.LoadSettings();
                 DatasetManager.LoadSettings();
-                WatcherControlVm.LoadSettings();
-                SearchConfigVm.LoadSettings();
                 QCVm.LoadSettings();
                 ApplicationLogger.LogMessage(0, "Finished loading settings from config.");
 

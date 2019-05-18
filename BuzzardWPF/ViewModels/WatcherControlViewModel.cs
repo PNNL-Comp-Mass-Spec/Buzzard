@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.IO;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Linq;
 using System.Threading;
 using System.Windows;
 using BuzzardWPF.Data;
@@ -15,7 +16,7 @@ using ReactiveUI;
 
 namespace BuzzardWPF.ViewModels
 {
-    public class WatcherControlViewModel : ReactiveObject, IStoredSettingsMonitor
+    public class WatcherControlViewModel : ReactiveObject
     {
         #region Constants
 
@@ -28,10 +29,6 @@ namespace BuzzardWPF.ViewModels
         #endregion
 
         #region Attributes
-
-        private string mDirectoryToWatch;
-        private SearchOption mWatchDepth;
-        private string mExtension;
 
         private readonly ConcurrentDictionary<string, DateTime> mFilePathsToProcess;
         private readonly Timer mFileUpdateHandler;
@@ -77,17 +74,15 @@ namespace BuzzardWPF.ViewModels
             SelectDirectoryCommand = ReactiveCommand.Create(SelectDirectory);
             ResetToDefaultsCommand = ReactiveCommand.Create(ResetToDefaults);
             MonitorStartStopCommand = ReactiveCommand.Create(MonitorStartStop);
+
+            this.WhenAnyValue(x => x.Config.DirectoryPath).ObserveOn(RxApp.MainThreadScheduler).Subscribe(x => SetDirectorySelectorOptionsList());
         }
 
         private void ResetToDefaults()
         {
             // Leave this unchanged: m_directoryToWatch;
-
-            WatchDepth = SearchConfig.DEFAULT_SEARCH_DEPTH;
+            Config.ResetToDefaults(false);
             DatasetManager.TriggerFileCreationWaitTime = DEFAULT_WAIT_TIME_MINUTES;
-            DatasetManager.MinimumFileSizeKB = SearchConfig.DEFAULT_MINIMUM_FILE_SIZE_KB;
-            DatasetManager.MatchFolders = SearchConfig.DEFAULT_MATCH_FOLDERS;
-            Extension = SearchConfig.DEFAULT_FILE_EXTENSION;
             DatasetManager.CreateTriggerOnDMSFail = false;
         }
 
@@ -103,41 +98,7 @@ namespace BuzzardWPF.ViewModels
 
         public DatasetManager DatasetManager => DatasetManager.Manager;
 
-        public bool SettingsChanged { get; set; }
-
-        public string Extension
-        {
-            get => mExtension;
-            set => this.RaiseAndSetIfChangedMonitored(ref mExtension, value);
-        }
-
-        public SearchOption WatchDepth
-        {
-            get => mWatchDepth;
-            set => this.RaiseAndSetIfChangedMonitored(ref mWatchDepth, value);
-        }
-
-        public string DirectoryToWatch
-        {
-            get => mDirectoryToWatch;
-            set
-            {
-                if (this.RaiseAndSetIfChangedMonitoredBool(ref mDirectoryToWatch, value))
-                {
-                    /*
-                    if (value != null)
-                    {
-                        if (value.ToLower() == "lamarche")
-                        {
-                            StateSingleton.SetState();
-                        }
-                    }
-                    */
-
-                    SetDirectorySelectorOptionsList();
-                }
-            }
-        }
+        public SearchConfig Config => DatasetManager.Config;
 
         public bool IsWatching
         {
@@ -186,7 +147,7 @@ namespace BuzzardWPF.ViewModels
             if (string.IsNullOrWhiteSpace(e.FullPath) || e.FullPath.Contains('$'))
                 return;
 
-            if (extensionLcase != Extension.ToLower())
+            if (extensionLcase != Config.FileExtension.ToLower())
             {
                 return;
             }
@@ -196,7 +157,7 @@ namespace BuzzardWPF.ViewModels
             // File was renamed, either update an existing dataset, or add a new one
             DatasetManager.CreatePendingDataset(
                 e.FullPath,
-                BuzzardTriggerFileTools.GetCaptureSubfolderPath(DirectoryToWatch, e.FullPath),
+                BuzzardTriggerFileTools.GetCaptureSubfolderPath(Config.DirectoryPath, e.FullPath),
                 allowFolderMatch,
                 DatasetSource.Watcher,
                 e.OldFullPath);
@@ -209,7 +170,7 @@ namespace BuzzardWPF.ViewModels
 
         private void SetDirectorySelectorOptionsList()
         {
-            var text = DirectoryToWatch;
+            var text = Config.DirectoryPath;
             string dirname;
 
             try
@@ -266,13 +227,13 @@ namespace BuzzardWPF.ViewModels
 
         private void SelectDirectory()
         {
-            mFolderDialog.SelectedPath = DirectoryToWatch;
+            mFolderDialog.SelectedPath = Config.DirectoryPath;
 
             var result = mFolderDialog.ShowDialog();
 
             if (result.HasValue && result.Value)
             {
-                DirectoryToWatch = mFolderDialog.SelectedPath;
+                Config.DirectoryPath = mFolderDialog.SelectedPath;
             }
         }
 
@@ -287,31 +248,6 @@ namespace BuzzardWPF.ViewModels
 
         #region Methods
 
-        public bool SaveSettings(bool force = false)
-        {
-            if (!SettingsChanged && !force)
-            {
-                return false;
-            }
-
-            Settings.Default.Watcher_FilePattern = Extension;
-            Settings.Default.Watcher_SearchType = WatchDepth;
-            Settings.Default.Watcher_WatchDir = DirectoryToWatch;
-
-            SettingsChanged = false;
-
-            return true;
-        }
-
-        public void LoadSettings()
-        {
-            Extension = Settings.Default.Watcher_FilePattern;
-            WatchDepth = Settings.Default.Watcher_SearchType;
-            DirectoryToWatch = Settings.Default.Watcher_WatchDir;
-
-            SettingsChanged = false;
-        }
-
         private void ProcessFilePathQueue()
         {
             if (mFilePathsToProcess.Count == 0)
@@ -320,7 +256,7 @@ namespace BuzzardWPF.ViewModels
             var lstKeys = mFilePathsToProcess.Keys.ToList();
 
             ControlFileMonitor(false);
-            var diBaseFolder = new DirectoryInfo(DirectoryToWatch);
+            var diBaseFolder = new DirectoryInfo(Config.DirectoryPath);
 
             foreach (var fullFilePath in lstKeys)
             {
@@ -333,7 +269,7 @@ namespace BuzzardWPF.ViewModels
 
                     var extension = Path.GetExtension(fullFilePath).ToLower();
 
-                    if (extension != Extension.ToLower())
+                    if (extension != Config.FileExtension.ToLower())
                     {
                         continue;
                     }
@@ -391,11 +327,11 @@ namespace BuzzardWPF.ViewModels
 
         private void StartWatching()
         {
-            var diBaseFolder = new DirectoryInfo(DirectoryToWatch);
+            var diBaseFolder = new DirectoryInfo(Config.DirectoryPath);
 
             if (!diBaseFolder.Exists)
             {
-                ReportError("Could not start the monitor. Fold path not found: " + DirectoryToWatch);
+                ReportError("Could not start the monitor. Fold path not found: " + Config.DirectoryPath);
 
                 return;
             }
@@ -447,7 +383,7 @@ namespace BuzzardWPF.ViewModels
             DatasetManager.FileWatchRoot = diBaseFolder.FullName;
 
             mFileSystemWatcher.Path = diBaseFolder.FullName;
-            mFileSystemWatcher.IncludeSubdirectories = WatchDepth == SearchOption.AllDirectories;
+            mFileSystemWatcher.IncludeSubdirectories = Config.SearchDepth == SearchOption.AllDirectories;
             mFileSystemWatcher.Filter = "*.*";
             mFileSystemWatcher.EnableRaisingEvents = true;
             IsWatching = true;
