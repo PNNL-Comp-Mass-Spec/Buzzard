@@ -126,7 +126,7 @@
         <Button Grid.Row="1" Grid.Column="0" Style="{StaticResource SimpleButtonStyle}" HorizontalAlignment="Right" MinWidth="160" Content="Add QC Monitor" Command="{Binding AddQcMonitorCommand}" />
 
         <DataGrid Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Margin="4" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserResizeRows="False" AutoGenerateColumns="False" SelectionMode="Single"
-                  ItemsSource="{Binding Manager.QcMonitors}"
+                  ItemsSource="{Binding Monitor.QcMonitors}"
                   SelectedItem="{Binding SelectedQcMonitor}"
                   d:DataContext="{d:DesignInstance {x:Type management:QcMonitorData}, IsDesignTimeCreatable=True}">
             <DataGrid.Columns>

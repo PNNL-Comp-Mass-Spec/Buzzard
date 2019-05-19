@@ -82,8 +82,8 @@ namespace BuzzardWPF.ViewModels
         {
             // Leave this unchanged: m_directoryToWatch;
             Config.ResetToDefaults(false);
-            DatasetManager.TriggerFileCreationWaitTime = DEFAULT_WAIT_TIME_MINUTES;
-            DatasetManager.CreateTriggerOnDMSFail = false;
+            Monitor.TriggerFileCreationWaitTime = DEFAULT_WAIT_TIME_MINUTES;
+            Monitor.CreateTriggerOnDMSFail = false;
         }
 
         #endregion
@@ -97,6 +97,7 @@ namespace BuzzardWPF.ViewModels
         public IReadOnlyReactiveList<SearchOption> SearchDepthOptions { get; }
 
         public DatasetManager DatasetManager => DatasetManager.Manager;
+        public DatasetMonitor Monitor => DatasetMonitor.Monitor;
 
         public SearchConfig Config => DatasetManager.Config;
 
@@ -337,20 +338,20 @@ namespace BuzzardWPF.ViewModels
             }
 
             // Make sure the required metadata has been defined
-            var missingData = DatasetManager.GetMissingRequiredFields();
+            var missingData = DatasetMonitor.Monitor.GetMissingRequiredFields();
 
             if (missingData.Count > 0)
             {
-                if (!DatasetManager.CreateTriggerOnDMSFail &&
-                    missingData.Contains(DatasetManager.EXPERIMENT_NAME_DESCRIPTION))
+                if (!Monitor.CreateTriggerOnDMSFail &&
+                    missingData.Contains(DatasetMonitor.EXPERIMENT_NAME_DESCRIPTION))
                 {
-                    missingData.Remove(DatasetManager.EXPERIMENT_NAME_DESCRIPTION);
+                    missingData.Remove(DatasetMonitor.EXPERIMENT_NAME_DESCRIPTION);
                 }
 
-                if (!DatasetManager.QcCreateTriggerOnDMSFail &&
-                    missingData.Contains(DatasetManager.QC_MONITORS_DESCRIPTION))
+                if (!Monitor.QcCreateTriggerOnDMSFail &&
+                    missingData.Contains(DatasetMonitor.QC_MONITORS_DESCRIPTION))
                 {
-                    missingData.Remove(DatasetManager.QC_MONITORS_DESCRIPTION);
+                    missingData.Remove(DatasetMonitor.QC_MONITORS_DESCRIPTION);
                 }
             }
 

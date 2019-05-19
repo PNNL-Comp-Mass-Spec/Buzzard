@@ -216,7 +216,7 @@
             IsEnabled="{Binding Path=IsNotMonitoring}"
             Maximum="600"
             Minimum="1"
-            Value="{Binding Path=DatasetManager.TriggerFileCreationWaitTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            Value="{Binding Path=Monitor.TriggerFileCreationWaitTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
         <GroupBox Grid.Row="3" Grid.Column="3" Grid.RowSpan="2" Header="Upload datasets with no DMS Request:" FontSize="15" Margin="0,-5,0,0" ToolTip="If both are not checked, only datasets with matching DMS requests will be uploaded">
             <Grid>
@@ -231,7 +231,7 @@
                     VerticalAlignment="Center"
                     Content="Datasets with 'Instrument Metadata'"
                     FontSize="15"
-                    IsChecked="{Binding Path=DatasetManager.CreateTriggerOnDMSFail, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    IsChecked="{Binding Path=Monitor.CreateTriggerOnDMSFail, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     IsEnabled="{Binding Path=IsNotMonitoring}"
                     ToolTip="Do you want the watcher to auto-create the trigger file for datasets it finds when a matching DMS request is not found?" />
 
@@ -241,7 +241,7 @@
                     VerticalAlignment="Center"
                     Content="QCs with 'QC Samples' metadata"
                     FontSize="15"
-                    IsChecked="{Binding Path=DatasetManager.QcCreateTriggerOnDMSFail, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    IsChecked="{Binding Path=Monitor.QcCreateTriggerOnDMSFail, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     IsEnabled="{Binding Path=IsNotMonitoring}"
                     ToolTip="Do you want the watcher to auto-create the trigger file for QC datasets it finds when a matching DMS request is not found?" />
             </Grid>

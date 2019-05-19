@@ -26,7 +26,7 @@ namespace BuzzardWPF.ViewModels
             isNotMonitoring = true;
 
             SelectExperimentCommand = ReactiveCommand.Create(SelectExperiment);
-            AddQcMonitorCommand = ReactiveCommand.Create(AddQcMonitor, this.WhenAnyValue(x => x.ExperimentName, x => x.DatasetNameMatch, x => x.EMSLUsageType, x => x.EMSLProposalID, x => x.EMSLProposalUsers, x => x.EMSLProposalUsers.Count, x => x.Manager.QcMonitors).Select(
+            AddQcMonitorCommand = ReactiveCommand.Create(AddQcMonitor, this.WhenAnyValue(x => x.ExperimentName, x => x.DatasetNameMatch, x => x.EMSLUsageType, x => x.EMSLProposalID, x => x.EMSLProposalUsers, x => x.EMSLProposalUsers.Count, x => x.Monitor.QcMonitors).Select(
                 x =>
                 {
                     var musts = !string.IsNullOrWhiteSpace(x.Item1) && !string.IsNullOrWhiteSpace(x.Item2) && !string.IsNullOrWhiteSpace(x.Item3);
@@ -95,7 +95,7 @@ namespace BuzzardWPF.ViewModels
             set => this.RaiseAndSetIfChangedMonitored(ref experimentName, value);
         }
 
-        public DatasetManager Manager => DatasetManager.Manager;
+        public DatasetMonitor Monitor => DatasetMonitor.Monitor;
 
         public ReactiveList<ProposalUser> EMSLProposalUsers { get; } = new ReactiveList<ProposalUser>();
 
@@ -162,7 +162,7 @@ namespace BuzzardWPF.ViewModels
                 }
             }
 
-            Manager.QcMonitors.Add(qcMonitor);
+            Monitor.QcMonitors.Add(qcMonitor);
         }
 
         private void RemoveQcMonitor()
@@ -172,7 +172,7 @@ namespace BuzzardWPF.ViewModels
                 return;
             }
 
-            Manager.QcMonitors.Remove(SelectedQcMonitor);
+            Monitor.QcMonitors.Remove(SelectedQcMonitor);
         }
 
         /// <summary>
@@ -246,7 +246,7 @@ namespace BuzzardWPF.ViewModels
                     }
                 }
 
-                Manager.QcMonitors.Add(monitor);
+                Monitor.QcMonitors.Add(monitor);
             }
 
             SettingsChanged = false;
