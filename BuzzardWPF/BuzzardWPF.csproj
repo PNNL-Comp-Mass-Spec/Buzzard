@@ -119,6 +119,7 @@
     <Compile Include="Management\QcMonitorData.cs" />
     <Compile Include="Management\RenameDataRequest.cs" />
     <Compile Include="Management\StateSingleton.cs" />
+    <Compile Include="Management\TriggerFileMonitor.cs" />
     <Compile Include="Management\WatcherMetadata.cs" />
     <Compile Include="Properties\SettingsUpgradeHandler.cs" />
     <Compile Include="Searching\DatasetFoundEventArgs.cs" />

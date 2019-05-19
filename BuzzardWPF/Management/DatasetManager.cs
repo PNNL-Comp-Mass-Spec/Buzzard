@@ -38,11 +38,6 @@ namespace BuzzardWPF.Management
 
         private bool loadingDmsData = false;
 
-        /// <summary>
-        /// Dictionary where keys are FileInfo objects and values are false if the file is still waiting to be processed, or True if it has been processed (is found in the Success folder)
-        /// </summary>
-        private static Dictionary<string, bool> mTriggerFolderContents;
-
         private Timer mScannedDatasetTimer;
         private Timer mTriggerCountdownTimer;
         private readonly ConcurrentDictionary<BuzzardDataset, bool> triggerCountdownDatasets = new ConcurrentDictionary<BuzzardDataset, bool>(3, 10);
@@ -127,38 +122,7 @@ namespace BuzzardWPF.Management
                 // trigger files that were sent.
 
                 currentTask = "Examine the trigger file folder";
-                var triggerFileDestination = LCMSSettings.GetParameter("TriggerFileFolder");
-
-                if (mTriggerFolderContents == null)
-                {
-                    mTriggerFolderContents = new Dictionary<string, bool>(StringComparer.CurrentCultureIgnoreCase);
-                }
-                else
-                {
-                    mTriggerFolderContents.Clear();
-                }
-
-                if (!string.IsNullOrWhiteSpace(triggerFileDestination))
-                {
-                    try
-                    {
-                        var diTriggerFolder = new DirectoryInfo(triggerFileDestination);
-
-                        if (diTriggerFolder.Exists)
-                        {
-                            currentTask = "Parsing trigger files in " + diTriggerFolder.FullName;
-                            AddTriggerFiles(diTriggerFolder, false);
-
-                            var diSuccessFolder = new DirectoryInfo(Path.Combine(diTriggerFolder.FullName, "success"));
-                            currentTask = "Parsing trigger files in " + diSuccessFolder.FullName;
-                            AddTriggerFiles(diSuccessFolder, true);
-                        }
-                    }
-                    catch
-                    {
-                        // Ignore errors here
-                    }
-                }
+                TriggerMonitor.ReloadTriggerFileStates(ref currentTask);
 
                 currentTask = "Raise event DatasetsLoaded";
                 var lastUpdatedTime = DateTime.Now;
@@ -254,7 +218,7 @@ namespace BuzzardWPF.Management
                 dataset.DatasetStatus = DatasetStatus.TriggerFileSent;
                 dataset.TriggerCreationWarning = string.Empty;
 
-                AddUpdateTriggerFile(triggerFilePath, false);
+                TriggerMonitor.AddNewTriggerFile(triggerFilePath);
 
                 return triggerFilePath;
             }
@@ -272,8 +236,6 @@ namespace BuzzardWPF.Management
             return null;
 
         }
-
-        public Dictionary<string, bool> TriggerDirectoryContents => mTriggerFolderContents;
 
         #endregion
 
@@ -420,6 +382,8 @@ namespace BuzzardWPF.Management
 
         public bool SettingsChanged { get; set; }
 
+        public static TriggerFileMonitor TriggerMonitor => TriggerFileMonitor.Instance;
+
         #endregion
 
         private void SetupTimers()
@@ -471,7 +435,7 @@ namespace BuzzardWPF.Management
                         var hasTriggerFileSent = false;
 
                         // Also make sure that the trigger file does not exist on the server...
-                        foreach (var filePath in TriggerDirectoryContents.Keys.ToList())
+                        foreach (var filePath in TriggerMonitor.TriggerDirectoryContents.Keys.ToList())
                         {
                             if (filePath.ToLower().Contains(dataset.DmsData.DatasetName.ToLower()))
                             {
@@ -617,7 +581,7 @@ namespace BuzzardWPF.Management
                 }
 
                 var fiTriggerFile = new FileInfo(triggerFilePath);
-                AddUpdateTriggerFile(fiTriggerFile.FullName, false);
+                TriggerMonitor.AddNewTriggerFile(fiTriggerFile.FullName);
 
             }
             catch (Exception ex)
@@ -721,34 +685,6 @@ namespace BuzzardWPF.Management
         }
 
         #endregion
-
-        private void AddTriggerFiles(DirectoryInfo diTriggerFolder, bool inSuccessFolder)
-        {
-            if (!diTriggerFolder.Exists)
-            {
-                return;
-            }
-
-            foreach (var file in diTriggerFolder.GetFiles("*.xml", SearchOption.TopDirectoryOnly))
-            {
-                AddUpdateTriggerFile(file.FullName, inSuccessFolder);
-            }
-        }
-
-        private static void AddUpdateTriggerFile(string triggerFilePath, bool inSuccessFolder)
-        {
-            if (mTriggerFolderContents == null)
-            {
-                mTriggerFolderContents = new Dictionary<string, bool>(StringComparer.CurrentCultureIgnoreCase);
-            }
-
-            if (mTriggerFolderContents.ContainsKey(triggerFilePath))
-                mTriggerFolderContents[triggerFilePath] = inSuccessFolder;
-            else
-            {
-                mTriggerFolderContents.Add(triggerFilePath, inSuccessFolder);
-            }
-        }
 
         /// <summary>
         ///
@@ -952,7 +888,7 @@ namespace BuzzardWPF.Management
                     ResolveDms(dataset, true);
 
                     var hasTriggerFileSent = false;
-                    foreach (var filePath in TriggerDirectoryContents.Keys)
+                    foreach (var filePath in TriggerMonitor.TriggerDirectoryContents.Keys)
                     {
                         if (filePath.ToLower().Contains(dataset.DmsData.DatasetName.ToLower()))
                         {
