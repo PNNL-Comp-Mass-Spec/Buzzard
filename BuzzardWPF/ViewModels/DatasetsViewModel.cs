@@ -787,6 +787,10 @@ namespace BuzzardWPF.ViewModels
                     {
                         stableDatasets.Add(entry.Key);
                     }
+                    else if (DatasetManager.DatasetHasAcquisitionLock(entry.Key.FilePath))
+                    {
+                        entry.Key.DatasetStatus = DatasetStatus.FileSizeChanged;
+                    }
                     else
                     {
                         entry.Key.DatasetStatus = DatasetStatus.FileSizeChanged;

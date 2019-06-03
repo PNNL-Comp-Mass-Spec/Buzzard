@@ -165,7 +165,8 @@ namespace BuzzardWPF.Management
                                 continue;
                             }
 
-                            if (DateTime.UtcNow.Subtract(dataset.FileLastChangedUtc).TotalSeconds < 60)
+                            if (DateTime.UtcNow.Subtract(dataset.FileLastChangedUtc).TotalSeconds < 60 ||
+                                Manager.DatasetHasAcquisitionLock(dataset.FilePath))
                             {
                                 dataset.DatasetStatus = DatasetStatus.PendingFileStable;
                                 continue;

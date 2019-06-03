@@ -50,6 +50,7 @@ Source: "bin\Release\LcmsNetDmsTools.dll";                            DestDir: "
 Source: "bin\Release\LcmsNetSQLiteTools.dll";                         DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\Ookii.Dialogs.Wpf.dll";                          DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\PrismDMS.config";                                DestDir: "{app}";     Flags: ignoreversion
+Source: "bin\Release\PRISMWin.dll";                                   DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\ReactiveUI*.dll";                                DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\Splat.dll";                                      DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\System.Data.SQLite.dll";                         DestDir: "{app}";     Flags: ignoreversion
