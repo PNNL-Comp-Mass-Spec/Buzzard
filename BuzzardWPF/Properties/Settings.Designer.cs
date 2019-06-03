@@ -455,6 +455,18 @@ namespace BuzzardWPF.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Unreviewed")]
+        public string WatcherInterestRating {
+            get {
+                return ((string)(this["WatcherInterestRating"]));
+            }
+            set {
+                this["WatcherInterestRating"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string WatcherQCEMSLProposalID {
             get {

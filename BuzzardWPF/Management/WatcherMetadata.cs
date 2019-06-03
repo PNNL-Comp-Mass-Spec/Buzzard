@@ -23,6 +23,7 @@ namespace BuzzardWPF.Management
         private string emslUsageType;
         private string emslProposalId;
         private string userComments;
+        private string interestRating;
 
         public WatcherMetadata()
         {
@@ -185,6 +186,12 @@ namespace BuzzardWPF.Management
             set => this.RaiseAndSetIfChangedMonitored(ref userComments, value);
         }
 
+        public string InterestRating
+        {
+            get => interestRating;
+            set => this.RaiseAndSetIfChangedMonitored(ref interestRating, value);
+        }
+
         public ReactiveList<ProposalUser> EMSLProposalUsers { get; } = new ReactiveList<ProposalUser>();
 
         public bool SettingsChanged { get; set; }
@@ -207,6 +214,7 @@ namespace BuzzardWPF.Management
             Settings.Default.WatcherSeparationType = SeparationType;
             Settings.Default.WatcherEMSLUsageType = EMSLUsageType;
             Settings.Default.WatcherEMSLProposalID = EMSLProposalID;
+            Settings.Default.WatcherInterestRating = InterestRating;
 
             var selectedEmslUsers = new StringCollection();
             foreach (var user in EMSLProposalUsers)
@@ -238,6 +246,7 @@ namespace BuzzardWPF.Management
             }
 
             UserComments = Settings.Default.WatcherComment;
+            InterestRating = Settings.Default.WatcherInterestRating;
 
             /*
              * The following settings need to be checked before being applied

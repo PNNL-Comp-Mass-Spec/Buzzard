@@ -581,12 +581,15 @@ namespace BuzzardWPF.Management
                         emslProposalId = WatcherMetadata.EMSLProposalID;
                         emslProposalUsers = WatcherMetadata.EMSLProposalUsers;
                     }
+
+                    dataset.InterestRating = "Released";
                 }
                 else
                 {
                     emslUsageType = WatcherMetadata.EMSLUsageType;
                     emslProposalId = WatcherMetadata.EMSLProposalID;
                     emslProposalUsers = WatcherMetadata.EMSLProposalUsers;
+                    dataset.InterestRating = WatcherMetadata.InterestRating;
                 }
 
                 dataset.DmsData.EMSLUsageType = emslUsageType;

@@ -7,7 +7,7 @@
     xmlns:viewModels="clr-namespace:BuzzardWPF.ViewModels"
     xmlns:views="clr-namespace:BuzzardWPF.Views"
     xmlns:cueBannerOverlay="clr-namespace:WpfExtras.CueBannerOverlay;assembly=WpfExtras"
-    d:DesignHeight="400"
+    d:DesignHeight="500"
     d:DesignWidth="1050"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance {x:Type viewModels:WatcherConfigViewModel}, IsDesignTimeCreatable=True}">
@@ -46,7 +46,7 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="305" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="15*" />
         </Grid.RowDefinitions>
         <StackPanel Grid.Column="0" Margin="1,1,4,1">
@@ -229,9 +229,9 @@
 
         <Grid Grid.Row="0" Grid.Column="1" Margin="5,5,5,5">
             <Grid.RowDefinitions>
-                <RowDefinition Height="120" />
-                <RowDefinition Height="140" />
-                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <GroupBox Grid.Row="0" Header="If No Request in DMS">
                 <Grid>
@@ -277,6 +277,34 @@
                 DataContext="{Binding EmslUsageSelectionVm}"
                 IsEnabled="{Binding Path=DataContext.IsNotMonitoring, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type views:WatcherConfigView}}}" />
 
+            <GroupBox Grid.Row="2" FontWeight="Bold" Header="Dataset">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" SharedSizeGroup="A" />
+                        <ColumnDefinition Width="auto" SharedSizeGroup="B" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        FontWeight="Regular"
+                        Style="{StaticResource TextBlockStyle}"
+                        Text="Interest Rating:" />
+                    <ComboBox
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        FontWeight="Regular"
+                        IsEnabled="{Binding Path=IsNotMonitoring}"
+                        ItemsSource="{Binding Path=InterestRatingOptions, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        SelectedItem="{Binding Path=WatcherMetadata.InterestRating, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        Style="{StaticResource ComboBoxStyle}">
+                        <cueBannerOverlay:CueBannerService.CueBanner>
+                            <TextBlock Text="Select" Margin="0" FontWeight="Regular" Style="{StaticResource TextBlockStyle}" />
+                        </cueBannerOverlay:CueBannerService.CueBanner>
+                    </ComboBox>
+                </Grid>
+            </GroupBox>
         </Grid>
 
         <DockPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
