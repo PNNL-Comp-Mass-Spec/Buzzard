@@ -10,7 +10,7 @@
     xmlns:viewModels="clr-namespace:BuzzardWPF.ViewModels"
     MinWidth="200"
     MinHeight="200"
-    d:DesignHeight="200"
+    d:DesignHeight="210"
     d:DesignWidth="800"
     Background="{x:Null}"
     mc:Ignorable="d"
@@ -34,11 +34,11 @@
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="40" />
-            <RowDefinition Height="40" />
-            <RowDefinition Height="40" />
-            <RowDefinition Height="40" />
-            <RowDefinition Height="40" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />

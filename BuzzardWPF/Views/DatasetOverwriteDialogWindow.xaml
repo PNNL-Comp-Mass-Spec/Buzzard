@@ -22,10 +22,10 @@
     d:DataContext="{d:DesignInstance {x:Type viewModels:DatasetOverwriteDialogViewModel}, IsDesignTimeCreatable=True}">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="60" />
-            <RowDefinition Height="60" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="auto" MinHeight="22" />
         </Grid.RowDefinitions>
 
@@ -36,10 +36,10 @@
             VerticalScrollBarVisibility="Auto">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="auto" />
-                    <RowDefinition Height="auto" MinHeight="100" />
-                    <RowDefinition Height="auto" />
-                    <RowDefinition Height="auto" MinHeight="100" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" MinHeight="100" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" MinHeight="100" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 

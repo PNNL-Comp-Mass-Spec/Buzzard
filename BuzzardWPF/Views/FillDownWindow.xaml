@@ -9,7 +9,7 @@
     xmlns:views="clr-namespace:BuzzardWPF.Views"
     Title="Dataset Filldown"
     Width="475"
-    Height="648.179"
+    Height="650"
     MinWidth="400"
     MinHeight="505"
     MaxWidth="475"
@@ -47,7 +47,7 @@
     <DockPanel>
         <Grid DockPanel.Dock="Bottom">
             <Grid.RowDefinitions>
-                <RowDefinition Height="48" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
