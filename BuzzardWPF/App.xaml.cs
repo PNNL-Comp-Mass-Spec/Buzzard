@@ -132,7 +132,7 @@ namespace BuzzardWPF
             resetSplashCreated.WaitOne();
 
             // Start up the threaded logging
-            ApplicationLogger.ShutDownLogging();
+            ApplicationLogger.StartUpLogging();
 
             var openMainWindow = AppInitializer.InitializeApplication(splashScreen, splashScreen.SetInstrumentName).Result;
             if (openMainWindow)
@@ -172,6 +172,7 @@ namespace BuzzardWPF
             {
                 splashScreen.LoadComplete();
                 splashScreenEnded = true;
+                ShutdownCleanup();
             }
         }
 
