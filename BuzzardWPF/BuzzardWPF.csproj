@@ -111,7 +111,6 @@
     </Compile>
     <Compile Include="MainWindowViewModel.cs" />
     <Compile Include="Management\CartConfigFilter.cs" />
-    <Compile Include="Management\DatasetFactory.cs" />
     <Compile Include="Management\DatasetManager.cs" />
     <Compile Include="Management\DatasetMonitor.cs" />
     <Compile Include="Management\DMSConfig.cs" />
