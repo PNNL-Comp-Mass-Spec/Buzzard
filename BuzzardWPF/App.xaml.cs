@@ -30,11 +30,31 @@ namespace BuzzardWPF
         private void CurrentDomainOnUnhandledException(object sender, UnhandledExceptionEventArgs args)
         {
             // This is fired after Dispatcher.UnhandledException - exceptions cannot be "handled" here, we can only report them
+            var e = (Exception)args.ExceptionObject;
+            try
+            {
+                ApplicationLogger.LogError(0, "Buzzard had an unhandled critical error.  " + e.Message, e);
+            }
+            catch
+            {
+                // Do nothing, we already tried to log it.
+            }
+
+            ShutdownCleanup();
         }
 
         private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            ApplicationLogger.LogError(0, "Buzzard had an unhandled critical error.  " + e.Exception.Message, e.Exception);
+            try
+            {
+                ApplicationLogger.LogError(0, "Buzzard had an unhandled critical error.  " + e.Exception.Message, e.Exception);
+            }
+            catch
+            {
+                // Do nothing, we already tried to log it.
+            }
+
+            e.Handled = true;
             ShutdownCleanup();
         }
 
