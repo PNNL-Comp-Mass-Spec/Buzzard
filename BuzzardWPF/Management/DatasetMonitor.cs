@@ -135,19 +135,8 @@ namespace BuzzardWPF.Management
 
                         try
                         {
-                            var hasTriggerFileSent = false;
-
                             // Also make sure that the trigger file does not exist on the server...
-                            foreach (var filePath in TriggerMonitor.TriggerDirectoryContents.Keys.ToList())
-                            {
-                                if (filePath.ToLower().Contains(dataset.DmsData.DatasetName.ToLower()))
-                                {
-                                    hasTriggerFileSent = true;
-                                    break;
-                                }
-                            }
-
-                            if (hasTriggerFileSent)
+                            if (TriggerMonitor.CheckForTriggerFile(dataset.DmsData.DatasetName))
                             {
                                 dataset.DatasetStatus = DatasetStatus.TriggerFileSent;
                                 continue;

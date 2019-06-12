@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using LcmsNetData;
 
 namespace BuzzardWPF.Management
@@ -24,7 +24,6 @@ namespace BuzzardWPF.Management
         /// Dictionary where keys are FileInfo objects and values are false if the file is still waiting to be processed, or True if it has been processed (is found in the Success folder)
         /// </summary>
         private readonly ConcurrentDictionary<string, bool> triggerDirectoryContents;
-        public IDictionary<string, bool> TriggerDirectoryContents => triggerDirectoryContents;
 
         public void ReloadTriggerFileStates(ref string currentTask)
         {
@@ -77,6 +76,12 @@ namespace BuzzardWPF.Management
         public void AddNewTriggerFile(string triggerFilePath)
         {
             AddUpdateTriggerFile(triggerFilePath, false);
+        }
+
+        public bool CheckForTriggerFile(string datasetName)
+        {
+            var datasetNameLower = datasetName.ToLower();
+            return triggerDirectoryContents.Keys.Any(x => x.ToLower().Contains(datasetNameLower));
         }
     }
 }

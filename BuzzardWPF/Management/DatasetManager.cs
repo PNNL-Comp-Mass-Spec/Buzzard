@@ -649,18 +649,10 @@ namespace BuzzardWPF.Management
                 {
                     ResolveDms(dataset, true);
 
-                    var hasTriggerFileSent = false;
-                    foreach (var filePath in TriggerMonitor.TriggerDirectoryContents.Keys)
+                    if (TriggerMonitor.CheckForTriggerFile(dataset.DmsData.DatasetName))
                     {
-                        if (filePath.ToLower().Contains(dataset.DmsData.DatasetName.ToLower()))
-                        {
-                            hasTriggerFileSent = true;
-                            break;
-                        }
-                    }
-
-                    if (hasTriggerFileSent)
                         dataset.DatasetStatus = DatasetStatus.TriggerFileSent;
+                    }
                 }
 
                 RxApp.MainThreadScheduler.Schedule(() => Datasets.Add(dataset));
