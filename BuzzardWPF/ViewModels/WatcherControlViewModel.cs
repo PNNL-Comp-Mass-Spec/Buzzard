@@ -381,8 +381,6 @@ namespace BuzzardWPF.ViewModels
                 return;
             }
 
-            DatasetManager.FileWatchRoot = diBaseFolder.FullName;
-
             mFileSystemWatcher.Path = diBaseFolder.FullName;
             mFileSystemWatcher.IncludeSubdirectories = Config.SearchDepth == SearchOption.AllDirectories;
             mFileSystemWatcher.Filter = "*.*";

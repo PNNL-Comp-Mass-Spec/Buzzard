@@ -37,14 +37,12 @@ namespace BuzzardWPF.Management
         // Agilent GC-MS: msinsctl
         public const string BlockingProcessNamesRegExString = @"HomePage|ThermoFisher\.Foundation\.AcquisitionService|Thermo\.TNG\.InstrumentServer|LTQManager|AgtVoyAcgEng|msinsctl";
 
-        #region Attributes
+        #region Members
 
         /// <summary>
         /// Trie that holds requested run names from DMS.
         /// </summary>
         private readonly DatasetTrie mRequestedRunTrie;
-
-        private bool loadingDmsData = false;
 
         private static readonly string[] INTEREST_RATING_ARRAY = { "Unreviewed", "Not Released", "Released", "Rerun (Good Data)", "Rerun (Superseded)" };
         public static readonly ReactiveList<string> INTEREST_RATINGS_COLLECTION;
@@ -72,25 +70,91 @@ namespace BuzzardWPF.Management
             INTEREST_RATINGS_COLLECTION = new ReactiveList<string>(INTEREST_RATING_ARRAY);
         }
 
+        #region Properties
+
+        /// <summary>
+        /// Instrument data files / folders that are candidate datasets
+        /// </summary>
+        public ReactiveList<BuzzardDataset> Datasets { get; }
+
+        public bool IsLoading { get; private set; }
+
+        public static DatasetManager Manager { get; }
+
+        public bool SettingsChanged { get; set; }
+
+        public static TriggerFileMonitor TriggerMonitor => TriggerFileMonitor.Instance;
+
+        public DatasetMonitor Monitor => DatasetMonitor.Monitor;
+
+        public DateTime RequestedRunsLastUpdated
+        {
+            get => requestedRunsLastUpdated;
+            private set => this.RaiseAndSetIfChanged(ref requestedRunsLastUpdated, value);
+        }
+
+        #endregion
+
+        #region Searcher Config
+
+        /// <summary>
+        /// This value tells the DatasetManager whether or not
+        /// to create a dataset for an archived datasource that
+        /// is found by the searcher.
+        /// </summary>
+        /// <remarks>
+        /// the SearchConvfigView is responsible for setting this.
+        /// </remarks>
+        public bool IncludeArchivedItems
+        {
+            get => includeArchivedItems;
+            set => this.RaiseAndSetIfChangedMonitored(ref includeArchivedItems, value);
+        }
+
+        /// <summary>
+        /// The search/watcher config common parameters
+        /// </summary>
+        public SearchConfig Config { get; } = new SearchConfig();
+
+        private string triggerFileLocation;
+        private bool includeArchivedItems;
+        private DateTime requestedRunsLastUpdated;
+
+        public string TriggerFileLocation
+        {
+            get => triggerFileLocation;
+            set
+            {
+                if (this.RaiseAndSetIfChangedMonitoredBool(ref triggerFileLocation, value))
+                {
+                    LCMSSettings.SetParameter(LCMSSettings.PARAM_TRIGGERFILEFOLDER, value);
+                }
+            }
+        }
+
+        public WatcherMetadata WatcherMetadata { get; } = new WatcherMetadata();
+
+        #endregion
+
         #region Loading Data
 
         public async Task LoadRequestedRunsCache()
         {
             lock (this)
             {
-                if (loadingDmsData)
+                if (IsLoading)
                 {
                     return;
                 }
 
-                loadingDmsData = true;
+                IsLoading = true;
             }
 
             await Task.Run(LoadRequestedRuns).ConfigureAwait(false);
 
             lock (this)
             {
-                loadingDmsData = false;
+                IsLoading = false;
             }
         }
 
@@ -133,12 +197,6 @@ namespace BuzzardWPF.Management
                 MessageBox.Show("Error loading data, task " + currentTask + ": " + ex.Message, "Error",
                                 MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
-        }
-
-        public DateTime RequestedRunsLastUpdated
-        {
-            get => requestedRunsLastUpdated;
-            private set => this.RaiseAndSetIfChanged(ref requestedRunsLastUpdated, value);
         }
 
         #endregion
@@ -365,68 +423,6 @@ namespace BuzzardWPF.Management
         }
         #endregion
 
-        #region Properties
-
-        /// <summary>
-        /// Instrument data files / folders that are candidate datasets
-        /// </summary>
-        public ReactiveList<BuzzardDataset> Datasets { get; }
-
-        public string FileWatchRoot { get; set; }
-
-        public bool IsLoading => loadingDmsData;
-
-        public static DatasetManager Manager { get; }
-
-        public bool SettingsChanged { get; set; }
-
-        public static TriggerFileMonitor TriggerMonitor => TriggerFileMonitor.Instance;
-
-        public DatasetMonitor Monitor => DatasetMonitor.Monitor;
-
-        #endregion
-
-        #region Searcher Config
-
-        /// <summary>
-        /// This value tells the DatasetManager whether or not
-        /// to create a dataset for an archived datasource that
-        /// is found by the searcher.
-        /// </summary>
-        /// <remarks>
-        /// the SearchConvfigView is responsible for setting this.
-        /// </remarks>
-        public bool IncludeArchivedItems
-        {
-            get => includeArchivedItems;
-            set => this.RaiseAndSetIfChangedMonitored(ref includeArchivedItems, value);
-        }
-
-        /// <summary>
-        /// The search/watcher config common parameters
-        /// </summary>
-        public SearchConfig Config { get; } = new SearchConfig();
-
-        private string triggerFileLocation;
-        private bool includeArchivedItems;
-        private DateTime requestedRunsLastUpdated;
-
-        public string TriggerFileLocation
-        {
-            get => triggerFileLocation;
-            set
-            {
-                if (this.RaiseAndSetIfChangedMonitoredBool(ref triggerFileLocation, value))
-                {
-                    LCMSSettings.SetParameter(LCMSSettings.PARAM_TRIGGERFILEFOLDER, value);
-                }
-            }
-        }
-
-        public WatcherMetadata WatcherMetadata { get; } = new WatcherMetadata();
-
-        #endregion
-
         /// <summary>
         ///
         /// </summary>
@@ -523,7 +519,7 @@ namespace BuzzardWPF.Management
                     DmsData =
                     {
                         DatasetName = BuzzardTriggerFileTools.GetDatasetNameFromFilePath(datasetFileOrFolderPath),
-                        CartName = DatasetManager.Manager.WatcherMetadata.CartName
+                        CartName = WatcherMetadata.CartName
                     }
                 };
 
