@@ -17,9 +17,26 @@ namespace BuzzardWPF
     {
         #region "Constants and members"
 
-        public const string PROGRAM_DATE = "January 4, 2019";
+        public static string AssemblyDate { get; }
 
         private const string DefaultInstallerFolder = @"\\proto-5\BionetSoftware\Buzzard";
+
+        #endregion
+
+        #region Constructor
+
+        static AppInitializer()
+        {
+            AssemblyDate = "";
+
+            var asm = Assembly.GetExecutingAssembly();
+            // Can throw an exception if there is more than one matching attribute
+            var asmDate = asm.GetCustomAttribute<AssemblyDateAttribute>();
+            if (asmDate != null)
+            {
+                AssemblyDate = asmDate.AssemblyDate;
+            }
+        }
 
         #endregion
 
