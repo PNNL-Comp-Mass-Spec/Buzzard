@@ -337,7 +337,7 @@ namespace BuzzardWPF.Management
                 return;
             }
 
-            if (dataset.DmsData != null && !forceUpdate)
+            if (!forceUpdate)
             {
                 // Update the DMS info every 2 minutes
                 if (DateTime.UtcNow.Subtract(dataset.DMSDataLastUpdate).TotalMinutes < 2)
@@ -387,10 +387,25 @@ namespace BuzzardWPF.Management
                     }
                 }
 
+                // Cache the cart name and cart config name
+                var cartName = dataset.DmsData.CartName;
+                var cartConfigName = dataset.DmsData.CartConfigName;
+
                 // Match found
                 RxApp.MainThreadScheduler.Schedule(() => {
-                dataset.DmsData.CopyValuesAndLockWithNewPath(data, dataset.FilePath);
-                dataset.DMSDataLastUpdate = DateTime.UtcNow;
+                    dataset.DmsData.CopyValuesAndLockWithNewPath(data, dataset.FilePath);
+                    dataset.DMSDataLastUpdate = DateTime.UtcNow;
+
+                    // Override the cart name and cart config name from DMS - the local info will generally be more correct.
+                    if (!string.IsNullOrWhiteSpace(cartName))
+                    {
+                        dataset.DmsData.CartName = cartName;
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(cartConfigName))
+                    {
+                        dataset.DmsData.CartConfigName = cartConfigName;
+                    }
                 });
             }
             catch (DatasetTrieException ex)
