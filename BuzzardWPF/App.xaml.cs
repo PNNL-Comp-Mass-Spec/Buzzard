@@ -193,6 +193,8 @@ namespace BuzzardWPF
                 splashScreen.LoadComplete();
                 splashScreenEnded = true;
                 ShutdownCleanup();
+                // Trigger an immediate shutdown - Otherwise we might get errors when updating
+                Shutdown(0);
             }
         }
 
