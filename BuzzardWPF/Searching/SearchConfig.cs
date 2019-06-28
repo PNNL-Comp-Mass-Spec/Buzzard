@@ -81,6 +81,11 @@ namespace BuzzardWPF.Searching
                 if (!string.IsNullOrWhiteSpace(value))
                 {
                     var value2 = string.Join("", value.Split(Path.GetInvalidFileNameChars()));
+                    if (!value2.StartsWith("."))
+                    {
+                        value2 = "." + value2;
+                    }
+
                     if (!value.Equals(value2))
                     {
                         changed = true;
