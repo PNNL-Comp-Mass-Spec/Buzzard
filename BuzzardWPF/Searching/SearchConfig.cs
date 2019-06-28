@@ -74,7 +74,26 @@ namespace BuzzardWPF.Searching
         public string FileExtension
         {
             get => mFileExtension;
-            set => this.RaiseAndSetIfChangedMonitored(ref mFileExtension, value);
+            set
+            {
+                // Strip any invalid characters from the provided value
+                var changed = false;
+                if (!string.IsNullOrWhiteSpace(value))
+                {
+                    var value2 = string.Join("", value.Split(Path.GetInvalidFileNameChars()));
+                    if (!value.Equals(value2))
+                    {
+                        changed = true;
+                        value = value2;
+                    }
+                }
+
+                if (!this.RaiseAndSetIfChangedMonitoredBool(ref mFileExtension, value) && changed)
+                {
+                    // if we cleaned the value, we need to report that the value changed to remove the invalid characters from the textbox.
+                    this.RaisePropertyChanged();
+                }
+            }
         }
 
         /// <summary>
