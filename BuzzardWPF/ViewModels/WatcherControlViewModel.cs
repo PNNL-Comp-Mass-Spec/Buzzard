@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reactive;
@@ -9,7 +10,6 @@ using System.Windows;
 using BuzzardWPF.Data;
 using BuzzardWPF.IO;
 using BuzzardWPF.Management;
-using BuzzardWPF.Properties;
 using BuzzardWPF.Searching;
 using LcmsNetData.Logging;
 using ReactiveUI;
@@ -30,7 +30,10 @@ namespace BuzzardWPF.ViewModels
 
         #region Attributes
 
-        private readonly ConcurrentDictionary<string, DateTime> mFilePathsToProcess;
+        // Thread-safe queue for queuing file system changes to check.
+        private readonly ConcurrentQueue<FileSystemEventArgs> filePathsToProcess;
+        // Dictionary to limit the number of "change" entries that are added to filePathsToProcess
+        private readonly ConcurrentDictionary<string, bool> filePathEntryLimiter;
         private readonly Timer mFileUpdateHandler;
         private bool fileUpdateHandlerEnabled = false;
 
@@ -54,7 +57,8 @@ namespace BuzzardWPF.ViewModels
                 SearchOption.TopDirectoryOnly
             };
 
-            mFilePathsToProcess = new ConcurrentDictionary<string, DateTime>();
+            filePathEntryLimiter = new ConcurrentDictionary<string, bool>();
+            filePathsToProcess = new ConcurrentQueue<FileSystemEventArgs>();
 
             mFileUpdateHandler = new Timer(FileUpdateHandler_Tick, this, Timeout.Infinite, Timeout.Infinite);
             fileUpdateHandlerEnabled = false;
@@ -127,45 +131,32 @@ namespace BuzzardWPF.ViewModels
 
         void SystemWatcher_Changed(object sender, FileSystemEventArgs e)
         {
-            mFilePathsToProcess.TryAdd(e.FullPath, DateTime.UtcNow);
+            // NOTE: Microsoft Documentation recommends keeping the FileSystemWatcher event handling code as short as possible to avoid missing events.
+            // limit 'changed' entries for a single path
+            if (filePathEntryLimiter.ContainsKey(e.FullPath))
+            {
+                return;
+            }
+
+            filePathEntryLimiter.TryAdd(e.FullPath, true);
+            filePathsToProcess.Enqueue(e);
         }
 
         void SystemWatcher_FileCreated(object sender, FileSystemEventArgs e)
         {
-            mFilePathsToProcess.TryAdd(e.FullPath, DateTime.UtcNow);
+            // NOTE: Microsoft Documentation recommends keeping the FileSystemWatcher event handling code as short as possible to avoid missing events.
+            filePathsToProcess.Enqueue(e);
         }
 
         void SystemWatcher_FileRenamed(object sender, RenamedEventArgs e)
         {
-            var fileExtension = Path.GetExtension(e.FullPath);
-            if (fileExtension == null)
-            {
-                return;
-            }
-
-            var extensionLcase = fileExtension.ToLower();
-
-            if (string.IsNullOrWhiteSpace(e.FullPath) || e.FullPath.Contains('$'))
-                return;
-
-            if (extensionLcase != Config.FileExtension.ToLower())
-            {
-                return;
-            }
-
-            const bool allowFolderMatch = true;
-
-            // File was renamed, either update an existing dataset, or add a new one
-            DatasetManager.CreatePendingDataset(
-                e.FullPath,
-                BuzzardTriggerFileTools.GetCaptureSubfolderPath(Config.DirectoryPath, e.FullPath),
-                allowFolderMatch,
-                DatasetSource.Watcher,
-                e.OldFullPath);
+            // NOTE: Microsoft Documentation recommends keeping the FileSystemWatcher event handling code as short as possible to avoid missing events.
+            filePathsToProcess.Enqueue(e);
         }
 
         void SystemWatcher_FileDeleted(object sender, FileSystemEventArgs e)
         {
+            // NOTE: Microsoft Documentation recommends keeping the FileSystemWatcher event handling code as short as possible to avoid missing events.
             // The monitor will auto-notify the user of this (if a trigger file has not yet been sent)
         }
 
@@ -208,7 +199,7 @@ namespace BuzzardWPF.ViewModels
             ProcessFilePathQueue();
         }
 
-        private void ControlFileMonitor(bool enabled)
+        private void ControlFileMonitor(bool enabled, int dueTimeSeconds = 60)
         {
             if (enabled != fileUpdateHandlerEnabled)
             {
@@ -216,7 +207,7 @@ namespace BuzzardWPF.ViewModels
                 {
                     // Process new/changed files every 1 minute
                     // Was originally 1 second, then changed to 30 seconds
-                    mFileUpdateHandler.Change(TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(1));
+                    mFileUpdateHandler.Change(TimeSpan.FromSeconds(dueTimeSeconds), TimeSpan.FromMinutes(1));
                 }
                 else
                 {
@@ -251,31 +242,82 @@ namespace BuzzardWPF.ViewModels
 
         private void ProcessFilePathQueue()
         {
-            if (mFilePathsToProcess.Count == 0)
+
+            if (filePathsToProcess.Count == 0)
                 return;
 
-            var lstKeys = mFilePathsToProcess.Keys.ToList();
-
             ControlFileMonitor(false);
+
+            var deduplication = new Dictionary<string, bool>();
+            const bool allowFolderMatch = true;
             var diBaseFolder = new DirectoryInfo(Config.DirectoryPath);
-
-            foreach (var fullFilePath in lstKeys)
+            while (filePathsToProcess.TryDequeue(out var fseArgs))
             {
-                DateTime queueTime;
+                var fullFilePath = fseArgs.FullPath;
+                if (string.IsNullOrWhiteSpace(fullFilePath) || fullFilePath.Contains('$'))
+                    continue;
 
-                if (mFilePathsToProcess.TryRemove(fullFilePath, out queueTime))
+                if (Config.MatchFolders)
                 {
-                    if (string.IsNullOrWhiteSpace(fullFilePath) || fullFilePath.Contains('$'))
+                    // Find the lowest-level entry name that is in the monitored path and matches the extension
+                    // We include subdirectories for MatchFolders regardless of the SearchDepth settings so that we monitor changes of files in those folders
+                    // We do this because it allows the monitor to pick up folder datasets where the folder was created before monitoring started.
+                    var monitoredPath = mFileSystemWatcher.Path;
+                    var splitChars = new char[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar };
+                    var monitoredPathItems = monitoredPath.Split(splitChars, StringSplitOptions.RemoveEmptyEntries).Length;
+                    var pathSplit = fullFilePath.Split(splitChars, StringSplitOptions.RemoveEmptyEntries);
+                    var matchFound = false;
+
+                    for (var i = 0; i < pathSplit.Length - monitoredPathItems; i++)
+                    {
+                        // Always assume that the first x path items match the monitored path.
+                        var currentPart = pathSplit[i + monitoredPathItems] ?? "";
+                        if (Path.GetExtension(currentPart).Equals(Config.FileExtension, StringComparison.OrdinalIgnoreCase))
+                        {
+                            fullFilePath = string.Join(Path.DirectorySeparatorChar.ToString(), pathSplit.Take(i + monitoredPathItems + 1));
+                            matchFound = true;
+                            break;
+                        }
+
+                        // If the SearchDepth is TopDirectoryOnly, do not check the subdirectories for extension matches
+                        if (Config.SearchDepth == SearchOption.TopDirectoryOnly)
+                        {
+                            break;
+                        }
+                    }
+
+                    if (!matchFound)
+                    {
                         continue;
-
+                    }
+                }
+                else
+                {
                     var extension = Path.GetExtension(fullFilePath).ToLower();
-
                     if (extension != Config.FileExtension.ToLower())
                     {
                         continue;
                     }
+                }
 
-                    const bool allowFolderMatch = true;
+                if (deduplication.ContainsKey(fullFilePath))
+                {
+                    continue;
+                }
+
+                if (fseArgs is RenamedEventArgs renamed)
+                {
+                    deduplication.Add(fullFilePath, true);
+                    // File was renamed, either update an existing dataset, or add a new one
+                    DatasetManager.CreatePendingDataset(
+                        fullFilePath,
+                        BuzzardTriggerFileTools.GetCaptureSubfolderPath(Config.DirectoryPath, fullFilePath),
+                        allowFolderMatch,
+                        DatasetSource.Watcher,
+                        renamed.OldFullPath);
+                }
+                else
+                {
                     string parentFolderPath;
 
                     var fiDatasetFile = new FileInfo(fullFilePath);
@@ -297,10 +339,13 @@ namespace BuzzardWPF.ViewModels
                         }
                     }
 
+                    deduplication.Add(fullFilePath, true);
                     DatasetManager.CreatePendingDataset(fullFilePath, parentFolderPath, allowFolderMatch, DatasetSource.Watcher);
                 }
             }
 
+            // Clear the change entry limiter here; otherwise we may be constantly trying to process the same path because it is changing and adding new entries to the concurrent queue.
+            filePathEntryLimiter.Clear();
             ControlFileMonitor(IsWatching);
         }
 
@@ -332,7 +377,7 @@ namespace BuzzardWPF.ViewModels
 
             if (!diBaseFolder.Exists)
             {
-                ReportError("Could not start the monitor. Fold path not found: " + Config.DirectoryPath);
+                ReportError("Could not start the monitor. Folder path not found: " + Config.DirectoryPath);
 
                 return;
             }
@@ -371,8 +416,7 @@ namespace BuzzardWPF.ViewModels
 
             var baseFolderValidator = new InstrumentFolderValidator(DMS_DataAccessor.Instance.InstrumentDetails);
 
-            string expectedBaseFolderPath;
-            if (!baseFolderValidator.ValidateBaseFolder(diBaseFolder, out expectedBaseFolderPath))
+            if (!baseFolderValidator.ValidateBaseFolder(diBaseFolder, out var expectedBaseFolderPath))
             {
                 if (string.IsNullOrWhiteSpace(baseFolderValidator.ErrorMessage))
                     ReportError("Base folder not valid for this instrument; should be " + expectedBaseFolderPath);
@@ -382,12 +426,28 @@ namespace BuzzardWPF.ViewModels
             }
 
             mFileSystemWatcher.Path = diBaseFolder.FullName;
-            mFileSystemWatcher.IncludeSubdirectories = Config.SearchDepth == SearchOption.AllDirectories;
-            mFileSystemWatcher.Filter = "*.*";
+            // Set a larger than default buffer
+            mFileSystemWatcher.InternalBufferSize = 32768;
+            // Changes that will trigger a "change" event (useful for picking up datasets currently being acquired)
+            mFileSystemWatcher.NotifyFilter = NotifyFilters.DirectoryName | NotifyFilters.FileName |
+                                              NotifyFilters.LastWrite | NotifyFilters.Size;
+            if (Config.MatchFolders)
+            {
+                // Allow change monitoring of files within the matched folder(s)
+                mFileSystemWatcher.IncludeSubdirectories = true;
+                mFileSystemWatcher.Filter = "*.*";
+            }
+            else
+            {
+                // If only matching files, only trigger on files that have the specified extension
+                mFileSystemWatcher.IncludeSubdirectories = Config.SearchDepth == SearchOption.AllDirectories;
+                mFileSystemWatcher.Filter = "*" + Config.FileExtension;
+            }
+
             mFileSystemWatcher.EnableRaisingEvents = true;
             IsWatching = true;
 
-            ControlFileMonitor(true);
+            ControlFileMonitor(true, 15);
 
             OnMonitoringToggled(true);
 
