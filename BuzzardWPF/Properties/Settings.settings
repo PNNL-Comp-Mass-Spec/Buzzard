@@ -135,7 +135,7 @@
       <Value Profile="(Default)">TopDirectoryOnly</Value>
     </Setting>
     <Setting Name="SearchExtension" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">.raw</Value>
     </Setting>
     <Setting Name="SearchMinimumSizeKB" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">100</Value>
