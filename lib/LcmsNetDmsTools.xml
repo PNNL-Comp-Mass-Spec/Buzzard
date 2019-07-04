@@ -4,6 +4,28 @@
         <name>LcmsNetDmsTools</name>
     </assembly>
     <members>
+        <member name="T:LcmsNetDmsTools.ExtensionMethods">
+            <summary>
+            Extension methods static class for LcmsNetDmsTools
+            </summary>
+        </member>
+        <member name="M:LcmsNetDmsTools.ExtensionMethods.CastDBValTo``1(System.Object)">
+            <summary>
+            Simple cast that handles DBNull
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="value"></param>
+            <returns>If value is DBNull, then returns default(t); otherwise casts value to T</returns>
+        </member>
+        <member name="M:LcmsNetDmsTools.ExtensionMethods.ConvertDBNull``1(System.Object,System.Func{System.Object,``0})">
+            <summary>
+            Conversion helper that handles DBNull
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="value"></param>
+            <param name="conversionFunction">Function to convert the value to T (should handle null)</param>
+            <returns>Converted value</returns>
+        </member>
         <member name="T:LcmsNetDmsTools.DMSDBTools">
             <summary>
             Class for interacting with DMS database
@@ -60,7 +82,7 @@
         </member>
         <member name="M:LcmsNetDmsTools.DMSDBTools.GetConnection(System.String)">
             <summary>
-            Get a SQLiteConnection, but lim
+            Get a SQLiteConnection, but control creation of new connections based on UseConnectionPooling
             </summary>
             <param name="connString"></param>
             <returns></returns>
@@ -96,6 +118,11 @@
         <member name="M:LcmsNetDmsTools.DMSDBTools.GetCartConfigNamesFromDMS">
             <summary>
             Gets a list of Cart Config Names from DMS and stores it in cache
+            </summary>
+        </member>
+        <member name="M:LcmsNetDmsTools.DMSDBTools.GetWorkPackagesFromDMS">
+            <summary>
+            Gets a list of Work Packages from DMS and stores it in cache
             </summary>
         </member>
         <member name="M:LcmsNetDmsTools.DMSDBTools.GetCartListFromDMS">

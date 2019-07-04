@@ -231,6 +231,48 @@
             <param name="cartConfigList">List containing cart config info.</param>
             <param name="clearFirst">if true, the existing data will always be removed from the list; if false and <paramref name="cartConfigList"/>.Count is &lt;= to the number of existing rows, nothing is changed</param>
         </member>
+        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveWorkPackageListToCache(System.Collections.Generic.List{LcmsNetData.Data.WorkPackageInfo},System.Boolean)">
+            <summary>
+            Saves a list of WorkPackageInfo objects to cache
+            </summary>
+            <param name="workPackageList">List containing work package info.</param>
+            <param name="clearFirst">if true, the existing data will always be removed from the list; if false and <paramref name="workPackageList"/>.Count is &lt;= to the number of existing rows, nothing is changed</param>
+        </member>
+        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveCartListToCache(System.Collections.Generic.List{System.String},System.Boolean)">
+            <summary>
+            Saves a list of cart names to the SQLite cache
+            </summary>
+            <param name="cartNameList">Cart names</param>
+            <param name="clearFirst">if true, the existing data will always be removed from the list; if false and <paramref name="cartNameList"/>.Count is &lt;= to the number of existing rows, nothing is changed</param>
+        </member>
+        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveColumnListToCache(System.Collections.Generic.List{System.String},System.Boolean)">
+            <summary>
+            Saves a list of column names to the SQLite cache
+            </summary>
+            <param name="columnList">Column names</param>
+            <param name="clearFirst">if true, the existing data will always be removed from the list; if false and <paramref name="columnList"/>.Count is &lt;= to the number of existing rows, nothing is changed</param>
+        </member>
+        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveDatasetNameListToCache(System.Collections.Generic.List{System.String},System.Boolean)">
+            <summary>
+            Saves a list of Dataset names to the SQLite cache
+            </summary>
+            <param name="datasetNameList">Dataset names</param>
+            <param name="clearFirst">if true, the existing data will always be removed from the list; if false and <paramref name="datasetNameList"/>.Count is &lt;= to the number of existing rows, nothing is changed</param>
+        </member>
+        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveDatasetTypeListToCache(System.Collections.Generic.List{System.String},System.Boolean)">
+            <summary>
+            Saves a list of dataset type names to the SQLite cache
+            </summary>
+            <param name="datasetTypeList">Dataset type names</param>
+            <param name="clearFirst">if true, the existing data will always be removed from the list; if false and <paramref name="datasetTypeList"/>.Count is &lt;= to the number of existing rows, nothing is changed</param>
+        </member>
+        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveSeparationTypeListToCache(System.Collections.Generic.List{System.String},System.Boolean)">
+            <summary>
+            Saves a list of separation types to the SQLite cache
+            </summary>
+            <param name="separationTypeList">Separation type names</param>
+            <param name="clearFirst">if true, the existing data will always be removed from the list; if false and <paramref name="separationTypeList"/>.Count is &lt;= to the number of existing rows, nothing is changed</param>
+        </member>
         <member name="M:LcmsNetSQLiteTools.SQLiteTools.ExecuteSQLiteCommand(System.String,System.String)">
             <summary>
             Executes specified SQLite command
@@ -338,6 +380,12 @@
             Wrapper around generic retrieval method specifically for dataset type lists
             </summary>
             <returns>List containing dataset types</returns>
+        </member>
+        <member name="M:LcmsNetSQLiteTools.SQLiteTools.GetWorkPackageMap(System.Boolean)">
+            <summary>
+            Wrapper around generic retrieval method specifically for Work Package lists
+            </summary>
+            <returns>Mapping of Charge Codes to WorkPackageInfo objects</returns>
         </member>
         <member name="M:LcmsNetSQLiteTools.SQLiteTools.GetUserList(System.Boolean)">
             <summary>

@@ -46,6 +46,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="LcmsNetData">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\LcmsNetData.dll</HintPath>
     </Reference>
     <Reference Include="LcmsNetDmsTools">

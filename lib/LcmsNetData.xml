@@ -673,6 +673,11 @@
             Dataset type (ie, HMS-MSn, HMS, etc)
             </summary>
         </member>
+        <member name="P:LcmsNetData.Data.DMSData.WorkPackage">
+            <summary>
+            Work Package/charge code
+            </summary>
+        </member>
         <member name="P:LcmsNetData.Data.DMSData.EMSLUsageType">
             <summary>
             EMSL usage type
@@ -818,6 +823,70 @@
             <summary>
             Payroll number (network login) of user
             </summary>
+        </member>
+        <member name="T:LcmsNetData.Data.WorkPackageInfo">
+            <summary>
+            Class to hold information about a work package
+            </summary>
+        </member>
+        <member name="M:LcmsNetData.Data.WorkPackageInfo.#ctor">
+            <summary>
+            Constructor: for auto-population
+            </summary>
+        </member>
+        <member name="M:LcmsNetData.Data.WorkPackageInfo.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            Constructor: Known Values
+            </summary>
+            <param name="chargeCode"></param>
+            <param name="state"></param>
+            <param name="subAccount"></param>
+            <param name="wbs"></param>
+            <param name="title"></param>
+            <param name="ownerUserName"></param>
+            <param name="ownerName"></param>
+        </member>
+        <member name="P:LcmsNetData.Data.WorkPackageInfo.ChargeCode">
+            <summary>
+            Charge code for this work package
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.WorkPackageInfo.State">
+            <summary>
+            Valid content: (Tuple, separated by a comma and space) "(Active|Inactive)(, (used|unused|old))?"
+            'Active' can be by itself, 'used' is only paired with 'Inactive'
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.WorkPackageInfo.SubAccount">
+            <summary>
+            Work package subaccount name
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.WorkPackageInfo.WorkBreakdownStructure">
+            <summary>
+            Work package group (WBS) title
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.WorkPackageInfo.Title">
+            <summary>
+            Work package title
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.WorkPackageInfo.OwnerUserName">
+            <summary>
+            Username of work package owner
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.WorkPackageInfo.OwnerName">
+            <summary>
+            Name of work package owner
+            </summary>
+        </member>
+        <member name="M:LcmsNetData.Data.WorkPackageInfo.ToString">
+            <summary>
+            ToString override for debugging.
+            </summary>
+            <returns></returns>
         </member>
         <member name="T:LcmsNetData.EnumExtensions">
             <summary>
