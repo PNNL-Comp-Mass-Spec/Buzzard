@@ -437,7 +437,7 @@ namespace BuzzardWPF.ViewModels
 
             var filldownData = filldownWindowVm.Dataset;
 
-            if (filldownData.ShouldUseLCColumn &&
+            if (filldownData.UseLcColumn &&
                 !DmsData.ColumnData.Contains(filldownData.ColumnName))
             {
                 MessageBox.Show("Unknown LC column: " + filldownData.ColumnName +
@@ -455,42 +455,42 @@ namespace BuzzardWPF.ViewModels
             // Any changes that were selected in the Filldown
             // Window are passed on to the selected Datasets.
 
-            if (filldownData.ShouldUseCart)
+            if (filldownData.UseCart)
             {
                 DatasetManager.WatcherMetadata.CartName = filldownData.DmsData.CartName;
             }
 
             foreach (var dataset in selectedDatasets)
             {
-                if (filldownData.ShouldUseCart)
+                if (filldownData.UseCart)
                 {
                     dataset.DmsData.CartName = filldownData.DmsData.CartName;
                     dataset.DmsData.CartConfigName = filldownData.DmsData.CartConfigName;
                 }
-                if (filldownData.ShouldUseDatasetType)
+                if (filldownData.UseDatasetType)
                     dataset.DmsData.DatasetType = filldownData.DmsData.DatasetType;
 
-                if (filldownData.ShouldUseInstrumentType)
+                if (filldownData.UseInstrumentType)
                     dataset.InstrumentName = filldownData.InstrumentName;
 
-                if (filldownData.ShouldUseOperator)
+                if (filldownData.UseOperator)
                     dataset.Operator = filldownData.Operator;
 
-                if (filldownData.ShouldUseSeparationType)
+                if (filldownData.UseSeparationType)
                     dataset.SeparationType = filldownData.SeparationType;
 
-                if (filldownData.ShouldUseExperimentName)
+                if (filldownData.UseExperimentName)
                     dataset.DmsData.Experiment = filldownData.DmsData.Experiment;
 
-                if (filldownData.ShouldUseLCColumn)
+                if (filldownData.UseLcColumn)
                 {
                     dataset.ColumnName = filldownData.ColumnName;
                 }
 
-                if (filldownData.ShouldUseInterestRating)
+                if (filldownData.UseInterestRating)
                     dataset.InterestRating = filldownData.InterestRating;
 
-                if (filldownData.ShouldUseComment)
+                if (filldownData.UseComment)
                 {
                     dataset.DmsData.CommentAddition = filldownData.DmsData.CommentAddition;
                 }
@@ -498,13 +498,13 @@ namespace BuzzardWPF.ViewModels
                 // We might have to add a few extra checks on these guys since they're
                 // related to eachother when it comes to use.
                 // -FCT
-                if (filldownData.ShouldUseEMSLProposalID)
+                if (filldownData.UseEMSLProposalID)
                     dataset.DmsData.EMSLProposalID = filldownData.DmsData.EMSLProposalID;
 
-                if (filldownData.ShouldUseEMSLUsageType)
+                if (filldownData.UseEMSLUsageType)
                     dataset.DmsData.EMSLUsageType = filldownData.DmsData.EMSLUsageType;
 
-                if (filldownData.ShouldUseEMSLProposalUsers)
+                if (filldownData.UseEMSLProposalUsers)
                     using (dataset.EMSLProposalUsers.SuppressChangeNotifications())
                     {
                         dataset.EMSLProposalUsers.Clear();

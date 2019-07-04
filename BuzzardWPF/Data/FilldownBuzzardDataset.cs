@@ -4,7 +4,6 @@ using System.Collections.Specialized;
 using System.Linq;
 using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
-using LcmsNetData.Data;
 using ReactiveUI;
 
 namespace BuzzardWPF.Data
@@ -12,39 +11,40 @@ namespace BuzzardWPF.Data
     public class FilldownBuzzardDataset : BuzzardDataset, IStoredSettingsMonitor
     {
         #region Attributes
-        private bool m_shouldUseOperator;
-        private bool m_shouldUseDatasetType;
-        private bool m_shouldUseSeperationType;
-        private bool m_shouldUseInstrumentType;
+        private bool useOperator;
+        private bool useDatasetType;
+        private bool useSeperationType;
+        private bool useInstrumentType;
 
-        private bool m_shouldUseCart;
-        private bool m_shouldUseEmslProposalID;
-        private bool m_shouldUseEmslUsageType;
-        private bool m_shouldUseExperimentName;
+        private bool useCart;
+        private bool useEmslProposalID;
+        private bool useEmslUsageType;
+        private bool useExperimentName;
 
-        private bool m_shouldUseLCColumn;
-        private bool m_shouldUseComment;
-        private bool m_shouldUseInterestRating;
-        private bool m_shouldUseEMSLProposalUsers;
+        private bool useLcColumn;
+        private bool useComment;
+        private bool useInterestRating;
+        private bool useEMSLProposalUsers;
         #endregion
 
         #region Initialize
         public FilldownBuzzardDataset()
         {
-            ShouldUseCart = true;
-            ShouldUseDatasetType = true;
-            ShouldUseEMSLProposalID = true;
-            ShouldUseEMSLUsageType = true;
+            useDatasetType = true;
+            UseCart = true;
+            UseDatasetType = true;
+            UseEMSLProposalID = true;
+            UseEMSLUsageType = true;
 
-            ShouldUseInstrumentType = true;
-            ShouldUseOperator = true;
-            ShouldUseSeparationType = true;
-            ShouldUseExperimentName = true;
+            UseInstrumentType = true;
+            UseOperator = true;
+            UseSeparationType = true;
+            UseExperimentName = true;
 
-            ShouldUseLCColumn = true;
-            ShouldUseInterestRating = true;
-            ShouldUseEMSLProposalUsers = true;
-            ShouldUseComment = true;
+            UseLcColumn = true;
+            UseInterestRating = true;
+            UseEMSLProposalUsers = true;
+            UseComment = true;
 
             // Monitors for propertyChanged events
             this.WhenAnyValue(x => x.DmsData, x => x.DmsData.DatasetType, x => x.DmsData.EMSLUsageType, x => x.DmsData.EMSLProposalID)
@@ -59,76 +59,76 @@ namespace BuzzardWPF.Data
         #endregion
 
         #region Properties
-        public bool ShouldUseLCColumn
+        public bool UseLcColumn
         {
-            get => m_shouldUseLCColumn;
-            set => this.RaiseAndSetIfChanged(ref m_shouldUseLCColumn, value);
+            get => useLcColumn;
+            set => this.RaiseAndSetIfChanged(ref useLcColumn, value);
         }
 
-        public bool ShouldUseExperimentName
+        public bool UseExperimentName
         {
-            get => m_shouldUseExperimentName;
-            set => this.RaiseAndSetIfChanged(ref m_shouldUseExperimentName, value);
+            get => useExperimentName;
+            set => this.RaiseAndSetIfChanged(ref useExperimentName, value);
         }
 
-        public bool ShouldUseComment
+        public bool UseComment
         {
-            get => m_shouldUseComment;
-            set => this.RaiseAndSetIfChanged(ref m_shouldUseComment, value);
+            get => useComment;
+            set => this.RaiseAndSetIfChanged(ref useComment, value);
         }
 
-        public bool ShouldUseOperator
+        public bool UseOperator
         {
-            get => m_shouldUseOperator;
-            set => this.RaiseAndSetIfChanged(ref m_shouldUseOperator, value);
+            get => useOperator;
+            set => this.RaiseAndSetIfChanged(ref useOperator, value);
         }
 
-        public bool ShouldUseDatasetType
+        public bool UseDatasetType
         {
-            get => m_shouldUseDatasetType;
-            set => this.RaiseAndSetIfChanged(ref m_shouldUseDatasetType, value);
+            get => useDatasetType;
+            set => this.RaiseAndSetIfChanged(ref useDatasetType, value);
         }
 
-        public bool ShouldUseSeparationType
+        public bool UseSeparationType
         {
-            get => m_shouldUseSeperationType;
-            set => this.RaiseAndSetIfChanged(ref m_shouldUseSeperationType, value);
+            get => useSeperationType;
+            set => this.RaiseAndSetIfChanged(ref useSeperationType, value);
         }
 
-        public bool ShouldUseInstrumentType
+        public bool UseInstrumentType
         {
-            get => m_shouldUseInstrumentType;
-            set => this.RaiseAndSetIfChanged(ref m_shouldUseInstrumentType, value);
+            get => useInstrumentType;
+            set => this.RaiseAndSetIfChanged(ref useInstrumentType, value);
         }
 
-        public bool ShouldUseCart
+        public bool UseCart
         {
-            get => m_shouldUseCart;
-            set => this.RaiseAndSetIfChanged(ref m_shouldUseCart, value);
+            get => useCart;
+            set => this.RaiseAndSetIfChanged(ref useCart, value);
         }
 
-        public bool ShouldUseEMSLProposalID
+        public bool UseEMSLProposalID
         {
-            get => m_shouldUseEmslProposalID;
-            set => this.RaiseAndSetIfChanged(ref m_shouldUseEmslProposalID, value);
+            get => useEmslProposalID;
+            set => this.RaiseAndSetIfChanged(ref useEmslProposalID, value);
         }
 
-        public bool ShouldUseEMSLUsageType
+        public bool UseEMSLUsageType
         {
-            get => m_shouldUseEmslUsageType;
-            set => this.RaiseAndSetIfChanged(ref m_shouldUseEmslUsageType, value);
+            get => useEmslUsageType;
+            set => this.RaiseAndSetIfChanged(ref useEmslUsageType, value);
         }
 
-        public bool ShouldUseInterestRating
+        public bool UseInterestRating
         {
-            get => m_shouldUseInterestRating;
-            set => this.RaiseAndSetIfChanged(ref m_shouldUseInterestRating, value);
+            get => useInterestRating;
+            set => this.RaiseAndSetIfChanged(ref useInterestRating, value);
         }
 
-        public bool ShouldUseEMSLProposalUsers
+        public bool UseEMSLProposalUsers
         {
-            get => m_shouldUseEMSLProposalUsers;
-            set => this.RaiseAndSetIfChanged(ref m_shouldUseEMSLProposalUsers, value);
+            get => useEMSLProposalUsers;
+            set => this.RaiseAndSetIfChanged(ref useEMSLProposalUsers, value);
         }
 
         public bool SettingsChanged { get; set; }

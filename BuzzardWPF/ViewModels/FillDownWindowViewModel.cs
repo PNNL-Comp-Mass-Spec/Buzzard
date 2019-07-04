@@ -49,8 +49,8 @@ namespace BuzzardWPF.ViewModels
             Dataset = new FilldownBuzzardDataset();
 
             PickExperimentCommand = ReactiveCommand.Create(PickExperiment);
-            UseAllCommand = ReactiveCommand.Create(() => ShouldUseAllSettings(true));
-            UseNoneCommand = ReactiveCommand.Create(() => ShouldUseAllSettings(false));
+            UseAllCommand = ReactiveCommand.Create(() => UseAllSettings(true));
+            UseNoneCommand = ReactiveCommand.Create(() => UseAllSettings(false));
 
             this.WhenAnyValue(x => x.Dataset.DmsData.CartName).ObserveOn(RxApp.MainThreadScheduler).Subscribe(LoadCartConfigsForCart);
         }
@@ -232,7 +232,7 @@ namespace BuzzardWPF.ViewModels
             EmslProposalUsersText = selectedText;
         }
 
-        private void ShouldUseAllSettings(bool shouldWe)
+        private void UseAllSettings(bool shouldWe)
         {
             if (Dataset == null)
             {
@@ -240,20 +240,20 @@ namespace BuzzardWPF.ViewModels
                 return;
             }
 
-            Dataset.ShouldUseCart = shouldWe;
-            Dataset.ShouldUseDatasetType = shouldWe;
-            Dataset.ShouldUseEMSLProposalID = shouldWe;
-            Dataset.ShouldUseEMSLUsageType = shouldWe;
+            Dataset.UseCart = shouldWe;
+            Dataset.UseDatasetType = shouldWe;
+            Dataset.UseEMSLProposalID = shouldWe;
+            Dataset.UseEMSLUsageType = shouldWe;
 
-            Dataset.ShouldUseInstrumentType = shouldWe;
-            Dataset.ShouldUseOperator = shouldWe;
-            Dataset.ShouldUseSeparationType = shouldWe;
-            Dataset.ShouldUseExperimentName = shouldWe;
+            Dataset.UseInstrumentType = shouldWe;
+            Dataset.UseOperator = shouldWe;
+            Dataset.UseSeparationType = shouldWe;
+            Dataset.UseExperimentName = shouldWe;
 
-            Dataset.ShouldUseLCColumn = shouldWe;
-            Dataset.ShouldUseInterestRating = shouldWe;
-            Dataset.ShouldUseEMSLProposalUsers = shouldWe;
-            Dataset.ShouldUseComment = shouldWe;
+            Dataset.UseLcColumn = shouldWe;
+            Dataset.UseInterestRating = shouldWe;
+            Dataset.UseEMSLProposalUsers = shouldWe;
+            Dataset.UseComment = shouldWe;
         }
 
         private void LoadCartConfigsForCart(string cartName)

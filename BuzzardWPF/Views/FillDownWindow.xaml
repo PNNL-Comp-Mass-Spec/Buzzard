@@ -120,7 +120,7 @@
             <ToggleButton
                 Grid.Row="0"
                 Grid.Column="0"
-                IsChecked="{Binding Path=Dataset.ShouldUseOperator, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                IsChecked="{Binding Path=Dataset.UseOperator, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock
                 Grid.Row="0"
                 Grid.Column="1"
@@ -140,7 +140,7 @@
             <ToggleButton
                 Grid.Row="1"
                 Grid.Column="0"
-                IsChecked="{Binding Path=Dataset.ShouldUseDatasetType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                IsChecked="{Binding Path=Dataset.UseDatasetType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock
                 Grid.Row="1"
                 Grid.Column="1"
@@ -160,7 +160,7 @@
             <ToggleButton
                 Grid.Row="2"
                 Grid.Column="0"
-                IsChecked="{Binding Path=Dataset.ShouldUseSeparationType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                IsChecked="{Binding Path=Dataset.UseSeparationType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock
                 Grid.Row="2"
                 Grid.Column="1"
@@ -180,7 +180,7 @@
             <ToggleButton
                 Grid.Row="3"
                 Grid.Column="0"
-                IsChecked="{Binding Path=Dataset.ShouldUseLCColumn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                IsChecked="{Binding Path=Dataset.UseLcColumn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock
                 Grid.Row="3"
                 Grid.Column="1"
@@ -213,7 +213,7 @@
             <ToggleButton
                 Grid.Row="4"
                 Grid.Column="0"
-                IsChecked="{Binding Path=Dataset.ShouldUseInstrumentType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                IsChecked="{Binding Path=Dataset.UseInstrumentType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock
                 Grid.Row="4"
                 Grid.Column="1"
@@ -233,7 +233,7 @@
             <ToggleButton
                 Grid.Row="5"
                 Grid.Column="0"
-                IsChecked="{Binding Path=Dataset.ShouldUseCart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                IsChecked="{Binding Path=Dataset.UseCart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock
                 Grid.Row="5"
                 Grid.Column="1"
@@ -269,7 +269,7 @@
             <ToggleButton
                 Grid.Row="7"
                 Grid.Column="0"
-                IsChecked="{Binding Path=Dataset.ShouldUseInterestRating, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                IsChecked="{Binding Path=Dataset.UseInterestRating, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock
                 Grid.Row="7"
                 Grid.Column="1"
@@ -289,7 +289,7 @@
             <ToggleButton
                 Grid.Row="8"
                 Grid.Column="0"
-                IsChecked="{Binding Path=Dataset.ShouldUseEMSLUsageType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                IsChecked="{Binding Path=Dataset.UseEMSLUsageType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock
                 Grid.Row="8"
                 Grid.Column="1"
@@ -309,7 +309,7 @@
             <ToggleButton
                 Grid.Row="9"
                 Grid.Column="0"
-                IsChecked="{Binding Path=Dataset.ShouldUseEMSLProposalID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                IsChecked="{Binding Path=Dataset.UseEMSLProposalID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock
                 Grid.Row="9"
                 Grid.Column="1"
@@ -341,7 +341,7 @@
             <ToggleButton
                 Grid.Row="10"
                 Grid.Column="0"
-                IsChecked="{Binding Path=Dataset.ShouldUseEMSLProposalUsers, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                IsChecked="{Binding Path=Dataset.UseEMSLProposalUsers, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock
                 Grid.Row="10"
                 Grid.Column="1"
@@ -364,7 +364,7 @@
             <ToggleButton
                 Grid.Row="11"
                 Grid.Column="0"
-                IsChecked="{Binding Path=Dataset.ShouldUseExperimentName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                IsChecked="{Binding Path=Dataset.UseExperimentName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock
                 Grid.Row="11"
                 Grid.Column="1"
@@ -391,7 +391,7 @@
             <ToggleButton
                 Grid.Row="13"
                 Grid.Column="0"
-                IsChecked="{Binding Path=Dataset.ShouldUseComment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                IsChecked="{Binding Path=Dataset.UseComment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock
                 Grid.Row="13"
                 Grid.Column="1"
