@@ -84,12 +84,14 @@ namespace BuzzardWPF.Management
             if (DateTime.UtcNow.Subtract(LastLoadFromSqliteCacheUtc).TotalMinutes < 1 && !forceLoad)
                 return;
 
+            const bool forceReloadFromCache = true;
+
             //
             // Load Instrument Data
             //
             using (InstrumentData.SuppressChangeNotifications())
             {
-                var tempInstrumentData = SQLiteTools.GetInstrumentList(false);
+                var tempInstrumentData = SQLiteTools.GetInstrumentList(forceReloadFromCache);
                 if (tempInstrumentData == null)
                 {
                     ApplicationLogger.LogError(0, "Instrument list retrieval returned null.");
@@ -121,7 +123,7 @@ namespace BuzzardWPF.Management
             //
             // Load Operator Data
             //
-            var tempUserList = SQLiteTools.GetUserList(false);
+            var tempUserList = SQLiteTools.GetUserList(forceReloadFromCache);
             if (tempUserList == null)
                 ApplicationLogger.LogError(0, "User retrieval returned null.");
             else
@@ -136,7 +138,7 @@ namespace BuzzardWPF.Management
             //
             // Load Dataset Types
             //
-            var tempDatasetTypesList = SQLiteTools.GetDatasetTypeList(false);
+            var tempDatasetTypesList = SQLiteTools.GetDatasetTypeList(forceReloadFromCache);
             if (tempDatasetTypesList == null)
                 ApplicationLogger.LogError(0, "Dataset Types retrieval returned null.");
             else
@@ -151,7 +153,7 @@ namespace BuzzardWPF.Management
             //
             // Load Separation Types
             //
-            var tempSeparationTypesList = SQLiteTools.GetSepTypeList(false);
+            var tempSeparationTypesList = SQLiteTools.GetSepTypeList(forceReloadFromCache);
             if (tempSeparationTypesList == null)
                 ApplicationLogger.LogError(0, "Separation types retrieval returned null.");
             else
@@ -181,7 +183,7 @@ namespace BuzzardWPF.Management
             //
             // Load Cart Config Names
             //
-            var tempCartConfigNamesList = SQLiteTools.GetCartConfigNameList(false);
+            var tempCartConfigNamesList = SQLiteTools.GetCartConfigNameList(forceReloadFromCache);
             if (tempCartConfigNamesList == null)
                 ApplicationLogger.LogError(0, "LC Cart config names list retrieval returned null.");
             else
@@ -194,7 +196,7 @@ namespace BuzzardWPF.Management
             }
 
             // Load CartConfigNameMap
-            var tempCartConfigNameMap = SQLiteTools.GetCartConfigNameMap(false);
+            var tempCartConfigNameMap = SQLiteTools.GetCartConfigNameMap(forceReloadFromCache);
             if (tempCartConfigNameMap == null)
                 ApplicationLogger.LogError(0, "LC Cart config names map retrieval returned null.");
             else
@@ -205,7 +207,7 @@ namespace BuzzardWPF.Management
             //
             // Load column data
             //
-            var tempColumnData = SQLiteTools.GetColumnList(false);
+            var tempColumnData = SQLiteTools.GetColumnList(forceReloadFromCache);
             if (tempColumnData == null)
                 ApplicationLogger.LogError(0, "Column data list retrieval returned null.");
             else
