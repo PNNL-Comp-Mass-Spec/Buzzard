@@ -331,6 +331,7 @@
             <summary>
             Wrapper around generic retrieval method specifically for cart lists
             </summary>
+            <param name="force">Force reload of data from cache, rather than using the in-memory copy of it</param>
             <returns>List containing cart names</returns>
         </member>
         <member name="M:LcmsNetSQLiteTools.SQLiteTools.GetCartNameList">
@@ -343,30 +344,36 @@
             <summary>
             Wrapper around generic retrieval method specifically for cart config name lists
             </summary>
+            <param name="force">Force reload of data from cache, rather than using the in-memory copy of it</param>
             <returns>Mapping of cart names to possible cart config names</returns>
         </member>
         <member name="M:LcmsNetSQLiteTools.SQLiteTools.GetCartConfigNameList(System.Boolean)">
             <summary>
             Wrapper around generic retrieval method specifically for cart config name lists
             </summary>
+            <param name="force">Force reload of data from cache, rather than using the in-memory copy of it</param>
             <returns>List containing cart config names</returns>
         </member>
         <member name="M:LcmsNetSQLiteTools.SQLiteTools.GetCartConfigNameList(System.String,System.Boolean)">
             <summary>
             Get the cart config name list for a specific cart
             </summary>
+            <param name="cartName">Cart name</param>
+            <param name="force">Force reload of data from cache, rather than using the in-memory copy of it</param>
             <returns>List containing cart config names</returns>
         </member>
         <member name="M:LcmsNetSQLiteTools.SQLiteTools.GetColumnList(System.Boolean)">
             <summary>
             Wrapper around generic retrieval method specifically for LC column lists
             </summary>
+            <param name="force">Force reload of data from cache, rather than using the in-memory copy of it</param>
             <returns>List containing cart names</returns>
         </member>
         <member name="M:LcmsNetSQLiteTools.SQLiteTools.GetSepTypeList(System.Boolean)">
             <summary>
             Wrapper around generic retrieval method specifically for separation type lists
             </summary>
+            <param name="force">Force reload of data from cache, rather than using the in-memory copy of it</param>
             <returns>List containing separation types</returns>
         </member>
         <member name="M:LcmsNetSQLiteTools.SQLiteTools.GetDatasetList">
@@ -379,24 +386,28 @@
             <summary>
             Wrapper around generic retrieval method specifically for dataset type lists
             </summary>
+            <param name="force">Force reload of data from cache, rather than using the in-memory copy of it</param>
             <returns>List containing dataset types</returns>
         </member>
         <member name="M:LcmsNetSQLiteTools.SQLiteTools.GetWorkPackageMap(System.Boolean)">
             <summary>
             Wrapper around generic retrieval method specifically for Work Package lists
             </summary>
+            <param name="force">Force reload of data from cache, rather than using the in-memory copy of it</param>
             <returns>Mapping of Charge Codes to WorkPackageInfo objects</returns>
         </member>
         <member name="M:LcmsNetSQLiteTools.SQLiteTools.GetUserList(System.Boolean)">
             <summary>
             Gets user list from cache
             </summary>
+            <param name="force">Force reload of data from cache, rather than using the in-memory copy of it</param>
             <returns>List of user data</returns>
         </member>
         <member name="M:LcmsNetSQLiteTools.SQLiteTools.GetInstrumentList(System.Boolean)">
             <summary>
             Gets a list of instruments from the cache
             </summary>
+            <param name="force">Force reload of data from cache, rather than using the in-memory copy of it</param>
             <returns>List of instruments</returns>
         </member>
         <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveSelectedCartConfigName(System.String)">
