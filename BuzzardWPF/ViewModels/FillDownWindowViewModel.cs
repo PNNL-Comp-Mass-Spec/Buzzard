@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Reactive;
 using System.Reactive.Linq;
 using BuzzardWPF.Data;
@@ -14,44 +13,31 @@ namespace BuzzardWPF.ViewModels
     public class FillDownWindowViewModel : ReactiveObject
     {
         #region Attributes
-        private FilldownBuzzardDataset m_dataset;
-
-        private ReactiveList<string> m_operatorsSource;
-        private ReactiveList<string> m_instrumentsSource;
-        private ReactiveList<string> m_datasetTypesSource;
-        private ReactiveList<string> m_separationTypeSource;
-        private ReactiveList<string> m_cartNameListSource;
-        private ReactiveList<string> m_emslUsageTypeSource;
-        private ReactiveList<string> m_lcColumnSource;
-        private ReactiveList<string> m_emslProposalIDs;
-        private DMSData m_datasetDMS;
-        private ReactiveList<string> m_interestRatingSource;
-        private ReactiveList<ProposalUser> m_EMSLProposalUsersSource;
+        private ReactiveList<string> emslUsageTypeSource;
+        private ReactiveList<ProposalUser> emslProposalUsersSource;
         private string emslProposalUsersText;
 
         #endregion
 
-        public FillDownWindowViewModel()
+         [Obsolete("For WPF Design-time use only", true)]
+        public FillDownWindowViewModel() : this(new FilldownBuzzardDataset())
         {
-            OperatorsSource = new ReactiveList<string>();
-            InstrumentSource = new ReactiveList<string>();
-            DatasetTypesSource = new ReactiveList<string>();
-            SeparationTypeSource = new ReactiveList<string>();
+        }
 
-            CartNameListSource = new ReactiveList<string>();
+        public FillDownWindowViewModel(FilldownBuzzardDataset dataset)
+        {
             CartConfigNameListSource = new ReactiveList<string>();
-
             EmslUsageTypeSource = new ReactiveList<string>();
-            InterestRatingSource = DatasetManager.INTEREST_RATINGS_COLLECTION;
-            EMSLProposalIDs = DMS_DataAccessor.Instance.ProposalIDs;
-
             EMSLProposalUsersSource = new ReactiveList<ProposalUser>();
-            Dataset = new FilldownBuzzardDataset();
+            Dataset = dataset ?? new FilldownBuzzardDataset();
+
+            FillInEMSLProposalStuff();
 
             PickExperimentCommand = ReactiveCommand.Create(PickExperiment);
             UseAllCommand = ReactiveCommand.Create(() => UseAllSettings(true));
             UseNoneCommand = ReactiveCommand.Create(() => UseAllSettings(false));
 
+            this.WhenAnyValue(x => x.Dataset.DmsData, x => x.Dataset.DmsData.EMSLProposalID).Subscribe(_ => UpdateProposalUsersSource());
             this.WhenAnyValue(x => x.Dataset.DmsData.CartName).ObserveOn(RxApp.MainThreadScheduler).Subscribe(LoadCartConfigsForCart);
         }
 
@@ -61,92 +47,21 @@ namespace BuzzardWPF.ViewModels
         public ReactiveCommand<Unit, Unit> UseAllCommand { get; }
         public ReactiveCommand<Unit, Unit> UseNoneCommand { get; }
 
-        public ReactiveList<string> EMSLProposalIDs
-        {
-            get => m_emslProposalIDs;
-            set => this.RaiseAndSetIfChanged(ref m_emslProposalIDs, value);
-        }
+        public ReactiveList<string> EMSLProposalIDs => DMS_DataAccessor.Instance.ProposalIDs;
 
-        public ReactiveList<string> LCColumnSource
-        {
-            get => m_lcColumnSource;
-            set => this.RaiseAndSetIfChanged(ref m_lcColumnSource, value);
-        }
+        public ReactiveList<string> LCColumnSource => DMS_DataAccessor.Instance.ColumnData;
 
-        public FilldownBuzzardDataset Dataset
-        {
-            get => m_dataset;
-            set
-            {
-                if (m_dataset != value)
-                {
-                    if (m_dataset != null)
-                    {
-                        DatasetDMS = null;
-                        m_dataset.PropertyChanged -= DatasetPropertyChanged;
-                    }
+        public FilldownBuzzardDataset Dataset { get; }
 
-                    m_dataset = value;
-                    this.RaisePropertyChanged();
+        public ReactiveList<string> OperatorsSource => DMS_DataAccessor.Instance.OperatorData;
 
-                    if (m_dataset != null)
-                    {
-                        m_dataset.PropertyChanged += DatasetPropertyChanged;
-                        DatasetDMS = m_dataset.DmsData;
-                    }
+        public ReactiveList<string> InstrumentSource => DMS_DataAccessor.Instance.InstrumentData;
 
-                    FillInEMSLProposalStuff();
-                }
-            }
-        }
+        public ReactiveList<string> DatasetTypesSource => DMS_DataAccessor.Instance.DatasetTypes;
 
-        private DMSData DatasetDMS
-        {
-            get => m_datasetDMS;
-            set
-            {
-                if (m_datasetDMS != value)
-                {
-                    if (m_datasetDMS != null)
-                        m_datasetDMS.PropertyChanged -= DMSDataPropertyChanged;
+        public ReactiveList<string> SeparationTypeSource => DMS_DataAccessor.Instance.SeparationTypes;
 
-                    m_datasetDMS = value;
-
-                    if (m_datasetDMS != null)
-                        m_datasetDMS.PropertyChanged += DMSDataPropertyChanged;
-                }
-            }
-        }
-
-        public ReactiveList<string> OperatorsSource
-        {
-            get => m_operatorsSource;
-            set => this.RaiseAndSetIfChanged(ref m_operatorsSource, value);
-        }
-
-        public ReactiveList<string> InstrumentSource
-        {
-            get => m_instrumentsSource;
-            set => this.RaiseAndSetIfChanged(ref m_instrumentsSource, value);
-        }
-
-        public ReactiveList<string> DatasetTypesSource
-        {
-            get => m_datasetTypesSource;
-            set => this.RaiseAndSetIfChanged(ref m_datasetTypesSource, value);
-        }
-
-        public ReactiveList<string> SeparationTypeSource
-        {
-            get => m_separationTypeSource;
-            set => this.RaiseAndSetIfChanged(ref m_separationTypeSource, value);
-        }
-
-        public ReactiveList<string> CartNameListSource
-        {
-            get => m_cartNameListSource;
-            set => this.RaiseAndSetIfChanged(ref m_cartNameListSource, value);
-        }
+        public ReactiveList<string> CartNameListSource => DMS_DataAccessor.Instance.CartNames;
 
         /// <summary>
         /// List of cart config names associated with the current cart
@@ -156,48 +71,41 @@ namespace BuzzardWPF.ViewModels
 
         public ReactiveList<string> EmslUsageTypeSource
         {
-            get => m_emslUsageTypeSource;
-            set => this.RaiseAndSetIfChanged(ref m_emslUsageTypeSource, value);
+            get => emslUsageTypeSource;
+            set => this.RaiseAndSetIfChanged(ref emslUsageTypeSource, value);
         }
 
-        public ReactiveList<string> InterestRatingSource
-        {
-            get => m_interestRatingSource;
-            set => this.RaiseAndSetIfChanged(ref m_interestRatingSource, value);
-        }
+        public ReactiveList<string> InterestRatingSource => DatasetManager.INTEREST_RATINGS_COLLECTION;
 
         public ReactiveList<ProposalUser> EMSLProposalUsersSource
         {
-            get => m_EMSLProposalUsersSource;
-            set => this.RaiseAndSetIfChanged(ref m_EMSLProposalUsersSource, value);
+            get => emslProposalUsersSource;
+            private set => this.RaiseAndSetIfChanged(ref emslProposalUsersSource, value);
         }
 
         public string EmslProposalUsersText
         {
             get => emslProposalUsersText;
-            set => this.RaiseAndSetIfChanged(ref emslProposalUsersText, value);
+            private set => this.RaiseAndSetIfChanged(ref emslProposalUsersText, value);
         }
 
         #endregion
 
         #region Event Handlers
-        private void DatasetPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "DmsData")
-            {
-                DatasetDMS = Dataset.DmsData;
-            }
-        }
 
-        private void DMSDataPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void UpdateProposalUsersSource()
         {
-            if (e.PropertyName == "EMSLProposalID")
+            if (Dataset.DmsData == null)
             {
-                EMSLProposalUsersSource = DMS_DataAccessor.Instance.GetProposalUsers(DatasetDMS.EMSLProposalID);
-
-                EmslProposalUsersText = string.Empty;
-                Dataset.EMSLProposalUsers.Clear();
+                EMSLProposalUsersSource.Clear();
             }
+            else
+            {
+                EMSLProposalUsersSource = DMS_DataAccessor.Instance.GetProposalUsers(Dataset.DmsData.EMSLProposalID);
+            }
+
+            EmslProposalUsersText = string.Empty;
+            Dataset.EMSLProposalUsers.Clear();
         }
 
         private void PickExperiment()
@@ -221,10 +129,10 @@ namespace BuzzardWPF.ViewModels
         #region Methods
         private void FillInEMSLProposalStuff()
         {
-            if (Dataset == null)
+            if (Dataset?.DmsData == null)
                 return;
 
-            EMSLProposalUsersSource = DMS_DataAccessor.Instance.GetProposalUsers(DatasetDMS.EMSLProposalID);
+            EMSLProposalUsersSource = DMS_DataAccessor.Instance.GetProposalUsers(Dataset.DmsData.EMSLProposalID);
 
             var selectedText = string.Empty;
             foreach (var user in Dataset.EMSLProposalUsers)

@@ -411,16 +411,9 @@ namespace BuzzardWPF.ViewModels
             //
             // Prep the Filldown Window for use.
             //
-            var filldownWindowVm = new FillDownWindowViewModel()
+            var filldownWindowVm = new FillDownWindowViewModel(m_fillDownDataset)
             {
-                Dataset = m_fillDownDataset,
-                OperatorsSource = DmsData.OperatorData,
-                InstrumentSource = DmsData.InstrumentData,
-                DatasetTypesSource = DmsData.DatasetTypes,
-                SeparationTypeSource = DmsData.SeparationTypes,
-                CartNameListSource = DmsData.CartNames,
-                EmslUsageTypeSource = EmslUsageTypesSource,
-                LCColumnSource = DmsData.ColumnData
+                EmslUsageTypeSource = EmslUsageTypesSource
             };
             var filldownWindow = new FillDownWindow
             {
