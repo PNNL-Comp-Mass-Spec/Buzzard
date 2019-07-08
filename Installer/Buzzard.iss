@@ -54,7 +54,6 @@ Source: "bin\Release\PRISMWin.dll";                                   DestDir: "
 Source: "bin\Release\ReactiveUI*.dll";                                DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\Splat.dll";                                      DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\System.Data.SQLite.dll";                         DestDir: "{app}";     Flags: ignoreversion
-Source: "bin\Release\System.Drawing.Primitives.dll";                  DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\System.Reactive.dll";                            DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\System.ValueTuple.dll";                          DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\System.Windows.Controls.Input.Toolkit.dll";      DestDir: "{app}";     Flags: ignoreversion
@@ -87,7 +86,7 @@ begin
     // https://docs.microsoft.com/en-us/dotnet/framework/migration-guide/how-to-determine-which-versions-are-installed
     // http://kynosarges.org/DotNetVersion.html
     key := 'SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full';
-    minVersion := 394802;
+    minVersion := 461808;
     Result := false;
     NetFrameWorkInstalled := RegKeyExists(HKLM, key);
     if NetFrameWorkInstalled =true then
@@ -98,7 +97,7 @@ begin
 
     if Result =false then
     begin
-        MsgBox('This setup requires the .NET Framework version 4.6.2. Please install the .NET Framework and run this setup again.',
+        MsgBox('This setup requires the .NET Framework version 4.7.2. Please install the .NET Framework and run this setup again.',
             mbInformation, MB_OK);
     end;
 end;
