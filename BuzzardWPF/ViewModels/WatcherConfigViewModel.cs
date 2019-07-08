@@ -23,6 +23,8 @@ namespace BuzzardWPF.ViewModels
 
         #region Properties
 
+        private bool isNotMonitoring;
+
         public EmslUsageSelectionViewModel EmslUsageSelectionVm { get; } = new EmslUsageSelectionViewModel();
 
         public ReactiveCommand<Unit, Unit> SelectExperimentCommand { get; }
@@ -40,7 +42,6 @@ namespace BuzzardWPF.ViewModels
             get => isNotMonitoring;
             private set => this.RaiseAndSetIfChanged(ref isNotMonitoring, value);
         }
-        private bool isNotMonitoring;
 
         #endregion
 

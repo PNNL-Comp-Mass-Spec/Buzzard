@@ -380,7 +380,7 @@
                 Grid.Column="2"
                 Width="144"
                 MinHeight="32"
-                Margin="0,5,4.8,0"
+                Margin="2"
                 HorizontalAlignment="Right"
                 Command="{Binding PickExperimentCommand}"
                 Content="Experiments..."

@@ -53,8 +53,8 @@ namespace BuzzardWPF.Management
         }
 
         /// <summary>
-        /// This values tells the DatasetManager what name to use
-        /// for datasets that were found by the File Watcher.
+        /// This values tells the DatasetManager what experiment name to use
+        /// for datasets that were found by the File Watcher, with no matching run request
         /// </summary>
         /// <remarks>
         /// The Watcher Config control is responsible for setting this.
@@ -300,7 +300,7 @@ namespace BuzzardWPF.Management
         /// A setting can become invalid when it's removed as an option from the
         /// database.
         /// </remarks>
-        private string CheckSetting(string setting, ReactiveList<string> options, string errorIntro)
+        private string CheckSetting(string setting, IList<string> options, string errorIntro)
         {
             var s = " was not found when restoring settings for the File Watcher Configuration.";
 
