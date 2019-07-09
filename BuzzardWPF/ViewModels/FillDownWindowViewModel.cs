@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Windows.Media;
 using BuzzardWPF.Data;
 using BuzzardWPF.Management;
 using BuzzardWPF.Views;
@@ -16,6 +17,9 @@ namespace BuzzardWPF.ViewModels
         private ReactiveList<string> emslUsageTypeSource;
         private ReactiveList<ProposalUser> emslProposalUsersSource;
         private string emslProposalUsersText;
+        private string workPackageToolTipText;
+        private bool workPackageWarning = false;
+        private bool workPackageError = false;
 
         #endregion
 
@@ -34,16 +38,19 @@ namespace BuzzardWPF.ViewModels
             FillInEMSLProposalStuff();
 
             PickExperimentCommand = ReactiveCommand.Create(PickExperiment);
+            PickWorkPackageCommand = ReactiveCommand.Create(PickWorkPackage);
             UseAllCommand = ReactiveCommand.Create(() => UseAllSettings(true));
             UseNoneCommand = ReactiveCommand.Create(() => UseAllSettings(false));
 
             this.WhenAnyValue(x => x.Dataset.DmsData, x => x.Dataset.DmsData.EMSLProposalID).Subscribe(_ => UpdateProposalUsersSource());
+            this.WhenAnyValue(x => x.Dataset.DmsData, x => x.Dataset.DmsData.WorkPackage).Subscribe(_ => UpdateWorkPackageToolTip());
             this.WhenAnyValue(x => x.Dataset.DmsData.CartName).ObserveOn(RxApp.MainThreadScheduler).Subscribe(LoadCartConfigsForCart);
         }
 
         #region Properties
 
         public ReactiveCommand<Unit, Unit> PickExperimentCommand { get; }
+        public ReactiveCommand<Unit, Unit> PickWorkPackageCommand { get; }
         public ReactiveCommand<Unit, Unit> UseAllCommand { get; }
         public ReactiveCommand<Unit, Unit> UseNoneCommand { get; }
 
@@ -89,6 +96,24 @@ namespace BuzzardWPF.ViewModels
             private set => this.RaiseAndSetIfChanged(ref emslProposalUsersText, value);
         }
 
+        public string WorkPackageToolTipText
+        {
+            get => workPackageToolTipText;
+            private set => this.RaiseAndSetIfChanged(ref workPackageToolTipText, value);
+        }
+
+        public bool WorkPackageWarning
+        {
+            get => workPackageWarning;
+            private set => this.RaiseAndSetIfChanged(ref workPackageWarning, value);
+        }
+
+        public bool WorkPackageError
+        {
+            get => workPackageError;
+            private set => this.RaiseAndSetIfChanged(ref workPackageError, value);
+        }
+
         #endregion
 
         #region Event Handlers
@@ -108,6 +133,53 @@ namespace BuzzardWPF.ViewModels
             Dataset.EMSLProposalUsers.Clear();
         }
 
+        private void UpdateWorkPackageToolTip()
+        {
+            if (Dataset.DmsData == null || string.IsNullOrWhiteSpace(Dataset.DmsData.WorkPackage))
+            {
+                WorkPackageToolTipText = null;
+                WorkPackageWarning = false;
+                WorkPackageError = false;
+                return;
+            }
+
+            if (!DMS_DataAccessor.Instance.WorkPackageMap.TryGetValue(Dataset.DmsData.WorkPackage, out var workPackage))
+            {
+                WorkPackageToolTipText = "Work Package not found";
+                WorkPackageWarning = false;
+                WorkPackageError = true;
+                return;
+            }
+
+            WorkPackageError = false;
+            var textData = $"{workPackage.ChargeCode}: {workPackage.Title}\n{workPackage.SubAccount}: {workPackage.WorkBreakdownStructure}\nOwner: {workPackage.OwnerName} ({workPackage.OwnerUserName})";
+
+            if (workPackage.State.IndexOf("Inactive", StringComparison.OrdinalIgnoreCase) > -1)
+            {
+                WorkPackageWarning = true;
+                textData += "\n\nWarning: Work package is inactive.";
+            }
+            else
+            {
+                if (workPackage.State.IndexOf("unused", StringComparison.OrdinalIgnoreCase) > -1)
+                {
+                    WorkPackageWarning = true;
+                    textData += "\n\nWarning: Work package has not been previously used in DMS";
+                }
+                else if (workPackage.State.IndexOf("old", StringComparison.OrdinalIgnoreCase) > -1)
+                {
+                    WorkPackageWarning = true;
+                    textData += "\n\nWarning: Work package has been marked \"old\"";
+                }
+                else
+                {
+                    WorkPackageWarning = false;
+                }
+            }
+
+            WorkPackageToolTipText = textData;
+        }
+
         private void PickExperiment()
         {
             var dialogVm = new ExperimentsViewerViewModel();
@@ -122,6 +194,22 @@ namespace BuzzardWPF.ViewModels
 
             var selectedExperiment = dialogVm.SelectedExperiment;
             Dataset.DmsData.Experiment = selectedExperiment.Experiment;
+        }
+
+        private void PickWorkPackage()
+        {
+            var dialogVm = new WorkPackageSelectionViewModel();
+            var dialog = new WorkPackageSelectionWindow()
+            {
+                DataContext = dialogVm
+            };
+
+            var stop = dialog.ShowDialog() != true;
+            if (stop)
+                return;
+
+            var selectedWorkPackage = dialogVm.SelectedWorkPackage;
+            Dataset.DmsData.WorkPackage = selectedWorkPackage.ChargeCode;
         }
 
         #endregion

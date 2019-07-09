@@ -438,6 +438,12 @@
                 Header="Interest Rating"
                 IsReadOnly="True" />
 
+            <DataGridTextColumn
+                MinWidth="80"
+                Binding="{Binding DmsData.WorkPackage}"
+                Header="WP#"
+                IsReadOnly="True" />
+
             <!--  File Information  -->
             <DataGridTextColumn
                 Binding="{Binding Path=FileSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource FileSizeConverter}}"

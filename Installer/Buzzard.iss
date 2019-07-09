@@ -45,6 +45,7 @@ Name: "{app}\x86"
 ; Exe and supporting libraries
 Source: "bin\Release\BuzzardWPF.exe";                                 DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\BuzzardWPF.exe.config";                          DestDir: "{app}";     Flags: ignoreversion
+Source: "bin\Release\DynamicData.dll";                                DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\LcmsNetData.dll";                                DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\LcmsNetDmsTools.dll";                            DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\LcmsNetSQLiteTools.dll";                         DestDir: "{app}";     Flags: ignoreversion
@@ -55,6 +56,8 @@ Source: "bin\Release\ReactiveUI*.dll";                                DestDir: "
 Source: "bin\Release\Splat.dll";                                      DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\System.Data.SQLite.dll";                         DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\System.Reactive.dll";                            DestDir: "{app}";     Flags: ignoreversion
+Source: "bin\Release\System.Runtime.CompilerServices.Unsafe.dll";     DestDir: "{app}";     Flags: ignoreversion
+Source: "bin\Release\System.Threading.Tasks.Extensions.dll";          DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\System.ValueTuple.dll";                          DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\System.Windows.Controls.Input.Toolkit.dll";      DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\System.Windows.Controls.Layout.Toolkit.dll";     DestDir: "{app}";     Flags: ignoreversion

@@ -74,6 +74,9 @@
     <Setting Name="FilldownSeparationType" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="FillDownWorkPackage" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
     <Setting Name="WatcherCartName" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
@@ -108,6 +111,9 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="WatcherSeparationType" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="WatcherWorkPackage" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="WatcherInterestRating" Type="System.String" Scope="User">

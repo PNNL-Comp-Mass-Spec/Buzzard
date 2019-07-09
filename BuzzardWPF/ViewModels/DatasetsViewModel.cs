@@ -488,6 +488,11 @@ namespace BuzzardWPF.ViewModels
                     dataset.DmsData.CommentAddition = filldownData.DmsData.CommentAddition;
                 }
 
+                if (filldownData.UseWorkPackage)
+                {
+                    dataset.DmsData.WorkPackage = filldownData.DmsData.WorkPackage;
+                }
+
                 // We might have to add a few extra checks on these guys since they're
                 // related to eachother when it comes to use.
                 // -FCT

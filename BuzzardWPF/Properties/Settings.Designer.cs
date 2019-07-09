@@ -313,6 +313,18 @@ namespace BuzzardWPF.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string FillDownWorkPackage {
+            get {
+                return ((string)(this["FillDownWorkPackage"]));
+            }
+            set {
+                this["FillDownWorkPackage"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string WatcherCartName {
             get {
                 return ((string)(this["WatcherCartName"]));
@@ -450,6 +462,18 @@ namespace BuzzardWPF.Properties {
             }
             set {
                 this["WatcherSeparationType"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string WatcherWorkPackage {
+            get {
+                return ((string)(this["WatcherWorkPackage"]));
+            }
+            set {
+                this["WatcherWorkPackage"] = value;
             }
         }
         

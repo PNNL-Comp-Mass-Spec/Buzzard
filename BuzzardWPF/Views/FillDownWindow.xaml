@@ -107,6 +107,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
 
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
@@ -387,17 +388,59 @@
                 FontFamily="Arial"
                 Style="{StaticResource SimpleButtonStyle}" />
 
-            <!--  Comment  -->
+            <!--  Work Package  -->
             <ToggleButton
                 Grid.Row="13"
                 Grid.Column="0"
-                IsChecked="{Binding Path=Dataset.UseComment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                IsChecked="{Binding Path=Dataset.UseWorkPackage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock
                 Grid.Row="13"
                 Grid.Column="1"
+                Text="Work Package" />
+            <DockPanel Grid.Row="13" Grid.Column="2" LastChildFill="True">
+                <Button
+                    DockPanel.Dock="Right"
+                    Width="90"
+                    MinHeight="32"
+                    Margin="2"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Right"
+                    Command="{Binding PickWorkPackageCommand}"
+                    Content="Select"
+                    FontFamily="Arial"
+                    Style="{StaticResource SimpleButtonStyle}" />
+                <TextBox
+                    Margin="2"
+                    FontSize="15"
+                    VerticalContentAlignment="Center"
+                    Text="{Binding Path=Dataset.DmsData.WorkPackage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    ToolTip="{Binding WorkPackageToolTipText}">
+                    <TextBox.Style>
+                        <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding WorkPackageWarning}" Value="True">
+                                    <Setter Property="Background" Value="Yellow" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding WorkPackageError}" Value="True">
+                                    <Setter Property="Background" Value="OrangeRed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBox.Style>
+                </TextBox>
+            </DockPanel>
+
+            <!--  Comment  -->
+            <ToggleButton
+                Grid.Row="14"
+                Grid.Column="0"
+                IsChecked="{Binding Path=Dataset.UseComment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBlock
+                Grid.Row="14"
+                Grid.Column="1"
                 Text="Comment" />
             <TextBox
-                Grid.Row="13"
+                Grid.Row="14"
                 Grid.RowSpan="2"
                 Grid.Column="2"
                 Margin="2,2,2,6"

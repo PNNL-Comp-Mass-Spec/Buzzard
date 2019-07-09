@@ -313,6 +313,9 @@ namespace BuzzardWPF.Management
             if (string.IsNullOrWhiteSpace(WatcherMetadata.ExperimentName))
                 missingFields.Add(EXPERIMENT_NAME_DESCRIPTION);
 
+            if (string.IsNullOrWhiteSpace(WatcherMetadata.WorkPackage))
+                missingFields.Add("Work Package");
+
             if (string.IsNullOrWhiteSpace(WatcherMetadata.LCColumn))
                 missingFields.Add("LC Column");
             else if (!DMS_DataAccessor.Instance.ColumnData.Contains(WatcherMetadata.LCColumn))

@@ -1,0 +1,62 @@
+﻿<Window x:Class="BuzzardWPF.Views.WorkPackageSelectionWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:views="clr-namespace:BuzzardWPF.Views"
+        xmlns:viewModels="clr-namespace:BuzzardWPF.ViewModels"
+        Title="Work Packages"
+        Width="800"
+        Height="450"
+        MinWidth="400"
+        MinHeight="300"
+        ShowInTaskbar="False"
+        SnapsToDevicePixels="True"
+        Topmost="True"
+        UseLayoutRounding="True"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="ToolWindow"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance {x:Type viewModels:WorkPackageSelectionViewModel}, IsDesignTimeCreatable=True}">
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="MinHeight" Value="32" />
+            <Setter Property="MinWidth" Value="95" />
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="auto" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+
+        <views:WorkPackageSelectionView
+            Grid.Row="0"
+            Grid.Column="0"
+            Grid.ColumnSpan="3" />
+
+        <Button
+            Grid.Row="1"
+            Grid.Column="1"
+            MinHeight="32"
+            Click="Button_Click"
+            Content="Apply to Sets"
+            FontFamily="Arial"
+            IsEnabled="{Binding WorkPackageSelected}"
+            Style="{StaticResource SimpleButtonStyle}" />
+        <Button
+            Grid.Row="1"
+            Grid.Column="2"
+            MinHeight="32"
+            Content="Cancel"
+            FontFamily="Arial"
+            IsCancel="True"
+            Click="Cancel_OnClick"
+            Style="{StaticResource SimpleButtonStyle}" />
+    </Grid>
+</Window>

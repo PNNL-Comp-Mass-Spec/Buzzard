@@ -587,6 +587,9 @@ namespace BuzzardWPF.Management
                 if (string.IsNullOrWhiteSpace(dataset.DmsData.Experiment))
                     dataset.DmsData.Experiment = WatcherMetadata.ExperimentName;
 
+                if (string.IsNullOrWhiteSpace(dataset.DmsData.WorkPackage))
+                    dataset.DmsData.WorkPackage = WatcherMetadata.WorkPackage;
+
                 if (string.IsNullOrWhiteSpace(dataset.ColumnName))
                     dataset.ColumnName = WatcherMetadata.LCColumn;
 

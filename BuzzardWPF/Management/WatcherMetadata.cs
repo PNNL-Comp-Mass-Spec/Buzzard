@@ -15,6 +15,7 @@ namespace BuzzardWPF.Management
         private string cartName;
         private string lcColumn;
         private string experimentName;
+        private string workPackage;
         private string instrument;
         private string instrumentOperator;
         private string cartConfigName;
@@ -63,6 +64,19 @@ namespace BuzzardWPF.Management
         {
             get => experimentName;
             set => this.RaiseAndSetIfChangedMonitored(ref experimentName, value);
+        }
+
+        /// <summary>
+        /// This values tells the DatasetManager what work package to use
+        /// for datasets that were found by the File Watcher, with no matching run request
+        /// </summary>
+        /// <remarks>
+        /// The Watcher Config control is responsible for setting this.
+        /// </remarks>
+        public string WorkPackage
+        {
+            get => workPackage;
+            set => this.RaiseAndSetIfChangedMonitored(ref workPackage, value);
         }
 
         /// <summary>
@@ -215,6 +229,7 @@ namespace BuzzardWPF.Management
             Settings.Default.WatcherEMSLUsageType = EMSLUsageType;
             Settings.Default.WatcherEMSLProposalID = EMSLProposalID;
             Settings.Default.WatcherInterestRating = InterestRating;
+            Settings.Default.WatcherWorkPackage = WorkPackage;
 
             var selectedEmslUsers = new StringCollection();
             foreach (var user in EMSLProposalUsers)
@@ -287,6 +302,11 @@ namespace BuzzardWPF.Management
                 Settings.Default.WatcherColumn,
                 DMS_DataAccessor.Instance.ColumnData,
                 "LC Column");
+
+            WorkPackage = CheckSetting(
+                Settings.Default.WatcherWorkPackage,
+                DMS_DataAccessor.Instance.WorkPackages.Select(x => x.ChargeCode).ToList(),
+                "Work Package");
 
             SettingsChanged = false;
         }

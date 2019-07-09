@@ -228,6 +228,17 @@ namespace BuzzardWPF.Management
             else
                 Experiments = experimentList;
 
+            // Load Work Packages
+            var workPackageMap = SQLiteTools.GetWorkPackageMap(forceReloadFromCache);
+            if (workPackageMap == null)
+                ApplicationLogger.LogError(0, "Work package list retrieval returned null.");
+            else
+            {
+                WorkPackageMap = workPackageMap;
+                WorkPackages.Clear();
+                WorkPackages.AddRange(WorkPackageMap.Values.OrderBy(x => x.ChargeCode));
+            }
+
             //
             // Load datasets
             //
@@ -719,6 +730,13 @@ namespace BuzzardWPF.Management
         public Dictionary<string, List<string>> CartConfigNameMap { get; private set; } = new Dictionary<string, List<string>>();
 
         /// <summary>
+        /// Key is charge code, value is all the details
+        /// </summary>
+        public Dictionary<string, WorkPackageInfo> WorkPackageMap { get; private set; } = new Dictionary<string, WorkPackageInfo>();
+
+        public List<WorkPackageInfo> WorkPackages { get; } = new List<WorkPackageInfo>();
+
+        /// <summary>
         /// List of DMS dataset names
         /// </summary>
         /// <remarks>Sorted set for fast lookups (not-case sensitive)</remarks>
@@ -728,10 +746,8 @@ namespace BuzzardWPF.Management
         /// List of DMS experiment names
         /// </summary>
         /// <remarks>
-        /// This isn't meant to be bound to directly, which is why it's a
-        /// list and not an ReactiveList. Due to the large number
-        /// of items this tends to hold, I would advise people to try to
-        /// filter it down a bit first before inserting it into an
+        /// This isn't meant to be bound to directly, which is why it's a list and not an ReactiveList. Due to the large number
+        /// of items this tends to hold, I would advise trying to filter it down a bit first before inserting it into an
         /// ReactiveList for binding.
         /// </remarks>
         public List<ExperimentData> Experiments

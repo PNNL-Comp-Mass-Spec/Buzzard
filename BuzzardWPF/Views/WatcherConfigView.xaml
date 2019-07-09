@@ -274,6 +274,7 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto" />
                         <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="auto" SharedSizeGroup="A" />
@@ -305,6 +306,48 @@
                         FontFamily="Arial"
                         IsEnabled="{Binding Path=IsNotMonitoring}"
                         Style="{StaticResource SimpleButtonStyle}" />
+
+                    <Grid Grid.Row="2" Grid.Column="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock
+                            Grid.Column="0"
+                            Style="{StaticResource TextBlockStyle}"
+                            Text="Work Package:" />
+
+                        <Button
+                            Grid.Column="1"
+                            Width="80"
+                            Margin="2"
+                            HorizontalAlignment="Right"
+                            Command="{Binding SelectWorkPackageCommand}"
+                            Content="Select"
+                            FontFamily="Arial"
+                            IsEnabled="{Binding Path=IsNotMonitoring}"
+                            Style="{StaticResource SimpleButtonStyle}" />
+                    </Grid>
+
+                    <TextBox
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        IsEnabled="{Binding Path=IsNotMonitoring}"
+                        ToolTip="{Binding WorkPackageToolTipText}"
+                        Text="{Binding Path=WatcherMetadata.WorkPackage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        <TextBox.Style>
+                            <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource TextBoxStyle}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding WorkPackageWarning}" Value="True">
+                                        <Setter Property="Background" Value="Yellow" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding WorkPackageError}" Value="True">
+                                        <Setter Property="Background" Value="OrangeRed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
                 </Grid>
             </GroupBox>
 

@@ -25,6 +25,7 @@ namespace BuzzardWPF.Data
         private bool useComment;
         private bool useInterestRating;
         private bool useEMSLProposalUsers;
+        private bool useWorkPackage;
         #endregion
 
         #region Initialize
@@ -40,6 +41,7 @@ namespace BuzzardWPF.Data
             UseOperator = true;
             UseSeparationType = true;
             UseExperimentName = true;
+            UseWorkPackage = true;
 
             UseLcColumn = true;
             UseInterestRating = true;
@@ -131,6 +133,12 @@ namespace BuzzardWPF.Data
             set => this.RaiseAndSetIfChanged(ref useEMSLProposalUsers, value);
         }
 
+        public bool UseWorkPackage
+        {
+            get => useWorkPackage;
+            set => this.RaiseAndSetIfChanged(ref useWorkPackage, value);
+        }
+
         public bool SettingsChanged { get; set; }
 
         #endregion
@@ -154,6 +162,7 @@ namespace BuzzardWPF.Data
             Settings.Default.FilldownEMSLUsageType = DmsData.EMSLUsageType;
             Settings.Default.FilldownEMSLProposal = DmsData.EMSLProposalID;
             Settings.Default.FilldownExperimentName = DmsData.Experiment;
+            Settings.Default.FillDownWorkPackage = DmsData.WorkPackage;
 
             var selectedEmslUsers = new StringCollection();
             foreach (var user in EMSLProposalUsers)
@@ -179,6 +188,7 @@ namespace BuzzardWPF.Data
             DmsData.EMSLUsageType = Settings.Default.FilldownEMSLUsageType;
             DmsData.EMSLProposalID = Settings.Default.FilldownEMSLProposal;
             DmsData.DatasetType = Settings.Default.FilldownDatasetType;
+            DmsData.WorkPackage = Settings.Default.FillDownWorkPackage;
 
             List<string> selectedUsers;
             if (Settings.Default.FilldownEMSLUsers == null)
