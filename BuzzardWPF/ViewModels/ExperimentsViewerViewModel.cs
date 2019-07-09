@@ -17,7 +17,6 @@ namespace BuzzardWPF.ViewModels
         private ExperimentData m_selectedExperiment;
 
         private List<ExperimentData> m_experimentList;
-        private List<string> m_experimentNameList;
         private List<string> m_organismNameList;
         private List<string> m_researcherList;
         private List<string> m_reason;
@@ -64,10 +63,8 @@ namespace BuzzardWPF.ViewModels
             // number of experiments to insert into the UI
             m_researcherList = m_experimentList.Select(x => x.Researcher.Trim()).Distinct(stringEqualityDeterminer).ToList();
             m_organismNameList = m_experimentList.Select(x => x.Organism.Trim()).Distinct(stringEqualityDeterminer).ToList();
-            m_experimentNameList = m_experimentList.Select(x => x.Experiment.Trim()).Distinct(stringEqualityDeterminer).ToList();
             m_reason = m_experimentList.Select(x => x.Reason).Distinct(stringEqualityDeterminer).ToList();
 
-            m_experimentNameList.Sort();
             m_organismNameList.Sort();
             m_reason.Sort();
             m_researcherList.Sort();
@@ -164,7 +161,7 @@ namespace BuzzardWPF.ViewModels
                     break;
 
                 case FilterOption.Experiment:
-                    AutoCompleteBoxItems = m_experimentNameList;
+                    AutoCompleteBoxItems = new List<string>();
                     break;
 
                 case FilterOption.Organism:

@@ -1,5 +1,85 @@
 Buzzard Change Log
 
+Version 1.9.0.0; July 8, 2019
+	- Add capability to set work package numbers for datasets that are not matched to a DMS requested run
+	- Bump .NET Framework requirement to .NET 4.7.2 (because otherwise the installer must have 60+ DLLs)
+	- Code refactoring and some UI components rearranged.
+
+Version 1.8.3.7; July 3, 2019
+	- Ensure the "dataset extension" starts with a "." (period)
+	- Monitor: Improve the handling and detection of changes for directory-style datasets
+	- Fix problems with data (like LC Columns) not updating properly from the SQLite cache
+
+Version 1.8.3.6; June 28, 2019
+	- Block characters not allowed in filenames in the "dataset extension" textbox
+
+Version 1.8.3.5; June 17, 2019
+	- Properly close down Buzzard when running an update so the user isn't prompted to "close running programs" by the installer.
+
+Version 1.8.3.4; June 14, 2019
+	- Trust the locally-set cart name and cart config over what is set on a requested run
+
+Version 1.8.3.3; June 13, 2019
+	- Fix a problem found with the previous release, with trigger file creation
+	- Change how the version date is stored in code so that updating it isn't missed so often
+
+Version 1.8.3.2; June 12, 2019
+	- Improve logging and cleanup of unhandled exceptions (log them, and close "gracefully", rather than displaying a dialog and maybe locking up acquisition software, like what occurred on an Agilent GC-MS)
+	- More code refactoring
+
+Version 1.8.3.1; June 3, 2019
+	- Monitor: Allow setting the dataset rating to a specified value
+	- Monitor: Always default QC dataset ratings to "Released"
+	- Check dataset files for file locks owned by acquisition programs to prevent uploading datasets still being acquired.
+	- More code refactoring
+
+Version 1.8.3.0; May 18, 2019
+	- Persist some previously-unsaved settings.
+	- More code refactoring and cleanup
+	- Link together the search settings common to both "Search" and "Monitor" modes
+
+Version 1.8.2.5; May 16, 2019
+	- Significant code refactoring to consolidate duplicated code and improve readability.
+	- Rename a few persisted settings, and add method to automatically handle upgrading from old versions of Buzzard without losing settings.
+
+Version 1.8.2.4; May 10, 2019
+	- Update the trigger file countdown display every second (outside of the dataset monitoring 5 second interval)
+
+Version 1.8.2.3; May 9, 2019
+	- Fix an issue with getting the size of some files
+
+Version 1.8.2.2; May 9, 2019
+	- Fix an incorrect dataset status display text
+
+Version 1.8.2.1; May 9, 2019
+	- Fix a bug in determining the last write time for directory-style datasets
+
+Version 1.8.2.0; May 9, 2019
+	- Add ability to add/remove datasets from monitoring
+	- Code refactoring to improve readability.
+
+Version 1.8.1.6; May 8, 2019
+	- Monitor: Instead of checking for new datasets every 30 seconds, only check once per minute.
+	- Make the dataset size more readable (show units like B, KB, MB, GB)
+	- Monitor: Ensure datasets don't change for 1 minute before beginning the trigger file creation countdown.
+	- Improve how the dataset size/last write time is determined.
+
+Version 1.8.1.5; May 8, 2019
+	- For monitored datasets, only refresh the size/last write time every 5 seconds, instead of trying every 0.5 seconds
+
+Version 1.8.1.4; May 8, 2019
+	- Check directory contents to determine last write time for directory-style datasets
+	- Display the DMS data refresh information in the GUI.
+
+Version 1.8.1.3; May 7, 2019
+	- Fix calculating the dataset sizes for directory-style datasets
+
+Version 1.8.1.2; April 4, 2019
+	- Rearrange and improve labels on the "Create (QC)? Dataset on no run request match" checkboxes
+
+Version 1.8.1.1; January 24, 2019
+	- Logging improvements (trying to avoid exceptions in the logging)
+
 Version 1.8.1.0; January 4, 2019
 	- Create a concrete 'copy' of the datasets list when checking for existence of a dataset to avoid enumeration errors
 	- Reduce how often the watcher/monitor checks for new files or file changes (was happening ~every second, now set to happen every 30 seconds)
