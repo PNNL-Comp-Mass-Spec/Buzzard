@@ -1,5 +1,8 @@
 Buzzard Change Log
 
+Version 1.9.1.0; July 10, 2019
+	- Actually add the Work Package number to the trigger files
+
 Version 1.9.0.0; July 8, 2019
 	- Add capability to set work package numbers for datasets that are not matched to a DMS requested run
 	- Bump .NET Framework requirement to .NET 4.7.2 (because otherwise the installer must have 60+ DLLs)
