@@ -40,7 +40,7 @@ namespace BuzzardWPF.Management
         private int triggerFileCreationWaitTime;
 
         public const string EXPERIMENT_NAME_DESCRIPTION = "Experiment";
-        public const string QC_MONITORS_DESCRIPTION = "QC Monitor(s) (or uncheck 'Create Trigger For QC's ?')";
+        public const string QC_MONITORS_DESCRIPTION = "QC Monitor(s) (or uncheck uploading \"QCs with 'QC Samples' metadata\")";
 
         public bool SettingsChanged { get; set; }
 
