@@ -1,5 +1,8 @@
 Buzzard Change Log
 
+Version 1.9.2.0; July 11, 2019
+	- Allow "none" as a valid work package
+
 Version 1.9.1.0; July 10, 2019
 	- Actually add the Work Package number to the trigger files
 

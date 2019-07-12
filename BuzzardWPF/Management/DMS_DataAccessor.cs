@@ -234,6 +234,11 @@ namespace BuzzardWPF.Management
                 ApplicationLogger.LogError(0, "Work package list retrieval returned null.");
             else
             {
+                if (!workPackageMap.ContainsKey("none"))
+                {
+                    workPackageMap.Add("none", new WorkPackageInfo("none", "Active", "none", "none", "No Work Package", "none", "none"));
+                }
+
                 WorkPackageMap = workPackageMap;
                 WorkPackages.Clear();
                 WorkPackages.AddRange(WorkPackageMap.Values.OrderBy(x => x.ChargeCode));

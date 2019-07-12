@@ -36,6 +36,7 @@ namespace BuzzardWPF.Management
             SeparationType = null;
             EMSLUsageType = null;
             EMSLProposalID = null;
+            WorkPackage = "none";
 
             this.WhenAnyValue(x => x.EMSLProposalUsers.Count).Subscribe(_ => SettingsChanged = true);
         }
@@ -307,6 +308,11 @@ namespace BuzzardWPF.Management
                 Settings.Default.WatcherWorkPackage,
                 DMS_DataAccessor.Instance.WorkPackages.Select(x => x.ChargeCode).ToList(),
                 "Work Package");
+
+            if (string.IsNullOrWhiteSpace(WorkPackage))
+            {
+                WorkPackage = "none";
+            }
 
             SettingsChanged = false;
         }

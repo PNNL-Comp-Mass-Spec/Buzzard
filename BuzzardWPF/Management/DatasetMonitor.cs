@@ -40,6 +40,7 @@ namespace BuzzardWPF.Management
         private int triggerFileCreationWaitTime;
 
         public const string EXPERIMENT_NAME_DESCRIPTION = "Experiment";
+        public const string WorkPackageDescription = "Work Package (use 'none' for no work package)";
         public const string QC_MONITORS_DESCRIPTION = "QC Monitor(s) (or uncheck uploading \"QCs with 'QC Samples' metadata\")";
 
         public bool SettingsChanged { get; set; }
@@ -314,7 +315,7 @@ namespace BuzzardWPF.Management
                 missingFields.Add(EXPERIMENT_NAME_DESCRIPTION);
 
             if (string.IsNullOrWhiteSpace(WatcherMetadata.WorkPackage))
-                missingFields.Add("Work Package");
+                missingFields.Add(WorkPackageDescription);
 
             if (string.IsNullOrWhiteSpace(WatcherMetadata.LCColumn))
                 missingFields.Add("LC Column");

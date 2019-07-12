@@ -48,6 +48,8 @@ namespace BuzzardWPF.Data
             UseEMSLProposalUsers = true;
             UseComment = true;
 
+            DmsData.WorkPackage = "none";
+
             // Monitors for propertyChanged events
             this.WhenAnyValue(x => x.DmsData, x => x.DmsData.DatasetType, x => x.DmsData.EMSLUsageType, x => x.DmsData.EMSLProposalID)
                 .Subscribe(x => SettingsChanged = true);
@@ -189,6 +191,11 @@ namespace BuzzardWPF.Data
             DmsData.EMSLProposalID = Settings.Default.FilldownEMSLProposal;
             DmsData.DatasetType = Settings.Default.FilldownDatasetType;
             DmsData.WorkPackage = Settings.Default.FillDownWorkPackage;
+
+            if (string.IsNullOrWhiteSpace(DmsData.WorkPackage))
+            {
+                DmsData.WorkPackage = "none";
+            }
 
             List<string> selectedUsers;
             if (Settings.Default.FilldownEMSLUsers == null)

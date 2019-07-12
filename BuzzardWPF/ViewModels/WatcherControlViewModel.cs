@@ -398,6 +398,12 @@ namespace BuzzardWPF.ViewModels
                 {
                     missingData.Remove(DatasetMonitor.QC_MONITORS_DESCRIPTION);
                 }
+
+                if (!Monitor.QcCreateTriggerOnDMSFail && !Monitor.CreateTriggerOnDMSFail &&
+                    missingData.Contains(DatasetMonitor.WorkPackageDescription))
+                {
+                    missingData.Remove(DatasetMonitor.WorkPackageDescription);
+                }
             }
 
             if (missingData.Count > 0)

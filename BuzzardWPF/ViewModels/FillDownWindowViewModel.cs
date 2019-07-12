@@ -161,7 +161,12 @@ namespace BuzzardWPF.ViewModels
             }
             else
             {
-                if (workPackage.State.IndexOf("unused", StringComparison.OrdinalIgnoreCase) > -1)
+                if (workPackage.ChargeCode.Equals("none", StringComparison.OrdinalIgnoreCase))
+                {
+                    WorkPackageWarning = true;
+                    textData += "\n\nWarning: Work package is needed for accurate tracking of instrument use";
+                }
+                else if (workPackage.State.IndexOf("unused", StringComparison.OrdinalIgnoreCase) > -1)
                 {
                     WorkPackageWarning = true;
                     textData += "\n\nWarning: Work package has not been previously used in DMS";
