@@ -599,8 +599,7 @@ namespace BuzzardWPF.Management
                 string emslProposalId;
                 IEnumerable<ProposalUser> emslProposalUsers;
 
-                // QC data from the QC panel will override
-                // any previous data for given properties
+                // QC data from the QC panel will override any previous data for given properties
                 if (dataset.IsQC)
                 {
                     var qcMonitors = Monitor.QcMonitors;
@@ -620,6 +619,7 @@ namespace BuzzardWPF.Management
                         emslUsageType = chosenMonitor.EmslUsageType;
                         emslProposalId = chosenMonitor.EmslProposalId;
                         emslProposalUsers = chosenMonitor.EmslProposalUsers;
+                        dataset.InterestRating = "Released";
                     }
                     else
                     {
@@ -628,9 +628,8 @@ namespace BuzzardWPF.Management
                         emslUsageType = WatcherMetadata.EMSLUsageType;
                         emslProposalId = WatcherMetadata.EMSLProposalID;
                         emslProposalUsers = WatcherMetadata.EMSLProposalUsers;
+                        dataset.InterestRating = WatcherMetadata.InterestRating;
                     }
-
-                    dataset.InterestRating = "Released";
                 }
                 else
                 {
