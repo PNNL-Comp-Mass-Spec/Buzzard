@@ -37,6 +37,8 @@ namespace BuzzardWPF.Management
         // Agilent GC-MS: msinsctl
         public const string BlockingProcessNamesRegExString = @"HomePage|ThermoFisher\.Foundation\.AcquisitionService|Thermo\.TNG\.InstrumentServer|LTQManager|AgtVoyAcgEng|msinsctl";
 
+        public const string QcDatasetNameRegExString = @"^QC(_|-).*";
+
         #region Members
 
         /// <summary>
@@ -50,6 +52,7 @@ namespace BuzzardWPF.Management
         private readonly object lockDatasets = new object();
 
         private readonly Regex BlockingProcessNamesRegEx = new Regex(BlockingProcessNamesRegExString, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private readonly Regex qcDatasetNameRegEx = new Regex(QcDatasetNameRegExString, RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         #endregion
 
@@ -538,8 +541,7 @@ namespace BuzzardWPF.Management
                     }
                 };
 
-                if (dataset.DmsData.DatasetName.StartsWith("qc_", StringComparison.OrdinalIgnoreCase) ||
-                    dataset.DmsData.DatasetName.StartsWith("qc-", StringComparison.OrdinalIgnoreCase))
+                if (qcDatasetNameRegEx.IsMatch(dataset.DmsData.DatasetName))
                 {
                     // Assuming that people will generally name QC datasets 'QC_xxx' or 'QC-xxx'
                     // But we can't watch for everything a user may do here...
