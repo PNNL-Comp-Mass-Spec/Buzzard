@@ -25,6 +25,7 @@ namespace BuzzardWPF.Data
         private string captureSubdirectoryPath = string.Empty;
 
         private bool isQC;
+        private bool isBlank;
 
         /// <summary>
         /// Status of the dataset.
@@ -131,10 +132,22 @@ namespace BuzzardWPF.Data
 
         public ReactiveCommand<Unit, Unit> ToggleMonitoringCommand { get; }
 
+        /// <summary>
+        /// Dataset is a QC dataset, i.e. the dataset name starts with "QC_" or "QC-"
+        /// </summary>
         public bool IsQC
         {
             get => isQC;
             set => this.RaiseAndSetIfChanged(ref isQC, value);
+        }
+
+        /// <summary>
+        /// Dataset is a blank dataset, i.e. the dataset name starts with "Blank_" or "Blank-"
+        /// </summary>
+        public bool IsBlank
+        {
+            get => isBlank;
+            set => this.RaiseAndSetIfChanged(ref isBlank, value);
         }
 
         /// <summary>

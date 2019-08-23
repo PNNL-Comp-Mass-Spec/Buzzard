@@ -7,7 +7,7 @@
     xmlns:views="clr-namespace:BuzzardWPF.Views"
     xmlns:viewModels="clr-namespace:BuzzardWPF.ViewModels"
     xmlns:management="clr-namespace:BuzzardWPF.Management"
-    d:DesignHeight="370"
+    d:DesignHeight="400"
     d:DesignWidth="900"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance {x:Type viewModels:QCViewModel}, IsDesignTimeCreatable=True}">
@@ -58,7 +58,8 @@
             Grid.Row="0"
             Grid.Column="0"
             Margin="1,1,4,1">
-            <TextBlock Style="{StaticResource TextBlockStyle}" FontWeight="Bold"  Text="These settings only apply to datasets that start with 'QC_' or 'QC-'." />
+            <TextBlock Style="{StaticResource TextBlockStyle}" Margin="6,0,4,0" FontWeight="Bold" Text="These settings only apply to datasets that start with 'QC_', 'QC-'," />
+            <TextBlock Style="{StaticResource TextBlockStyle}" Margin="6,0,4,0" FontWeight="Bold" HorizontalAlignment="Center" Text="'Blank_', or 'Blank-'." />
             <views:EmslUsageSelectionView DataContext="{Binding EmslUsageSelectionVm}" IsEnabled="{Binding Path=DataContext.IsNotMonitoring, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:QCView}}}" />
 
             <GroupBox Header="Experiments">
@@ -109,11 +110,11 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource TextBlockStyle}" Text="Dataset Names starting with:" />
-                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding DatasetNameMatch}" ToolTip="Use '*' to match all QC datasets; duplicates not allowed">
+                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding DatasetNameMatch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding DatasetNameMatchError}">
                     <TextBox.Style>
                         <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource TextBoxStyle}">
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding DatasetNameMatchIsDuplicate}" Value="True">
+                                <DataTrigger Binding="{Binding DatasetNameMatchHasError}" Value="True">
                                     <Setter Property="Background" Value="Red" />
                                 </DataTrigger>
                             </Style.Triggers>
@@ -121,6 +122,7 @@
                     </TextBox.Style>
                 </TextBox>
             </Grid>
+            <TextBlock Style="{StaticResource TextBlockStyle}" HorizontalAlignment="Right" Text="Use '*' to match all QC datasets; duplicates not allowed" />
         </StackPanel>
 
         <Button Grid.Row="1" Grid.Column="0" Style="{StaticResource SimpleButtonStyle}" HorizontalAlignment="Right" MinWidth="160" Content="Add QC Monitor" Command="{Binding AddQcMonitorCommand}" />

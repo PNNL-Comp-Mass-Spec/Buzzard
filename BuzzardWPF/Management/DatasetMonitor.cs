@@ -253,7 +253,7 @@ namespace BuzzardWPF.Management
                     Manager.ResolveDms(dataset, true);
                 }
 
-                if (dataset.IsQC)
+                if (dataset.IsQC || dataset.IsBlank)
                 {
                     if (!QcCreateTriggerOnDMSFail)
                     {

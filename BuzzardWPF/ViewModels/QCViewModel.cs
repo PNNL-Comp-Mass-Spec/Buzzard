@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Text.RegularExpressions;
 using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
 using BuzzardWPF.Searching;
@@ -25,24 +26,40 @@ namespace BuzzardWPF.ViewModels
 
             isNotMonitoring = true;
 
+            datasetNameMatchHasError = this.WhenAnyValue(x => x.DatasetNameMatch, x => x.Monitor.QcMonitors).Select(x =>
+            {
+                if (x.Item2.Any(y => y.DatasetNameMatch.Equals(x.Item1)))
+                {
+                    DatasetNameMatchError = "ERROR: Duplicate dataset name match entry!";
+                    return true;
+                }
+
+                if (string.IsNullOrWhiteSpace(x.Item1))
+                {
+                    DatasetNameMatchError = null;
+                    return false;
+                }
+
+                if (!validNameMatchRegex.IsMatch(x.Item1))
+                {
+                    DatasetNameMatchError = "ERROR: Dataset name match must start with \"QC\" or \"BLANK\", followed by a '_' or '-'!";
+                    return true;
+                }
+
+                DatasetNameMatchError = null;
+
+                return false;
+            }).ToProperty(this, x => x.DatasetNameMatchHasError);
+
             SelectExperimentCommand = ReactiveCommand.Create(SelectExperiment);
-            AddQcMonitorCommand = ReactiveCommand.Create(AddQcMonitor, this.WhenAnyValue(x => x.ExperimentName, x => x.DatasetNameMatch, x => x.EMSLUsageType, x => x.EMSLProposalID, x => x.EMSLProposalUsers, x => x.EMSLProposalUsers.Count, x => x.Monitor.QcMonitors).Select(
+            AddQcMonitorCommand = ReactiveCommand.Create(AddQcMonitor, this.WhenAnyValue(x => x.ExperimentName, x => x.DatasetNameMatch, x => x.EMSLUsageType, x => x.EMSLProposalID, x => x.EMSLProposalUsers, x => x.DatasetNameMatchHasError).Select(
                 x =>
                 {
                     var musts = !string.IsNullOrWhiteSpace(x.Item1) && !string.IsNullOrWhiteSpace(x.Item2) && !string.IsNullOrWhiteSpace(x.Item3);
-                    if (!musts)
+                    if (!musts || x.Item6)
                     {
-                        DatasetNameMatchIsDuplicate = false;
                         return false;
                     }
-
-                    if (x.Item7.Any(y => y.DatasetNameMatch.Equals(x.Item2)))
-                    {
-                        DatasetNameMatchIsDuplicate = true;
-                        return false;
-                    }
-
-                    DatasetNameMatchIsDuplicate = false;
 
                     if (x.Item3.Equals("USER", StringComparison.OrdinalIgnoreCase))
                     {
@@ -66,8 +83,12 @@ namespace BuzzardWPF.ViewModels
         private string experimentName;
         private bool isNotMonitoring;
         private string datasetNameMatch;
+        private string datasetNameMatchError;
         private QcMonitorData selectedQcMonitor;
-        private bool datasetNameMatchIsDuplicate;
+        private ObservableAsPropertyHelper<bool> datasetNameMatchHasError;
+
+        private const string ValidNameMatchRegexString = @"(BLANK|QC)(_|-).*";
+        private readonly Regex validNameMatchRegex = new Regex(ValidNameMatchRegexString, RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         public ReactiveCommand<Unit, Unit> SelectExperimentCommand { get; }
         public ReactiveCommand<Unit, Unit> AddQcMonitorCommand { get; }
@@ -105,6 +126,12 @@ namespace BuzzardWPF.ViewModels
             set => this.RaiseAndSetIfChanged(ref datasetNameMatch, value);
         }
 
+        public string DatasetNameMatchError
+        {
+            get => datasetNameMatchError;
+            private set => this.RaiseAndSetIfChanged(ref datasetNameMatchError, value);
+        }
+
         public bool IsNotMonitoring
         {
             get => isNotMonitoring;
@@ -117,11 +144,7 @@ namespace BuzzardWPF.ViewModels
             set => this.RaiseAndSetIfChanged(ref selectedQcMonitor, value);
         }
 
-        public bool DatasetNameMatchIsDuplicate
-        {
-            get => datasetNameMatchIsDuplicate;
-            private set => this.RaiseAndSetIfChanged(ref datasetNameMatchIsDuplicate, value);
-        }
+        public bool DatasetNameMatchHasError => datasetNameMatchHasError.Value;
 
         #endregion
 

@@ -38,6 +38,7 @@ namespace BuzzardWPF.Management
         public const string BlockingProcessNamesRegExString = @"HomePage|ThermoFisher\.Foundation\.AcquisitionService|Thermo\.TNG\.InstrumentServer|LTQManager|AgtVoyAcgEng|msinsctl";
 
         public const string QcDatasetNameRegExString = @"^QC(_|-).*";
+        public const string BlankDatasetNameRegExString = @"^BLANK(_|-).*";
 
         #region Members
 
@@ -53,6 +54,7 @@ namespace BuzzardWPF.Management
 
         private readonly Regex BlockingProcessNamesRegEx = new Regex(BlockingProcessNamesRegExString, RegexOptions.Compiled | RegexOptions.IgnoreCase);
         private readonly Regex qcDatasetNameRegEx = new Regex(QcDatasetNameRegExString, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private readonly Regex blankDatasetNameRegEx = new Regex(BlankDatasetNameRegExString, RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         #endregion
 
@@ -548,6 +550,13 @@ namespace BuzzardWPF.Management
                     // This is now used as a gateway check for if we need to match the dataset name to a QC experiment name
                     dataset.IsQC = true;
                 }
+
+                if (blankDatasetNameRegEx.IsMatch(dataset.DmsData.DatasetName))
+                {
+                    // If the dataset is a blank
+                    dataset.IsBlank = true;
+                }
+
                 dataset.CaptureSubdirectoryPath = captureSubfolderPath;
                 dataset.DmsData.CommentAddition = WatcherMetadata.UserComments;
 
@@ -600,12 +609,12 @@ namespace BuzzardWPF.Management
                 IEnumerable<ProposalUser> emslProposalUsers;
 
                 // QC data from the QC panel will override any previous data for given properties
-                if (dataset.IsQC)
+                if (dataset.IsQC || dataset.IsBlank)
                 {
                     var qcMonitors = Monitor.QcMonitors;
                     // use data from the first QC monitor with a dataset name match
                     var chosenMonitor = qcMonitors.FirstOrDefault(x => dataset.DmsData.DatasetName.StartsWith(x.DatasetNameMatch, StringComparison.OrdinalIgnoreCase));
-                    if (chosenMonitor == null && qcMonitors.Any(x => x.MatchesAny))
+                    if (chosenMonitor == null && qcMonitors.Any(x => x.MatchesAny) && dataset.IsQC)
                     {
                         chosenMonitor = qcMonitors.First(x => x.MatchesAny);
                     }
