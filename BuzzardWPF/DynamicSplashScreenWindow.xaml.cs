@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -74,6 +75,8 @@ namespace BuzzardWPF
             get => instrumentName;
             private set => this.RaiseAndSetIfChanged(ref instrumentName, value);
         }
+
+        public bool IsComplete { get; private set; }
         #endregion
 
         #region Event Handlers
@@ -109,12 +112,23 @@ namespace BuzzardWPF
 
         public async void LoadComplete()
         {
+            if (IsComplete)
+            {
+                return;
+            }
             // Wait for any updates to complete, to avoid thread cancellation exceptions
-            await Dispatcher.Yield();
+            IsComplete = true;
+            if (Dispatcher.CheckAccess())
+            {
+                await Dispatcher.Yield();
+            }
             ApplicationLogger.Message -= ApplicationLogger_ItemLogged;
             ApplicationLogger.Error -= ApplicationLogger_ItemLogged;
             FileLogger.LogFilePathDefined -= ApplicationLogger_LogFilePathDefined;
-            await Dispatcher.Yield();
+            if (Dispatcher.CheckAccess())
+            {
+                await Dispatcher.Yield();
+            }
             Dispatcher.Invoke(Close);
         }
 
