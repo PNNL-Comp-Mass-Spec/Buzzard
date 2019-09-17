@@ -247,8 +247,8 @@ namespace BuzzardWPF
             const string name = "Buzzard";
             FileLogger.AppFolder = name;
 
-            SQLiteTools.Initialize(name);
-            SQLiteTools.SetCacheLocation("BuzzardCache.que");
+            SQLiteTools.Initialize(name, "BuzzardCache.que");
+            //SQLiteTools.SetCacheLocation("BuzzardCache.que");
             SQLiteTools.BuildConnectionString(false);
 
             //Application.EnableVisualStyles();

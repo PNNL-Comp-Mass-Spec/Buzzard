@@ -401,32 +401,55 @@ namespace BuzzardWPF.Management
         /// <returns></returns>
         public bool UpdateSQLiteCacheFromDms(ProgressEventHandler progressEventHandler = null, Action<string, Exception> errorAction = null)
         {
-            try
+            var retries = 3;
+            var dmsAvailable = dmsDbTools.CheckDMSConnection();
+            while (retries > 0)
             {
-                if (progressEventHandler != null)
+                retries--;
+                try
                 {
-                    dmsDbTools.ProgressEvent += progressEventHandler;
+                    if (SQLiteTools.DatabaseImageBad && dmsAvailable)
+                    {
+                        SQLiteTools.DeleteBadCache();
+                    }
+
+                    if (progressEventHandler != null)
+                    {
+                        dmsDbTools.ProgressEvent += progressEventHandler;
+                    }
+
+                    dmsDbTools.LoadCacheFromDMS();
+
+                    if (SQLiteTools.DatabaseImageBad && dmsAvailable && retries > 0)
+                    {
+                        continue;
+                    }
+
+                    LastSqliteCacheUpdateUtc = DateTime.UtcNow;
+                    return true;
                 }
-
-                dmsDbTools.LoadCacheFromDMS();
-
-                LastSqliteCacheUpdateUtc = DateTime.UtcNow;
-                return true;
-            }
-            catch (Exception ex)
-            {
-                var message = "Error loading data from DMS and updating the SQLite cache file!";
-                ApplicationLogger.LogError(0, message, ex);
-                errorAction?.Invoke(message, ex);
-                return false;
-            }
-            finally
-            {
-                if (progressEventHandler != null)
+                catch (Exception ex)
                 {
-                    dmsDbTools.ProgressEvent -= progressEventHandler;
+                    var message = "Error loading data from DMS and updating the SQLite cache file!";
+                    ApplicationLogger.LogError(0, message, ex);
+                    if (SQLiteTools.DatabaseImageBad && dmsAvailable && retries > 0)
+                    {
+                        continue;
+                    }
+
+                    errorAction?.Invoke(message, ex);
+                    return false;
+                }
+                finally
+                {
+                    if (progressEventHandler != null)
+                    {
+                        dmsDbTools.ProgressEvent -= progressEventHandler;
+                    }
                 }
             }
+
+            return false;
         }
 
         #endregion

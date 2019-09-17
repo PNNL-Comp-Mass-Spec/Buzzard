@@ -110,6 +110,12 @@
             Loads DMS configuration from file
             </summary>
         </member>
+        <member name="M:LcmsNetDmsTools.DMSDBTools.CheckDMSConnection">
+            <summary>
+            Test if we can query each of the needed DMS tables/views.
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:LcmsNetDmsTools.DMSDBTools.LoadCacheFromDMS">
             <summary>
             Loads all DMS data into cache

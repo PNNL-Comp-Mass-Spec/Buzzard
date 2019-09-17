@@ -52,6 +52,13 @@
             Constructor
             </summary>
         </member>
+        <member name="M:LcmsNetSQLiteTools.SQLiteTools.Initialize(System.String,System.String)">
+            <summary>
+            Initialize the cache, with the provided app name and cache filename
+            </summary>
+            <param name="appDataFolderName"></param>
+            <param name="cacheName"></param>
+        </member>
         <member name="P:LcmsNetSQLiteTools.SQLiteTools.CacheName">
             <summary>
             Cache file name or path
@@ -86,6 +93,13 @@
             Wrap an existing connection, which will stay open on Dispose().
             </summary>
             <param name="existingConnection"></param>
+        </member>
+        <member name="M:LcmsNetSQLiteTools.SQLiteTools.DeleteBadCache(System.Boolean)">
+            <summary>
+            Delete a cache file that has issues so a good cache can be made it its place.
+            It is the responsibility of the calling method to ensure no other database operations are occurring that could interfere.
+            </summary>
+            <param name="force">If true, deletes the cache regardless of the <see cref="P:LcmsNetSQLiteTools.SQLiteTools.DatabaseImageBad"/> value</param>
         </member>
         <member name="M:LcmsNetSQLiteTools.SQLiteTools.SetCacheLocation(System.String)">
             <summary>
