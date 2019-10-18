@@ -26,6 +26,7 @@ namespace BuzzardWPF.Data
 
         private bool isQC;
         private bool isBlank;
+        private bool matchedMonitor;
 
         /// <summary>
         /// Status of the dataset.
@@ -148,6 +149,15 @@ namespace BuzzardWPF.Data
         {
             get => isBlank;
             set => this.RaiseAndSetIfChanged(ref isBlank, value);
+        }
+
+        /// <summary>
+        /// If dataset is QC or blank, this is set to true if the dataset was matched to a monitor. This is used to prevent uploading QCs or blanks that did not match a monitor.
+        /// </summary>
+        public bool MatchedMonitor
+        {
+            get => matchedMonitor;
+            set => this.RaiseAndSetIfChanged(ref matchedMonitor, value);
         }
 
         /// <summary>

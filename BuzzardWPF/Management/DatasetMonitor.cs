@@ -255,7 +255,7 @@ namespace BuzzardWPF.Management
 
                 if (dataset.IsQC || dataset.IsBlank)
                 {
-                    if (!QcCreateTriggerOnDMSFail)
+                    if (!QcCreateTriggerOnDMSFail || !dataset.MatchedMonitor)
                     {
                         return;
                     }

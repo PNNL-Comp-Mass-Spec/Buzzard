@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using BuzzardWPF.Properties;
 using LcmsNetData.Data;
 using ReactiveUI;
@@ -17,6 +18,7 @@ namespace BuzzardWPF.Management
         public QcMonitorData()
         {
             EmslProposalUsers.Changed.Subscribe(x => this.RaisePropertyChanged(nameof(EmslProposalUsersNames)));
+            this.WhenAnyValue(x => x.DatasetNameMatch).Subscribe(_ => UpdateDatasetNameMatchRegex());
         }
 
         public string EmslUsageType
@@ -49,6 +51,11 @@ namespace BuzzardWPF.Management
             set => this.RaiseAndSetIfChanged(ref datasetNameMatch, value);
         }
 
+        /// <summary>
+        /// Dataset name match regex, allows case-insensitivity and dash-vs-underscore swaps.
+        /// </summary>
+        public Regex DatasetNameMatchRegex { get; private set; }
+
         public bool MatchesAny => string.IsNullOrWhiteSpace(DatasetNameMatch) || DatasetNameMatch == "*";
 
         public string EmslUsageDisplayString
@@ -67,6 +74,21 @@ namespace BuzzardWPF.Management
 
                 return $"{EmslProposalId}: {EmslProposalUsersNames}";
             }
+        }
+
+        private void UpdateDatasetNameMatchRegex()
+        {
+            if (string.IsNullOrWhiteSpace(datasetNameMatch) || datasetNameMatch.Equals("*"))
+            {
+                // A regex that won't match any valid dataset name
+                DatasetNameMatchRegex = new Regex(@"^\\/%$", RegexOptions.Compiled);
+                return;
+            }
+
+            // Allow replacement of dashes with underscores and vice-versa, and keep a case insensitive match
+            var horBarMatch = new Regex(@"[-_]+");
+            var modMatchString = "^" + horBarMatch.Replace(datasetNameMatch, @"[-_]+");
+            DatasetNameMatchRegex = new Regex(modMatchString, RegexOptions.Compiled | RegexOptions.IgnoreCase);
         }
 
         private void LoadFromString(string qcMonitorData)

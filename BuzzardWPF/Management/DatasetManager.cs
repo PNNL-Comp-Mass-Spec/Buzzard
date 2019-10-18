@@ -613,7 +613,9 @@ namespace BuzzardWPF.Management
                 {
                     var qcMonitors = Monitor.QcMonitors;
                     // use data from the first QC monitor with a dataset name match
-                    var chosenMonitor = qcMonitors.FirstOrDefault(x => dataset.DmsData.DatasetName.StartsWith(x.DatasetNameMatch, StringComparison.OrdinalIgnoreCase));
+                    // Matching using StartsWith works well, until they put a dash in place of an underscore...
+                    //var chosenMonitor = qcMonitors.FirstOrDefault(x => dataset.DmsData.DatasetName.StartsWith(x.DatasetNameMatch, StringComparison.OrdinalIgnoreCase));
+                    var chosenMonitor = qcMonitors.FirstOrDefault(x => x.DatasetNameMatchRegex.IsMatch(dataset.DmsData.DatasetName));
                     if (chosenMonitor == null && qcMonitors.Any(x => x.MatchesAny) && dataset.IsQC)
                     {
                         chosenMonitor = qcMonitors.First(x => x.MatchesAny);
@@ -629,6 +631,7 @@ namespace BuzzardWPF.Management
                         emslProposalId = chosenMonitor.EmslProposalId;
                         emslProposalUsers = chosenMonitor.EmslProposalUsers;
                         dataset.InterestRating = "Released";
+                        dataset.MatchedMonitor = true;
                     }
                     else
                     {
@@ -638,6 +641,7 @@ namespace BuzzardWPF.Management
                         emslProposalId = WatcherMetadata.EMSLProposalID;
                         emslProposalUsers = WatcherMetadata.EMSLProposalUsers;
                         dataset.InterestRating = WatcherMetadata.InterestRating;
+                        dataset.MatchedMonitor = false;
                     }
                 }
                 else
