@@ -494,7 +494,7 @@ namespace BuzzardWPF.ViewModels
                 }
 
                 // We might have to add a few extra checks on these guys since they're
-                // related to eachother when it comes to use.
+                // related to each other when it comes to use.
                 // -FCT
                 if (filldownData.UseEMSLProposalID)
                     dataset.DmsData.EMSLProposalID = filldownData.DmsData.EMSLProposalID;
