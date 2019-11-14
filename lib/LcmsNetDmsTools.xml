@@ -70,6 +70,11 @@
             </summary>
             <remarks>Default is 18 months; use 0 to load all data</remarks>
         </member>
+        <member name="P:LcmsNetDmsTools.DMSDBTools.EMSLProposalsRecentMonthsToLoad">
+            <summary>
+            Number of months back to load expired EMSL Proposals; defaults to '12', use '-1' to load all data
+            </summary>
+        </member>
         <member name="M:LcmsNetDmsTools.DMSDBTools.#ctor">
             <summary>
             Constructor
@@ -154,6 +159,11 @@
         <member name="M:LcmsNetDmsTools.DMSDBTools.GetUserListFromDMS">
             <summary>
             Gets a list of active users from DMS and stores it in cache
+            </summary>
+        </member>
+        <member name="M:LcmsNetDmsTools.DMSDBTools.GetProposalUsers">
+            <summary>
+            Get EMSL User Proposal IDs and associated users. Uses <see cref="P:LcmsNetDmsTools.DMSDBTools.EMSLProposalsRecentMonthsToLoad"/> to control how much data is loaded.
             </summary>
         </member>
         <member name="M:LcmsNetDmsTools.DMSDBTools.GetInstrumentListFromDMS">

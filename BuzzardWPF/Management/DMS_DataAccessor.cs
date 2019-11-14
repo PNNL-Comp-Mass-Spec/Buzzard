@@ -568,7 +568,7 @@ namespace BuzzardWPF.Management
 
                 m_proposalUsers = eusUsers;
 
-                ProposalIDs = new ReactiveList<string>(m_pidIndexedCrossReferenceList.Keys);
+                ProposalIDs = new ReactiveList<string>(m_pidIndexedCrossReferenceList.Keys.OrderBy(x => x));
 
             }
             catch (Exception ex)
