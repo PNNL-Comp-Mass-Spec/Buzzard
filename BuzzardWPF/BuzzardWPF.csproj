@@ -117,10 +117,11 @@
     <Compile Include="Management\DatasetMonitor.cs" />
     <Compile Include="Management\DMSConfig.cs" />
     <Compile Include="Management\DMS_DataAccessor.cs" />
+    <Compile Include="Management\FileSystemWatcherManager.cs" />
     <Compile Include="Management\IStoredSettingsMonitor.cs" />
     <Compile Include="Management\QcMonitorData.cs" />
     <Compile Include="Management\RenameDataRequest.cs" />
-    <Compile Include="Management\StateSingleton.cs" />
+    <Compile Include="Management\TriggerFileCreationManager.cs" />
     <Compile Include="Management\TriggerFileMonitor.cs" />
     <Compile Include="Management\WatcherMetadata.cs" />
     <Compile Include="Properties\SettingsUpgradeHandler.cs" />

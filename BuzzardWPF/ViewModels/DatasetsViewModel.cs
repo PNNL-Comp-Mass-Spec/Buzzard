@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using BuzzardWPF.Data;
@@ -27,10 +24,10 @@ namespace BuzzardWPF.ViewModels
         private ReactiveList<string> m_emslUsageTypesSource;
 
         private bool m_showGridItemDetail;
-        private bool mAbortTriggerCreationNow;
         private readonly object lockCartConfigNameListSource = new object();
         private readonly ObservableAsPropertyHelper<bool> canSelectDatasets;
         private readonly ObservableAsPropertyHelper<bool> datasetSelected;
+        private readonly ObservableAsPropertyHelper<bool> isCreatingTriggerFiles;
 
         #endregion
 
@@ -46,6 +43,10 @@ namespace BuzzardWPF.ViewModels
 
             CartConfigNameListSource = new ReactiveList<string>();
 
+            canSelectDatasets = Datasets.CountChanged.Select(x => x > 0).ToProperty(this, x => x.CanSelectDatasets);
+            datasetSelected = SelectedDatasets.CountChanged.Select(x => x > 0).ToProperty(this, x => x.DatasetSelected);
+            isCreatingTriggerFiles = TriggerFileCreationManager.Instance.WhenAnyValue(x => x.IsCreatingTriggerFiles).ObserveOn(RxApp.MainThreadScheduler).ToProperty(this, x => x.IsCreatingTriggerFiles);
+
             DatasetManager.WatcherMetadata.WhenAnyValue(x => x.CartName).Subscribe(UpdateCartConfigNames);
 
             InvertShowDetailsCommand = ReactiveCommand.Create(InvertShowDetails);
@@ -55,10 +56,7 @@ namespace BuzzardWPF.ViewModels
             BringUpExperimentsCommand = ReactiveCommand.Create(BringUpExperiments, SelectedDatasets.WhenAnyValue(x => x.Count).Select(x => x > 0).ObserveOn(RxApp.MainThreadScheduler));
             OpenFilldownCommand = ReactiveCommand.Create(OpenFilldown, SelectedDatasets.WhenAnyValue(x => x.Count).Select(x => x > 0).ObserveOn(RxApp.MainThreadScheduler));
             AbortCommand = ReactiveCommand.Create(AbortTriggerThread);
-            CreateTriggersCommand = ReactiveCommand.Create(CreateTriggers, SelectedDatasets.WhenAnyValue(x => x.Count).Select(x => x > 0).ObserveOn(RxApp.MainThreadScheduler));
-
-            canSelectDatasets = Datasets.CountChanged.Select(x => x > 0).ToProperty(this, x => x.CanSelectDatasets);
-            datasetSelected = SelectedDatasets.CountChanged.Select(x => x > 0).ToProperty(this, x => x.DatasetSelected);
+            CreateTriggersCommand = ReactiveCommand.Create(CreateTriggers, this.WhenAnyValue(x => x.SelectedDatasets.Count, x => x.IsCreatingTriggerFiles, x => x.Watcher.IsMonitoring).Select(x => x.Item1 > 0 && !(x.Item2 || x.Item3)).ObserveOn(RxApp.MainThreadScheduler));
 
             BindingOperations.EnableCollectionSynchronization(CartConfigNameListSource, lockCartConfigNameListSource);
         }
@@ -107,6 +105,8 @@ namespace BuzzardWPF.ViewModels
 
         #region Properties
 
+        private FileSystemWatcherManager Watcher => FileSystemWatcherManager.Instance;
+
         public bool CanSelectDatasets => canSelectDatasets.Value;
         public bool DatasetSelected => datasetSelected.Value;
 
@@ -138,19 +138,7 @@ namespace BuzzardWPF.ViewModels
 
         public ReactiveList<BuzzardDataset> Datasets => DatasetManager.Datasets;
 
-        public bool IsCreatingTriggerFiles
-        {
-            get => StateSingleton.IsCreatingTriggerFiles;
-            private set
-            {
-                if (StateSingleton.IsCreatingTriggerFiles == value) return;
-                StateSingleton.IsCreatingTriggerFiles = value;
-                this.RaisePropertyChanged(nameof(IsCreatingTriggerFiles));
-                this.RaisePropertyChanged(nameof(IsNotCreatingTriggerFiles));
-            }
-        }
-
-        public bool IsNotCreatingTriggerFiles => !IsCreatingTriggerFiles;
+        public bool IsCreatingTriggerFiles => isCreatingTriggerFiles.Value;
 
         public bool ShowGridItemDetail
         {
@@ -519,8 +507,7 @@ namespace BuzzardWPF.ViewModels
         /// </summary>
         private void AbortTriggerThread()
         {
-            mAbortTriggerCreationNow = true;
-            IsCreatingTriggerFiles = false;
+            TriggerFileCreationManager.Instance.AbortTriggerThread();
         }
 
         /// <summary>
@@ -537,275 +524,7 @@ namespace BuzzardWPF.ViewModels
             if (selectedItems.Count == 0)
                 return;
 
-            if (IsCreatingTriggerFiles)
-            {
-                MessageBox.Show("Already creating trigger files; please wait for the current operation to complete", "Busy",
-                                MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                return;
-            }
-
-            // Check for a running thread
-            mAbortTriggerCreationNow = false;
-
-            // Create the trigger files, running on a separate thread
-
-            var task1 = Task.Factory.StartNew(() => CreateTriggerFiles(selectedItems));
-
-            Task.Factory.ContinueWhenAll(
-            new[] { task1 },
-            TriggerFilesCreated, // Call this method when all tasks finish.
-            CancellationToken.None,
-            TaskContinuationOptions.None,
-            TaskScheduler.FromCurrentSynchronizationContext()); // Finish on UI thread.
-
-        }
-
-        private void TriggerFilesCreated(Task[] obj)
-        {
-            mAbortTriggerCreationNow = false;
-            IsCreatingTriggerFiles = false;
-        }
-
-        private void CreateTriggerFiles(List<BuzzardDataset> selectedDatasets)
-        {
-
-            /*
-            // If we're on the wrong thread, then put in
-            // a call to this in the correct thread and exit.
-            if (!MainWindow.Dispatcher.CheckAccess())
-            {
-                Action action = CreateTriggerFiles;
-
-                MainWindow.Dispatcher.BeginInvoke(action, DispatcherPriority.Normal);
-                return;
-            }
-             */
-
-            IsCreatingTriggerFiles = true;
-
-            try
-            {
-
-                //
-                // From the list of selected Datasets, find
-                // the Datasets that didn't get their DMSData
-                // from DMS. Then try to resolve it.
-                //
-                var needsDmsResolved = selectedDatasets.Where(x => !x.DmsData.LockData);
-
-                DatasetManager.ResolveDms(needsDmsResolved);
-
-                if (mAbortTriggerCreationNow)
-                {
-                    MarkAborted(selectedDatasets);
-                    return;
-                }
-
-                // Update field .IsFile
-                foreach (var dataset in selectedDatasets)
-                {
-                    dataset.TriggerCreationWarning = string.Empty;
-
-                    var fiFile = new FileInfo(dataset.FilePath);
-                    if (!fiFile.Exists)
-                    {
-                        var diFolder = new DirectoryInfo(dataset.FilePath);
-                        if (diFolder.Exists && dataset.IsFile)
-                            dataset.IsFile = false;
-                    }
-                }
-
-                List<BuzzardDataset> validDatasets;
-                var success = SimulateTriggerCreation(selectedDatasets, out validDatasets);
-                if (!success)
-                    return;
-
-                // Confirm that the dataset are not changing and are thus safe to create trigger files for
-                var stableDatasets = VerifyDatasetsStable(validDatasets);
-
-                if (mAbortTriggerCreationNow)
-                    return;
-
-                var completedDatasets = new List<BuzzardDataset>();
-
-                foreach (var dataset in stableDatasets)
-                {
-                    var triggerFilePath = DatasetManager.CreateTriggerFileBuzzard(dataset, forceSend: true, preview: false);
-
-                    if (mAbortTriggerCreationNow)
-                    {
-                        MarkAborted(stableDatasets.Except(completedDatasets).ToList());
-                        return;
-                    }
-                    else
-                    {
-                        completedDatasets.Add(dataset);
-                    }
-
-                }
-
-                ApplicationLogger.LogMessage(
-                    0,
-                    "Finished executing create trigger files command.");
-
-            }
-            catch (Exception ex)
-            {
-                ApplicationLogger.LogError(
-                    0,
-                    "Exception creating trigger files for the selected datasets", ex);
-
-            }
-            finally
-            {
-                IsCreatingTriggerFiles = false;
-            }
-        }
-
-        private void MarkAborted(List<BuzzardDataset> selectedDatasets)
-        {
-            foreach (var dataset in selectedDatasets)
-                dataset.DatasetStatus = DatasetStatus.TriggerAborted;
-        }
-
-        /// <summary>
-        /// Creates the xml trigger file for each dataset but does not save it to disk
-        /// </summary>
-        /// <param name="selectedDatasets"></param>
-        /// <param name="validDatasets"></param>
-        /// <returns>True if no problems, False if a problem with one or more datasets</returns>
-        private bool SimulateTriggerCreation(List<BuzzardDataset> selectedDatasets, out List<BuzzardDataset> validDatasets)
-        {
-            validDatasets = new List<BuzzardDataset>();
-            var datasetsAlreadyInDMS = 0;
-
-            // Simulate trigger file creation to check for errors
-            foreach (var dataset in selectedDatasets)
-            {
-                DatasetManager.CreateTriggerFileBuzzard(dataset, forceSend: true, preview: true);
-
-                if (mAbortTriggerCreationNow)
-                {
-                    MarkAborted(selectedDatasets);
-                    return false;
-                }
-
-                if ((dataset.DatasetStatus == DatasetStatus.Pending ||
-                     dataset.DatasetStatus == DatasetStatus.ValidatingStable))
-                {
-                    validDatasets.Add(dataset);
-                }
-
-                if (dataset.DatasetStatus == DatasetStatus.DatasetAlreadyInDMS)
-                    datasetsAlreadyInDMS++;
-            }
-
-            if (datasetsAlreadyInDMS > 0 && datasetsAlreadyInDMS == selectedDatasets.Count)
-            {
-                // All of the datasets were already in DMS
-                return false;
-            }
-
-            var invalidDatasetCount = selectedDatasets.Count - validDatasets.Count - datasetsAlreadyInDMS;
-            if (invalidDatasetCount <= 0)
-            {
-                return true;
-            }
-
-            var warningMessage = "Warning, " + invalidDatasetCount;
-            if (invalidDatasetCount == 1)
-            {
-                warningMessage += " dataset has ";
-            }
-            else
-            {
-                warningMessage += " datasets have ";
-            }
-
-            warningMessage += "validation errors; fix the errors then try again.";
-
-            MessageBox.Show(warningMessage, "Validation Errors", MessageBoxButton.OK, MessageBoxImage.Warning);
-
-            return false;
-        }
-
-        private List<BuzzardDataset> VerifyDatasetsStable(List<BuzzardDataset> selectedDatasets)
-        {
-            const int SECONDS_TO_WAIT = 30;
-
-            var stableDatasets = new List<BuzzardDataset>();
-
-            // Values: Dataset exists (file or directory), size (in bytes), number of files
-            var datasetsToVerify = new Dictionary<BuzzardDataset, (bool Exists, long Size, int FileCount)>();
-
-            foreach (var dataset in selectedDatasets)
-            {
-                var stats = dataset.GetFileStats();
-                if (!stats.Exists)
-                {
-                    dataset.DatasetStatus = DatasetStatus.FileNotFound;
-                    continue;
-                }
-
-                datasetsToVerify.Add(dataset, stats);
-
-                dataset.DatasetStatus = DatasetStatus.ValidatingStable;
-            }
-
-            var startTime = DateTime.UtcNow;
-            var nextLogTime = startTime.AddSeconds(2);
-            var baseMessage = "Verifying dataset files are unchanged for " + SECONDS_TO_WAIT + " seconds";
-            ApplicationLogger.LogMessage(0, baseMessage);
-
-            while (DateTime.UtcNow.Subtract(startTime).TotalSeconds < SECONDS_TO_WAIT)
-            {
-                Thread.Sleep(100);
-
-                if (mAbortTriggerCreationNow)
-                {
-                    MarkAborted(selectedDatasets);
-                    ApplicationLogger.LogMessage(0, "Aborted verification of stable dataset files");
-                    return stableDatasets;
-                }
-
-                if (DateTime.UtcNow >= nextLogTime)
-                {
-                    nextLogTime = nextLogTime.AddSeconds(2);
-                    var secondsRemaining = (int)(Math.Round(SECONDS_TO_WAIT - DateTime.UtcNow.Subtract(startTime).TotalSeconds));
-                    ApplicationLogger.LogMessage(0, baseMessage + "; " + secondsRemaining + " seconds remain");
-                }
-            }
-
-            foreach (var entry in datasetsToVerify)
-            {
-                var stats = entry.Key.GetFileStats();
-                if (stats.Exists)
-                {
-                    if (stats.Equals(entry.Value))
-                    {
-                        stableDatasets.Add(entry.Key);
-                    }
-                    else if (DatasetManager.DatasetHasAcquisitionLock(entry.Key.FilePath))
-                    {
-                        entry.Key.DatasetStatus = DatasetStatus.FileSizeChanged;
-                    }
-                    else
-                    {
-                        entry.Key.DatasetStatus = DatasetStatus.FileSizeChanged;
-                    }
-                }
-                else
-                {
-                    entry.Key.DatasetStatus = DatasetStatus.FileNotFound;
-                }
-            }
-
-            foreach (var dataset in stableDatasets)
-            {
-                dataset.DatasetStatus = DatasetStatus.Pending;
-            }
-
-            return stableDatasets;
+            TriggerFileCreationManager.Instance.CreateTriggers(selectedItems);
         }
 
         #endregion

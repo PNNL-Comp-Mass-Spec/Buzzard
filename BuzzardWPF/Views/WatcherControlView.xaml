@@ -18,8 +18,8 @@
     <UserControl.Resources>
         <converters:BoolToObjectConverter
             x:Key="MonitorButtonContentConverter"
-            FalseContent="Monitor"
-            TrueContent="Stop" />
+            TrueContent="Monitor"
+            FalseContent="Stop" />
 
         <Style TargetType="TextBlock">
             <Setter Property="FontSize" Value="15" />
@@ -182,7 +182,7 @@
                 <Label
                     Width="90"
                     VerticalContentAlignment="Center"
-                    Content="{Binding Path=IsWatching, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource MonitorButtonContentConverter}}"
+                    Content="{Binding Path=IsNotMonitoring, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource MonitorButtonContentConverter}}"
                     DockPanel.Dock="Right"
                     FontFamily="Arial" />
                 <Image

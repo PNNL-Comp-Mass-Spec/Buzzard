@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reactive;
+using System.Reactive.Linq;
 using BuzzardWPF.Management;
-using BuzzardWPF.Searching;
 using BuzzardWPF.Views;
 using ReactiveUI;
 
@@ -12,7 +12,7 @@ namespace BuzzardWPF.ViewModels
         #region Initialization
         public WatcherConfigViewModel()
         {
-            isNotMonitoring = true;
+            isNotMonitoring = FileSystemWatcherManager.Instance.WhenAnyValue(x => x.IsMonitoring).Select(x => !x).ObserveOn(RxApp.MainThreadScheduler).ToProperty(this, x => x.IsNotMonitoring);
 
             EmslUsageSelectionVm.BoundContainer = WatcherMetadata;
 
@@ -25,10 +25,10 @@ namespace BuzzardWPF.ViewModels
 
         #region Properties
 
-        private bool isNotMonitoring;
         private string workPackageToolTipText;
         private bool workPackageWarning = false;
         private bool workPackageError = false;
+        private readonly ObservableAsPropertyHelper<bool> isNotMonitoring;
 
         public EmslUsageSelectionViewModel EmslUsageSelectionVm { get; } = new EmslUsageSelectionViewModel();
 
@@ -44,11 +44,7 @@ namespace BuzzardWPF.ViewModels
 
         public DMS_DataAccessor DmsData => DMS_DataAccessor.Instance;
 
-        public bool IsNotMonitoring
-        {
-            get => isNotMonitoring;
-            private set => this.RaiseAndSetIfChanged(ref isNotMonitoring, value);
-        }
+        public bool IsNotMonitoring => isNotMonitoring.Value;
 
         public string WorkPackageToolTipText
         {
@@ -159,15 +155,6 @@ namespace BuzzardWPF.ViewModels
             WorkPackageToolTipText = textData;
         }
 
-        /// <summary>
-        /// Enables / disables the controls based on e.Monitoring
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        public void MonitoringToggleHandler(object sender, StartStopEventArgs e)
-        {
-            IsNotMonitoring = !e.Monitoring;
-        }
         #endregion
     }
 }

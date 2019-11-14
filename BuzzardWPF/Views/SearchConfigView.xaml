@@ -218,7 +218,6 @@
             HorizontalAlignment="Stretch"
             VerticalAlignment="Bottom"
             Command="{Binding SearchCommand}"
-            IsEnabled="{Binding Path=IsSafeToSearch, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
             Style="{StaticResource SimpleButtonStyle}">
             <DockPanel Width="128" Height="45">
                 <Label

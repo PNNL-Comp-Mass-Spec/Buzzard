@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Concurrency;
+using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -64,6 +65,7 @@ namespace BuzzardWPF
         private bool remoteFolderLocationIsEnabled;
         private readonly object lockEmslUsageTypesSource = new object();
         private readonly Timer settingsSaveTimer;
+        private readonly ObservableAsPropertyHelper<bool> isNotMonitoring;
 
         #endregion
 
@@ -78,8 +80,8 @@ namespace BuzzardWPF
             var version = assembly.GetName().Version.ToString();
             Title = "Buzzard - v." + version;
 
-            StateSingleton.WatchingStateChanged += StateSingleton_WatchingStateChanged;
-            // StateSingleton.StateChanged += StateSingleton_StateChanged;
+            isNotMonitoring = FileSystemWatcherManager.Instance.WhenAnyValue(x => x.IsMonitoring).Select(x => !x).ObserveOn(RxApp.MainThreadScheduler).ToProperty(this, x => x.IsNotMonitoring);
+            FileSystemWatcherManager.Instance.WhenAnyValue(x => x.IsMonitoring).ObserveOn(RxApp.MainThreadScheduler).Subscribe(ControlAnimation);
 
             m_firstTimeLoading = true;
 
@@ -112,11 +114,6 @@ namespace BuzzardWPF
             RegisterSearcher(new FileSearchBuzzardier(DMS_DataAccessor.Instance.InstrumentDetails));
             SearchConfigVm = new SearchConfigViewModel(m_buzzadier);
 
-            // Wire up event handler on the embedded controls
-            WatcherControlVm.MonitoringToggled += WatcherConfigVm.MonitoringToggleHandler;
-            WatcherControlVm.MonitoringToggled += QCVm.MonitoringToggleHandler;
-            WatcherControlVm.MonitoringToggled += SearchConfigVm.MonitoringToggleHandler;
-
             LoadImages();
             ApplicationLogger.LogMessage(0, "Ready");
 
@@ -132,16 +129,6 @@ namespace BuzzardWPF
 
             // Auto-save settings every 5 minutes, on a background thread
             settingsSaveTimer = new Timer(SaveSettings_Tick, this, TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(5));
-        }
-
-        private void StateSingleton_WatchingStateChanged(object sender, EventArgs e)
-        {
-            ControlAnimation(StateSingleton.IsMonitoring);
-            if (!StateSingleton.IsMonitoring)
-            {
-                CurrentImage = m_animationImages[0];
-            }
-            this.RaisePropertyChanged(nameof(IsNotMonitoring));
         }
 
         /// <summary>
@@ -245,7 +232,7 @@ namespace BuzzardWPF
         /// <summary>
         /// Gets or sets whether the system is monitoring or not.
         /// </summary>
-        public bool IsNotMonitoring => !StateSingleton.IsMonitoring;
+        public bool IsNotMonitoring => isNotMonitoring.Value;
 
         /// <summary>
         /// Gets and sets a string containing the last message or error
@@ -512,6 +499,11 @@ namespace BuzzardWPF
                     m_animationTimer.Change(Timeout.Infinite, Timeout.Infinite);
                 }
                 animationEnabled = enabled;
+            }
+
+            if (!enabled)
+            {
+                CurrentImage = m_animationImages[0];
             }
         }
 

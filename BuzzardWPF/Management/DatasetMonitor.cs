@@ -30,6 +30,8 @@ namespace BuzzardWPF.Management
 
         public static DatasetMonitor Monitor { get; }
 
+        protected const int DefaultTriggerCreationWaitTimeMinutes = 15;
+
         private Timer mScannedDatasetTimer;
         private Timer mTriggerCountdownTimer;
         private readonly ConcurrentDictionary<BuzzardDataset, bool> triggerCountdownDatasets = new ConcurrentDictionary<BuzzardDataset, bool>(3, 10);
@@ -88,6 +90,12 @@ namespace BuzzardWPF.Management
         {
             get => qcCreateTriggerOnDmsFail;
             set => this.RaiseAndSetIfChangedMonitored(ref qcCreateTriggerOnDmsFail, value);
+        }
+
+        public void ResetToDefaults()
+        {
+            TriggerFileCreationWaitTime = DefaultTriggerCreationWaitTimeMinutes;
+            CreateTriggerOnDMSFail = false;
         }
 
         private void SetupTimers()

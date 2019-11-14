@@ -18,14 +18,15 @@ namespace BuzzardWPF.ViewModels
     {
         #region Attributes
 
-        private bool mIsNotMonitoring;
-
         readonly Ookii.Dialogs.Wpf.VistaFolderBrowserDialog m_folderDialog;
         private string[] directoryPathOptions;
 
         private readonly IBuzzadier datasetSearcher;
         private CancellationTokenSource searchCancelToken = new CancellationTokenSource();
         private bool searching;
+        private readonly ObservableAsPropertyHelper<bool> isNotMonitoring;
+        private readonly ObservableAsPropertyHelper<bool> isCreatingTriggerFiles;
+        private readonly ObservableAsPropertyHelper<string> searchButtonText;
 
         #endregion
 
@@ -42,6 +43,7 @@ namespace BuzzardWPF.ViewModels
         /// </summary>
         public SearchConfigViewModel(IBuzzadier datasetSearcherImpl)
         {
+
             datasetSearcher = datasetSearcherImpl;
 
             m_folderDialog = new Ookii.Dialogs.Wpf.VistaFolderBrowserDialog { ShowNewFolderButton = true };
@@ -53,12 +55,14 @@ namespace BuzzardWPF.ViewModels
                 SearchOption.TopDirectoryOnly
             };
 
-            IsNotMonitoring = true;
+            isNotMonitoring = FileSystemWatcherManager.Instance.WhenAnyValue(x => x.IsMonitoring).Select(x => !x).ObserveOn(RxApp.MainThreadScheduler).ToProperty(this, x => x.IsNotMonitoring);
+            isCreatingTriggerFiles = TriggerFileCreationManager.Instance.WhenAnyValue(x => x.IsCreatingTriggerFiles).ObserveOn(RxApp.MainThreadScheduler).ToProperty(this, x => x.IsCreatingTriggerFiles);
+            searchButtonText = this.WhenAnyValue(x => x.IsCreatingTriggerFiles, x => x.IsNotMonitoring).Select(x => !x.Item1 && x.Item2 ? "Search" : "(disabled)").ToProperty(this, x => x.SearchButtonText, initialValue: "Search");
 
             ExploreDirectoryCommand = ReactiveCommand.Create(ExploreDirectory);
             BrowseForPathCommand = ReactiveCommand.Create(BrowseForPath);
             ResetToDefaultsCommand = ReactiveCommand.Create(ResetToDefaults);
-            SearchCommand = ReactiveCommand.CreateFromTask(Search);
+            SearchCommand = ReactiveCommand.CreateFromTask(Search, this.WhenAnyValue(x => x.IsCreatingTriggerFiles, x => x.IsNotMonitoring).Select(x => !x.Item1 && x.Item2).ObserveOn(RxApp.MainThreadScheduler));
             StopSearchCommand = ReactiveCommand.Create(StopSearch, this.WhenAnyValue(x => x.Searching).ObserveOn(RxApp.MainThreadScheduler));
             ResetDateRangeCommand = ReactiveCommand.Create(ResetDateRange);
 
@@ -89,36 +93,11 @@ namespace BuzzardWPF.ViewModels
         /// </summary>
         public SearchConfig Config => DatasetManager.Config;
 
-        public bool IsCreatingTriggerFiles
-        {
-            get => StateSingleton.IsCreatingTriggerFiles;
-            private set
-            {
-                if (StateSingleton.IsCreatingTriggerFiles == value) return;
-                StateSingleton.IsCreatingTriggerFiles = value;
-                this.RaisePropertyChanged();
-                this.RaisePropertyChanged(nameof(IsSafeToSearch));
-                this.RaisePropertyChanged(nameof(SearchButtonText));
-            }
-        }
+        public bool IsCreatingTriggerFiles => isCreatingTriggerFiles.Value;
 
-        public bool IsNotCreatingTriggerFiles => !IsCreatingTriggerFiles;
+        public bool IsNotMonitoring => isNotMonitoring.Value;
 
-        public bool IsSafeToSearch => IsNotMonitoring && IsNotCreatingTriggerFiles;
-
-        public bool IsNotMonitoring
-        {
-            get => mIsNotMonitoring;
-            private set
-            {
-                mIsNotMonitoring = value;
-                this.RaisePropertyChanged();
-                this.RaisePropertyChanged(nameof(IsSafeToSearch));
-                this.RaisePropertyChanged(nameof(SearchButtonText));
-            }
-        }
-
-        public string SearchButtonText => IsSafeToSearch ? "Search" : "(disabled)";
+        public string SearchButtonText => searchButtonText.Value;
 
         public string[] DirectoryPathOptions
         {
@@ -253,19 +232,6 @@ namespace BuzzardWPF.ViewModels
             Config?.ResetDateRange();
         }
 
-        #endregion
-
-        #region Methods
-
-        /// <summary>
-        /// Enables / disables the controls based on e.Monitoring
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        public void MonitoringToggleHandler(object sender, StartStopEventArgs e)
-        {
-            IsNotMonitoring = !e.Monitoring;
-        }
         #endregion
     }
 }

@@ -6,7 +6,6 @@ using System.Reactive.Linq;
 using System.Text.RegularExpressions;
 using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
-using BuzzardWPF.Searching;
 using BuzzardWPF.Views;
 using LcmsNetData.Data;
 using ReactiveUI;
@@ -18,13 +17,13 @@ namespace BuzzardWPF.ViewModels
         #region Initialize
         public QCViewModel()
         {
+            isNotMonitoring = FileSystemWatcherManager.Instance.WhenAnyValue(x => x.IsMonitoring).Select(x => !x).ObserveOn(RxApp.MainThreadScheduler).ToProperty(this, x => x.IsNotMonitoring);
+
             EmslUsageSelectionVm.BoundContainer = this;
 
             EMSLUsageType = EmslUsageSelectionVm.UsageTypesSource[1];
             EMSLProposalID = null;
             ExperimentName = null;
-
-            isNotMonitoring = true;
 
             datasetNameMatchHasError = this.WhenAnyValue(x => x.DatasetNameMatch, x => x.Monitor.QcMonitors).Select(x =>
             {
@@ -81,11 +80,11 @@ namespace BuzzardWPF.ViewModels
         private string selectedEMSLUsageType;
         private string emslProposalID;
         private string experimentName;
-        private bool isNotMonitoring;
+        private ObservableAsPropertyHelper<bool> isNotMonitoring;
         private string datasetNameMatch;
         private string datasetNameMatchError;
         private QcMonitorData selectedQcMonitor;
-        private ObservableAsPropertyHelper<bool> datasetNameMatchHasError;
+        private readonly ObservableAsPropertyHelper<bool> datasetNameMatchHasError;
 
         private const string ValidNameMatchRegexString = @"(BLANK|QC)(_|-).*";
         private readonly Regex validNameMatchRegex = new Regex(ValidNameMatchRegexString, RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -132,11 +131,7 @@ namespace BuzzardWPF.ViewModels
             private set => this.RaiseAndSetIfChanged(ref datasetNameMatchError, value);
         }
 
-        public bool IsNotMonitoring
-        {
-            get => isNotMonitoring;
-            private set => this.RaiseAndSetIfChanged(ref isNotMonitoring, value);
-        }
+        public bool IsNotMonitoring => isNotMonitoring.Value;
 
         public QcMonitorData SelectedQcMonitor
         {
@@ -198,15 +193,6 @@ namespace BuzzardWPF.ViewModels
             Monitor.QcMonitors.Remove(SelectedQcMonitor);
         }
 
-        /// <summary>
-        /// Enables / disables the controls based on e.Monitoring
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        public void MonitoringToggleHandler(object sender, StartStopEventArgs e)
-        {
-            IsNotMonitoring = !e.Monitoring;
-        }
         #endregion
 
         #region Methods

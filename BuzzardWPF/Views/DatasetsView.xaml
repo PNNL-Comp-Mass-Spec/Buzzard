@@ -148,8 +148,7 @@
                 Height="48"
                 Command="{Binding CreateTriggersCommand}"
                 IsEnabled="True"
-                Style="{StaticResource SimpleButtonStyle}"
-                Visibility="{Binding Path=IsNotCreatingTriggerFiles, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToVis}}">
+                Style="{StaticResource SimpleButtonStyle}">
                 <DockPanel>
                     <Image
                         Margin="5"
