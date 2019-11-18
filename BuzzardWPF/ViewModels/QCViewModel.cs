@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
 using BuzzardWPF.Views;
+using DynamicData.Binding;
 using LcmsNetData.Data;
 using ReactiveUI;
 
@@ -117,7 +118,7 @@ namespace BuzzardWPF.ViewModels
 
         public DatasetMonitor Monitor => DatasetMonitor.Monitor;
 
-        public ReactiveList<ProposalUser> EMSLProposalUsers { get; } = new ReactiveList<ProposalUser>();
+        public ObservableCollectionExtended<ProposalUser> EMSLProposalUsers { get; } = new ObservableCollectionExtended<ProposalUser>();
 
         public string DatasetNameMatch
         {
@@ -174,10 +175,7 @@ namespace BuzzardWPF.ViewModels
             if (EMSLUsageType.Equals("USER", StringComparison.OrdinalIgnoreCase))
             {
                 qcMonitor.EmslProposalId = EMSLProposalID;
-                using (qcMonitor.EmslProposalUsers.SuppressChangeNotifications())
-                {
-                    qcMonitor.EmslProposalUsers.AddRange(EMSLProposalUsers);
-                }
+                qcMonitor.EmslProposalUsers.AddRange(EMSLProposalUsers);
             }
 
             Monitor.QcMonitors.Add(qcMonitor);
@@ -231,11 +229,7 @@ namespace BuzzardWPF.ViewModels
             else
                 selectedUsers = Settings.Default.WatcherQCEMSLUsers.Cast<string>().ToList();
 
-            using (EMSLProposalUsers.SuppressChangeNotifications())
-            {
-                EMSLProposalUsers.Clear();
-                EMSLProposalUsers.AddRange(DMS_DataAccessor.Instance.FindSavedEMSLProposalUsers(EMSLProposalID, selectedUsers));
-            }
+            EMSLProposalUsers.Load(DMS_DataAccessor.Instance.FindSavedEMSLProposalUsers(EMSLProposalID, selectedUsers));
 
             if (!string.IsNullOrWhiteSpace(ExperimentName) && string.IsNullOrWhiteSpace(Settings.Default.WatcherQCMonitors))
             {
@@ -249,10 +243,7 @@ namespace BuzzardWPF.ViewModels
                 if (!string.IsNullOrWhiteSpace(monitor.EmslUsageType) && monitor.EmslUsageType.Equals("USER", StringComparison.OrdinalIgnoreCase))
                 {
                     monitor.EmslProposalId = EMSLProposalID;
-                    using (monitor.EmslProposalUsers.SuppressChangeNotifications())
-                    {
-                        monitor.EmslProposalUsers.AddRange(EMSLProposalUsers);
-                    }
+                    monitor.EmslProposalUsers.AddRange(EMSLProposalUsers);
                 }
 
                 Monitor.QcMonitors.Add(monitor);

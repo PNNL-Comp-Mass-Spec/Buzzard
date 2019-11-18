@@ -8,6 +8,7 @@ using System.Threading;
 using System.Windows.Data;
 using BuzzardWPF.Data;
 using BuzzardWPF.Properties;
+using DynamicData.Binding;
 using LcmsNetData.Logging;
 using ReactiveUI;
 
@@ -51,7 +52,7 @@ namespace BuzzardWPF.Management
         public DatasetManager Manager => DatasetManager.Manager;
         public TriggerFileMonitor TriggerMonitor => TriggerFileMonitor.Instance;
 
-        public ReactiveList<QcMonitorData> QcMonitors { get; } = new ReactiveList<QcMonitorData>();
+        public ObservableCollectionExtended<QcMonitorData> QcMonitors { get; } = new ObservableCollectionExtended<QcMonitorData>();
 
         /// <summary>
         /// This values tells the DatasetManager if it can create
@@ -351,7 +352,6 @@ namespace BuzzardWPF.Management
             }
 
             Settings.Default.WatcherQCCreateTriggerOnDMSFail = QcCreateTriggerOnDMSFail;
-
             Settings.Default.WatcherCreateTriggerOnDMSFail = CreateTriggerOnDMSFail;
             Settings.Default.Watcher_WaitTime = TriggerFileCreationWaitTime;
 
@@ -366,10 +366,7 @@ namespace BuzzardWPF.Management
 
             if (!string.IsNullOrWhiteSpace(Settings.Default.WatcherQCMonitors))
             {
-                using (QcMonitors.SuppressChangeNotifications())
-                {
-                    QcMonitors.AddRange(QcMonitorData.LoadSettings());
-                }
+                QcMonitors.AddRange(QcMonitorData.LoadSettings());
             }
 
             CreateTriggerOnDMSFail = Settings.Default.WatcherCreateTriggerOnDMSFail;

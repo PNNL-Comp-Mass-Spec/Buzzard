@@ -203,11 +203,7 @@ namespace BuzzardWPF.Data
             else
                 selectedUsers = Settings.Default.FilldownEMSLUsers.Cast<string>().ToList();
 
-            using (EMSLProposalUsers.SuppressChangeNotifications())
-            {
-                EMSLProposalUsers.Clear();
-                EMSLProposalUsers.AddRange(DMS_DataAccessor.Instance.FindSavedEMSLProposalUsers(DmsData.EMSLProposalID, selectedUsers));
-            }
+            EMSLProposalUsers.Load(DMS_DataAccessor.Instance.FindSavedEMSLProposalUsers(DmsData.EMSLProposalID, selectedUsers));
         }
     }
 }

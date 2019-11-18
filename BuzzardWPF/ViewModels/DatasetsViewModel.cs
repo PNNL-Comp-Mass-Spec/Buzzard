@@ -10,6 +10,7 @@ using BuzzardWPF.Data;
 using BuzzardWPF.IO;
 using BuzzardWPF.Management;
 using BuzzardWPF.Views;
+using DynamicData.Binding;
 using LcmsNetData.Logging;
 using ReactiveUI;
 
@@ -42,7 +43,7 @@ namespace BuzzardWPF.ViewModels
             CartConfigNameListSource = new ReactiveList<string>();
 
             canSelectDatasets = Datasets.CountChanged.Select(x => x > 0).ToProperty(this, x => x.CanSelectDatasets);
-            datasetSelected = SelectedDatasets.CountChanged.Select(x => x > 0).ToProperty(this, x => x.DatasetSelected);
+            datasetSelected = this.WhenAnyValue(x => x.SelectedDatasets.Count).Select(x => x > 0).ToProperty(this, x => x.DatasetSelected);
             isCreatingTriggerFiles = TriggerFileCreationManager.Instance.WhenAnyValue(x => x.IsCreatingTriggerFiles).ObserveOn(RxApp.MainThreadScheduler).ToProperty(this, x => x.IsCreatingTriggerFiles);
 
             DatasetManager.WatcherMetadata.WhenAnyValue(x => x.CartName).Subscribe(UpdateCartConfigNames);
@@ -120,7 +121,7 @@ namespace BuzzardWPF.ViewModels
         public ReactiveCommand<Unit, Unit> AbortCommand { get; }
         public ReactiveCommand<Unit, Unit> CreateTriggersCommand { get; }
 
-        public ReactiveList<BuzzardDataset> SelectedDatasets { get; } = new ReactiveList<BuzzardDataset>();
+        public ObservableCollectionExtended<BuzzardDataset> SelectedDatasets { get; } = new ObservableCollectionExtended<BuzzardDataset>();
 
         /// <summary>
         /// List of cart config names associated with the current cart
@@ -480,11 +481,7 @@ namespace BuzzardWPF.ViewModels
                     dataset.DmsData.EMSLUsageType = filldownData.DmsData.EMSLUsageType;
 
                 if (filldownData.UseEMSLProposalUsers)
-                    using (dataset.EMSLProposalUsers.SuppressChangeNotifications())
-                    {
-                        dataset.EMSLProposalUsers.Clear();
-                        dataset.EMSLProposalUsers.AddRange(filldownData.EMSLProposalUsers);
-                    }
+                    dataset.EMSLProposalUsers.Load(filldownData.EMSLProposalUsers);
             }
         }
         #endregion

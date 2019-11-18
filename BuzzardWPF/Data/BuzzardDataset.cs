@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using BuzzardWPF.Management;
+using DynamicData.Binding;
 using LcmsNetData.Data;
 using ReactiveUI;
 
@@ -101,7 +102,7 @@ namespace BuzzardWPF.Data
 
         #region Datagrid Properties
 
-        public ReactiveList<ProposalUser> EMSLProposalUsers { get; } = new ReactiveList<ProposalUser>();
+        public ObservableCollectionExtended<ProposalUser> EMSLProposalUsers { get; } = new ObservableCollectionExtended<ProposalUser>();
 
         public string ColumnName
         {

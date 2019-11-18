@@ -657,14 +657,13 @@ namespace BuzzardWPF.Management
                 }
 
                 dataset.DmsData.EMSLUsageType = emslUsageType;
-                using (dataset.EMSLProposalUsers.SuppressChangeNotifications())
+                using (dataset.EMSLProposalUsers.SuspendNotifications())
                 {
                     if (!string.IsNullOrWhiteSpace(dataset.DmsData.EMSLUsageType) &&
                         dataset.DmsData.EMSLUsageType.Equals("USER", StringComparison.OrdinalIgnoreCase))
                     {
                         dataset.DmsData.EMSLProposalID = emslProposalId;
-                        dataset.EMSLProposalUsers.Clear();
-                        dataset.EMSLProposalUsers.AddRange(emslProposalUsers);
+                        dataset.EMSLProposalUsers.Load(emslProposalUsers);
                     }
                     else
                     {

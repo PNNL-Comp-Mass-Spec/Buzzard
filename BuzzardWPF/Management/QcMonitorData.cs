@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Text.RegularExpressions;
 using BuzzardWPF.Properties;
+using DynamicData.Binding;
 using LcmsNetData.Data;
 using ReactiveUI;
 
@@ -14,10 +16,13 @@ namespace BuzzardWPF.Management
         private string emslProposalId;
         private string experimentName;
         private string datasetNameMatch;
+        private readonly ObservableAsPropertyHelper<string> emslProposalUserNames;
 
         public QcMonitorData()
         {
-            EmslProposalUsers.Changed.Subscribe(x => this.RaisePropertyChanged(nameof(EmslProposalUsersNames)));
+            emslProposalUserNames = this.WhenAnyValue(x => x.EmslProposalUsers, x => x.EmslProposalUsers.Count)
+                .Select(x => string.Join("; ", x.Item1.Select(y => y.UserName)))
+                .ToProperty(this, x => x.EmslProposalUsersNames);
             this.WhenAnyValue(x => x.DatasetNameMatch).Subscribe(_ => UpdateDatasetNameMatchRegex());
         }
 
@@ -33,8 +38,8 @@ namespace BuzzardWPF.Management
             set => this.RaiseAndSetIfChanged(ref emslProposalId, value);
         }
 
-        public ReactiveList<ProposalUser> EmslProposalUsers { get; } = new ReactiveList<ProposalUser>();
-        public string EmslProposalUsersNames => string.Join("; ", EmslProposalUsers.Select(x => x.UserName));
+        public ObservableCollectionExtended<ProposalUser> EmslProposalUsers { get; } = new ObservableCollectionExtended<ProposalUser>();
+        public string EmslProposalUsersNames => emslProposalUserNames.Value;
 
         public string ExperimentName
         {
@@ -101,10 +106,7 @@ namespace BuzzardWPF.Management
             {
                 EmslProposalId = split[3];
                 var emslUsers = split[4].Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries).ToList();
-                using (EmslProposalUsers.SuppressChangeNotifications())
-                {
-                    EmslProposalUsers.AddRange(DMS_DataAccessor.Instance.FindSavedEMSLProposalUsers(EmslProposalId, emslUsers));
-                }
+                EmslProposalUsers.AddRange(DMS_DataAccessor.Instance.FindSavedEMSLProposalUsers(EmslProposalId, emslUsers));
             }
         }
 

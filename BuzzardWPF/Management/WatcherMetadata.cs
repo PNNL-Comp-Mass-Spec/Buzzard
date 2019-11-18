@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using BuzzardWPF.Properties;
 using BuzzardWPF.ViewModels;
+using DynamicData.Binding;
 using LcmsNetData.Data;
 using LcmsNetData.Logging;
 using ReactiveUI;
@@ -207,7 +208,7 @@ namespace BuzzardWPF.Management
             set => this.RaiseAndSetIfChangedMonitored(ref interestRating, value);
         }
 
-        public ReactiveList<ProposalUser> EMSLProposalUsers { get; } = new ReactiveList<ProposalUser>();
+        public ObservableCollectionExtended<ProposalUser> EMSLProposalUsers { get; } = new ObservableCollectionExtended<ProposalUser>();
 
         public bool SettingsChanged { get; set; }
 
@@ -255,11 +256,7 @@ namespace BuzzardWPF.Management
             else
                 selectedUsers = Settings.Default.WatcherEMSLUsers.Cast<string>().ToList();
 
-            using (EMSLProposalUsers.SuppressChangeNotifications())
-            {
-                EMSLProposalUsers.Clear();
-                EMSLProposalUsers.AddRange(DMS_DataAccessor.Instance.FindSavedEMSLProposalUsers(EMSLProposalID, selectedUsers));
-            }
+            EMSLProposalUsers.Load(DMS_DataAccessor.Instance.FindSavedEMSLProposalUsers(EMSLProposalID, selectedUsers));
 
             UserComments = Settings.Default.WatcherComment;
             InterestRating = Settings.Default.WatcherInterestRating;
