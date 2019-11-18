@@ -21,8 +21,6 @@ namespace BuzzardWPF.ViewModels
 
         private readonly FilldownBuzzardDataset m_fillDownDataset;
 
-        private ReactiveList<string> m_emslUsageTypesSource;
-
         private bool m_showGridItemDetail;
         private readonly object lockCartConfigNameListSource = new object();
         private readonly ObservableAsPropertyHelper<bool> canSelectDatasets;
@@ -129,12 +127,6 @@ namespace BuzzardWPF.ViewModels
         /// </summary>
         /// <remarks>Updated via Manager_PropertyChanged</remarks>
         public ReactiveList<string> CartConfigNameListSource { get; }
-
-        public ReactiveList<string> EmslUsageTypesSource
-        {
-            get => m_emslUsageTypesSource;
-            set => this.RaiseAndSetIfChanged(ref m_emslUsageTypesSource, value);
-        }
 
         public ReactiveList<BuzzardDataset> Datasets => DatasetManager.Datasets;
 
@@ -399,10 +391,7 @@ namespace BuzzardWPF.ViewModels
             //
             // Prep the Filldown Window for use.
             //
-            var filldownWindowVm = new FillDownWindowViewModel(m_fillDownDataset)
-            {
-                EmslUsageTypeSource = EmslUsageTypesSource
-            };
+            var filldownWindowVm = new FillDownWindowViewModel(m_fillDownDataset);
             var filldownWindow = new FillDownWindow
             {
                 DataContext = filldownWindowVm

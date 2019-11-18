@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reactive;
@@ -22,7 +23,7 @@ namespace BuzzardWPF.ViewModels
             //this.EMSL_DataSelector.BoundContainer = this;
 
             // Combo box for the search types.
-            SearchDepthOptions = new ReactiveList<SearchOption>
+            SearchDepthOptions = new List<SearchOption>
             {
                 SearchOption.AllDirectories,
                 SearchOption.TopDirectoryOnly
@@ -50,7 +51,7 @@ namespace BuzzardWPF.ViewModels
         public ReactiveCommand<Unit, Unit> ResetToDefaultsCommand { get; }
         public ReactiveCommand<Unit, Unit> MonitorStartStopCommand { get; }
 
-        public IReadOnlyReactiveList<SearchOption> SearchDepthOptions { get; }
+        public IReadOnlyList<SearchOption> SearchDepthOptions { get; }
 
         public DatasetManager DatasetManager => DatasetManager.Manager;
         public DatasetMonitor Monitor => DatasetMonitor.Monitor;

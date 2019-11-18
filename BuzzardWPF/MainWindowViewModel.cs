@@ -63,7 +63,6 @@ namespace BuzzardWPF
         private BitmapImage m_CurrentImage;
 
         private bool remoteFolderLocationIsEnabled;
-        private readonly object lockEmslUsageTypesSource = new object();
         private readonly Timer settingsSaveTimer;
         private readonly ObservableAsPropertyHelper<bool> isNotMonitoring;
 
@@ -87,19 +86,6 @@ namespace BuzzardWPF
 
             ApplicationLogger.Message += ApplicationLogger_Message;
             ApplicationLogger.Error += ApplicationLogger_Error;
-
-            // These values come from table T_EUS_UsageType
-            // It is rarely updated, so we're not querying the database every time
-            // Previously used, but deprecated in April 2017 is USER_UNKNOWN
-            var emslUsageTypesSource =
-                new ReactiveList<string>
-                    (
-                    new[] { "BROKEN", "CAP_DEV", "MAINTENANCE", "USER" }
-                    );
-
-            BindingOperations.EnableCollectionSynchronization(emslUsageTypesSource, lockEmslUsageTypesSource);
-
-            DatasetsVm.EmslUsageTypesSource = emslUsageTypesSource;
 
             if (!DMS_DataAccessor.Instance.CartNames.Contains("unknown"))
             {

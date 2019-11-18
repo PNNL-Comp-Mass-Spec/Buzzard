@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Linq;
 using BuzzardWPF.Management;
@@ -40,7 +41,7 @@ namespace BuzzardWPF.ViewModels
 
         public WatcherMetadata WatcherMetadata => DatasetManager.WatcherMetadata;
 
-        public ReactiveList<string> InterestRatingOptions => DatasetManager.INTEREST_RATINGS_COLLECTION;
+        public IReadOnlyList<string> InterestRatingOptions => DatasetManager.InterestRatingCollection;
 
         public DMS_DataAccessor DmsData => DMS_DataAccessor.Instance;
 

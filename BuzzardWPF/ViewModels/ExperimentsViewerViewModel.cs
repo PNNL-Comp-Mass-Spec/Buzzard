@@ -33,7 +33,7 @@ namespace BuzzardWPF.ViewModels
         {
             FilterText = string.Empty;
 
-            FilterOptions = new ReactiveList<FilterOption>(Enum.GetValues(typeof(FilterOption)).Cast<FilterOption>().Where(x => x != FilterOption.None));
+            FilterOptions = new List<FilterOption>(Enum.GetValues(typeof(FilterOption)).Cast<FilterOption>().Where(x => x != FilterOption.None));
             SelectedFilterOption = FilterOption.Experiment;
             SearchCommand = ReactiveCommand.Create(Search);
 
@@ -103,7 +103,7 @@ namespace BuzzardWPF.ViewModels
 
         public bool ExperimentSelected => experimentSelected.Value;
 
-        public IReadOnlyReactiveList<FilterOption> FilterOptions { get; }
+        public IReadOnlyList<FilterOption> FilterOptions { get; }
 
         public FilterOption SelectedFilterOption
         {

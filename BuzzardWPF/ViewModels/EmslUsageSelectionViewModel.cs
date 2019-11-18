@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reactive.Linq;
 using System.Windows.Controls;
@@ -27,7 +28,6 @@ namespace BuzzardWPF.ViewModels
         };
 
         private IEmslUsageData boundContainer;
-        private ReactiveList<string> usageTypesSource;
         private ReactiveList<string> availableProposalIDs;
         private ReactiveList<ProposalUser> proposalUsers;
         private string proposalUsersText;
@@ -37,7 +37,7 @@ namespace BuzzardWPF.ViewModels
         #region Constructors
         public EmslUsageSelectionViewModel()
         {
-            UsageTypesSource = new ReactiveList<string>(EMSL_USAGE_TYPES);
+            UsageTypesSource = EMSL_USAGE_TYPES;
             AvailableProposalIDs = DMS_DataAccessor.Instance.ProposalIDs;
 
             this.WhenAnyValue(x => x.BoundContainer.EMSLProposalUsers, x => x.BoundContainer.EMSLProposalUsers.Count).ObserveOn(RxApp.MainThreadScheduler).Subscribe(x => UpdateSelectedUsersText());
@@ -83,11 +83,7 @@ namespace BuzzardWPF.ViewModels
             }
         }
 
-        public ReactiveList<string> UsageTypesSource
-        {
-            get => usageTypesSource;
-            set => this.RaiseAndSetIfChanged(ref usageTypesSource, value);
-        }
+        public IReadOnlyList<string> UsageTypesSource { get; }
 
         public ReactiveList<string> AvailableProposalIDs
         {

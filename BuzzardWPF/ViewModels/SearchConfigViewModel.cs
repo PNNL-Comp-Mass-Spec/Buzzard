@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -49,7 +50,7 @@ namespace BuzzardWPF.ViewModels
             m_folderDialog = new Ookii.Dialogs.Wpf.VistaFolderBrowserDialog { ShowNewFolderButton = true };
 
             // Combo box for the search types.
-            SearchDepthOptions = new ReactiveList<SearchOption>
+            SearchDepthOptions = new List<SearchOption>
             {
                 SearchOption.AllDirectories,
                 SearchOption.TopDirectoryOnly
@@ -84,7 +85,7 @@ namespace BuzzardWPF.ViewModels
         public ReactiveCommand<Unit, Unit> StopSearchCommand { get; }
         public ReactiveCommand<Unit, Unit> ResetDateRangeCommand { get; }
 
-        public IReadOnlyReactiveList<SearchOption> SearchDepthOptions { get; }
+        public IReadOnlyList<SearchOption> SearchDepthOptions { get; }
 
         public DatasetManager DatasetManager => DatasetManager.Manager;
 

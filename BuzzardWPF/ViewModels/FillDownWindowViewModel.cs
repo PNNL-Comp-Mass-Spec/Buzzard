@@ -16,7 +16,6 @@ namespace BuzzardWPF.ViewModels
     public class FillDownWindowViewModel : ReactiveObject
     {
         #region Attributes
-        private ReactiveList<string> emslUsageTypeSource;
         private ReactiveList<ProposalUser> emslProposalUsersSource;
         private string workPackageToolTipText;
         private bool workPackageWarning = false;
@@ -33,7 +32,6 @@ namespace BuzzardWPF.ViewModels
         public FillDownWindowViewModel(FilldownBuzzardDataset dataset)
         {
             CartConfigNameListSource = new ReactiveList<string>();
-            EmslUsageTypeSource = new ReactiveList<string>();
             EMSLProposalUsersSource = new ReactiveList<ProposalUser>();
             Dataset = dataset ?? new FilldownBuzzardDataset();
 
@@ -80,13 +78,9 @@ namespace BuzzardWPF.ViewModels
         /// <remarks>Updated via CartNameList_OnSelectionChanged</remarks>
         public ReactiveList<string> CartConfigNameListSource { get; }
 
-        public ReactiveList<string> EmslUsageTypeSource
-        {
-            get => emslUsageTypeSource;
-            set => this.RaiseAndSetIfChanged(ref emslUsageTypeSource, value);
-        }
+        public IReadOnlyList<string> EmslUsageTypeSource => DatasetManager.Manager.EmslUsageTypesSource;
 
-        public ReactiveList<string> InterestRatingSource => DatasetManager.INTEREST_RATINGS_COLLECTION;
+        public IReadOnlyList<string> InterestRatingSource => DatasetManager.InterestRatingCollection;
 
         public ReactiveList<ProposalUser> EMSLProposalUsersSource
         {
