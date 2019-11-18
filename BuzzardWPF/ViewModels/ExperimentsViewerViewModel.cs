@@ -5,6 +5,7 @@ using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using BuzzardWPF.Management;
+using BuzzardWPF.Utility;
 using LcmsNetData.Data;
 using ReactiveUI;
 
@@ -57,7 +58,7 @@ namespace BuzzardWPF.ViewModels
             // do it here.
             // -FC
             m_experimentList = DMS_DataAccessor.Instance.Experiments;
-            var stringEqualityDeterminer = new StringComparision();
+            var stringEqualityDeterminer = new IgnoreCaseStringComparison();
 
             // Building lists that we can use to narrow down the
             // number of experiments to insert into the UI
@@ -70,31 +71,6 @@ namespace BuzzardWPF.ViewModels
             m_researcherList.Sort();
         }
 
-        private class StringComparision
-            : IEqualityComparer<string>
-        {
-            public bool Equals(string x, string y)
-            {
-                bool areTheyEqual;
-
-                if (x == null && y == null)
-                    areTheyEqual = true;
-                else if (x == null || y == null)
-                    areTheyEqual = false;
-                else
-                    areTheyEqual = x.Equals(y, StringComparison.OrdinalIgnoreCase);
-
-                return areTheyEqual;
-            }
-
-            public int GetHashCode(string obj)
-            {
-                if (obj != null)
-                    return obj.ToUpper().GetHashCode();
-
-                throw new Exception();
-            }
-        }
         #endregion
 
         #region Properties

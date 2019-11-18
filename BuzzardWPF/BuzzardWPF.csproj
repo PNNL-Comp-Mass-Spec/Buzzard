@@ -133,6 +133,7 @@
     <Compile Include="Searching\SearchConfig.cs" />
     <Compile Include="Searching\SearchEventArgs.cs" />
     <Compile Include="Searching\StartStopEventArgs.cs" />
+    <Compile Include="Utility\IgnoreCaseStringComparison.cs" />
     <Compile Include="ViewModels\DatasetOverwriteDialogViewModel.cs" />
     <Compile Include="ViewModels\DatasetsViewModel.cs" />
     <Compile Include="ViewModels\EmslUsageSelectionViewModel.cs" />

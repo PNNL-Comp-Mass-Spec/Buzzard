@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
 using BuzzardWPF.Management;
+using BuzzardWPF.Utility;
 using DynamicData;
 using DynamicData.Binding;
 using LcmsNetData.Data;
@@ -97,7 +98,7 @@ namespace BuzzardWPF.ViewModels
         /// </summary>
         private void SetAutoCompleteList()
         {
-            var stringEqualityDeterminer = new StringComparision();
+            var stringEqualityDeterminer = new IgnoreCaseStringComparison();
             var filterOption = SelectedFilterOption;
             var showAutoComplete = true;
 
@@ -143,20 +144,6 @@ namespace BuzzardWPF.ViewModels
                 var fieldItemList = DMS_DataAccessor.Instance.WorkPackages.Select(fieldSelector).Distinct(stringEqualityDeterminer).ToList();
                 fieldItemList.Sort();
                 AutoCompleteBoxItems = fieldItemList;
-            }
-        }
-
-        private class StringComparision
-            : IEqualityComparer<string>
-        {
-            public bool Equals(string x, string y)
-            {
-                return string.Equals(x, y, StringComparison.OrdinalIgnoreCase);
-            }
-
-            public int GetHashCode(string obj)
-            {
-                return obj.ToUpper().GetHashCode();
             }
         }
     }
