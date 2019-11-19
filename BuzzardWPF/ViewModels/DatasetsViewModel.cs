@@ -87,7 +87,7 @@ namespace BuzzardWPF.ViewModels
             // Update the allowable CartConfig names
             CartConfigNameListSource.Clear();
 
-            var cartConfigNames = CartConfigFilter.GetCartConfigNamesForCart(cartName);
+            var cartConfigNames = DmsData.GetCartConfigNamesForCart(cartName);
             foreach (var item in cartConfigNames)
             {
                 CartConfigNameListSource.Add(item);

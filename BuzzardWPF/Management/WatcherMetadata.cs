@@ -121,7 +121,7 @@ namespace BuzzardWPF.Management
                             // Update the allowable CartConfig names
                             CartConfigNameListForCart.Clear();
 
-                            var cartConfigNames = CartConfigFilter.GetCartConfigNamesForCart(value);
+                            var cartConfigNames = DMS_DataAccessor.Instance.GetCartConfigNamesForCart(value);
                             foreach (var item in cartConfigNames)
                             {
                                 CartConfigNameListForCart.Add(item);

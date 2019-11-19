@@ -662,15 +662,6 @@ namespace BuzzardWPF.Management
         }
 
         /// <summary>
-        /// Proposal IDs
-        /// </summary>
-        public ReactiveList<string> ProposalIDs
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
         /// Search cached EUS proposal users for each user ID in keys
         /// </summary>
         /// <param name="proposalID"></param>
@@ -692,9 +683,33 @@ namespace BuzzardWPF.Management
             return allProposalUsers.Where(x => keys.Contains(x.UserID.ToString()));
         }
 
+        /// <summary>
+        /// Gets the list of cart config names for a specified cart, returning an empty list if the cart name is not found.
+        /// </summary>
+        /// <param name="cartName"></param>
+        /// <returns></returns>
+        public List<string> GetCartConfigNamesForCart(string cartName)
+        {
+            if (CartConfigNameMap.TryGetValue(cartName, out var configNames))
+            {
+                return configNames;
+            }
+
+            return new List<string>();
+        }
+
         #endregion
 
         #region Properties
+
+        /// <summary>
+        /// Proposal IDs
+        /// </summary>
+        public ReactiveList<string> ProposalIDs
+        {
+            get;
+            private set;
+        }
 
         /// <summary>
         /// DMS data refresh interval, in hours
