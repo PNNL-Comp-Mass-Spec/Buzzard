@@ -251,7 +251,7 @@
                         Grid.Column="1"
                         FontWeight="Regular"
                         IsEnabled="{Binding Path=IsNotMonitoring}"
-                        ItemsSource="{Binding Path=InterestRatingOptions, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        ItemsSource="{Binding Path=DmsData.InterestRatingCollection, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                         SelectedItem="{Binding Path=WatcherMetadata.InterestRating, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         Style="{StaticResource ComboBoxStyle}">
                         <cueBannerOverlay:CueBannerService.CueBanner>

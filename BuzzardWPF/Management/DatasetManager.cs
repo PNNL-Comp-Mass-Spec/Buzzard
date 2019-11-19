@@ -46,7 +46,6 @@ namespace BuzzardWPF.Management
         /// Trie that holds requested run names from DMS.
         /// </summary>
         private readonly DatasetTrie mRequestedRunTrie;
-        public static IReadOnlyList<string> InterestRatingCollection => new [] { "Unreviewed", "Not Released", "Released", "Rerun (Good Data)", "Rerun (Superseded)" };
 
         private readonly object lockDatasets = new object();
 
@@ -73,13 +72,6 @@ namespace BuzzardWPF.Management
         }
 
         #region Properties
-
-        /// <summary>
-        /// These values come from table T_EUS_UsageType
-        /// It is rarely updated, so we're not querying the database every time
-        /// Previously used, but deprecated in April 2017 is USER_UNKNOWN
-        /// </summary>
-        public IReadOnlyList<string> EmslUsageTypesSource => new[] { "BROKEN", "CAP_DEV", "MAINTENANCE", "USER" };
 
         /// <summary>
         /// Instrument data files / folders that are candidate datasets

@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Windows.Media;
 using BuzzardWPF.Data;
 using BuzzardWPF.Management;
 using BuzzardWPF.Views;
@@ -56,31 +54,14 @@ namespace BuzzardWPF.ViewModels
         public ReactiveCommand<Unit, Unit> UseAllCommand { get; }
         public ReactiveCommand<Unit, Unit> UseNoneCommand { get; }
 
-        public ReactiveList<string> EMSLProposalIDs => DMS_DataAccessor.Instance.ProposalIDs;
-
-        public ReactiveList<string> LCColumnSource => DMS_DataAccessor.Instance.ColumnData;
-
         public FilldownBuzzardDataset Dataset { get; }
-
-        public ReactiveList<string> OperatorsSource => DMS_DataAccessor.Instance.OperatorData;
-
-        public ReactiveList<string> InstrumentSource => DMS_DataAccessor.Instance.InstrumentData;
-
-        public ReactiveList<string> DatasetTypesSource => DMS_DataAccessor.Instance.DatasetTypes;
-
-        public ReactiveList<string> SeparationTypeSource => DMS_DataAccessor.Instance.SeparationTypes;
-
-        public ReactiveList<string> CartNameListSource => DMS_DataAccessor.Instance.CartNames;
+        public DMS_DataAccessor DmsDbLists => DMS_DataAccessor.Instance;
 
         /// <summary>
         /// List of cart config names associated with the current cart
         /// </summary>
         /// <remarks>Updated via CartNameList_OnSelectionChanged</remarks>
         public ReactiveList<string> CartConfigNameListSource { get; }
-
-        public IReadOnlyList<string> EmslUsageTypeSource => DatasetManager.Manager.EmslUsageTypesSource;
-
-        public IReadOnlyList<string> InterestRatingSource => DatasetManager.InterestRatingCollection;
 
         public ReactiveList<ProposalUser> EMSLProposalUsersSource
         {

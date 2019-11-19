@@ -41,8 +41,6 @@ namespace BuzzardWPF.ViewModels
 
         public WatcherMetadata WatcherMetadata => DatasetManager.WatcherMetadata;
 
-        public IReadOnlyList<string> InterestRatingOptions => DatasetManager.InterestRatingCollection;
-
         public DMS_DataAccessor DmsData => DMS_DataAccessor.Instance;
 
         public bool IsNotMonitoring => isNotMonitoring.Value;

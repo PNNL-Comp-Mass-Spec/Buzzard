@@ -17,11 +17,12 @@ namespace BuzzardWPF.Management
 {
     public class DMS_DataAccessor : ReactiveObject, IDisposable
     {
-
         #region Constants
 
         public const int RECENT_EXPERIMENT_MONTHS = 18;
         public const int RECENT_DATASET_MONTHS = 12;
+
+        private readonly string[] interestRatingOptions = { "Unreviewed", "Not Released", "Released", "Rerun (Good Data)", "Rerun (Superseded)" };
 
         #endregion
 
@@ -33,6 +34,12 @@ namespace BuzzardWPF.Management
         private DMS_DataAccessor()
         {
             m_proposalUserCollections = new Dictionary<string, ReactiveList<ProposalUser>>();
+            InterestRatingCollection = interestRatingOptions;
+            // These values come from table T_EUS_UsageType
+            // It is rarely updated, so we're not querying the database every time
+            // Previously used, but deprecated in April 2017 is USER_UNKNOWN
+            EMSLUsageTypesSource = new [] { "BROKEN", "CAP_DEV", "MAINTENANCE", "USER" };
+
             LoadProposalUsers();
 
             Experiments = new List<ExperimentData>();
@@ -701,6 +708,10 @@ namespace BuzzardWPF.Management
         #endregion
 
         #region Properties
+
+        public IReadOnlyList<string> InterestRatingCollection { get; }
+
+        public IReadOnlyList<string> EMSLUsageTypesSource { get; }
 
         /// <summary>
         /// Proposal IDs

@@ -81,7 +81,7 @@ namespace BuzzardWPF.ViewModels
         private string selectedEMSLUsageType;
         private string emslProposalID;
         private string experimentName;
-        private ObservableAsPropertyHelper<bool> isNotMonitoring;
+        private readonly ObservableAsPropertyHelper<bool> isNotMonitoring;
         private string datasetNameMatch;
         private string datasetNameMatchError;
         private QcMonitorData selectedQcMonitor;

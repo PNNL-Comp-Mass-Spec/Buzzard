@@ -130,7 +130,7 @@
                 Grid.Row="0"
                 Grid.Column="2"
                 Margin="2"
-                ItemsSource="{Binding Path=OperatorsSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                ItemsSource="{Binding Path=DmsDbLists.OperatorData, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                 SelectedValue="{Binding Path=Dataset.Operator, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                 <cueBannerOverlay:CueBannerService.CueBanner>
                     <TextBlock Text="Select" Margin="0" FontWeight="Regular" />
@@ -150,7 +150,7 @@
                 Grid.Row="1"
                 Grid.Column="2"
                 Margin="2"
-                ItemsSource="{Binding Path=DatasetTypesSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                ItemsSource="{Binding Path=DmsDbLists.DatasetTypes, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                 SelectedValue="{Binding Path=Dataset.DmsData.DatasetType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                 <cueBannerOverlay:CueBannerService.CueBanner>
                     <TextBlock Text="Select" Margin="0" FontWeight="Regular" />
@@ -170,7 +170,7 @@
                 Grid.Row="2"
                 Grid.Column="2"
                 Margin="2"
-                ItemsSource="{Binding Path=SeparationTypeSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                ItemsSource="{Binding Path=DmsDbLists.SeparationTypes, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                 SelectedValue="{Binding Path=Dataset.SeparationType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                 <cueBannerOverlay:CueBannerService.CueBanner>
                     <TextBlock Text="Select" Margin="0" FontWeight="Regular" />
@@ -201,7 +201,7 @@
                 <ComboBox
                     Grid.Column="1"
                     Margin="2"
-                    ItemsSource="{Binding Path=LCColumnSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                    ItemsSource="{Binding Path=DmsDbLists.ColumnData, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                     SelectedItem="{Binding Dataset.ColumnName}">
                     <cueBannerOverlay:CueBannerService.CueBanner>
                         <TextBlock Text="Select" Margin="0" FontWeight="Regular" />
@@ -223,7 +223,7 @@
                 Grid.Row="4"
                 Grid.Column="2"
                 Margin="2"
-                ItemsSource="{Binding Path=InstrumentSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                ItemsSource="{Binding Path=DmsDbLists.InstrumentData, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                 SelectedValue="{Binding Path=Dataset.InstrumentName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                 <cueBannerOverlay:CueBannerService.CueBanner>
                     <TextBlock Text="Select" Margin="0" FontWeight="Regular" />
@@ -243,7 +243,7 @@
                 Grid.Row="5"
                 Grid.Column="2"
                 Margin="2"
-                ItemsSource="{Binding Path=CartNameListSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                ItemsSource="{Binding Path=DmsDbLists.CartNames, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                 SelectedItem="{Binding Path=Dataset.DmsData.CartName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                 <cueBannerOverlay:CueBannerService.CueBanner>
                     <TextBlock Text="Select" Margin="0" FontWeight="Regular" />
@@ -279,7 +279,7 @@
                 Grid.Row="7"
                 Grid.Column="2"
                 Margin="2"
-                ItemsSource="{Binding Path=InterestRatingSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                ItemsSource="{Binding Path=DmsDbLists.InterestRatingCollection, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                 SelectedValue="{Binding Path=Dataset.InterestRating, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                 <cueBannerOverlay:CueBannerService.CueBanner>
                     <TextBlock Text="Select" Margin="0" FontWeight="Regular" />
@@ -299,7 +299,7 @@
                 Grid.Row="8"
                 Grid.Column="2"
                 Margin="2"
-                ItemsSource="{Binding Path=EmslUsageTypeSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                ItemsSource="{Binding Path=DmsDbLists.EMSLUsageTypesSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                 SelectedValue="{Binding Path=Dataset.DmsData.EMSLUsageType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                 <cueBannerOverlay:CueBannerService.CueBanner>
                     <TextBlock Text="Select" Margin="0" FontWeight="Regular" />
@@ -329,7 +329,7 @@
                 <ComboBox
                     Grid.Column="1"
                     Margin="2"
-                    ItemsSource="{Binding Path=EMSLProposalIDs, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                    ItemsSource="{Binding Path=DmsDbLists.ProposalIDs, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                     SelectedItem="{Binding Dataset.DmsData.EMSLProposalID}">
                     <cueBannerOverlay:CueBannerService.CueBanner>
                         <TextBlock Text="Select" Margin="0" FontWeight="Regular" />
