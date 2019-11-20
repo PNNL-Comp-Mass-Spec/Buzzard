@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Reactive.Concurrency;
 using System.Threading;
-using System.Windows.Data;
 using BuzzardWPF.Data;
 using BuzzardWPF.Properties;
 using DynamicData.Binding;
@@ -24,7 +23,6 @@ namespace BuzzardWPF.Management
         private DatasetMonitor()
         {
             TriggerFileCreationWaitTime = 5;
-            BindingOperations.EnableCollectionSynchronization(QcMonitors, lockQcMonitors);
 
             SetupTimers();
         }
@@ -36,7 +34,6 @@ namespace BuzzardWPF.Management
         private Timer mScannedDatasetTimer;
         private Timer mTriggerCountdownTimer;
         private readonly ConcurrentDictionary<BuzzardDataset, bool> triggerCountdownDatasets = new ConcurrentDictionary<BuzzardDataset, bool>(3, 10);
-        private readonly object lockQcMonitors = new object();
 
         private bool createTriggerOnDmsFail;
         private bool qcCreateTriggerOnDmsFail;

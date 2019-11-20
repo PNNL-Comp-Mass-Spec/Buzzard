@@ -26,7 +26,7 @@ namespace BuzzardWPF.ViewModels
             EMSLProposalID = null;
             ExperimentName = null;
 
-            datasetNameMatchHasError = this.WhenAnyValue(x => x.DatasetNameMatch, x => x.Monitor.QcMonitors).Select(x =>
+            datasetNameMatchHasError = this.WhenAnyValue(x => x.DatasetNameMatch, x => x.Monitor.QcMonitors, x => x.Monitor.QcMonitors.Count).Select(x =>
             {
                 if (x.Item2.Any(y => y.DatasetNameMatch.Equals(x.Item1)))
                 {

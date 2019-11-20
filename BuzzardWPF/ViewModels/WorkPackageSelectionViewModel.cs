@@ -30,6 +30,10 @@ namespace BuzzardWPF.ViewModels
                 .Throttle(TimeSpan.FromMilliseconds(250), RxApp.TaskpoolScheduler)
                 .Select(x => new Func<WorkPackageInfo, bool>(y =>
                 {
+                    if (string.IsNullOrWhiteSpace(x))
+                    {
+                        return true;
+                    }
                     var value = fieldSelector(y);
                     return value != null && value.StartsWith(x, StringComparison.OrdinalIgnoreCase);
                 }));
@@ -98,7 +102,6 @@ namespace BuzzardWPF.ViewModels
         /// </summary>
         private void SetAutoCompleteList()
         {
-            var stringEqualityDeterminer = new IgnoreCaseStringComparison();
             var filterOption = SelectedFilterOption;
             var showAutoComplete = true;
 
@@ -137,11 +140,11 @@ namespace BuzzardWPF.ViewModels
 
             if (!showAutoComplete)
             {
-                AutoCompleteBoxItems.Clear();
+                AutoCompleteBoxItems = new List<string>();
             }
             else
             {
-                var fieldItemList = DMS_DataAccessor.Instance.WorkPackages.Select(fieldSelector).Distinct(stringEqualityDeterminer).ToList();
+                var fieldItemList = DMS_DataAccessor.Instance.WorkPackages.Select(fieldSelector).Distinct(new IgnoreCaseStringComparison()).ToList();
                 fieldItemList.Sort();
                 AutoCompleteBoxItems = fieldItemList;
             }

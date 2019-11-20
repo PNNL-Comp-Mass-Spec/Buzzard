@@ -16,13 +16,14 @@ namespace BuzzardWPF.Management
         private string emslProposalId;
         private string experimentName;
         private string datasetNameMatch;
-        private readonly ObservableAsPropertyHelper<string> emslProposalUserNames;
+        private readonly ObservableAsPropertyHelper<string> emslProposalUsersNames;
 
         public QcMonitorData()
         {
-            emslProposalUserNames = this.WhenAnyValue(x => x.EmslProposalUsers, x => x.EmslProposalUsers.Count)
+            emslProposalUsersNames = this.WhenAnyValue(x => x.EmslProposalUsers, x => x.EmslProposalUsers.Count)
                 .Select(x => string.Join("; ", x.Item1.Select(y => y.UserName)))
-                .ToProperty(this, x => x.EmslProposalUsersNames);
+                .ToProperty(this, x => x.EmslProposalUsersNames, initialValue: string.Join("; ", EmslProposalUsers.Select(y => y.UserName)));
+
             this.WhenAnyValue(x => x.DatasetNameMatch).Subscribe(_ => UpdateDatasetNameMatchRegex());
         }
 
@@ -39,7 +40,7 @@ namespace BuzzardWPF.Management
         }
 
         public ObservableCollectionExtended<ProposalUser> EmslProposalUsers { get; } = new ObservableCollectionExtended<ProposalUser>();
-        public string EmslProposalUsersNames => emslProposalUserNames.Value;
+        public string EmslProposalUsersNames => emslProposalUsersNames.Value;
 
         public string ExperimentName
         {
