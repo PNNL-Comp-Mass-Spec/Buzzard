@@ -48,7 +48,7 @@ namespace BuzzardWPF.ViewModels
             experiments.Connect().Filter(filter).ObserveOn(RxApp.MainThreadScheduler).Bind(out var filteredExperiments).Subscribe();
             Experiments = filteredExperiments;
 
-            FilterOptions = new List<FilterOption>(Enum.GetValues(typeof(FilterOption)).Cast<FilterOption>().Where(x => x != FilterOption.None));
+            FilterOptions = Enum.GetValues(typeof(FilterOption)).Cast<FilterOption>().Where(x => x != FilterOption.None).ToArray();
             SelectedFilterOption = FilterOption.Experiment;
 
             experimentSelected = this.WhenAnyValue(x => x.SelectedExperiment).Select(x => x != null).ToProperty(this, x => x.ExperimentSelected, scheduler: RxApp.MainThreadScheduler);

@@ -19,7 +19,7 @@ namespace BuzzardWPF.ViewModels
         {
             FilterText = string.Empty;
 
-            FilterOptions = new List<WorkPackageFilterOption>(Enum.GetValues(typeof(WorkPackageFilterOption)).Cast<WorkPackageFilterOption>());
+            FilterOptions = Enum.GetValues(typeof(WorkPackageFilterOption)).Cast<WorkPackageFilterOption>().ToArray();
             SelectedFilterOption = WorkPackageFilterOption.ChargeCode;
 
             var workPackagesObservable = new SourceList<WorkPackageInfo>(DMS_DataAccessor.Instance.WorkPackages.AsObservableChangeSet());
