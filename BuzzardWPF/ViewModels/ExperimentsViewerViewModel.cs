@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
-using System.Reactive;
-using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using BuzzardWPF.Management;
 using BuzzardWPF.Utility;
+using DynamicData;
+using DynamicData.Binding;
 using LcmsNetData.Data;
 using ReactiveUI;
 
@@ -14,18 +15,14 @@ namespace BuzzardWPF.ViewModels
     public class ExperimentsViewerViewModel : ReactiveObject
     {
         #region Attributes
-        private string m_filterText;
-        private ExperimentData m_selectedExperiment;
+        private string filterText;
+        private ExperimentData selectedExperiment;
 
-        private List<ExperimentData> m_experimentList;
-        private List<string> m_organismNameList;
-        private List<string> m_researcherList;
-        private List<string> m_reason;
-
-        private ReactiveList<ExperimentData> m_experiments;
+        private readonly SourceList<ExperimentData> experiments = new SourceList<ExperimentData>();
         private FilterOption selectedFilterOption;
         private List<string> autoCompleteBoxItems;
         private readonly ObservableAsPropertyHelper<bool> experimentSelected;
+        private Func<ExperimentData, string> fieldSelector = x => x.Experiment;
 
         #endregion
 
@@ -34,52 +31,40 @@ namespace BuzzardWPF.ViewModels
         {
             FilterText = string.Empty;
 
+            experiments.AddRange(DMS_DataAccessor.Instance.Experiments);
+            var filter = this.WhenValueChanged(x => x.FilterText)
+                .Throttle(TimeSpan.FromMilliseconds(250), RxApp.TaskpoolScheduler).Select(x =>
+                    new Func<ExperimentData, bool>(
+                        y =>
+                        {
+                            if (string.IsNullOrWhiteSpace(x))
+                            {
+                                return true;
+                            }
+                            var value = fieldSelector(y);
+                            return value != null && value.StartsWith(x, StringComparison.OrdinalIgnoreCase);
+                        }));
+
+            experiments.Connect().Filter(filter).ObserveOn(RxApp.MainThreadScheduler).Bind(out var filteredExperiments).Subscribe();
+            Experiments = filteredExperiments;
+
             FilterOptions = new List<FilterOption>(Enum.GetValues(typeof(FilterOption)).Cast<FilterOption>().Where(x => x != FilterOption.None));
             SelectedFilterOption = FilterOption.Experiment;
-            SearchCommand = ReactiveCommand.Create(Search);
 
             experimentSelected = this.WhenAnyValue(x => x.SelectedExperiment).Select(x => x != null).ToProperty(this, x => x.ExperimentSelected, scheduler: RxApp.MainThreadScheduler);
 
-            RxApp.MainThreadScheduler.Schedule(LoadExperiments);
             this.WhenAnyValue(x => x.SelectedFilterOption).Subscribe(_ => SetAutoCompleteList());
             SetAutoCompleteList();
         }
-
-        private void LoadExperiments()
-        {
-            // Get the list of experiments.
-            // I don't know why I can't just put the entire list
-            // right into an observable collection and throw it
-            // into the Experiments property. What I do know is
-            // that, if we do that at this time, the memory usage
-            // will grow by over a GB, and we'll be waiting forever
-            // for the UI thread to unfreeze. We can throw everything
-            // into Experiments when we run a search, but we can't
-            // do it here.
-            // -FC
-            m_experimentList = DMS_DataAccessor.Instance.Experiments;
-            var stringEqualityDeterminer = new IgnoreCaseStringComparison();
-
-            // Building lists that we can use to narrow down the
-            // number of experiments to insert into the UI
-            m_researcherList = m_experimentList.Select(x => x.Researcher.Trim()).Distinct(stringEqualityDeterminer).ToList();
-            m_organismNameList = m_experimentList.Select(x => x.Organism.Trim()).Distinct(stringEqualityDeterminer).ToList();
-            m_reason = m_experimentList.Select(x => x.Reason).Distinct(stringEqualityDeterminer).ToList();
-
-            m_organismNameList.Sort();
-            m_reason.Sort();
-            m_researcherList.Sort();
-        }
-
         #endregion
 
         #region Properties
 
-        public ReactiveCommand<Unit, Unit> SearchCommand { get; }
-
         public bool ExperimentSelected => experimentSelected.Value;
 
         public IReadOnlyList<FilterOption> FilterOptions { get; }
+
+        public ReadOnlyObservableCollection<ExperimentData> Experiments { get; }
 
         public FilterOption SelectedFilterOption
         {
@@ -89,13 +74,13 @@ namespace BuzzardWPF.ViewModels
 
         public ExperimentData SelectedExperiment
         {
-            get => m_selectedExperiment;
-            set => this.RaiseAndSetIfChanged(ref m_selectedExperiment, value);
+            get => selectedExperiment;
+            set => this.RaiseAndSetIfChanged(ref selectedExperiment, value);
         }
 
         public string FilterText
         {
-            get => m_filterText;
+            get => filterText;
             set
             {
                 if (value == null)
@@ -103,14 +88,8 @@ namespace BuzzardWPF.ViewModels
                     value = string.Empty;
                 }
 
-                this.RaiseAndSetIfChanged(ref m_filterText, value);
+                this.RaiseAndSetIfChanged(ref filterText, value);
             }
-        }
-
-        public ReactiveList<ExperimentData> Experiments
-        {
-            get => m_experiments;
-            set => this.RaiseAndSetIfChanged(ref m_experiments, value);
         }
 
         public List<string> AutoCompleteBoxItems
@@ -123,85 +102,49 @@ namespace BuzzardWPF.ViewModels
 
         #region Methods
         /// <summary>
-        /// Gives the autofill box a list of times to use as its source based
-        /// on the selected filter to use.
+        /// Gives the autofill box a list of times to use as its source based on the selected filter to use.
         /// </summary>
         private void SetAutoCompleteList()
         {
             var filterOption = SelectedFilterOption;
+            var showAutoComplete = true;
 
             switch (filterOption)
             {
                 case FilterOption.Researcher:
-                    AutoCompleteBoxItems = m_researcherList;
+                    fieldSelector = exp => exp.Researcher;
                     break;
 
                 case FilterOption.Experiment:
-                    AutoCompleteBoxItems = new List<string>();
+                    showAutoComplete = false;
+                    fieldSelector = exp => exp.Experiment;
                     break;
 
                 case FilterOption.Organism:
-                    AutoCompleteBoxItems = m_organismNameList;
+                    fieldSelector = exp => exp.Organism;
                     break;
 
                 case FilterOption.Reason:
-                    AutoCompleteBoxItems = m_reason;
+                    fieldSelector = exp => exp.Reason;
                     break;
 
                 default:
-                    AutoCompleteBoxItems = new List<string>();
+                    showAutoComplete = false;
                     break;
             }
+
+            if (!showAutoComplete)
+            {
+                AutoCompleteBoxItems = new List<string>();
+            }
+            else
+            {
+                var fieldItemList = DMS_DataAccessor.Instance.Experiments.Select(fieldSelector).Distinct(new IgnoreCaseStringComparison()).ToList();
+                fieldItemList.Sort();
+                AutoCompleteBoxItems = fieldItemList;
+            }
         }
 
-        /// <summary>
-        /// Searches for experiments that match the selected filter and
-        /// filter screen.
-        /// </summary>
-        private void Search()
-        {
-            Experiments = null;
-            var filterOption = SelectedFilterOption;
-
-            IEnumerable<ExperimentData> matches = null;
-
-            try
-            {
-                switch (filterOption)
-                {
-                    case FilterOption.Researcher:
-                        matches = m_experimentList.Where(exp => exp.Researcher.StartsWith(FilterText, StringComparison.OrdinalIgnoreCase));
-                        break;
-
-                    case FilterOption.Experiment:
-                        matches = m_experimentList.Where(exp => exp.Experiment.StartsWith(FilterText, StringComparison.OrdinalIgnoreCase));
-                        break;
-
-                    case FilterOption.Organism:
-                        matches = m_experimentList.Where(exp => exp.Organism.StartsWith(FilterText, StringComparison.OrdinalIgnoreCase));
-                        break;
-
-                    case FilterOption.Reason:
-                        matches = m_experimentList.Where(exp => exp.Reason != null && exp.Reason.StartsWith(FilterText, StringComparison.OrdinalIgnoreCase));
-                        break;
-
-                    default:
-                        break;
-                }
-
-                if (matches == null)
-                    return;
-
-                var tempRef = new ReactiveList<ExperimentData>(matches);
-                Experiments = tempRef;
-            }
-            catch (Exception ex)
-            {
-                // Search error; do not update Experiments
-                Console.WriteLine("Error ignored in ExperimentsViewerViewModel.Search_Click: " + ex.Message);
-            }
-
-        }
         #endregion
 
         public enum FilterOption

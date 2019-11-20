@@ -73,15 +73,6 @@
             ItemsSource="{Binding AutoCompleteBoxItems}"
             Text="{Binding Path=FilterText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-        <Button
-            Grid.Row="0"
-            Grid.Column="4"
-            MinHeight="32"
-            Command="{Binding SearchCommand}"
-            Content="Search"
-            FontFamily="Arial"
-            Style="{StaticResource SimpleButtonStyle}" />
-
         <DataGrid
             Grid.Row="2"
             Grid.Column="0"
