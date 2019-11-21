@@ -87,10 +87,7 @@ namespace BuzzardWPF
             ApplicationLogger.Message += ApplicationLogger_Message;
             ApplicationLogger.Error += ApplicationLogger_Error;
 
-            if (!DMS_DataAccessor.Instance.CartNames.Contains("unknown"))
-            {
-                DMS_DataAccessor.Instance.CartNames.Add("unknown");
-            }
+            DMS_DataAccessor.Instance.GuaranteeUnknownCartNameOption();
 
             m_animationTimer = new Timer(Animation_Tick, this, Timeout.Infinite, Timeout.Infinite);
             animationEnabled = false;

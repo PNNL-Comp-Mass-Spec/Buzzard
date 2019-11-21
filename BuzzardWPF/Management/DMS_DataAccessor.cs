@@ -187,28 +187,13 @@ namespace BuzzardWPF.Management
                 }
             }
 
-            //
-            // Load Cart Config Names
-            //
-            var tempCartConfigNamesList = SQLiteTools.GetCartConfigNameList(forceReloadFromCache);
-            if (tempCartConfigNamesList == null)
-                ApplicationLogger.LogError(0, "LC Cart config names list retrieval returned null.");
-            else
-            {
-                using (CartConfigNames.SuppressChangeNotifications())
-                {
-                    CartConfigNames.Clear();
-                    CartConfigNames.AddRange(tempCartConfigNamesList);
-                }
-            }
-
             // Load CartConfigNameMap
             var tempCartConfigNameMap = SQLiteTools.GetCartConfigNameMap(forceReloadFromCache);
             if (tempCartConfigNameMap == null)
                 ApplicationLogger.LogError(0, "LC Cart config names map retrieval returned null.");
             else
             {
-                CartConfigNameMap = tempCartConfigNameMap;
+                cartConfigNameMap = tempCartConfigNameMap;
             }
 
             //
@@ -367,6 +352,11 @@ namespace BuzzardWPF.Management
 
         private readonly object m_cacheLoadingSync = new object();
         private bool mIsUpdating;
+
+        /// <summary>
+        /// Key is cart name, value is list of valid cart config names for that cart.
+        /// </summary>
+        private Dictionary<string, List<string>> cartConfigNameMap = new Dictionary<string, List<string>>();
 
         #endregion
 
@@ -697,12 +687,20 @@ namespace BuzzardWPF.Management
         /// <returns></returns>
         public List<string> GetCartConfigNamesForCart(string cartName)
         {
-            if (CartConfigNameMap.TryGetValue(cartName, out var configNames))
+            if (cartConfigNameMap.TryGetValue(cartName, out var configNames))
             {
                 return configNames;
             }
 
             return new List<string>();
+        }
+
+        public void GuaranteeUnknownCartNameOption()
+        {
+            if (!CartNames.Contains("unknown"))
+            {
+                CartNames.Add("unknown");
+            }
         }
 
         #endregion
@@ -772,16 +770,6 @@ namespace BuzzardWPF.Management
         /// Cart names
         /// </summary>
         public ReactiveList<string> CartNames { get; } = new ReactiveList<string>();
-
-        /// <summary>
-        /// Cart config names
-        /// </summary>
-        public ReactiveList<string> CartConfigNames { get; } = new ReactiveList<string>();
-
-        /// <summary>
-        /// Key is cart name, value is list of valid cart config names for that cart.
-        /// </summary>
-        public Dictionary<string, List<string>> CartConfigNameMap { get; private set; } = new Dictionary<string, List<string>>();
 
         /// <summary>
         /// Key is charge code, value is all the details

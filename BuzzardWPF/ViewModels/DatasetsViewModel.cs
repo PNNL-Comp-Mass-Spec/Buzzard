@@ -23,7 +23,6 @@ namespace BuzzardWPF.ViewModels
         private readonly FilldownBuzzardDataset m_fillDownDataset;
 
         private bool m_showGridItemDetail;
-        private readonly object lockCartConfigNameListSource = new object();
         private readonly ObservableAsPropertyHelper<bool> canSelectDatasets;
         private readonly ObservableAsPropertyHelper<bool> datasetSelected;
         private readonly ObservableAsPropertyHelper<bool> isCreatingTriggerFiles;
@@ -40,13 +39,12 @@ namespace BuzzardWPF.ViewModels
             Datasets.ItemsAdded.ObserveOn(RxApp.TaskpoolScheduler).Subscribe(DatasetAdded);
             Datasets.ItemsRemoved.ObserveOn(RxApp.TaskpoolScheduler).Subscribe(DatasetRemoved);
 
-            CartConfigNameListSource = new ReactiveList<string>();
 
             canSelectDatasets = Datasets.CountChanged.Select(x => x > 0).ToProperty(this, x => x.CanSelectDatasets);
             datasetSelected = this.WhenAnyValue(x => x.SelectedDatasets.Count).Select(x => x > 0).ToProperty(this, x => x.DatasetSelected);
             isCreatingTriggerFiles = TriggerFileCreationManager.Instance.WhenAnyValue(x => x.IsCreatingTriggerFiles).ObserveOn(RxApp.MainThreadScheduler).ToProperty(this, x => x.IsCreatingTriggerFiles);
 
-            DatasetManager.WatcherMetadata.WhenAnyValue(x => x.CartName).Subscribe(UpdateCartConfigNames);
+            DatasetManager.WatcherMetadata.WhenAnyValue(x => x.CartName).ObserveOn(RxApp.MainThreadScheduler).Subscribe(UpdateCartConfigNames);
 
             InvertShowDetailsCommand = ReactiveCommand.Create(InvertShowDetails);
             ClearAllDatasetsCommand = ReactiveCommand.Create(ClearAllDatasets, Datasets.WhenAnyValue(x => x.Count).Select(x => x > 0).ObserveOn(RxApp.MainThreadScheduler));
@@ -56,8 +54,6 @@ namespace BuzzardWPF.ViewModels
             OpenFilldownCommand = ReactiveCommand.Create(OpenFilldown, SelectedDatasets.WhenAnyValue(x => x.Count).Select(x => x > 0).ObserveOn(RxApp.MainThreadScheduler));
             AbortCommand = ReactiveCommand.Create(AbortTriggerThread);
             CreateTriggersCommand = ReactiveCommand.Create(CreateTriggers, this.WhenAnyValue(x => x.SelectedDatasets.Count, x => x.IsCreatingTriggerFiles, x => x.Watcher.IsMonitoring).Select(x => x.Item1 > 0 && !(x.Item2 || x.Item3)).ObserveOn(RxApp.MainThreadScheduler));
-
-            BindingOperations.EnableCollectionSynchronization(CartConfigNameListSource, lockCartConfigNameListSource);
         }
 
         private bool settingsChanged = false;
@@ -82,16 +78,13 @@ namespace BuzzardWPF.ViewModels
         private void UpdateCartConfigNames(string cartName)
         {
             if (string.IsNullOrEmpty(cartName))
+            {
+                CartConfigNameListSource.Clear();
                 return;
+            }
 
             // Update the allowable CartConfig names
-            CartConfigNameListSource.Clear();
-
-            var cartConfigNames = DmsData.GetCartConfigNamesForCart(cartName);
-            foreach (var item in cartConfigNames)
-            {
-                CartConfigNameListSource.Add(item);
-            }
+            CartConfigNameListSource.Load(DMS_DataAccessor.Instance.GetCartConfigNamesForCart(cartName));
 
             // Update the Cart name for datasets already in the grid
             foreach (var dataset in Datasets)
@@ -127,7 +120,7 @@ namespace BuzzardWPF.ViewModels
         /// List of cart config names associated with the current cart
         /// </summary>
         /// <remarks>Updated via Manager_PropertyChanged</remarks>
-        public ReactiveList<string> CartConfigNameListSource { get; }
+        public ObservableCollectionExtended<string> CartConfigNameListSource { get; } = new ObservableCollectionExtended<string>();
 
         public ReactiveList<BuzzardDataset> Datasets => DatasetManager.Datasets;
 

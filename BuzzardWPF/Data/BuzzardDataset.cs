@@ -236,10 +236,7 @@ namespace BuzzardWPF.Data
                     return;
                 }
 
-                if (DMS_DataAccessor.Instance.CartConfigNameMap.TryGetValue(DmsData.CartName, out var list))
-                {
-                    CartConfigError = !list.Contains(DmsData.CartConfigName);
-                }
+                CartConfigError = !DMS_DataAccessor.Instance.GetCartConfigNamesForCart(DmsData.CartName).Contains(DmsData.CartConfigName);
             }
         }
 

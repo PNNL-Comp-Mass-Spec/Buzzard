@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Reactive.Linq;
 using BuzzardWPF.Properties;
 using BuzzardWPF.ViewModels;
 using DynamicData.Binding;
@@ -40,6 +41,17 @@ namespace BuzzardWPF.Management
             WorkPackage = "none";
 
             this.WhenAnyValue(x => x.EMSLProposalUsers.Count).Subscribe(_ => SettingsChanged = true);
+
+            this.WhenAnyValue(x => x.CartName).ObserveOn(RxApp.MainThreadScheduler).Subscribe(x =>
+            {
+                if (string.IsNullOrWhiteSpace(x))
+                {
+                    CartConfigNameListForCart.Clear();
+                    return;
+                }
+
+                CartConfigNameListForCart.Load(DMS_DataAccessor.Instance.GetCartConfigNamesForCart(x));
+            });
         }
 
         /// <summary>
@@ -98,7 +110,7 @@ namespace BuzzardWPF.Management
         /// List of cart config names associated with the current cart
         /// </summary>
         /// <remarks>Updated via the WatcherConfigSelectedCartName setter</remarks>
-        public ReactiveList<string> CartConfigNameListForCart { get; } = new ReactiveList<string>();
+        public ObservableCollectionExtended<string> CartConfigNameListForCart { get; } = new ObservableCollectionExtended<string>();
 
         /// <summary>
         /// This item contains a copy of the SelectedCartName value of
@@ -110,26 +122,7 @@ namespace BuzzardWPF.Management
         public string CartName
         {
             get => cartName;
-            set
-            {
-                if (this.RaiseAndSetIfChangedMonitoredBool(ref cartName, value))
-                {
-                    if (!string.IsNullOrWhiteSpace(value))
-                    {
-                        using (CartConfigNameListForCart.SuppressChangeNotifications())
-                        {
-                            // Update the allowable CartConfig names
-                            CartConfigNameListForCart.Clear();
-
-                            var cartConfigNames = DMS_DataAccessor.Instance.GetCartConfigNamesForCart(value);
-                            foreach (var item in cartConfigNames)
-                            {
-                                CartConfigNameListForCart.Add(item);
-                            }
-                        }
-                    }
-                }
-            }
+            set => this.RaiseAndSetIfChangedMonitored(ref cartName, value);
         }
 
         /// <summary>

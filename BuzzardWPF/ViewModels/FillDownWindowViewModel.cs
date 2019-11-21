@@ -5,6 +5,7 @@ using System.Reactive.Linq;
 using BuzzardWPF.Data;
 using BuzzardWPF.Management;
 using BuzzardWPF.Views;
+using DynamicData.Binding;
 using LcmsNetData.Data;
 using LcmsNetData.Logging;
 using ReactiveUI;
@@ -29,7 +30,6 @@ namespace BuzzardWPF.ViewModels
 
         public FillDownWindowViewModel(FilldownBuzzardDataset dataset)
         {
-            CartConfigNameListSource = new ReactiveList<string>();
             EMSLProposalUsersSource = new ReactiveList<ProposalUser>();
             Dataset = dataset ?? new FilldownBuzzardDataset();
 
@@ -61,7 +61,7 @@ namespace BuzzardWPF.ViewModels
         /// List of cart config names associated with the current cart
         /// </summary>
         /// <remarks>Updated via CartNameList_OnSelectionChanged</remarks>
-        public ReactiveList<string> CartConfigNameListSource { get; }
+        public ObservableCollectionExtended<string> CartConfigNameListSource { get; } = new ObservableCollectionExtended<string>();
 
         public ReactiveList<ProposalUser> EMSLProposalUsersSource
         {
@@ -251,16 +251,13 @@ namespace BuzzardWPF.ViewModels
         private void LoadCartConfigsForCart(string cartName)
         {
             if (string.IsNullOrEmpty(cartName))
+            {
+                CartConfigNameListSource.Clear();
                 return;
+            }
 
             // Update the allowable CartConfig names
-            CartConfigNameListSource.Clear();
-
-            var cartConfigNames = DMS_DataAccessor.Instance.GetCartConfigNamesForCart(cartName);
-            foreach (var item in cartConfigNames)
-            {
-                CartConfigNameListSource.Add(item);
-            }
+            CartConfigNameListSource.Load(DMS_DataAccessor.Instance.GetCartConfigNamesForCart(cartName));
         }
         #endregion
     }
