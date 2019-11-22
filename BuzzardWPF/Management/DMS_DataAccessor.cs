@@ -20,8 +20,9 @@ namespace BuzzardWPF.Management
     {
         #region Constants
 
-        public const int RECENT_EXPERIMENT_MONTHS = 18;
-        public const int RECENT_DATASET_MONTHS = 12;
+        public const int RecentExperimentMonths = 18;
+        public const int RecentDatasetMonths = 12;
+        public const int RecentEMSLProposalMonths = 12;
 
         private readonly string[] interestRatingOptions = { "Unreviewed", "Not Released", "Released", "Rerun (Good Data)", "Rerun (Superseded)" };
 
@@ -34,14 +35,12 @@ namespace BuzzardWPF.Management
         /// </summary>
         private DMS_DataAccessor()
         {
-            m_proposalUserCollections = new Dictionary<string, ReactiveList<ProposalUser>>();
+            proposalUserCollections = new Dictionary<string, ReactiveList<ProposalUser>>();
             InterestRatingCollection = interestRatingOptions;
             // These values come from table T_EUS_UsageType
             // It is rarely updated, so we're not querying the database every time
             // Previously used, but deprecated in April 2017 is USER_UNKNOWN
             EMSLUsageTypesSource = new [] { "BROKEN", "CAP_DEV", "MAINTENANCE", "USER" };
-
-            LoadProposalUsers();
 
             Datasets = new SortedSet<string>(StringComparer.CurrentCultureIgnoreCase);
 
@@ -51,30 +50,25 @@ namespace BuzzardWPF.Management
             lastSqliteCacheUpdate = this.WhenAnyValue(x => x.LastSqliteCacheUpdateUtc).ObserveOn(RxApp.MainThreadScheduler).Select(x => x.ToLocalTime()).ToProperty(this, x => x.LastSqliteCacheUpdate);
             lastLoadFromSqliteCache = this.WhenAnyValue(x => x.LastLoadFromSqliteCacheUtc).ObserveOn(RxApp.MainThreadScheduler).Select(x => x.ToLocalTime()).ToProperty(this, x => x.LastLoadFromSqliteCache);
 
-            mDataRefreshIntervalHours = 6;
+            dataRefreshIntervalHours = 6;
 
             // Load active experiments (created/used in the last 18 months), datasets, instruments, etc.
             dmsDbTools = new DMSDBTools
             {
                 LoadExperiments = true,
                 LoadDatasets = true,
-                RecentExperimentsMonthsToLoad = RECENT_EXPERIMENT_MONTHS,
-                RecentDatasetsMonthsToLoad = RECENT_DATASET_MONTHS
+                RecentExperimentsMonthsToLoad = RecentExperimentMonths,
+                RecentDatasetsMonthsToLoad = RecentDatasetMonths,
+                EMSLProposalsRecentMonthsToLoad = RecentEMSLProposalMonths
             };
+
+            autoUpdateTimer = new Timer(AutoUpdateTimer_Tick, this, Timeout.Infinite, Timeout.Infinite);
         }
 
         public void Dispose()
         {
-            mAutoUpdateTimer?.Dispose();
+            autoUpdateTimer?.Dispose();
             dmsDbTools?.Dispose();
-        }
-
-        private void StartAutoUpdateTimer()
-        {
-            if (mAutoUpdateTimer == null)
-            {
-                mAutoUpdateTimer = new Timer(AutoUpdateTimer_Tick, this, TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(5));
-            }
         }
 
         static DMS_DataAccessor()
@@ -93,9 +87,7 @@ namespace BuzzardWPF.Management
 
             const bool forceReloadFromCache = true;
 
-            //
             // Load Instrument Data
-            //
             using (InstrumentData.SuppressChangeNotifications())
             {
                 var tempInstrumentData = SQLiteTools.GetInstrumentList(forceReloadFromCache);
@@ -127,9 +119,7 @@ namespace BuzzardWPF.Management
                 }
             }
 
-            //
             // Load Operator Data
-            //
             var tempUserList = SQLiteTools.GetUserList(forceReloadFromCache);
             if (tempUserList == null)
                 ApplicationLogger.LogError(0, "User retrieval returned null.");
@@ -142,9 +132,7 @@ namespace BuzzardWPF.Management
                 }
             }
 
-            //
             // Load Dataset Types
-            //
             var tempDatasetTypesList = SQLiteTools.GetDatasetTypeList(forceReloadFromCache);
             if (tempDatasetTypesList == null)
                 ApplicationLogger.LogError(0, "Dataset Types retrieval returned null.");
@@ -157,9 +145,7 @@ namespace BuzzardWPF.Management
                 }
             }
 
-            //
             // Load Separation Types
-            //
             var tempSeparationTypesList = SQLiteTools.GetSepTypeList(forceReloadFromCache);
             if (tempSeparationTypesList == null)
                 ApplicationLogger.LogError(0, "Separation types retrieval returned null.");
@@ -172,9 +158,7 @@ namespace BuzzardWPF.Management
                 }
             }
 
-            //
             // Load Cart Names
-            //
             var tempCartsList = SQLiteTools.GetCartNameList();
             if (tempCartsList == null)
                 ApplicationLogger.LogError(0, "LC Cart names list retrieval returned null.");
@@ -196,9 +180,7 @@ namespace BuzzardWPF.Management
                 cartConfigNameMap = tempCartConfigNameMap;
             }
 
-            //
             // Load column data
-            //
             var tempColumnData = SQLiteTools.GetColumnList(forceReloadFromCache);
             if (tempColumnData == null)
                 ApplicationLogger.LogError(0, "Column data list retrieval returned null.");
@@ -211,9 +193,7 @@ namespace BuzzardWPF.Management
                 }
             }
 
-            //
             // Load Experiments
-            //
             var experimentList = SQLiteTools.GetExperimentList();
             if (experimentList == null)
                 ApplicationLogger.LogError(0, "Experiment list retrieval returned null.");
@@ -239,9 +219,7 @@ namespace BuzzardWPF.Management
                 WorkPackages.AddRange(WorkPackageMap.Values.OrderBy(x => x.ChargeCode));
             }
 
-            //
             // Load datasets
-            //
             var datasetList = SQLiteTools.GetDatasetList();
             if (datasetList == null)
                 ApplicationLogger.LogError(0, "Dataset list retrieval returned null.");
@@ -263,29 +241,14 @@ namespace BuzzardWPF.Management
                 Datasets = datasetSortedSet;
             }
 
+            // Load EMSL Proposal information
+            LoadProposalUsers();
+
             LastLoadFromSqliteCacheUtc = DateTime.UtcNow;
 
             // Now that data has been loaded, enable the timer that will auto-update the data every mDataRefreshIntervalHours hours
-            StartAutoUpdateTimer();
-        }
-
-        /// <summary>
-        /// Loads the DMS Data Cache
-        /// </summary>
-        private void UpdateCache()
-        {
-            mIsUpdating = true;
-
-            var success = UpdateSQLiteCacheFromDms();
-            if (!success)
-            {
-                mIsUpdating = false;
-                return;
-            }
-
-            RxApp.MainThreadScheduler.Schedule(() => LoadDMSDataFromCache(true));
-
-            mIsUpdating = false;
+            // It's okay to re-set this every time we run an update.
+            autoUpdateTimer.Change(TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(5));
         }
 
         /// <summary>
@@ -293,28 +256,37 @@ namespace BuzzardWPF.Management
         /// </summary>
         public async Task UpdateCacheNow([CallerMemberName] string callingFunction = "unknown")
         {
-            lock (m_cacheLoadingSync)
+            lock (cacheLoadingLock)
             {
-                if (mIsUpdating)
+                if (isUpdatingCache)
                 {
                     return;
                 }
 
-                mIsUpdating = true;
+                isUpdatingCache = true;
             }
 
             try
             {
-                await Task.Run(() => UpdateCache()).ConfigureAwait(false);
+                await Task.Run(() =>
+                {
+                    var success = UpdateSQLiteCacheFromDms();
+                    if (!success)
+                    {
+                        return;
+                    }
+
+                    RxApp.MainThreadScheduler.Schedule(() => LoadDMSDataFromCache(true));
+                }).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
                 ApplicationLogger.LogError(0, string.Format("Exception updating the cached DMS data (called from {0}): {1}", callingFunction, ex.Message));
             }
 
-            lock (m_cacheLoadingSync)
+            lock (cacheLoadingLock)
             {
-                mIsUpdating = false;
+                isUpdatingCache = false;
             }
         }
 
@@ -338,9 +310,9 @@ namespace BuzzardWPF.Management
 
         #region Member Variables
 
-        private Timer mAutoUpdateTimer;
+        private readonly Timer autoUpdateTimer;
 
-        private float mDataRefreshIntervalHours;
+        private float dataRefreshIntervalHours;
         private DateTime lastSqliteCacheUpdateUtc;
         private DateTime lastLoadFromSqliteCacheUtc;
         private readonly DMSDBTools dmsDbTools;
@@ -348,12 +320,12 @@ namespace BuzzardWPF.Management
         private readonly ObservableAsPropertyHelper<DateTime> lastSqliteCacheUpdate;
         private readonly ObservableAsPropertyHelper<DateTime> lastLoadFromSqliteCache;
 
-        private List<ProposalUser> m_proposalUsers;
-        private Dictionary<string, List<UserIDPIDCrossReferenceEntry>> m_pidIndexedCrossReferenceList;
-        private readonly Dictionary<string, ReactiveList<ProposalUser>> m_proposalUserCollections;
+        private List<ProposalUser> proposalUsersList;
+        private Dictionary<string, List<UserIDPIDCrossReferenceEntry>> pidIndexedCrossReferenceList;
+        private readonly Dictionary<string, ReactiveList<ProposalUser>> proposalUserCollections;
 
-        private readonly object m_cacheLoadingSync = new object();
-        private bool mIsUpdating;
+        private readonly object cacheLoadingLock = new object();
+        private bool isUpdatingCache;
 
         /// <summary>
         /// Key is cart name, value is list of valid cart config names for that cart.
@@ -543,7 +515,7 @@ namespace BuzzardWPF.Management
         {
             try
             {
-                m_pidIndexedCrossReferenceList = new Dictionary<string, List<UserIDPIDCrossReferenceEntry>>();
+                pidIndexedCrossReferenceList = new Dictionary<string, List<UserIDPIDCrossReferenceEntry>>();
 
                 List<ProposalUser> eusUsers;
 
@@ -569,14 +541,14 @@ namespace BuzzardWPF.Management
                     // Store the users for this proposal sorted by user last name
                     var sortedProposalUsers = GetSortedUsers(items.Value, userIDtoNameMap);
 
-                    m_pidIndexedCrossReferenceList.Add(
+                    pidIndexedCrossReferenceList.Add(
                         items.Key,
                         sortedProposalUsers);
                 }
 
-                m_proposalUsers = eusUsers;
+                proposalUsersList = eusUsers;
 
-                ProposalIDs = new ReactiveList<string>(m_pidIndexedCrossReferenceList.Keys.OrderBy(x => x));
+                ProposalIDs = new ReactiveList<string>(pidIndexedCrossReferenceList.Keys.OrderBy(x => x));
 
             }
             catch (Exception ex)
@@ -595,9 +567,9 @@ namespace BuzzardWPF.Management
 
             // We haven't built a quick reference collection for this PID
             // yet, so lets do that.
-            if (m_proposalUserCollections.ContainsKey(proposalID))
+            if (proposalUserCollections.ContainsKey(proposalID))
             {
-                return m_proposalUserCollections[proposalID];
+                return proposalUserCollections[proposalID];
             }
 
             ReactiveList<ProposalUser> newUserCollection;
@@ -608,7 +580,7 @@ namespace BuzzardWPF.Management
             {
                 if (returnAllWhenEmpty)
                 {
-                    var query = m_proposalUsers.OrderBy(item => item.UserName);
+                    var query = proposalUsersList.OrderBy(item => item.UserName);
                     newUserCollection = new ReactiveList<ProposalUser>(query);
                 }
                 else
@@ -616,9 +588,9 @@ namespace BuzzardWPF.Management
                     return new ReactiveList<ProposalUser>();
                 }
             }
-            else if (m_pidIndexedCrossReferenceList.ContainsKey(proposalID))
+            else if (pidIndexedCrossReferenceList.ContainsKey(proposalID))
             {
-                var crossReferenceList = m_pidIndexedCrossReferenceList[proposalID];
+                var crossReferenceList = pidIndexedCrossReferenceList[proposalID];
 
                 // This really shouldn't be possible because the PIDs are generated from the
                 // User lists, so if there are no Users list, then there's no PID generated.
@@ -642,7 +614,7 @@ namespace BuzzardWPF.Management
                     var hashedUIDs = new HashSet<int>(uIDs);
 
                     // Get the users based on the given UIDs.
-                    var singleProposalUsers = m_proposalUsers.Where(user => hashedUIDs.Contains(user.UserID))
+                    var singleProposalUsers = proposalUsersList.Where(user => hashedUIDs.Contains(user.UserID))
                                                              .OrderBy(user => user.UserName);
 
                     // Create the user collection and set it for future use.
@@ -664,9 +636,9 @@ namespace BuzzardWPF.Management
                 return new ReactiveList<ProposalUser>();
             }
 
-            m_proposalUserCollections.Add(proposalID, newUserCollection);
+            proposalUserCollections.Add(proposalID, newUserCollection);
 
-            return m_proposalUserCollections[proposalID];
+            return proposalUserCollections[proposalID];
         }
 
         /// <summary>
@@ -728,13 +700,13 @@ namespace BuzzardWPF.Management
         /// </summary>
         public float DataRefreshIntervalHours
         {
-            get => mDataRefreshIntervalHours;
+            get => dataRefreshIntervalHours;
             set
             {
                 if (value < 0.5)
                     value = 0.5f;
 
-                mDataRefreshIntervalHours = value;
+                dataRefreshIntervalHours = value;
             }
         }
 
