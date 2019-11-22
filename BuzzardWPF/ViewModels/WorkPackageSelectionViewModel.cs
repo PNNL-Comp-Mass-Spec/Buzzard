@@ -22,7 +22,6 @@ namespace BuzzardWPF.ViewModels
             FilterOptions = Enum.GetValues(typeof(WorkPackageFilterOption)).Cast<WorkPackageFilterOption>().ToArray();
             SelectedFilterOption = WorkPackageFilterOption.ChargeCode;
 
-            var workPackagesObservable = new SourceList<WorkPackageInfo>(DMS_DataAccessor.Instance.WorkPackages.AsObservableChangeSet());
             workPackageSelected = this.WhenAnyValue(x => x.SelectedWorkPackage).Select(x => x != null).ToProperty(this, x => x.WorkPackageSelected, scheduler: RxApp.MainThreadScheduler);
 
             //var wpFilter = this.WhenAnyValue(x => x.FilterText, x => x.SelectedFilterOption).Throttle(TimeSpan.FromMilliseconds(250), RxApp.TaskpoolScheduler).Select(x => new )
@@ -38,8 +37,8 @@ namespace BuzzardWPF.ViewModels
                     return value != null && value.StartsWith(x, StringComparison.OrdinalIgnoreCase);
                 }));
 
-            //WorkPackagesFiltered = workPackagesObservable.Connect().Filter(wpFilter).ObserveOn(RxApp.MainThreadScheduler).AsObservableList();
-            var loader = workPackagesObservable.Connect().Filter(wpFilter).ObserveOn(RxApp.MainThreadScheduler)
+            //WorkPackagesFiltered = DMS_DataAccessor.Instance.WorkPackages.Connect().Filter(wpFilter).ObserveOn(RxApp.MainThreadScheduler).AsObservableList();
+            var loader = DMS_DataAccessor.Instance.WorkPackages.Connect().Filter(wpFilter).ObserveOn(RxApp.MainThreadScheduler)
                 .Bind(out var workPackagesFiltered).Subscribe();
 
             WorkPackagesFiltered = workPackagesFiltered;
@@ -144,7 +143,7 @@ namespace BuzzardWPF.ViewModels
             }
             else
             {
-                var fieldItemList = DMS_DataAccessor.Instance.WorkPackages.Select(fieldSelector).Distinct(new IgnoreCaseStringComparison()).ToList();
+                var fieldItemList = DMS_DataAccessor.Instance.WorkPackages.Items.Select(fieldSelector).Distinct(new IgnoreCaseStringComparison()).ToList();
                 fieldItemList.Sort();
                 AutoCompleteBoxItems = fieldItemList;
             }

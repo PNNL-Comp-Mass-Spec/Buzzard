@@ -18,7 +18,6 @@ namespace BuzzardWPF.ViewModels
         private string filterText;
         private ExperimentData selectedExperiment;
 
-        private readonly SourceList<ExperimentData> experiments = new SourceList<ExperimentData>();
         private FilterOption selectedFilterOption;
         private List<string> autoCompleteBoxItems;
         private readonly ObservableAsPropertyHelper<bool> experimentSelected;
@@ -27,11 +26,11 @@ namespace BuzzardWPF.ViewModels
         #endregion
 
         #region Initialization
+
         public ExperimentsViewerViewModel()
         {
             FilterText = string.Empty;
 
-            experiments.AddRange(DMS_DataAccessor.Instance.Experiments);
             var filter = this.WhenValueChanged(x => x.FilterText)
                 .Throttle(TimeSpan.FromMilliseconds(250), RxApp.TaskpoolScheduler).Select(x =>
                     new Func<ExperimentData, bool>(
@@ -45,7 +44,7 @@ namespace BuzzardWPF.ViewModels
                             return value != null && value.StartsWith(x, StringComparison.OrdinalIgnoreCase);
                         }));
 
-            experiments.Connect().Filter(filter).ObserveOn(RxApp.MainThreadScheduler).Bind(out var filteredExperiments).Subscribe();
+            DMS_DataAccessor.Instance.Experiments.Connect().Filter(filter).ObserveOn(RxApp.MainThreadScheduler).Bind(out var filteredExperiments).Subscribe();
             Experiments = filteredExperiments;
 
             FilterOptions = Enum.GetValues(typeof(FilterOption)).Cast<FilterOption>().Where(x => x != FilterOption.None).ToArray();
@@ -56,6 +55,7 @@ namespace BuzzardWPF.ViewModels
             this.WhenAnyValue(x => x.SelectedFilterOption).Subscribe(_ => SetAutoCompleteList());
             SetAutoCompleteList();
         }
+
         #endregion
 
         #region Properties
@@ -139,7 +139,7 @@ namespace BuzzardWPF.ViewModels
             }
             else
             {
-                var fieldItemList = DMS_DataAccessor.Instance.Experiments.Select(fieldSelector).Distinct(new IgnoreCaseStringComparison()).ToList();
+                var fieldItemList = DMS_DataAccessor.Instance.Experiments.Items.Select(fieldSelector).Distinct(new IgnoreCaseStringComparison()).ToList();
                 fieldItemList.Sort();
                 AutoCompleteBoxItems = fieldItemList;
             }

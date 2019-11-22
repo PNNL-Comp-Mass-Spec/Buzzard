@@ -296,7 +296,7 @@ namespace BuzzardWPF.Management
 
             WorkPackage = CheckSetting(
                 Settings.Default.WatcherWorkPackage,
-                DMS_DataAccessor.Instance.WorkPackages.Select(x => x.ChargeCode).ToList(),
+                DMS_DataAccessor.Instance.WorkPackages.Items.Select(x => x.ChargeCode).ToList(),
                 "Work Package");
 
             if (string.IsNullOrWhiteSpace(WorkPackage))

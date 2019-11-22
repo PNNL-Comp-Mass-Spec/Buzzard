@@ -6,6 +6,7 @@ using System.Reactive.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using DynamicData;
 using LcmsNetDmsTools;
 using LcmsNetData;
 using LcmsNetData.Data;
@@ -42,7 +43,6 @@ namespace BuzzardWPF.Management
 
             LoadProposalUsers();
 
-            Experiments = new List<ExperimentData>();
             Datasets = new SortedSet<string>(StringComparer.CurrentCultureIgnoreCase);
 
             LastSqliteCacheUpdateUtc = DateTime.UtcNow;
@@ -218,7 +218,10 @@ namespace BuzzardWPF.Management
             if (experimentList == null)
                 ApplicationLogger.LogError(0, "Experiment list retrieval returned null.");
             else
-                Experiments = experimentList;
+            {
+                Experiments.Clear();
+                Experiments.AddRange(experimentList);
+            }
 
             // Load Work Packages
             var workPackageMap = SQLiteTools.GetWorkPackageMap(forceReloadFromCache);
@@ -348,7 +351,6 @@ namespace BuzzardWPF.Management
         private List<ProposalUser> m_proposalUsers;
         private Dictionary<string, List<UserIDPIDCrossReferenceEntry>> m_pidIndexedCrossReferenceList;
         private readonly Dictionary<string, ReactiveList<ProposalUser>> m_proposalUserCollections;
-        private List<ExperimentData> m_experiments;
 
         private readonly object m_cacheLoadingSync = new object();
         private bool mIsUpdating;
@@ -777,7 +779,7 @@ namespace BuzzardWPF.Management
         /// </summary>
         public Dictionary<string, WorkPackageInfo> WorkPackageMap { get; private set; } = new Dictionary<string, WorkPackageInfo>();
 
-        public List<WorkPackageInfo> WorkPackages { get; } = new List<WorkPackageInfo>();
+        public SourceList<WorkPackageInfo> WorkPackages { get; } = new SourceList<WorkPackageInfo>();
 
         /// <summary>
         /// List of DMS dataset names
@@ -789,15 +791,9 @@ namespace BuzzardWPF.Management
         /// List of DMS experiment names
         /// </summary>
         /// <remarks>
-        /// This isn't meant to be bound to directly, which is why it's a list and not an ReactiveList. Due to the large number
-        /// of items this tends to hold, I would advise trying to filter it down a bit first before inserting it into an
-        /// ReactiveList for binding.
+        /// This isn't meant to be bound to directly, which is why it's a SourceList and not an ObservableCollection.
         /// </remarks>
-        public List<ExperimentData> Experiments
-        {
-            get => m_experiments;
-            set => this.RaiseAndSetIfChanged(ref m_experiments, value);
-        }
+        public SourceList<ExperimentData> Experiments { get; } = new SourceList<ExperimentData>();
 
         #endregion
     }
