@@ -5,7 +5,6 @@ using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Windows;
-using System.Windows.Data;
 using BuzzardWPF.Data;
 using BuzzardWPF.IO;
 using BuzzardWPF.Management;
@@ -20,9 +19,9 @@ namespace BuzzardWPF.ViewModels
     {
         #region Attributes
 
-        private readonly FilldownBuzzardDataset m_fillDownDataset;
+        private readonly FilldownBuzzardDataset fillDownDataset = new FilldownBuzzardDataset();
 
-        private bool m_showGridItemDetail;
+        private bool showGridItemDetail;
         private readonly ObservableAsPropertyHelper<bool> canSelectDatasets;
         private readonly ObservableAsPropertyHelper<bool> datasetSelected;
         private readonly ObservableAsPropertyHelper<bool> isCreatingTriggerFiles;
@@ -34,11 +33,8 @@ namespace BuzzardWPF.ViewModels
         {
             ShowGridItemDetail = false;
 
-            m_fillDownDataset = new FilldownBuzzardDataset();
-
             Datasets.ItemsAdded.ObserveOn(RxApp.TaskpoolScheduler).Subscribe(DatasetAdded);
             Datasets.ItemsRemoved.ObserveOn(RxApp.TaskpoolScheduler).Subscribe(DatasetRemoved);
-
 
             canSelectDatasets = Datasets.CountChanged.Select(x => x > 0).ToProperty(this, x => x.CanSelectDatasets);
             datasetSelected = this.WhenAnyValue(x => x.SelectedDatasets.Count).Select(x => x > 0).ToProperty(this, x => x.DatasetSelected);
@@ -71,7 +67,7 @@ namespace BuzzardWPF.ViewModels
 
         public void LoadSettings()
         {
-            m_fillDownDataset.LoadSettings();
+            fillDownDataset.LoadSettings();
             settingsChanged = false;
         }
 
@@ -128,8 +124,8 @@ namespace BuzzardWPF.ViewModels
 
         public bool ShowGridItemDetail
         {
-            get => m_showGridItemDetail;
-            set => this.RaiseAndSetIfChanged(ref m_showGridItemDetail, value);
+            get => showGridItemDetail;
+            set => this.RaiseAndSetIfChanged(ref showGridItemDetail, value);
         }
 
         #endregion
@@ -385,7 +381,7 @@ namespace BuzzardWPF.ViewModels
             //
             // Prep the Filldown Window for use.
             //
-            var filldownWindowVm = new FillDownWindowViewModel(m_fillDownDataset);
+            var filldownWindowVm = new FillDownWindowViewModel(fillDownDataset);
             var filldownWindow = new FillDownWindow
             {
                 DataContext = filldownWindowVm
@@ -410,9 +406,9 @@ namespace BuzzardWPF.ViewModels
             }
 
             // force-save the current settings, and set the local flag to true
-            if (m_fillDownDataset.SettingsChanged)
+            if (fillDownDataset.SettingsChanged)
             {
-                m_fillDownDataset.SaveSettings(true);
+                fillDownDataset.SaveSettings(true);
                 settingsChanged = true;
             }
 
