@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using BuzzardWPF.Management;
 using BuzzardWPF.Searching;
+using DynamicData;
 using LcmsNetData.Logging;
 using ReactiveUI;
 
@@ -183,10 +184,7 @@ namespace BuzzardWPF.ViewModels
             }
 
             Searching = true;
-            using (DatasetManager.Datasets.SuppressChangeNotifications())
-            {
-                DatasetManager.Datasets.Clear();
-            }
+            DatasetManager.Datasets.Clear();
             searchCancelToken = new CancellationTokenSource();
             await datasetSearcher.SearchAsync(Config, searchCancelToken);
             Searching = false;

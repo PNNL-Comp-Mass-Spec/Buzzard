@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Concurrency;
@@ -9,6 +10,7 @@ using BuzzardWPF.Data;
 using BuzzardWPF.IO;
 using BuzzardWPF.Management;
 using BuzzardWPF.Views;
+using DynamicData;
 using DynamicData.Binding;
 using LcmsNetData.Logging;
 using ReactiveUI;
@@ -34,14 +36,44 @@ namespace BuzzardWPF.ViewModels
         {
             ShowGridItemDetail = false;
 
-            Datasets.ItemsAdded.ObserveOn(RxApp.TaskpoolScheduler).Subscribe(DatasetAdded);
-            Datasets.ItemsRemoved.ObserveOn(RxApp.TaskpoolScheduler).Subscribe(DatasetRemoved);
+            DatasetManager.Datasets.Connect().ObserveOn(RxApp.MainThreadScheduler).Bind(out var datasets).Subscribe();
+            Datasets = datasets;
 
-            canSelectDatasets = Datasets.CountChanged.Select(x => x > 0).ToProperty(this, x => x.CanSelectDatasets);
+            canSelectDatasets = Datasets.WhenAnyValue(x => x.Count).Select(x => x > 0).ToProperty(this, x => x.CanSelectDatasets);
             datasetSelected = this.WhenAnyValue(x => x.SelectedDatasets.Count).Select(x => x > 0).ToProperty(this, x => x.DatasetSelected);
             isCreatingTriggerFiles = TriggerFileCreationManager.Instance.WhenAnyValue(x => x.IsCreatingTriggerFiles).ObserveOn(RxApp.MainThreadScheduler).ToProperty(this, x => x.IsCreatingTriggerFiles);
 
-            DatasetManager.WatcherMetadata.WhenAnyValue(x => x.CartName).ObserveOn(RxApp.MainThreadScheduler).Subscribe(UpdateCartConfigNames);
+            DatasetManager.Datasets.Connect().ObserveOn(RxApp.TaskpoolScheduler).WhereReasonsAre(new []{ ListChangeReason.Add, ListChangeReason.AddRange, ListChangeReason.Remove, ListChangeReason.RemoveRange }).Subscribe(
+                x =>
+                {
+                    foreach (var changeset in x)
+                    {
+                        if (changeset.Reason == ListChangeReason.Add)
+                        {
+                            DatasetAdded(changeset.Item.Current);
+                        }
+                        else if (changeset.Reason == ListChangeReason.AddRange)
+                        {
+                            foreach (var item in changeset.Range)
+                            {
+                                DatasetAdded(item);
+                            }
+                        }
+                        else if (changeset.Reason == ListChangeReason.Remove)
+                        {
+                            DatasetRemoved(changeset.Item.Current);
+                        }
+                        else if (changeset.Reason == ListChangeReason.RemoveRange)
+                        {
+                            foreach (var item in changeset.Range)
+                            {
+                                DatasetRemoved(item);
+                            }
+                        }
+                    }
+                });
+
+            DatasetManager.WatcherMetadata.WhenAnyValue(x => x.CartName).Subscribe(UpdateCartConfigNames);
 
             InvertShowDetailsCommand = ReactiveCommand.Create(InvertShowDetails);
             ClearAllDatasetsCommand = ReactiveCommand.Create(ClearAllDatasets, Datasets.WhenAnyValue(x => x.Count).Select(x => x > 0).ObserveOn(RxApp.MainThreadScheduler));
@@ -50,7 +82,7 @@ namespace BuzzardWPF.ViewModels
             BringUpExperimentsCommand = ReactiveCommand.Create(BringUpExperiments, SelectedDatasets.WhenAnyValue(x => x.Count).Select(x => x > 0).ObserveOn(RxApp.MainThreadScheduler));
             OpenFilldownCommand = ReactiveCommand.Create(OpenFilldown, SelectedDatasets.WhenAnyValue(x => x.Count).Select(x => x > 0).ObserveOn(RxApp.MainThreadScheduler));
             AbortCommand = ReactiveCommand.Create(AbortTriggerThread);
-            CreateTriggersCommand = ReactiveCommand.Create(CreateTriggers, this.WhenAnyValue(x => x.SelectedDatasets.Count, x => x.IsCreatingTriggerFiles, x => x.Watcher.IsMonitoring).Select(x => x.Item1 > 0 && !(x.Item2 || x.Item3)).ObserveOn(RxApp.MainThreadScheduler));
+            CreateTriggersCommand = ReactiveCommand.Create(CreateTriggers, SelectedDatasets.WhenAnyValue(x => x.Count).Select(x => x > 0).ObserveOn(RxApp.MainThreadScheduler));
         }
 
         private bool settingsChanged = false;
@@ -123,7 +155,7 @@ namespace BuzzardWPF.ViewModels
             private set => this.RaiseAndSetIfChanged(ref cartConfigNameListSource, value);
         }
 
-        public ReactiveList<BuzzardDataset> Datasets => DatasetManager.Datasets;
+        public ReadOnlyObservableCollection<BuzzardDataset> Datasets { get; }
 
         public bool IsCreatingTriggerFiles => isCreatingTriggerFiles.Value;
 
@@ -146,7 +178,7 @@ namespace BuzzardWPF.ViewModels
         /// </summary>
         private void ClearAllDatasets()
         {
-            Datasets?.Clear();
+            DatasetManager.Datasets.Clear();
         }
 
         /// <summary>
@@ -224,7 +256,7 @@ namespace BuzzardWPF.ViewModels
 
             foreach (var dataset in selectedDatasets)
             {
-                Datasets.Remove(dataset);
+                DatasetManager.Datasets.Remove(dataset);
             }
         }
 

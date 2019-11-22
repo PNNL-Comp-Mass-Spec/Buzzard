@@ -112,7 +112,7 @@ namespace BuzzardWPF.Management
             try
             {
                 // Find the datasets that have source data found by the file watcher.
-                var datasets = Manager.Datasets.Where(ds => ds.DatasetSource == DatasetSource.Watcher).ToList();
+                var datasets = Manager.Datasets.Items.Where(ds => ds.DatasetSource == DatasetSource.Watcher).ToList();
 
                 // If there aren't any, then we're done.
                 if (datasets.Count == 0)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -12,6 +13,7 @@ using BuzzardWPF.Data;
 using BuzzardWPF.IO;
 using BuzzardWPF.Properties;
 using BuzzardWPF.Searching;
+using DynamicData;
 using LcmsNetData;
 using LcmsNetData.Data;
 using LcmsNetData.Logging;
@@ -47,8 +49,6 @@ namespace BuzzardWPF.Management
         /// </summary>
         private readonly DatasetTrie mRequestedRunTrie;
 
-        private readonly object lockDatasets = new object();
-
         private readonly Regex BlockingProcessNamesRegEx = new Regex(BlockingProcessNamesRegExString, RegexOptions.Compiled | RegexOptions.IgnoreCase);
         private readonly Regex qcDatasetNameRegEx = new Regex(QcDatasetNameRegExString, RegexOptions.Compiled | RegexOptions.IgnoreCase);
         private readonly Regex blankDatasetNameRegEx = new Regex(BlankDatasetNameRegExString, RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -61,9 +61,6 @@ namespace BuzzardWPF.Management
         private DatasetManager()
         {
             mRequestedRunTrie = new DatasetTrie();
-            Datasets = new ReactiveList<BuzzardDataset>();
-
-            BindingOperations.EnableCollectionSynchronization(Datasets, lockDatasets);
         }
 
         static DatasetManager()
@@ -76,7 +73,7 @@ namespace BuzzardWPF.Management
         /// <summary>
         /// Instrument data files / folders that are candidate datasets
         /// </summary>
-        public ReactiveList<BuzzardDataset> Datasets { get; }
+        public SourceList<BuzzardDataset> Datasets { get; } = new SourceList<BuzzardDataset>();
 
         public bool IsLoading { get; private set; }
 
@@ -475,7 +472,7 @@ namespace BuzzardWPF.Management
                 var fileNameOld = Path.GetFileName(oldFullPath);
                 if (!fileNameOld.StartsWith("x_", StringComparison.OrdinalIgnoreCase))
                 {
-                    foreach (var datasetEntry in Datasets.ToList())
+                    foreach (var datasetEntry in Datasets.Items.ToList())
                     {
                         if (datasetEntry.FilePath.Equals(oldFullPath, StringComparison.OrdinalIgnoreCase))
                         {
@@ -497,7 +494,7 @@ namespace BuzzardWPF.Management
                 //
                 // Find if we need to create a new dataset.
                 //
-                foreach (var datasetEntry in Datasets.ToList())
+                foreach (var datasetEntry in Datasets.Items.ToList())
                 {
                     if (datasetEntry.FilePath.Equals(datasetFileOrFolderPath, StringComparison.OrdinalIgnoreCase) ||
                         datasetEntry.FilePath.Equals(originalPath, StringComparison.OrdinalIgnoreCase))
@@ -649,19 +646,16 @@ namespace BuzzardWPF.Management
                 }
 
                 dataset.DmsData.EMSLUsageType = emslUsageType;
-                using (dataset.EMSLProposalUsers.SuspendNotifications())
+                if (!string.IsNullOrWhiteSpace(dataset.DmsData.EMSLUsageType) &&
+                    dataset.DmsData.EMSLUsageType.Equals("USER", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (!string.IsNullOrWhiteSpace(dataset.DmsData.EMSLUsageType) &&
-                        dataset.DmsData.EMSLUsageType.Equals("USER", StringComparison.OrdinalIgnoreCase))
-                    {
-                        dataset.DmsData.EMSLProposalID = emslProposalId;
-                        dataset.EMSLProposalUsers.Load(emslProposalUsers);
-                    }
-                    else
-                    {
-                        dataset.DmsData.EMSLProposalID = null;
-                        dataset.EMSLProposalUsers.Clear();
-                    }
+                    dataset.DmsData.EMSLProposalID = emslProposalId;
+                    dataset.EMSLProposalUsers.Load(emslProposalUsers);
+                }
+                else
+                {
+                    dataset.DmsData.EMSLProposalID = null;
+                    dataset.EMSLProposalUsers.Clear();
                 }
             }
 
@@ -678,7 +672,7 @@ namespace BuzzardWPF.Management
                     }
                 }
 
-                RxApp.MainThreadScheduler.Schedule(() => Datasets.Add(dataset));
+                Datasets.Add(dataset);
 
                 ApplicationLogger.LogMessage(
                     0,
@@ -729,7 +723,7 @@ namespace BuzzardWPF.Management
             bool isArchived;
             var pathToUse = ValidateFileOrFolderPath(path, true, out isArchived);
 
-            foreach (var datasetEntry in Datasets)
+            foreach (var datasetEntry in Datasets.Items)
             {
                 if (datasetEntry.FilePath.Equals(pathToUse, StringComparison.OrdinalIgnoreCase))
                 {
