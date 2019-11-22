@@ -25,10 +25,7 @@ namespace BuzzardWPF
             InitializeComponent();
 
             Closed += Main_Closed;
-            Loaded += Main_Loaded;
         }
-
-        private bool firstTimeLoading = true;
 
         /// <summary>
         /// Will tell the various configuration containing controls
@@ -43,28 +40,6 @@ namespace BuzzardWPF
             if (DataContext is MainWindowViewModel mwvm)
             {
                 mwvm.SaveSettingsOnClose();
-            }
-        }
-
-        /// <summary>
-        /// Will load the saved configuration settings on application startup.
-        /// </summary>
-        private void Main_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (firstTimeLoading)
-            {
-                //// This next piece of code will reset the settings
-                //// to their default values before loading them into
-                //// the application.
-                //// This is kept here, in case I need to check that
-                //// the effects of the default settings.
-                //// -FCT
-                //BuzzardWPF.Properties.Settings.Default.Reset();
-                if (DataContext is MainWindowViewModel mwvm)
-                {
-                    mwvm.LoadSettings();
-                }
-                firstTimeLoading = false;
             }
         }
     }

@@ -159,6 +159,10 @@ namespace BuzzardWPF
             {
                 dmsDataAccessorInstance = DMS_DataAccessor.Instance;
                 var mainVm = new MainWindowViewModel();
+                // Load the saved configuration settings on application startup.
+                // Uncomment the following line to test with default settings.
+                //BuzzardWPF.Properties.Settings.Default.Reset();
+                mainVm.LoadSettings();
                 var mainWindow = new MainWindow()
                 {
                     DataContext = mainVm,
