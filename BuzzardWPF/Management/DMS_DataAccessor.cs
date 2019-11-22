@@ -35,7 +35,6 @@ namespace BuzzardWPF.Management
         /// </summary>
         private DMS_DataAccessor()
         {
-            proposalUserCollections = new Dictionary<string, ReactiveList<ProposalUser>>();
             InterestRatingCollection = interestRatingOptions;
             // These values come from table T_EUS_UsageType
             // It is rarely updated, so we're not querying the database every time
@@ -320,9 +319,9 @@ namespace BuzzardWPF.Management
         private readonly ObservableAsPropertyHelper<DateTime> lastSqliteCacheUpdate;
         private readonly ObservableAsPropertyHelper<DateTime> lastLoadFromSqliteCache;
 
-        private List<ProposalUser> proposalUsersList;
-        private Dictionary<string, List<UserIDPIDCrossReferenceEntry>> pidIndexedCrossReferenceList;
-        private readonly Dictionary<string, ReactiveList<ProposalUser>> proposalUserCollections;
+        private readonly List<ProposalUser> proposalUsersList = new List<ProposalUser>();
+        private readonly Dictionary<string, List<UserIDPIDCrossReferenceEntry>> pidIndexedCrossReferenceList = new Dictionary<string, List<UserIDPIDCrossReferenceEntry>>();
+        private readonly Dictionary<string, IReadOnlyList<ProposalUser>> proposalUserCollections = new Dictionary<string, IReadOnlyList<ProposalUser>>();
 
         private readonly object cacheLoadingLock = new object();
         private bool isUpdatingCache;
@@ -515,8 +514,6 @@ namespace BuzzardWPF.Management
         {
             try
             {
-                pidIndexedCrossReferenceList = new Dictionary<string, List<UserIDPIDCrossReferenceEntry>>();
-
                 List<ProposalUser> eusUsers;
 
                 // Keys in this dictionary are proposal numbers; values are the users for that proposal
@@ -533,6 +530,7 @@ namespace BuzzardWPF.Management
                     userIDtoNameMap.Add(user.UserID, user.UserName);
                 }
 
+                pidIndexedCrossReferenceList.Clear();
                 foreach (var items in proposalUserMapping)
                 {
                     if (items.Value.Count == 0)
@@ -546,7 +544,8 @@ namespace BuzzardWPF.Management
                         sortedProposalUsers);
                 }
 
-                proposalUsersList = eusUsers;
+                proposalUsersList.Clear();
+                proposalUsersList.AddRange(eusUsers);
 
                 ProposalIDs = new ReactiveList<string>(pidIndexedCrossReferenceList.Keys.OrderBy(x => x));
 
@@ -558,9 +557,9 @@ namespace BuzzardWPF.Management
         }
 
         /// <summary>
-        /// Gets an ReactiveList of ProposalUsers that are involved with the given PID.
+        /// Gets a list of ProposalUsers that are involved with the given PID.
         /// </summary>
-        public ReactiveList<ProposalUser> GetProposalUsers(string proposalID, bool returnAllWhenEmpty = false)
+        public IReadOnlyList<ProposalUser> GetProposalUsers(string proposalID, bool returnAllWhenEmpty = false)
         {
             if (string.IsNullOrWhiteSpace(proposalID))
                 proposalID = string.Empty;
@@ -572,7 +571,7 @@ namespace BuzzardWPF.Management
                 return proposalUserCollections[proposalID];
             }
 
-            ReactiveList<ProposalUser> newUserCollection;
+            List<ProposalUser> newUserCollection;
 
             // We weren't given a PID to filter out the results, so we are returning every user
             // (unless told otherwise).
@@ -581,11 +580,11 @@ namespace BuzzardWPF.Management
                 if (returnAllWhenEmpty)
                 {
                     var query = proposalUsersList.OrderBy(item => item.UserName);
-                    newUserCollection = new ReactiveList<ProposalUser>(query);
+                    newUserCollection = new List<ProposalUser>(query);
                 }
                 else
                 {
-                    return new ReactiveList<ProposalUser>();
+                    return new List<ProposalUser>();
                 }
             }
             else if (pidIndexedCrossReferenceList.ContainsKey(proposalID))
@@ -604,7 +603,7 @@ namespace BuzzardWPF.Management
                             "Requested Proposal ID '{0}' has no users. Returning empty collection of Proposal Users.",
                             proposalID));
 
-                    newUserCollection = new ReactiveList<ProposalUser>();
+                    newUserCollection = new List<ProposalUser>();
                 }
                 else
                 {
@@ -618,7 +617,7 @@ namespace BuzzardWPF.Management
                                                              .OrderBy(user => user.UserName);
 
                     // Create the user collection and set it for future use.
-                    newUserCollection = new ReactiveList<ProposalUser>(singleProposalUsers);
+                    newUserCollection = new List<ProposalUser>(singleProposalUsers);
                 }
             }
             // The given PID wasn't in our cross reference list, log the error
@@ -633,10 +632,10 @@ namespace BuzzardWPF.Management
                         proposalID));
 
                 // Return the collection before we can insert it into the dictionary.
-                return new ReactiveList<ProposalUser>();
+                return new List<ProposalUser>();
             }
 
-            proposalUserCollections.Add(proposalID, newUserCollection);
+            proposalUserCollections.Add(proposalID, newUserCollection.ToArray());
 
             return proposalUserCollections[proposalID];
         }

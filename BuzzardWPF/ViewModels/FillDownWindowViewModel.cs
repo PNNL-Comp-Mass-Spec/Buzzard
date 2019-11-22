@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
@@ -15,7 +16,7 @@ namespace BuzzardWPF.ViewModels
     public class FillDownWindowViewModel : ReactiveObject
     {
         #region Attributes
-        private ReactiveList<ProposalUser> emslProposalUsersSource;
+        private IReadOnlyList<ProposalUser> emslProposalUsersSource;
         private string workPackageToolTipText;
         private bool workPackageWarning = false;
         private bool workPackageError = false;
@@ -30,7 +31,7 @@ namespace BuzzardWPF.ViewModels
 
         public FillDownWindowViewModel(FilldownBuzzardDataset dataset)
         {
-            EMSLProposalUsersSource = new ReactiveList<ProposalUser>();
+            EMSLProposalUsersSource = new List<ProposalUser>();
             Dataset = dataset ?? new FilldownBuzzardDataset();
 
             FillInEMSLProposalStuff();
@@ -63,7 +64,7 @@ namespace BuzzardWPF.ViewModels
         /// <remarks>Updated via CartNameList_OnSelectionChanged</remarks>
         public ObservableCollectionExtended<string> CartConfigNameListSource { get; } = new ObservableCollectionExtended<string>();
 
-        public ReactiveList<ProposalUser> EMSLProposalUsersSource
+        public IReadOnlyList<ProposalUser> EMSLProposalUsersSource
         {
             get => emslProposalUsersSource;
             private set => this.RaiseAndSetIfChanged(ref emslProposalUsersSource, value);
@@ -97,7 +98,8 @@ namespace BuzzardWPF.ViewModels
         {
             if (Dataset.DmsData == null)
             {
-                EMSLProposalUsersSource.Clear();
+                // Don't clear the list, because DMS_DataAccessor caches it
+                EMSLProposalUsersSource = new List<ProposalUser>();
             }
             else
             {

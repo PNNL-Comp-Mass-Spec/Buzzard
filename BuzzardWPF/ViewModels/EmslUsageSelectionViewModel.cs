@@ -29,7 +29,7 @@ namespace BuzzardWPF.ViewModels
 
         private IEmslUsageData boundContainer;
         private ReactiveList<string> availableProposalIDs;
-        private ReactiveList<ProposalUser> proposalUsers;
+        private IReadOnlyList<ProposalUser> proposalUsers;
         private string proposalUsersText;
 
         #endregion
@@ -91,7 +91,7 @@ namespace BuzzardWPF.ViewModels
             set => this.RaiseAndSetIfChanged(ref availableProposalIDs, value);
         }
 
-        public ReactiveList<ProposalUser> ProposalUsers
+        public IReadOnlyList<ProposalUser> ProposalUsers
         {
             get => proposalUsers;
             set => this.RaiseAndSetIfChanged(ref proposalUsers, value);
