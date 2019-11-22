@@ -266,7 +266,7 @@ namespace BuzzardWPF.Management
 
             CartConfigName = CheckSetting(
                 Settings.Default.WatcherCartConfigName,
-                CartConfigNameListForCart,
+                DMS_DataAccessor.Instance.GetCartConfigNamesForCart(CartName),
                 "CartConfig");
 
             DatasetType = CheckSetting(
