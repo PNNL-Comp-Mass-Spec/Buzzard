@@ -7,7 +7,6 @@ using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Data;
 using System.Windows.Media.Imaging;
 using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
@@ -86,8 +85,6 @@ namespace BuzzardWPF
 
             ApplicationLogger.Message += ApplicationLogger_Message;
             ApplicationLogger.Error += ApplicationLogger_Error;
-
-            DMS_DataAccessor.Instance.GuaranteeUnknownCartNameOption();
 
             m_animationTimer = new Timer(Animation_Tick, this, Timeout.Infinite, Timeout.Infinite);
             animationEnabled = false;

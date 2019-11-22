@@ -400,6 +400,7 @@ namespace BuzzardWPF.Management
         {
             var retries = 3;
             var dmsAvailable = dmsDbTools.CheckDMSConnection();
+            var result = false;
             while (retries > 0)
             {
                 retries--;
@@ -423,7 +424,8 @@ namespace BuzzardWPF.Management
                     }
 
                     LastSqliteCacheUpdateUtc = DateTime.UtcNow;
-                    return true;
+                    result = true;
+                    break;
                 }
                 catch (Exception ex)
                 {
@@ -435,7 +437,8 @@ namespace BuzzardWPF.Management
                     }
 
                     errorAction?.Invoke(message, ex);
-                    return false;
+                    result = false;
+                    break;
                 }
                 finally
                 {
@@ -446,7 +449,13 @@ namespace BuzzardWPF.Management
                 }
             }
 
-            return false;
+            // Guarantee "unknown" cart name option
+            if (!CartNames.Contains("unknown"))
+            {
+                RxApp.MainThreadScheduler.Schedule(() => CartNames.Add("unknown"));
+            }
+
+            return result;
         }
 
         #endregion
@@ -693,14 +702,6 @@ namespace BuzzardWPF.Management
             }
 
             return new List<string>();
-        }
-
-        public void GuaranteeUnknownCartNameOption()
-        {
-            if (!CartNames.Contains("unknown"))
-            {
-                CartNames.Add("unknown");
-            }
         }
 
         #endregion

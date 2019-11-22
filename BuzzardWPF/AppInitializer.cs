@@ -250,6 +250,7 @@ namespace BuzzardWPF
             SQLiteTools.Initialize(name, "BuzzardCache.que");
             //SQLiteTools.SetCacheLocation("BuzzardCache.que");
             SQLiteTools.BuildConnectionString(false);
+            SQLiteTools.DisableInMemoryCaching = true;
 
             //Application.EnableVisualStyles();
             //Application.SetCompatibleTextRenderingDefault(false);
