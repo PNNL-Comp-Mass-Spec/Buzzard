@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
-using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -61,6 +61,21 @@ namespace BuzzardWPF.Management
                 EMSLProposalsRecentMonthsToLoad = RecentEMSLProposalMonths
             };
 
+            cartNamesSource.Connect().ObserveOn(RxApp.MainThreadScheduler).Bind(out var cartNames).Subscribe();
+            CartNames = cartNames;
+            proposalIDsSource.Connect().ObserveOn(RxApp.MainThreadScheduler).Bind(out var proposalIDs).Subscribe();
+            ProposalIDs = proposalIDs;
+            columnDataSource.Connect().ObserveOn(RxApp.MainThreadScheduler).Bind(out var columnData).Subscribe();
+            ColumnData = columnData;
+            instrumentDataSource.Connect().ObserveOn(RxApp.MainThreadScheduler).Bind(out var instrumentData).Subscribe();
+            InstrumentData = instrumentData;
+            operatorDataSource.Connect().ObserveOn(RxApp.MainThreadScheduler).Bind(out var operatorData).Subscribe();
+            OperatorData = operatorData;
+            datasetTypesSource.Connect().ObserveOn(RxApp.MainThreadScheduler).Bind(out var datasetTypes).Subscribe();
+            DatasetTypes = datasetTypes;
+            separationTypesSource.Connect().ObserveOn(RxApp.MainThreadScheduler).Bind(out var separationTypes).Subscribe();
+            SeparationTypes = separationTypes;
+
             autoUpdateTimer = new Timer(AutoUpdateTimer_Tick, this, Timeout.Infinite, Timeout.Infinite);
         }
 
@@ -68,6 +83,14 @@ namespace BuzzardWPF.Management
         {
             autoUpdateTimer?.Dispose();
             dmsDbTools?.Dispose();
+            proposalIDsSource.Dispose();
+            columnDataSource.Dispose();
+            instrumentDataSource.Dispose();
+            operatorDataSource.Dispose();
+            datasetTypesSource.Dispose();
+            separationTypesSource.Dispose();
+            cartNamesSource.Dispose();
+            cartConfigNamesSource.Dispose();
         }
 
         static DMS_DataAccessor()
@@ -87,33 +110,30 @@ namespace BuzzardWPF.Management
             const bool forceReloadFromCache = true;
 
             // Load Instrument Data
-            using (InstrumentData.SuppressChangeNotifications())
+            var tempInstrumentData = SQLiteTools.GetInstrumentList(forceReloadFromCache);
+            if (tempInstrumentData == null)
             {
-                var tempInstrumentData = SQLiteTools.GetInstrumentList(forceReloadFromCache);
-                if (tempInstrumentData == null)
-                {
-                    ApplicationLogger.LogError(0, "Instrument list retrieval returned null.");
-                    InstrumentData.Clear();
-                }
-                else
-                {
-                    if (tempInstrumentData.Count == 0)
-                        ApplicationLogger.LogError(0, "No instruments found.");
-                }
+                ApplicationLogger.LogError(0, "Instrument list retrieval returned null.");
+                instrumentDataSource.Clear();
+            }
+            else
+            {
+                if (tempInstrumentData.Count == 0)
+                    ApplicationLogger.LogError(0, "No instruments found.");
+            }
 
-                if (tempInstrumentData != null && tempInstrumentData.Count != 0)
+            if (tempInstrumentData != null && tempInstrumentData.Count != 0)
+            {
+                instrumentDataSource.Clear();
+                instrumentDataSource.AddRange(tempInstrumentData.Select(instDatum => instDatum.DMSName));
+
+                InstrumentDetails.Clear();
+
+                foreach (var instrument in tempInstrumentData)
                 {
-                    InstrumentData.Clear();
-                    InstrumentData.AddRange(tempInstrumentData.Select(instDatum => instDatum.DMSName));
-
-                    InstrumentDetails.Clear();
-
-                    foreach (var instrument in tempInstrumentData)
+                    if (!InstrumentDetails.ContainsKey(instrument.DMSName))
                     {
-                        if (!InstrumentDetails.ContainsKey(instrument.DMSName))
-                        {
-                            InstrumentDetails.Add(instrument.DMSName, instrument);
-                        }
+                        InstrumentDetails.Add(instrument.DMSName, instrument);
                     }
                 }
             }
@@ -124,11 +144,8 @@ namespace BuzzardWPF.Management
                 ApplicationLogger.LogError(0, "User retrieval returned null.");
             else
             {
-                using (OperatorData.SuppressChangeNotifications())
-                {
-                    OperatorData.Clear();
-                    OperatorData.AddRange(tempUserList.Select(userDatum => userDatum.UserName));
-                }
+                operatorDataSource.Clear();
+                operatorDataSource.AddRange(tempUserList.Select(userDatum => userDatum.UserName));
             }
 
             // Load Dataset Types
@@ -137,11 +154,8 @@ namespace BuzzardWPF.Management
                 ApplicationLogger.LogError(0, "Dataset Types retrieval returned null.");
             else
             {
-                using (DatasetTypes.SuppressChangeNotifications())
-                {
-                    DatasetTypes.Clear();
-                    DatasetTypes.AddRange(tempDatasetTypesList);
-                }
+                datasetTypesSource.Clear();
+                datasetTypesSource.AddRange(tempDatasetTypesList);
             }
 
             // Load Separation Types
@@ -150,11 +164,8 @@ namespace BuzzardWPF.Management
                 ApplicationLogger.LogError(0, "Separation types retrieval returned null.");
             else
             {
-                using (SeparationTypes.SuppressChangeNotifications())
-                {
-                    SeparationTypes.Clear();
-                    SeparationTypes.AddRange(tempSeparationTypesList);
-                }
+                separationTypesSource.Clear();
+                separationTypesSource.AddRange(tempSeparationTypesList);
             }
 
             // Load Cart Names
@@ -163,11 +174,14 @@ namespace BuzzardWPF.Management
                 ApplicationLogger.LogError(0, "LC Cart names list retrieval returned null.");
             else
             {
-                using (CartNames.SuppressChangeNotifications())
-                {
-                    CartNames.Clear();
-                    CartNames.AddRange(tempCartsList);
-                }
+                cartNamesSource.Clear();
+                cartNamesSource.AddRange(tempCartsList);
+            }
+
+            // Guarantee "unknown" cart name option
+            if (!cartNamesSource.Items.Contains("unknown"))
+            {
+                cartNamesSource.Add("unknown");
             }
 
             // Load CartConfigNameMap
@@ -185,11 +199,8 @@ namespace BuzzardWPF.Management
                 ApplicationLogger.LogError(0, "Column data list retrieval returned null.");
             else
             {
-                using (ColumnData.SuppressChangeNotifications())
-                {
-                    ColumnData.Clear();
-                    ColumnData.AddRange(tempColumnData);
-                }
+                columnDataSource.Clear();
+                columnDataSource.AddRange(tempColumnData);
             }
 
             // Load Experiments
@@ -275,7 +286,7 @@ namespace BuzzardWPF.Management
                         return;
                     }
 
-                    RxApp.MainThreadScheduler.Schedule(() => LoadDMSDataFromCache(true));
+                    LoadDMSDataFromCache(true);
                 }).ConfigureAwait(false);
             }
             catch (Exception ex)
@@ -330,6 +341,16 @@ namespace BuzzardWPF.Management
         /// Key is cart name, value is list of valid cart config names for that cart.
         /// </summary>
         private Dictionary<string, List<string>> cartConfigNameMap = new Dictionary<string, List<string>>();
+
+        // Backing lists for collections that can be provided to the UI.
+        private readonly SourceList<string> proposalIDsSource = new SourceList<string>();
+        private readonly SourceList<string> columnDataSource = new SourceList<string>();
+        private readonly SourceList<string> instrumentDataSource = new SourceList<string>();
+        private readonly SourceList<string> operatorDataSource = new SourceList<string>();
+        private readonly SourceList<string> datasetTypesSource = new SourceList<string>();
+        private readonly SourceList<string> separationTypesSource = new SourceList<string>();
+        private readonly SourceList<string> cartNamesSource = new SourceList<string>();
+        private readonly SourceList<string> cartConfigNamesSource = new SourceList<string>();
 
         #endregion
 
@@ -420,12 +441,6 @@ namespace BuzzardWPF.Management
                         dmsDbTools.ProgressEvent -= progressEventHandler;
                     }
                 }
-            }
-
-            // Guarantee "unknown" cart name option
-            if (!CartNames.Contains("unknown"))
-            {
-                RxApp.MainThreadScheduler.Schedule(() => CartNames.Add("unknown"));
             }
 
             return result;
@@ -547,7 +562,8 @@ namespace BuzzardWPF.Management
                 proposalUsersList.Clear();
                 proposalUsersList.AddRange(eusUsers);
 
-                ProposalIDs = new ReactiveList<string>(pidIndexedCrossReferenceList.Keys.OrderBy(x => x));
+                proposalIDsSource.Clear();
+                proposalIDsSource.AddRange(pidIndexedCrossReferenceList.Keys);
 
             }
             catch (Exception ex)
@@ -691,13 +707,9 @@ namespace BuzzardWPF.Management
         public IReadOnlyList<string> EMSLUsageTypesSource { get; }
 
         /// <summary>
-        /// Proposal IDs
+        /// Proposal IDs observable list
         /// </summary>
-        public ReactiveList<string> ProposalIDs
-        {
-            get;
-            private set;
-        }
+        public ReadOnlyObservableCollection<string> ProposalIDs { get; }
 
         /// <summary>
         /// DMS data refresh interval, in hours
@@ -715,14 +727,14 @@ namespace BuzzardWPF.Management
         }
 
         /// <summary>
-        /// List of DMS LC column names
+        /// Observable List of DMS LC column names
         /// </summary>
-        public ReactiveList<string> ColumnData { get; } = new ReactiveList<string>();
+        public ReadOnlyObservableCollection<string> ColumnData { get; }
 
         /// <summary>
-        /// List of the DMS instrument names
+        /// Observable List of the DMS instrument names
         /// </summary>
-        public ReactiveList<string> InstrumentData { get; } = new ReactiveList<string>();
+        public ReadOnlyObservableCollection<string> InstrumentData { get; }
 
         /// <summary>
         /// Instrument details (Name, status, source hostname, source share name, capture method
@@ -731,24 +743,24 @@ namespace BuzzardWPF.Management
         public Dictionary<string, InstrumentInfo> InstrumentDetails { get; } = new Dictionary<string, InstrumentInfo>();
 
         /// <summary>
-        /// This is a list of the names of the cart Operators.
+        /// This is an Observable list of the names of the cart Operators.
         /// </summary>
-        public ReactiveList<string> OperatorData { get; } = new ReactiveList<string>();
+        public ReadOnlyObservableCollection<string> OperatorData { get; }
 
         /// <summary>
-        /// Dataset types
+        /// Dataset types Observable list
         /// </summary>
-        public ReactiveList<string> DatasetTypes { get; } = new ReactiveList<string>();
+        public ReadOnlyObservableCollection<string> DatasetTypes { get; }
 
         /// <summary>
-        /// Separation types
+        /// Separation types Observable list
         /// </summary>
-        public ReactiveList<string> SeparationTypes { get; } = new ReactiveList<string>();
+        public ReadOnlyObservableCollection<string> SeparationTypes { get; }
 
         /// <summary>
         /// Cart names
         /// </summary>
-        public ReactiveList<string> CartNames { get; } = new ReactiveList<string>();
+        public ReadOnlyObservableCollection<string> CartNames { get; }
 
         /// <summary>
         /// Key is charge code, value is all the details
@@ -770,6 +782,36 @@ namespace BuzzardWPF.Management
         /// This isn't meant to be bound to directly, which is why it's a SourceList and not an ObservableCollection.
         /// </remarks>
         public SourceList<ExperimentData> Experiments { get; } = new SourceList<ExperimentData>();
+
+        /// <summary>
+        /// Read-only, non-observable retrieval of the CartNames collection contents
+        /// </summary>
+        public IEnumerable<string> CartNamesItems => cartNamesSource.Items;
+
+        /// <summary>
+        /// Read-only, non-observable retrieval of the DatasetTypes collection contents
+        /// </summary>
+        public IEnumerable<string> DatasetTypesItems => datasetTypesSource.Items;
+
+        /// <summary>
+        /// Read-only, non-observable retrieval of the InstrumentData collection contents
+        /// </summary>
+        public IEnumerable<string> InstrumentDataItems => instrumentDataSource.Items;
+
+        /// <summary>
+        /// Read-only, non-observable retrieval of the OperatorData collection contents
+        /// </summary>
+        public IEnumerable<string> OperatorDataItems => operatorDataSource.Items;
+
+        /// <summary>
+        /// Read-only, non-observable retrieval of the SeparationTypes collection contents
+        /// </summary>
+        public IEnumerable<string> SeparationTypesItems => separationTypesSource.Items;
+
+        /// <summary>
+        /// Read-only, non-observable retrieval of the ColumnData collection contents
+        /// </summary>
+        public IEnumerable<string> ColumnDataItems => columnDataSource.Items;
 
         #endregion
     }

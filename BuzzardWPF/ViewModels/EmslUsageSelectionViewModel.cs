@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Reactive.Linq;
 using System.Windows.Controls;
@@ -83,7 +84,7 @@ namespace BuzzardWPF.ViewModels
 
         public IReadOnlyList<string> UsageTypesSource { get; }
 
-        public ReactiveList<string> AvailableProposalIDs => DMS_DataAccessor.Instance.ProposalIDs;
+        public ReadOnlyObservableCollection<string> AvailableProposalIDs => DMS_DataAccessor.Instance.ProposalIDs;
 
         public IReadOnlyList<ProposalUser> ProposalUsers
         {

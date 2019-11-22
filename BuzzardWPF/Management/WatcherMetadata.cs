@@ -266,7 +266,7 @@ namespace BuzzardWPF.Management
              */
             CartName = CheckSetting(
                 Settings.Default.WatcherCartName,
-                DMS_DataAccessor.Instance.CartNames,
+                DMS_DataAccessor.Instance.CartNamesItems,
                 "Cart");
 
             CartConfigName = CheckSetting(
@@ -276,32 +276,32 @@ namespace BuzzardWPF.Management
 
             DatasetType = CheckSetting(
                 Settings.Default.WatcherDatasetType,
-                DMS_DataAccessor.Instance.DatasetTypes,
+                DMS_DataAccessor.Instance.DatasetTypesItems,
                 "Column Type");
 
             Instrument = CheckSetting(
                 Settings.Default.WatcherInstrument,
-                DMS_DataAccessor.Instance.InstrumentData,
+                DMS_DataAccessor.Instance.InstrumentDataItems,
                 "Instrument");
 
             InstrumentOperator = CheckSetting(
                 Settings.Default.WatcherOperator,
-                DMS_DataAccessor.Instance.OperatorData,
+                DMS_DataAccessor.Instance.OperatorDataItems,
                 "Operator");
 
             SeparationType = CheckSetting(
                 Settings.Default.WatcherSeparationType,
-                DMS_DataAccessor.Instance.SeparationTypes,
+                DMS_DataAccessor.Instance.SeparationTypesItems,
                 "Separation Type");
 
             LCColumn = CheckSetting(
                 Settings.Default.WatcherColumn,
-                DMS_DataAccessor.Instance.ColumnData,
+                DMS_DataAccessor.Instance.ColumnDataItems,
                 "LC Column");
 
             WorkPackage = CheckSetting(
                 Settings.Default.WatcherWorkPackage,
-                DMS_DataAccessor.Instance.WorkPackages.Items.Select(x => x.ChargeCode).ToList(),
+                DMS_DataAccessor.Instance.WorkPackages.Items.Select(x => x.ChargeCode),
                 "Work Package");
 
             if (string.IsNullOrWhiteSpace(WorkPackage))
