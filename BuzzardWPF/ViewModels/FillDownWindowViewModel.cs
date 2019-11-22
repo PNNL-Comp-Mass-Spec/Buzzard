@@ -6,7 +6,6 @@ using System.Reactive.Linq;
 using BuzzardWPF.Data;
 using BuzzardWPF.Management;
 using BuzzardWPF.Views;
-using DynamicData.Binding;
 using LcmsNetData.Data;
 using LcmsNetData.Logging;
 using ReactiveUI;
@@ -21,6 +20,7 @@ namespace BuzzardWPF.ViewModels
         private bool workPackageWarning = false;
         private bool workPackageError = false;
         private ObservableAsPropertyHelper<string> emslProposalUsersText;
+        private IReadOnlyList<string> cartConfigNameListSource = new List<string>();
 
         #endregion
 
@@ -62,7 +62,11 @@ namespace BuzzardWPF.ViewModels
         /// List of cart config names associated with the current cart
         /// </summary>
         /// <remarks>Updated via CartNameList_OnSelectionChanged</remarks>
-        public ObservableCollectionExtended<string> CartConfigNameListSource { get; } = new ObservableCollectionExtended<string>();
+        public IReadOnlyList<string> CartConfigNameListSource
+        {
+            get => cartConfigNameListSource;
+            private set => this.RaiseAndSetIfChanged(ref cartConfigNameListSource, value);
+        }
 
         public IReadOnlyList<ProposalUser> EMSLProposalUsersSource
         {
@@ -233,12 +237,12 @@ namespace BuzzardWPF.ViewModels
         {
             if (string.IsNullOrEmpty(cartName))
             {
-                CartConfigNameListSource.Clear();
+                CartConfigNameListSource = new List<string>();
                 return;
             }
 
             // Update the allowable CartConfig names
-            CartConfigNameListSource.Load(DMS_DataAccessor.Instance.GetCartConfigNamesForCart(cartName));
+            CartConfigNameListSource = DMS_DataAccessor.Instance.GetCartConfigNamesForCart(cartName);
         }
         #endregion
     }

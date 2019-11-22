@@ -667,7 +667,7 @@ namespace BuzzardWPF.Management
         /// </summary>
         /// <param name="cartName"></param>
         /// <returns></returns>
-        public List<string> GetCartConfigNamesForCart(string cartName)
+        public IReadOnlyList<string> GetCartConfigNamesForCart(string cartName)
         {
             if (cartConfigNameMap.TryGetValue(cartName, out var configNames))
             {

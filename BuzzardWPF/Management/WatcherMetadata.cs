@@ -27,6 +27,7 @@ namespace BuzzardWPF.Management
         private string emslProposalId;
         private string userComments;
         private string interestRating;
+        private IReadOnlyList<string> cartConfigNameListForCart = new List<string>();
 
         public WatcherMetadata()
         {
@@ -46,11 +47,11 @@ namespace BuzzardWPF.Management
             {
                 if (string.IsNullOrWhiteSpace(x))
                 {
-                    CartConfigNameListForCart.Clear();
+                    CartConfigNameListForCart = new List<string>();
                     return;
                 }
 
-                CartConfigNameListForCart.Load(DMS_DataAccessor.Instance.GetCartConfigNamesForCart(x));
+                CartConfigNameListForCart = DMS_DataAccessor.Instance.GetCartConfigNamesForCart(x);
             });
         }
 
@@ -110,7 +111,11 @@ namespace BuzzardWPF.Management
         /// List of cart config names associated with the current cart
         /// </summary>
         /// <remarks>Updated via the WatcherConfigSelectedCartName setter</remarks>
-        public ObservableCollectionExtended<string> CartConfigNameListForCart { get; } = new ObservableCollectionExtended<string>();
+        public IReadOnlyList<string> CartConfigNameListForCart
+        {
+            get => cartConfigNameListForCart;
+            private set => this.RaiseAndSetIfChanged(ref cartConfigNameListForCart, value);
+        }
 
         /// <summary>
         /// This item contains a copy of the SelectedCartName value of
@@ -316,7 +321,7 @@ namespace BuzzardWPF.Management
         /// A setting can become invalid when it's removed as an option from the
         /// database.
         /// </remarks>
-        private string CheckSetting(string setting, IList<string> options, string errorIntro)
+        private string CheckSetting(string setting, IEnumerable<string> options, string errorIntro)
         {
             var s = " was not found when restoring settings for the File Watcher Configuration.";
 

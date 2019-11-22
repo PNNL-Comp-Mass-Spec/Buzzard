@@ -25,6 +25,7 @@ namespace BuzzardWPF.ViewModels
         private readonly ObservableAsPropertyHelper<bool> canSelectDatasets;
         private readonly ObservableAsPropertyHelper<bool> datasetSelected;
         private readonly ObservableAsPropertyHelper<bool> isCreatingTriggerFiles;
+        private IReadOnlyList<string> cartConfigNameListSource = new List<string>();
 
         #endregion
 
@@ -75,12 +76,12 @@ namespace BuzzardWPF.ViewModels
         {
             if (string.IsNullOrEmpty(cartName))
             {
-                CartConfigNameListSource.Clear();
+                CartConfigNameListSource = new List<string>();
                 return;
             }
 
             // Update the allowable CartConfig names
-            CartConfigNameListSource.Load(DMS_DataAccessor.Instance.GetCartConfigNamesForCart(cartName));
+            CartConfigNameListSource = DMS_DataAccessor.Instance.GetCartConfigNamesForCart(cartName);
 
             // Update the Cart name for datasets already in the grid
             foreach (var dataset in Datasets)
@@ -116,7 +117,11 @@ namespace BuzzardWPF.ViewModels
         /// List of cart config names associated with the current cart
         /// </summary>
         /// <remarks>Updated via Manager_PropertyChanged</remarks>
-        public ObservableCollectionExtended<string> CartConfigNameListSource { get; } = new ObservableCollectionExtended<string>();
+        public IReadOnlyList<string> CartConfigNameListSource
+        {
+            get => cartConfigNameListSource;
+            private set => this.RaiseAndSetIfChanged(ref cartConfigNameListSource, value);
+        }
 
         public ReactiveList<BuzzardDataset> Datasets => DatasetManager.Datasets;
 
