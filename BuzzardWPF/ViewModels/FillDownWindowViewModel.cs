@@ -34,7 +34,7 @@ namespace BuzzardWPF.ViewModels
             EMSLProposalUsersSource = new List<ProposalUser>();
             Dataset = dataset ?? new FilldownBuzzardDataset();
 
-            FillInEMSLProposalStuff();
+            UpdateProposalUsersSource();
 
             PickExperimentCommand = ReactiveCommand.Create(PickExperiment);
             PickWorkPackageCommand = ReactiveCommand.Create(PickWorkPackage);
@@ -93,21 +93,6 @@ namespace BuzzardWPF.ViewModels
         #endregion
 
         #region Event Handlers
-
-        private void UpdateProposalUsersSource()
-        {
-            if (Dataset.DmsData == null)
-            {
-                // Don't clear the list, because DMS_DataAccessor caches it
-                EMSLProposalUsersSource = new List<ProposalUser>();
-            }
-            else
-            {
-                EMSLProposalUsersSource = DMS_DataAccessor.Instance.GetProposalUsers(Dataset.DmsData.EMSLProposalID);
-            }
-
-            UpdateEMSLProposalUsers();
-        }
 
         private void UpdateWorkPackageToolTip()
         {
@@ -196,34 +181,28 @@ namespace BuzzardWPF.ViewModels
         #endregion
 
         #region Methods
-        private void FillInEMSLProposalStuff()
+
+        private void UpdateProposalUsersSource()
         {
-            if (Dataset?.DmsData == null)
-                return;
+            if (Dataset.DmsData != null)
+            {
+                EMSLProposalUsersSource = DMS_DataAccessor.Instance.GetProposalUsers(Dataset.DmsData.EMSLProposalID);
+            }
 
-            EMSLProposalUsersSource = DMS_DataAccessor.Instance.GetProposalUsers(Dataset.DmsData.EMSLProposalID);
-
-            UpdateEMSLProposalUsers();
-        }
-
-        private void UpdateEMSLProposalUsers()
-        {
+            // Keep selected any users in the old selected users list that are part of the newly-selected proposal
             var oldUsers = Dataset.EMSLProposalUsers.ToList();
-            //using (Dataset.EMSLProposalUsers.SuppressChangeNotifications())
-            //{
-                Dataset.EMSLProposalUsers.Clear();
-                foreach (var user in oldUsers)
+            Dataset.EMSLProposalUsers.Clear();
+            foreach (var user in oldUsers)
+            {
+                foreach (var proposalUser in emslProposalUsersSource)
                 {
-                    foreach (var proposalUser in EMSLProposalUsersSource)
+                    if (user.UserID.Equals(proposalUser.UserID))
                     {
-                        if (user.UserID.Equals(proposalUser.UserID))
-                        {
-                            Dataset.EMSLProposalUsers.Add(proposalUser);
-                            break;
-                        }
+                        Dataset.EMSLProposalUsers.Add(proposalUser);
+                        break;
                     }
                 }
-            //}
+            }
         }
 
         private void UseAllSettings(bool shouldWe)
