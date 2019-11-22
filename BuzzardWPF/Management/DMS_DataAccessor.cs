@@ -669,6 +669,11 @@ namespace BuzzardWPF.Management
         /// <returns></returns>
         public IReadOnlyList<string> GetCartConfigNamesForCart(string cartName)
         {
+            if (string.IsNullOrWhiteSpace(cartName))
+            {
+                return new List<string>();
+            }
+
             if (cartConfigNameMap.TryGetValue(cartName, out var configNames))
             {
                 return configNames;
