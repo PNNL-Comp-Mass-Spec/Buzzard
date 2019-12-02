@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -8,7 +7,6 @@ using System.Reactive.Concurrency;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Data;
 using BuzzardWPF.Data;
 using BuzzardWPF.IO;
 using BuzzardWPF.Properties;
@@ -178,6 +176,8 @@ namespace BuzzardWPF.Management
                     {
                         mRequestedRunTrie.AddData(sample.DmsData);
                     }
+
+                    mRequestedRunTrie.RemoveEmptyNodes();
                 }
 
                 // We can use this to get an idea if any datasets already have
