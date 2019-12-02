@@ -375,9 +375,11 @@ namespace BuzzardWPF.ViewModels
             // the selected datasets.
             //
             var dialog = new ExperimentsDialogWindow();
-            var dialogVm = new ExperimentsViewerViewModel();
+            var dialogVm = ViewModelCache.Instance.GetExperimentsVm();
             dialog.DataContext = dialogVm;
+
             var keepGoing = dialog.ShowDialog() == true;
+            var experimentName = dialogVm.SelectedExperiment?.Experiment;
 
             // If the user say's they want out, then get out
             if (!keepGoing)
@@ -385,10 +387,8 @@ namespace BuzzardWPF.ViewModels
                 return;
             }
 
-            var experiment = dialogVm.SelectedExperiment;
-
             // Make sure the user did selected a data source
-            if (experiment == null)
+            if (experimentName == null)
             {
                 ApplicationLogger.LogMessage(0, "No experiment was selected.");
                 return;
@@ -399,7 +399,7 @@ namespace BuzzardWPF.ViewModels
             //
             foreach (var dataset in selectedItems)
             {
-                dataset.DmsData.Experiment = experiment.Experiment;
+                dataset.DmsData.Experiment = experimentName;
             }
 
             //
@@ -418,7 +418,7 @@ namespace BuzzardWPF.ViewModels
             //
             // Prep the Filldown Window for use.
             //
-            var filldownWindowVm = new FillDownWindowViewModel(fillDownDataset);
+            var filldownWindowVm = ViewModelCache.Instance.GetFillDownVm(fillDownDataset);
             var filldownWindow = new FillDownWindow
             {
                 DataContext = filldownWindowVm

@@ -73,16 +73,16 @@ namespace BuzzardWPF.ViewModels
         /// </summary>
         private void SelectExperiment()
         {
-            var dialogVm = new ExperimentsViewerViewModel();
+            var dialogVm = ViewModelCache.Instance.GetExperimentsVm();
             var dialog = new ExperimentsDialogWindow()
             {
                 DataContext = dialogVm
             };
-            var stop = dialog.ShowDialog() != true;
-            if (stop)
-                return;
 
-            DatasetManager.WatcherMetadata.ExperimentName = dialogVm.SelectedExperiment.Experiment;
+            if (dialog.ShowDialog() ?? false)
+            {
+                DatasetManager.WatcherMetadata.ExperimentName = dialogVm.SelectedExperiment.Experiment;
+            }
         }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace BuzzardWPF.ViewModels
         /// </summary>
         private void SelectWorkPackage()
         {
-            var dialogVm = new WorkPackageSelectionViewModel();
+            var dialogVm = ViewModelCache.Instance.GetWorkPackageVm();
             var dialog = new WorkPackageSelectionWindow()
             {
                 DataContext = dialogVm

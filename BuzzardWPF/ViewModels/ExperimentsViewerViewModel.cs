@@ -12,7 +12,7 @@ using ReactiveUI;
 
 namespace BuzzardWPF.ViewModels
 {
-    public class ExperimentsViewerViewModel : ReactiveObject
+    public class ExperimentsViewerViewModel : ReactiveObject, IDisposable
     {
         #region Attributes
         private string filterText;
@@ -22,6 +22,7 @@ namespace BuzzardWPF.ViewModels
         private List<string> autoCompleteBoxItems;
         private readonly ObservableAsPropertyHelper<bool> experimentSelected;
         private Func<ExperimentData, string> fieldSelector = x => x.Experiment;
+        private readonly IDisposable connectionDisposable;
 
         #endregion
 
@@ -44,7 +45,7 @@ namespace BuzzardWPF.ViewModels
                             return value != null && value.StartsWith(x, StringComparison.OrdinalIgnoreCase);
                         }));
 
-            DMS_DataAccessor.Instance.Experiments.Connect().Filter(filter).ObserveOn(RxApp.MainThreadScheduler).Bind(out var filteredExperiments).Subscribe();
+            connectionDisposable = DMS_DataAccessor.Instance.Experiments.Connect().Filter(filter).ObserveOn(RxApp.MainThreadScheduler).Bind(out var filteredExperiments).Subscribe();
             Experiments = filteredExperiments;
 
             FilterOptions = Enum.GetValues(typeof(FilterOption)).Cast<FilterOption>().Where(x => x != FilterOption.None).ToArray();
@@ -54,6 +55,12 @@ namespace BuzzardWPF.ViewModels
 
             this.WhenAnyValue(x => x.SelectedFilterOption).Subscribe(_ => SetAutoCompleteList());
             SetAutoCompleteList();
+        }
+
+        public void Dispose()
+        {
+            experimentSelected?.Dispose();
+            connectionDisposable?.Dispose();
         }
 
         #endregion

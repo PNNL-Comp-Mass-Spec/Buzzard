@@ -13,7 +13,7 @@ using ReactiveUI;
 
 namespace BuzzardWPF.ViewModels
 {
-    public class WorkPackageSelectionViewModel : ReactiveObject
+    public class WorkPackageSelectionViewModel : ReactiveObject, IDisposable
     {
         public WorkPackageSelectionViewModel()
         {
@@ -24,7 +24,6 @@ namespace BuzzardWPF.ViewModels
 
             workPackageSelected = this.WhenAnyValue(x => x.SelectedWorkPackage).Select(x => x != null).ToProperty(this, x => x.WorkPackageSelected, scheduler: RxApp.MainThreadScheduler);
 
-            //var wpFilter = this.WhenAnyValue(x => x.FilterText, x => x.SelectedFilterOption).Throttle(TimeSpan.FromMilliseconds(250), RxApp.TaskpoolScheduler).Select(x => new )
             var wpFilter = this.WhenValueChanged(x => x.FilterText)
                 .Throttle(TimeSpan.FromMilliseconds(250), RxApp.TaskpoolScheduler)
                 .Select(x => new Func<WorkPackageInfo, bool>(y =>
@@ -37,8 +36,7 @@ namespace BuzzardWPF.ViewModels
                     return value != null && value.StartsWith(x, StringComparison.OrdinalIgnoreCase);
                 }));
 
-            //WorkPackagesFiltered = DMS_DataAccessor.Instance.WorkPackages.Connect().Filter(wpFilter).ObserveOn(RxApp.MainThreadScheduler).AsObservableList();
-            var loader = DMS_DataAccessor.Instance.WorkPackages.Connect().Filter(wpFilter).ObserveOn(RxApp.MainThreadScheduler)
+            connectionDisposable = DMS_DataAccessor.Instance.WorkPackages.Connect().Filter(wpFilter).ObserveOn(RxApp.MainThreadScheduler)
                 .Bind(out var workPackagesFiltered).Subscribe();
 
             WorkPackagesFiltered = workPackagesFiltered;
@@ -46,6 +44,12 @@ namespace BuzzardWPF.ViewModels
             AutoCompleteBoxItems = new List<string>();
             this.WhenAnyValue(x => x.SelectedFilterOption).Subscribe(_ => SetAutoCompleteList());
             SetAutoCompleteList();
+        }
+
+        public void Dispose()
+        {
+            workPackageSelected?.Dispose();
+            connectionDisposable?.Dispose();
         }
 
         private string filterText;
@@ -56,6 +60,7 @@ namespace BuzzardWPF.ViewModels
         private WorkPackageFilterOption selectedFilterOption;
         private List<string> autoCompleteBoxItems;
         private readonly ObservableAsPropertyHelper<bool> workPackageSelected;
+        private readonly IDisposable connectionDisposable;
 
         public bool WorkPackageSelected => workPackageSelected.Value;
 

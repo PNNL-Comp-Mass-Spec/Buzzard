@@ -122,6 +122,7 @@
     <Compile Include="Management\RenameDataRequest.cs" />
     <Compile Include="Management\TriggerFileCreationManager.cs" />
     <Compile Include="Management\TriggerFileMonitor.cs" />
+    <Compile Include="Management\ViewModelCache.cs" />
     <Compile Include="Management\WatcherMetadata.cs" />
     <Compile Include="Properties\SettingsUpgradeHandler.cs" />
     <Compile Include="Searching\DatasetFoundEventArgs.cs" />

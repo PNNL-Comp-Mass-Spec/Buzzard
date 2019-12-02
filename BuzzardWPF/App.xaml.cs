@@ -110,6 +110,7 @@ namespace BuzzardWPF
             DatasetManager.Manager.Dispose();
             sqliteDisposable.Dispose();
             dmsDataAccessorInstance?.Dispose();
+            ViewModelCache.Instance.Dispose();
             ShutDownLogging();
         }
 

@@ -145,22 +145,23 @@ namespace BuzzardWPF.ViewModels
         #endregion
 
         #region Event Handlers
+
         /// <summary>
         /// The brings up a dialog window that lets the user choose
         /// an experiment name they wish to apply to the new datasets.
         /// </summary>
         private void SelectExperiment()
         {
-            var dialogVm = new ExperimentsViewerViewModel();
+            var dialogVm = ViewModelCache.Instance.GetExperimentsVm();
             var dialog = new ExperimentsDialogWindow()
             {
                 DataContext = dialogVm
             };
-            var stop = dialog.ShowDialog() != true;
-            if (stop)
-                return;
 
-            ExperimentName = dialogVm.SelectedExperiment.Experiment;
+            if (dialog.ShowDialog() ?? false)
+            {
+                ExperimentName = dialogVm.SelectedExperiment.Experiment;
+            }
         }
 
         private void AddQcMonitor()

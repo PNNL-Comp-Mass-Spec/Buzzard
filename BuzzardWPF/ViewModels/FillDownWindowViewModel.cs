@@ -12,14 +12,14 @@ using ReactiveUI;
 
 namespace BuzzardWPF.ViewModels
 {
-    public class FillDownWindowViewModel : ReactiveObject
+    public class FillDownWindowViewModel : ReactiveObject, IDisposable
     {
         #region Attributes
         private IReadOnlyList<ProposalUser> emslProposalUsersSource;
         private string workPackageToolTipText;
         private bool workPackageWarning = false;
         private bool workPackageError = false;
-        private ObservableAsPropertyHelper<string> emslProposalUsersText;
+        private readonly ObservableAsPropertyHelper<string> emslProposalUsersText;
         private IReadOnlyList<string> cartConfigNameListSource = new List<string>();
 
         #endregion
@@ -46,6 +46,15 @@ namespace BuzzardWPF.ViewModels
             this.WhenAnyValue(x => x.Dataset.DmsData, x => x.Dataset.DmsData.EMSLProposalID).Subscribe(_ => UpdateProposalUsersSource());
             this.WhenAnyValue(x => x.Dataset.DmsData, x => x.Dataset.DmsData.WorkPackage).Subscribe(_ => UpdateWorkPackageToolTip());
             this.WhenAnyValue(x => x.Dataset.DmsData.CartName).ObserveOn(RxApp.MainThreadScheduler).Subscribe(LoadCartConfigsForCart);
+        }
+
+        public void Dispose()
+        {
+            emslProposalUsersText?.Dispose();
+            PickExperimentCommand?.Dispose();
+            PickWorkPackageCommand?.Dispose();
+            UseAllCommand?.Dispose();
+            UseNoneCommand?.Dispose();
         }
 
         #region Properties
@@ -152,23 +161,21 @@ namespace BuzzardWPF.ViewModels
 
         private void PickExperiment()
         {
-            var dialogVm = new ExperimentsViewerViewModel();
+            var dialogVm = ViewModelCache.Instance.GetExperimentsVm();
             var dialog = new ExperimentsDialogWindow()
             {
                 DataContext = dialogVm
             };
 
-            var stop = dialog.ShowDialog() != true;
-            if (stop)
-                return;
-
-            var selectedExperiment = dialogVm.SelectedExperiment;
-            Dataset.DmsData.Experiment = selectedExperiment.Experiment;
+            if (dialog.ShowDialog() ?? false)
+            {
+                Dataset.DmsData.Experiment = dialogVm.SelectedExperiment.Experiment; ;
+            }
         }
 
         private void PickWorkPackage()
         {
-            var dialogVm = new WorkPackageSelectionViewModel();
+            var dialogVm = ViewModelCache.Instance.GetWorkPackageVm();
             var dialog = new WorkPackageSelectionWindow()
             {
                 DataContext = dialogVm
