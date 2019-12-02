@@ -108,7 +108,7 @@ namespace BuzzardWPF
             }
 
             DatasetManager.Manager.Dispose();
-            sqliteToolsInstance.Dispose();
+            sqliteDisposable.Dispose();
             dmsDataAccessorInstance?.Dispose();
             ShutDownLogging();
         }
@@ -129,7 +129,7 @@ namespace BuzzardWPF
         private ManualResetEvent resetSplashCreated;
         private Thread splashThread;
 
-        private static readonly SQLiteTools sqliteToolsInstance = SQLiteTools.GetInstance();
+        private static readonly IDisposable sqliteDisposable = SQLiteTools.GetDisposable();
         private static DMS_DataAccessor dmsDataAccessorInstance = null;
 
         /// <summary>

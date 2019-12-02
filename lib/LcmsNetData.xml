@@ -330,18 +330,6 @@
             Autosampler information, specifically Well Plate Number and Well Number
             </summary>
         </member>
-        <member name="M:LcmsNetData.Data.LcmsNetDataClassBase.GetPropertyValues">
-            <summary>
-            Gets current values for all the properties in the class in key/value format
-            </summary>
-            <returns>String dictionary containing current values of all properties</returns>
-        </member>
-        <member name="M:LcmsNetData.Data.LcmsNetDataClassBase.LoadPropertyValues(System.Collections.Generic.Dictionary{System.String,System.String})">
-            <summary>
-            Loads the class properties from a string dictionary
-            </summary>
-            <param name="propValues">String dictionary containing property names and values</param>
-        </member>
         <member name="T:LcmsNetData.Data.MRMFileData">
             <summary>
             Holds MRM file data downloaded from DMS
@@ -412,6 +400,42 @@
             <summary>
             The Wellplate name that is stored in DMS.
             </summary>
+        </member>
+        <member name="T:LcmsNetData.Data.PersistenceSettingAttribute">
+            <summary>
+            Settings for object persistence (generally to the SQLite database)
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.PersistenceSettingAttribute.IgnoreProperty">
+            <summary>
+            If the property should not be persisted or loaded
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.PersistenceSettingAttribute.ColumnName">
+            <summary>
+            The Column Name for this property in the database. If blank, the property name will be used.
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.PersistenceSettingAttribute.ColumnNamePrefix">
+            <summary>
+            For LCMSNet objects: The prefix used for column names for properties in the object
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.PersistenceSettingAttribute.PropertyGetOverrideMethod">
+            <summary>
+            For special read handling: Supply the name of the method to use for reading the value (preferably using the "nameof(...)" compiler method). Needs to have a unique name, no parameters, and return the same type as the property.
+            </summary>
+        </member>
+        <member name="M:LcmsNetData.Data.PersistenceSettingAttribute.#ctor">
+            <summary>
+            Default constructor
+            </summary>
+        </member>
+        <member name="M:LcmsNetData.Data.PersistenceSettingAttribute.#ctor(System.String)">
+            <summary>
+            Constructor to simply set a prefix
+            </summary>
+            <param name="prefix"></param>
         </member>
         <member name="F:LcmsNetData.Data.SampleDataBasic.dmsData">
             <summary>
@@ -493,12 +517,6 @@
         </member>
         <member name="P:LcmsNetData.Data.SampleDataBasic.InterestRating">
             <inheritdoc />
-        </member>
-        <member name="M:LcmsNetData.Data.SampleDataBasic.GetPropertyValues">
-            <summary>
-            Gets current values for all the properties in the class in key/value format
-            </summary>
-            <returns>String dictionary containing current values of all properties</returns>
         </member>
         <member name="T:LcmsNetData.Data.SampleQueryData">
             <summary>
@@ -745,12 +763,6 @@
             Batch number for blocking/randomizing
             </summary>
         </member>
-        <member name="M:LcmsNetData.Data.DMSData.LoadPropertyValues(System.Collections.Generic.Dictionary{System.String,System.String})">
-            <summary>
-            Loads the class properties from a string dictionary
-            </summary>
-            <param name="propValues">String dictionary containing property names and values</param>
-        </member>
         <member name="T:LcmsNetData.Data.TriggerFileTools">
             <summary>
             Tools for generation of trigger files
@@ -908,11 +920,6 @@
         <member name="F:LcmsNetData.ProgressEventArgs.PercentComplete">
             <summary>
             Value between 0 and 100
-            </summary>
-        </member>
-        <member name="T:LcmsNetData.ICacheInterface">
-            <summary>
-            Interface for data classes that use the cache database
             </summary>
         </member>
         <member name="M:LcmsNetData.NotifyPropertyChangedExtensions.RaiseAndSetIfChanged``1(LcmsNetData.INotifyPropertyChangedExt,``0@,``0,System.String)">
@@ -1576,19 +1583,6 @@
             Returns the name of the method.
             </summary>
             <returns></returns>
-        </member>
-        <member name="M:LcmsNetData.Method.LCMethodBasic.GetPropertyValues">
-            <summary>
-            Returns a string dictionary containing the key to the method rather than all of the
-            events contained within.
-            </summary>
-            <returns>StringDictionary containing the name of the LC Method</returns>
-        </member>
-        <member name="M:LcmsNetData.Method.LCMethodBasic.LoadPropertyValues(System.Collections.Generic.Dictionary{System.String,System.String})">
-            <summary>
-            Loads the name of the method and stores it.
-            </summary>
-            <param name="propValues"></param>
         </member>
         <member name="P:LcmsNetData.System.PersistDataPaths.AppName">
             <summary>

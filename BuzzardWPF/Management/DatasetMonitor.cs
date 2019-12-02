@@ -132,7 +132,7 @@ namespace BuzzardWPF.Management
                     {
                         var datasetName = dataset.DmsData.DatasetName;
 
-                        if (DMS_DataAccessor.Instance.Datasets.Contains(datasetName))
+                        if (DMS_DataAccessor.Instance.CheckDatasetExists(datasetName))
                         {
                             dataset.DatasetStatus = DatasetStatus.DatasetAlreadyInDMS;
                             dataset.PulseText = true;

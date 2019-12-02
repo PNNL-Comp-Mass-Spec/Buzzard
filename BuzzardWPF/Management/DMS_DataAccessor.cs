@@ -41,8 +41,6 @@ namespace BuzzardWPF.Management
             // Previously used, but deprecated in April 2017 is USER_UNKNOWN
             EMSLUsageTypesSource = new [] { "BROKEN", "CAP_DEV", "MAINTENANCE", "USER" };
 
-            Datasets = new SortedSet<string>(StringComparer.CurrentCultureIgnoreCase);
-
             LastSqliteCacheUpdateUtc = DateTime.UtcNow;
             LastLoadFromSqliteCacheUtc = DateTime.UtcNow.AddMinutes(-60);
 
@@ -227,28 +225,6 @@ namespace BuzzardWPF.Management
                 WorkPackageMap = workPackageMap;
                 WorkPackages.Clear();
                 WorkPackages.AddRange(WorkPackageMap.Values.OrderBy(x => x.ChargeCode));
-            }
-
-            // Load datasets
-            var datasetList = SQLiteTools.GetDatasetList();
-            if (datasetList == null)
-                ApplicationLogger.LogError(0, "Dataset list retrieval returned null.");
-            else
-            {
-                var datasetSortedSet = new SortedSet<string>(StringComparer.CurrentCultureIgnoreCase);
-                foreach (var dataset in datasetList)
-                {
-                    try
-                    {
-                        datasetSortedSet.Add(dataset);
-                    }
-                    catch (Exception)
-                    {
-                        // There should not be any duplicate datasets; but this try/catch block is here to silently ignore the situation if it is encountered
-                    }
-                }
-
-                Datasets = datasetSortedSet;
             }
 
             // Load EMSL Proposal information
@@ -698,6 +674,16 @@ namespace BuzzardWPF.Management
             return new List<string>();
         }
 
+        /// <summary>
+        /// Query the SQLite cache to determine if a dataset name exists
+        /// </summary>
+        /// <param name="datasetName"></param>
+        /// <returns></returns>
+        public bool CheckDatasetExists(string datasetName)
+        {
+            return SQLiteTools.CheckDatasetExists(datasetName);
+        }
+
         #endregion
 
         #region Properties
@@ -768,12 +754,6 @@ namespace BuzzardWPF.Management
         public Dictionary<string, WorkPackageInfo> WorkPackageMap { get; private set; } = new Dictionary<string, WorkPackageInfo>();
 
         public SourceList<WorkPackageInfo> WorkPackages { get; } = new SourceList<WorkPackageInfo>();
-
-        /// <summary>
-        /// List of DMS dataset names
-        /// </summary>
-        /// <remarks>Sorted set for fast lookups (not-case sensitive)</remarks>
-        public SortedSet<string> Datasets { get; private set; }
 
         /// <summary>
         /// List of DMS experiment names

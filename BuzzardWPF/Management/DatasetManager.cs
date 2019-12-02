@@ -430,7 +430,7 @@ namespace BuzzardWPF.Management
             if (!string.IsNullOrWhiteSpace(datasetName))
             {
                 // Look for a match to an existing dataset in DMS
-                if (DMS_DataAccessor.Instance.Datasets.Contains(datasetName))
+                if (DMS_DataAccessor.Instance.CheckDatasetExists(datasetName))
                     RxApp.MainThreadScheduler.Schedule(() => dataset.DatasetStatus = DatasetStatus.DatasetAlreadyInDMS);
             }
         }
