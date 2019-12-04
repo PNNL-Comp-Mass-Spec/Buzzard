@@ -168,14 +168,6 @@
             <param name="columnCount"></param>
             <returns></returns>
         </member>
-        <member name="M:LcmsNetSQLiteTools.SQLiteCacheIO.WriteDataToCache``1(System.Collections.Generic.IReadOnlyCollection{``0},System.String,System.String)">
-            <summary>
-            Saves a list of objects to the cache database
-            </summary>
-            <param name="dataToCache">List of objects to save properties for</param>
-            <param name="tableName">Name of the table to save data in</param>
-            <param name="connStr">Connection string</param>
-        </member>
         <member name="M:LcmsNetSQLiteTools.SQLiteCacheIO.ExecuteSQLiteCommand(System.String,System.String)">
             <summary>
             Executes specified SQLite command
@@ -216,21 +208,53 @@
             <param name="tableType">DatabaseTableTypes specifying table to get name for</param>
             <returns>Name of db table</returns>
         </member>
-        <member name="M:LcmsNetSQLiteTools.SQLiteCacheIO.GetSingleColumnName(LcmsNetSQLiteTools.DatabaseTableTypes)">
+        <member name="M:LcmsNetSQLiteTools.SQLiteCacheIO.GetSingleColumnName(LcmsNetSQLiteTools.DatabaseTableTypes,System.String)">
             <summary>
             Get the name of the single column in a single-column table
             </summary>
             <param name="tableType"></param>
+            <param name="connString"></param>
             <returns></returns>
         </member>
-        <member name="M:LcmsNetSQLiteTools.SQLiteCacheIO.ClearCacheTable(System.String,System.String,System.Int32)">
+        <member name="M:LcmsNetSQLiteTools.SQLiteCacheIO.PrepareMultiColumnTable(System.String,System.String,System.Type,System.Boolean,System.Boolean)">
             <summary>
-            Clears a cache table
+            Checks for existing multi-column table, creates it if it doesn't exist, and optionally drops existing data
             </summary>
-            <param name="tableName">Name of table to clear</param>
-            <param name="connStr">Connection string</param>
-            <param name="columnCountExpected">Expected number of columns; 0 to not validate column count</param>
-            <remarks>If the actual column count is less than columnCountExpected, then the table is deleted (dropped)</remarks>
+            <param name="tableName"></param>
+            <param name="connStr"></param>
+            <param name="dataType"></param>
+            <param name="dropOnMismatch">If true, the table exists, and the column names don't match property names, drops and re-creates the table</param>
+            <param name="clearExisting">If true and the table exists, the existing data will be truncated</param>
+            <returns>True if table exists and is readable</returns>
+        </member>
+        <member name="M:LcmsNetSQLiteTools.SQLiteCacheIO.PrepareMultiColumnTable(System.String,System.String,System.Collections.Generic.List{LcmsNetSQLiteTools.PropertyToColumnMapping.PropertyColumnMapping},System.Boolean,System.Boolean)">
+            <summary>
+            Checks for existing multi-column table, creates it if it doesn't exist, and optionally drops existing data
+            </summary>
+            <param name="tableName"></param>
+            <param name="connStr"></param>
+            <param name="mappings"></param>
+            <param name="dropOnMismatch">If true, the table exists, and the column names don't match property names, drops and re-creates the table</param>
+            <param name="clearExisting">If true and the table exists, the existing data will be truncated</param>
+            <returns>True if table exists and is readable</returns>
+        </member>
+        <member name="M:LcmsNetSQLiteTools.SQLiteCacheIO.PrepareSingleColumnTable(LcmsNetSQLiteTools.DatabaseTableTypes,System.String,System.Boolean,System.Boolean)">
+            <summary>
+            Checks for existing single-column table, creates it if it doesn't exist, and optionally drops existing data
+            </summary>
+            <param name="tableType"></param>
+            <param name="connStr"></param>
+            <param name="dropOnMismatch">If true, the table exists, and the column name doesn't match desired name, drops and re-creates the table</param>
+            <param name="clearExisting">If true and the table exists, the existing data will be truncated</param>
+            <returns>True if table exists and is readable</returns>
+        </member>
+        <member name="M:LcmsNetSQLiteTools.SQLiteCacheIO.CheckSingleColumnCacheTable(LcmsNetSQLiteTools.DatabaseTableTypes,System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            Checks if a cache table exists, creating it if it doesn't (and writing the default data if there is no data present)
+            </summary>
+            <param name="tableType"></param>
+            <param name="defaultData">Entries to add to the table if there are none present</param>
+            <returns>table row count</returns>
         </member>
         <member name="M:LcmsNetSQLiteTools.SQLiteCacheIO.DeleteBadCache(System.Boolean)">
             <summary>
@@ -245,6 +269,12 @@
             </summary>
             <param name="location">New path to location of queue</param>
             <remarks>If location is a filename (and not a path), then updates to use AppDataFolderName</remarks>
+        </member>
+        <member name="M:LcmsNetSQLiteTools.SQLiteCacheIO.CheckOrCreateCache(LcmsNetSQLiteTools.SQLiteCacheDefaultData)">
+            <summary>
+            Checks for an existing cache or creates a new one, and makes sure certain tables exist.
+            </summary>
+            <param name="defaultData"></param>
         </member>
         <member name="M:LcmsNetSQLiteTools.SQLiteCacheIO.ReadMultiColumnDataFromCache``1(LcmsNetSQLiteTools.DatabaseTableTypes,System.Func{``0},System.Collections.Generic.List{``0},System.Boolean)">
             <summary>
@@ -276,51 +306,46 @@
             <param name="connString">SQLite database connection string</param>
             <returns>List of items read from the table</returns>
         </member>
-        <member name="M:LcmsNetSQLiteTools.SQLiteCacheIO.SaveMultiColumnListToCache``1(LcmsNetSQLiteTools.DatabaseTableTypes,System.Collections.Generic.List{``0},System.Collections.Generic.List{``0},System.Boolean)">
+        <member name="M:LcmsNetSQLiteTools.SQLiteCacheIO.SaveMultiColumnListToCache``1(LcmsNetSQLiteTools.DatabaseTableTypes,System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.List{``0})">
             <summary>
             Store the contents of a list in the specified table
             </summary>
             <typeparam name="T"></typeparam>
+            <param name="tableType">table the data is to be stored in</param>
             <param name="dataList">list of data to be stored</param>
             <param name="memoryCache">in-memory cache of the list</param>
-            <param name="clearFirst">if the existing data should be removed first (always); otherwise, if the row counts match, nothing is changed</param>
-            <param name="tableType">table the data is to be stored in</param>
         </member>
-        <member name="M:LcmsNetSQLiteTools.SQLiteCacheIO.SaveMultiColumnListToCache``1(LcmsNetSQLiteTools.DatabaseTableTypes,System.Collections.Generic.List{``0},System.Boolean)">
+        <member name="M:LcmsNetSQLiteTools.SQLiteCacheIO.SaveMultiColumnListToCache``1(LcmsNetSQLiteTools.DatabaseTableTypes,System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Store the contents of a list in the specified table
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="tableType">table the data is to be stored in</param>
+            <param name="dataList">list of data to be stored</param>
+        </member>
+        <member name="M:LcmsNetSQLiteTools.SQLiteCacheIO.SaveMultiColumnListToCache``1(LcmsNetSQLiteTools.DatabaseTableTypes,System.Collections.Generic.IEnumerable{``0},System.String)">
             <summary>
             Store the contents of a list in the specified table
             </summary>
             <typeparam name="T"></typeparam>
             <param name="dataList">list of data to be stored</param>
-            <param name="clearFirst">if the existing data should be removed first (always); otherwise, if the row counts match, nothing is changed</param>
-            <param name="tableType">table the data is to be stored in</param>
-        </member>
-        <member name="M:LcmsNetSQLiteTools.SQLiteCacheIO.SaveMultiColumnListToCache``1(LcmsNetSQLiteTools.DatabaseTableTypes,System.Collections.Generic.List{``0},System.Boolean,System.String)">
-            <summary>
-            Store the contents of a list in the specified table
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="dataList">list of data to be stored</param>
-            <param name="clearFirst">if the existing data should be removed first (always); otherwise, if the row counts match, nothing is changed</param>
             <param name="tableType">table the data is to be stored in</param>
             <param name="connStr">Connection string; used for export/save as</param>
         </member>
-        <member name="M:LcmsNetSQLiteTools.SQLiteCacheIO.SaveSingleColumnListToCache(LcmsNetSQLiteTools.DatabaseTableTypes,System.Collections.Generic.List{System.String},System.Collections.Generic.List{System.String},System.Boolean)">
+        <member name="M:LcmsNetSQLiteTools.SQLiteCacheIO.SaveSingleColumnListToCache(LcmsNetSQLiteTools.DatabaseTableTypes,System.Collections.Generic.IEnumerable{System.String},System.Collections.Generic.List{System.String})">
             <summary>
             Generic method for saving a single column list to the cache db
             </summary>
             <param name="listData">List of data for storing in table</param>
             <param name="memoryCache">List used for in-memory cache of contents</param>
             <param name="tableType">enumTableNames specifying table name suffix</param>
-            <param name="clearFirst">if true, the existing data will always be removed from the list; if false and <paramref name="listData"/>.Count is &lt;= to the number of existing rows, nothing is changed</param>
         </member>
-        <member name="M:LcmsNetSQLiteTools.SQLiteCacheIO.SaveSingleColumnListToCache(LcmsNetSQLiteTools.DatabaseTableTypes,System.Collections.Generic.List{System.String},System.Boolean)">
+        <member name="M:LcmsNetSQLiteTools.SQLiteCacheIO.SaveSingleColumnListToCache(LcmsNetSQLiteTools.DatabaseTableTypes,System.Collections.Generic.IEnumerable{System.String})">
             <summary>
             Generic method for saving a single column list to the cache db
             </summary>
             <param name="tableType">enumTableNames specifying table name suffix</param>
             <param name="listData">List of data for storing in table</param>
-            <param name="clearFirst">if true, the existing data will always be removed from the list; if false and <paramref name="listData"/>.Count is &lt;= to the number of existing rows, nothing is changed</param>
             <remarks>Used with T_CartList, T_SeparationTypeSelected, T_LCColumnList, T_DatasetTypeList, T_DatasetList, and T_CartConfigNameSelected</remarks>
         </member>
         <member name="M:LcmsNetSQLiteTools.SQLiteCacheIO.CheckDatasetExists(System.String)">
@@ -509,7 +534,7 @@
             </summary>
             <returns>Separation type</returns>
         </member>
-        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveQueueToCache``1(System.Collections.Generic.List{``0},LcmsNetSQLiteTools.DatabaseTableTypes)">
+        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveQueueToCache``1(System.Collections.Generic.IEnumerable{``0},LcmsNetSQLiteTools.DatabaseTableTypes)">
             <summary>
             Saves the contents of specified sample queue to the SQLite cache file
             Connection string and database name are defined by defaults
@@ -517,7 +542,7 @@
             <param name="queueData">List of SampleData containing the sample data to save</param>
             <param name="tableType">TableTypes enum specifying which queue is being saved</param>
         </member>
-        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveQueueToCache``1(System.Collections.Generic.List{``0},LcmsNetSQLiteTools.DatabaseTableTypes,System.String)">
+        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveQueueToCache``1(System.Collections.Generic.IEnumerable{``0},LcmsNetSQLiteTools.DatabaseTableTypes,System.String)">
             <summary>
             Saves the contents of specified sample queue to an SQLite database file
             Overload requires database connection string be specified
@@ -526,21 +551,19 @@
             <param name="tableType">TableTypes enum specifying which queue is being saved</param>
             <param name="connStr">Connection string for database file</param>
         </member>
-        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveUserListToCache(System.Collections.Generic.List{LcmsNetData.Data.UserInfo},System.Boolean)">
+        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveUserListToCache(System.Collections.Generic.IEnumerable{LcmsNetData.Data.UserInfo})">
             <summary>
             Saves a list of users to cache
             </summary>
             <param name="userList">List containing user data</param>
-            <param name="clearFirst">if true, the existing data will always be removed from the list; if false and <paramref name="userList"/>.Count is &lt;= to the number of existing rows, nothing is changed</param>
         </member>
-        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveExperimentListToCache(System.Collections.Generic.List{LcmsNetData.Data.ExperimentData},System.Boolean)">
+        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveExperimentListToCache(System.Collections.Generic.IEnumerable{LcmsNetData.Data.ExperimentData})">
             <summary>
             Save a list of experiments to cache
             </summary>
             <param name="expList"></param>
-            <param name="clearFirst">if true, the existing data will always be removed from the list; if false and <paramref name="expList"/>.Count is &lt;= to the number of existing rows, nothing is changed</param>
         </member>
-        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveProposalUsers(System.Collections.Generic.List{LcmsNetData.Data.ProposalUser},System.Collections.Generic.List{LcmsNetData.Data.UserIDPIDCrossReferenceEntry},System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{LcmsNetData.Data.UserIDPIDCrossReferenceEntry}},System.Boolean)">
+        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveProposalUsers(System.Collections.Generic.IEnumerable{LcmsNetData.Data.ProposalUser},System.Collections.Generic.IEnumerable{LcmsNetData.Data.UserIDPIDCrossReferenceEntry},System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{LcmsNetData.Data.UserIDPIDCrossReferenceEntry}})">
             <summary>
             Saves the Proposal Users list and a Proposal ID to Proposal User ID cross-reference
             list to the cache.
@@ -550,63 +573,54 @@
             <param name="pidIndexedReferenceList">
             A dictionary of cross reference lists that have been grouped by Proposal ID.
             </param>
-            <param name="clearFirst">if true, the existing data will always be removed from the list; if false and <paramref name="users"/>.Count is &lt;= to the number of existing rows, nothing is changed</param>
         </member>
-        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveInstListToCache(System.Collections.Generic.List{LcmsNetData.Data.InstrumentInfo},System.Boolean)">
+        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveInstListToCache(System.Collections.Generic.IEnumerable{LcmsNetData.Data.InstrumentInfo})">
             <summary>
             Saves a list of instruments to cache
             </summary>
             <param name="instList">List of InstrumentInfo containing instrument data</param>
-            <param name="clearFirst">if true, the existing data will always be removed from the list; if false and <paramref name="instList"/>.Count is &lt;= to the number of existing rows, nothing is changed</param>
         </member>
-        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveCartConfigListToCache(System.Collections.Generic.List{LcmsNetData.Data.CartConfigInfo},System.Boolean)">
+        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveCartConfigListToCache(System.Collections.Generic.IEnumerable{LcmsNetData.Data.CartConfigInfo})">
             <summary>
             Saves a list of Cart_Configs (and associated Cart names) to cache
             </summary>
             <param name="cartConfigList">List containing cart config info.</param>
-            <param name="clearFirst">if true, the existing data will always be removed from the list; if false and <paramref name="cartConfigList"/>.Count is &lt;= to the number of existing rows, nothing is changed</param>
         </member>
-        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveWorkPackageListToCache(System.Collections.Generic.List{LcmsNetData.Data.WorkPackageInfo},System.Boolean)">
+        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveWorkPackageListToCache(System.Collections.Generic.IEnumerable{LcmsNetData.Data.WorkPackageInfo})">
             <summary>
             Saves a list of WorkPackageInfo objects to cache
             </summary>
             <param name="workPackageList">List containing work package info.</param>
-            <param name="clearFirst">if true, the existing data will always be removed from the list; if false and <paramref name="workPackageList"/>.Count is &lt;= to the number of existing rows, nothing is changed</param>
         </member>
-        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveCartListToCache(System.Collections.Generic.List{System.String},System.Boolean)">
+        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveCartListToCache(System.Collections.Generic.IEnumerable{System.String})">
             <summary>
             Saves a list of cart names to the SQLite cache
             </summary>
             <param name="cartNameList">Cart names</param>
-            <param name="clearFirst">if true, the existing data will always be removed from the list; if false and <paramref name="cartNameList"/>.Count is &lt;= to the number of existing rows, nothing is changed</param>
         </member>
-        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveColumnListToCache(System.Collections.Generic.List{System.String},System.Boolean)">
+        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveColumnListToCache(System.Collections.Generic.IEnumerable{System.String})">
             <summary>
             Saves a list of column names to the SQLite cache
             </summary>
             <param name="columnList">Column names</param>
-            <param name="clearFirst">if true, the existing data will always be removed from the list; if false and <paramref name="columnList"/>.Count is &lt;= to the number of existing rows, nothing is changed</param>
         </member>
-        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveDatasetNameListToCache(System.Collections.Generic.List{System.String},System.Boolean)">
+        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveDatasetNameListToCache(System.Collections.Generic.IEnumerable{System.String})">
             <summary>
             Saves a list of Dataset names to the SQLite cache
             </summary>
             <param name="datasetNameList">Dataset names</param>
-            <param name="clearFirst">if true, the existing data will always be removed from the list; if false and <paramref name="datasetNameList"/>.Count is &lt;= to the number of existing rows, nothing is changed</param>
         </member>
-        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveDatasetTypeListToCache(System.Collections.Generic.List{System.String},System.Boolean)">
+        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveDatasetTypeListToCache(System.Collections.Generic.IEnumerable{System.String})">
             <summary>
             Saves a list of dataset type names to the SQLite cache
             </summary>
             <param name="datasetTypeList">Dataset type names</param>
-            <param name="clearFirst">if true, the existing data will always be removed from the list; if false and <paramref name="datasetTypeList"/>.Count is &lt;= to the number of existing rows, nothing is changed</param>
         </member>
-        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveSeparationTypeListToCache(System.Collections.Generic.List{System.String},System.Boolean)">
+        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveSeparationTypeListToCache(System.Collections.Generic.IEnumerable{System.String})">
             <summary>
             Saves a list of separation types to the SQLite cache
             </summary>
             <param name="separationTypeList">Separation type names</param>
-            <param name="clearFirst">if true, the existing data will always be removed from the list; if false and <paramref name="separationTypeList"/>.Count is &lt;= to the number of existing rows, nothing is changed</param>
         </member>
         <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveSelectedCartConfigName(System.String)">
             <summary>

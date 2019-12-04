@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reactive.Concurrency;
+using System.Runtime;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
@@ -195,6 +196,10 @@ namespace BuzzardWPF.Management
                 MessageBox.Show("Error loading data, task " + currentTask + ": " + ex.Message, "Error",
                                 MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
+
+            // Force a garbage collection to try to clean up the freed memory from the trie
+            GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
+            GC.Collect(int.MaxValue, GCCollectionMode.Forced, true, true);
         }
 
         #endregion

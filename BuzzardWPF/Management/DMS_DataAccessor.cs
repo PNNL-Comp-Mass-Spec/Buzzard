@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Runtime;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -108,19 +109,11 @@ namespace BuzzardWPF.Management
             const bool forceReloadFromCache = true;
 
             // Load Instrument Data
-            var tempInstrumentData = SQLiteTools.GetInstrumentList(forceReloadFromCache);
-            if (tempInstrumentData == null)
-            {
-                ApplicationLogger.LogError(0, "Instrument list retrieval returned null.");
-                instrumentDataSource.Clear();
-            }
-            else
-            {
-                if (tempInstrumentData.Count == 0)
-                    ApplicationLogger.LogError(0, "No instruments found.");
-            }
+            var tempInstrumentData = SQLiteTools.GetInstrumentList(forceReloadFromCache).ToList();
+            if (tempInstrumentData.Count == 0)
+                ApplicationLogger.LogError(0, "No instruments found.");
 
-            if (tempInstrumentData != null && tempInstrumentData.Count != 0)
+            if (tempInstrumentData.Count != 0)
             {
                 instrumentDataSource.Clear();
                 instrumentDataSource.AddRange(tempInstrumentData.Select(instDatum => instDatum.DMSName));
@@ -235,6 +228,10 @@ namespace BuzzardWPF.Management
             // Now that data has been loaded, enable the timer that will auto-update the data every mDataRefreshIntervalHours hours
             // It's okay to re-set this every time we run an update.
             autoUpdateTimer.Change(TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(5));
+
+            // Force a garbage collection to clean up temporary objects related to reloading from DMS
+            GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
+            GC.Collect(int.MaxValue, GCCollectionMode.Forced, true, true);
         }
 
         /// <summary>
@@ -276,7 +273,7 @@ namespace BuzzardWPF.Management
             }
         }
 
-        public List<SampleDataBasic> LoadDMSRequestedRuns()
+        public IEnumerable<SampleDataBasic> LoadDMSRequestedRuns()
         {
             // Instantiate SampleQueryData using default filters (essentially no filters)
             // Only active requested runs are retrieved
@@ -418,6 +415,10 @@ namespace BuzzardWPF.Management
                     }
                 }
             }
+
+            // Force a garbage collection to try to clean up the temporary memory from the SQLite cache update
+            GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
+            GC.Collect(int.MaxValue, GCCollectionMode.Forced, true, true);
 
             return result;
         }
