@@ -104,7 +104,7 @@ namespace BuzzardWPF
             // Make sure the splash screen is closed.
             if (!splashScreenEnded)
             {
-                splashScreen.LoadComplete();
+                splashScreen?.LoadComplete();
             }
 
             DatasetManager.Manager.Dispose();
@@ -128,7 +128,6 @@ namespace BuzzardWPF
         private bool splashScreenEnded = false;
 
         private ManualResetEvent resetSplashCreated;
-        private Thread splashThread;
 
         private static readonly IDisposable sqliteDisposable = SQLiteTools.GetDisposable();
         private static DMS_DataAccessor dmsDataAccessorInstance = null;
@@ -143,7 +142,7 @@ namespace BuzzardWPF
             resetSplashCreated = new ManualResetEvent(false);
 
             // Run it on a different thread.
-            splashThread = new Thread(ShowSplashScreen);
+            var splashThread = new Thread(ShowSplashScreen);
             splashThread.SetApartmentState(ApartmentState.STA);
             splashThread.IsBackground = true;
             splashThread.Name = "SplashScreen";
@@ -182,6 +181,22 @@ namespace BuzzardWPF
                 // Do this here so that closing the splash screen doesn't minimize/throw to the background the main window.
                 splashScreen.LoadComplete();
                 splashScreenEnded = true;
+
+                try
+                {
+                    splashThread.Join(200);
+                    if (splashThread.IsAlive)
+                    {
+                        splashThread.Abort();
+                    }
+                }
+                catch
+                {
+                    // Don't care about the exception.
+                }
+
+                splashScreen = null;
+
                 try
                 {
                     mainWindow.Show();

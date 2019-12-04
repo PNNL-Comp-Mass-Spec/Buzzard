@@ -129,7 +129,9 @@ namespace BuzzardWPF
             {
                 await Dispatcher.Yield();
             }
-            Dispatcher.Invoke(Close);
+            // Close does not shutdown the dispatcher like it should be.
+            //Dispatcher.Invoke(Close);
+            Dispatcher.InvokeShutdown();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
