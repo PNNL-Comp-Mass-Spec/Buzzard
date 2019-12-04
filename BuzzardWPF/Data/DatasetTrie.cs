@@ -9,16 +9,8 @@ namespace BuzzardWPF.Data
     /// </summary>
     public class DatasetTrie
     {
-        #region Attributes
-        private readonly TrieNode rootNode;
-        private readonly Dictionary<int, DMSData> requestIDToDMSMap;
-        #endregion
-
-        public DatasetTrie()
-        {
-            rootNode = new TrieNode();
-            requestIDToDMSMap = new Dictionary<int, DMSData>();
-        }
+        private readonly TrieNode rootNode = new TrieNode();
+        private readonly Dictionary<int, DMSData> requestIDToDMSMap = new Dictionary<int, DMSData>();
 
         public void Clear()
         {
@@ -100,7 +92,7 @@ namespace BuzzardWPF.Data
             return FindRequestIdForNameInternal(datasetName.ToLowerInvariant(), ref searchDepth);
         }
 
-        public void AddDatasetInternal(string datasetNamePart, int requestId)
+        private void AddDatasetInternal(string datasetNamePart, int requestId)
         {
             if (string.IsNullOrWhiteSpace(datasetNamePart))
             {
@@ -143,6 +135,9 @@ namespace BuzzardWPF.Data
             return RequestID;
         }
 
+        /// <summary>
+        /// 'Clear' the node, a.k.a. blank the request ID and do the same for all child nodes
+        /// </summary>
         public void Clear()
         {
             RequestID = -1;
@@ -152,17 +147,20 @@ namespace BuzzardWPF.Data
             }
         }
 
+        /// <summary>
+        /// Prune any empty branches in the trie
+        /// </summary>
         public void RemoveEmptyNodes()
         {
             foreach (var node in Edges.ToList())
             {
+                // Depth first - we need to cascade from the leaves back to the trunk
+                node.Value.RemoveEmptyNodes();
+
                 if (node.Value.RequestID < 0 && node.Value.Edges.Count == 0)
                 {
+                    // Node edge doesn't have (or no longer has) any child nodes, nor a valid RequestID. Remove it.
                     Edges.Remove(node.Key);
-                }
-                else
-                {
-                    node.Value.RemoveEmptyNodes();
                 }
             }
         }
