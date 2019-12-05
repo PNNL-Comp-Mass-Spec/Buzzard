@@ -549,11 +549,12 @@ namespace BuzzardWPF
                 return;
             }
 
+            // Load active requested runs from DMS
+            // Run this first, so that the SQLite cache update can garbage collect from this method.
+            await DatasetManager.LoadRequestedRunsCache();
+
             // Also force an update on DMS_DataAccessor.Instance
             await DMS_DataAccessor.Instance.UpdateCacheNow("ForceDmsReload");
-
-            // Load active requested runs from DMS
-            await DatasetManager.LoadRequestedRunsCache();
         }
 
         private void UseTestFolder()

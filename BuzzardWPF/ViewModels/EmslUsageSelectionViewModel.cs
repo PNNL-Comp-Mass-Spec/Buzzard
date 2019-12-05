@@ -42,19 +42,6 @@ namespace BuzzardWPF.ViewModels
             this.WhenAnyValue(x => x.BoundContainer.EMSLProposalUsers, x => x.BoundContainer.EMSLProposalUsers.Count).ObserveOn(RxApp.MainThreadScheduler).Subscribe(x => UpdateSelectedUsersText());
         }
 
-        static EmslUsageSelectionViewModel()
-        {
-
-            // Assure that the DataAccessor has been initialized
-            try
-            {
-                DMS_DataAccessor.Instance.LoadDMSDataFromCache();
-            }
-            catch
-            {
-                // Ignore errors here
-            }
-        }
         #endregion
 
         #region Properties
