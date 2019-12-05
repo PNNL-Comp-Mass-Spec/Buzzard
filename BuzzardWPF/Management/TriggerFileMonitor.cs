@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.IO;
-using System.Linq;
+using System.Text.RegularExpressions;
 using LcmsNetData;
 
 namespace BuzzardWPF.Management
@@ -24,6 +24,7 @@ namespace BuzzardWPF.Management
         /// Dictionary where keys are FileInfo objects and values are false if the file is still waiting to be processed, or True if it has been processed (is found in the Success folder)
         /// </summary>
         private readonly ConcurrentDictionary<string, bool> triggerDirectoryContents;
+        private readonly Regex triggerFileNameDatasetNameMatch = new Regex(@"^.*?_\d{2}\.\d{2}\.\d{4}_\d{2}\.\d{2}\.\d{2}_", RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
         public void ReloadTriggerFileStates(ref string currentTask)
         {
@@ -69,8 +70,18 @@ namespace BuzzardWPF.Management
 
         private void AddUpdateTriggerFile(string triggerFilePath, bool inSuccessFolder)
         {
+            if (string.IsNullOrWhiteSpace(triggerFilePath))
+            {
+                return;
+            }
+
             // NOTE: Unless we are going to prevent a change from "true" to "false", the following will handle both add and update.
-            triggerDirectoryContents[triggerFilePath] = inSuccessFolder;
+            // Convert them to lower-case so that checking for a trigger file will be faster and less memory use.
+            // Strip off the prefixed cart name and date/time, so that we are storing the dataset name itself.
+            // Don't need full file path, just the name (and no extension)
+            var triggerFileName = Path.GetFileNameWithoutExtension(triggerFilePath);
+            var datasetName = triggerFileNameDatasetNameMatch.Replace(triggerFileName, "").ToLower();
+            triggerDirectoryContents[datasetName] = inSuccessFolder;
         }
 
         public void AddNewTriggerFile(string triggerFilePath)
@@ -81,7 +92,10 @@ namespace BuzzardWPF.Management
         public bool CheckForTriggerFile(string datasetName)
         {
             var datasetNameLower = datasetName.ToLower();
-            return triggerDirectoryContents.Keys.Any(x => x.ToLower().Contains(datasetNameLower));
+            return triggerDirectoryContents.ContainsKey(datasetNameLower);
+
+            // Old, more expensive
+            //return triggerDirectoryContents.Keys.Any(x => x.Contains(datasetNameLower));
         }
     }
 }
