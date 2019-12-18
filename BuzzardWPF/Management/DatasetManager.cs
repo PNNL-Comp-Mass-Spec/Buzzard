@@ -169,27 +169,23 @@ namespace BuzzardWPF.Management
                 var samples = DMS_DataAccessor.Instance.LoadDMSRequestedRuns();
 
                 currentTask = "Populating mRequestedRunTrie";
+
+                var requestedRunsUpdated = false;
                 lock (mRequestedRunTrie)
                 {
-                    mRequestedRunTrie.Clear();
-
-                    foreach (var sample in samples)
-                    {
-                        mRequestedRunTrie.AddData(sample.DmsData);
-                    }
-
-                    mRequestedRunTrie.RemoveEmptyNodes();
+                    requestedRunsUpdated = mRequestedRunTrie.LoadData(samples.Select(x => x.DmsData));
                 }
 
-                // We can use this to get an idea if any datasets already have
-                // trigger files that were sent.
-
+                // We can use this to get an idea if any datasets already have trigger files that were sent.
                 currentTask = "Examine the trigger file folder";
                 TriggerMonitor.ReloadTriggerFileStates(ref currentTask);
 
-                currentTask = "Raise event DatasetsLoaded";
-                var lastUpdatedTime = DateTime.Now;
-                RxApp.MainThreadScheduler.Schedule(() => RequestedRunsLastUpdated = lastUpdatedTime);
+                if (requestedRunsUpdated)
+                {
+                    currentTask = "Raise event DatasetsLoaded";
+                    var lastUpdatedTime = DateTime.Now;
+                    RxApp.MainThreadScheduler.Schedule(() => RequestedRunsLastUpdated = lastUpdatedTime);
+                }
             }
             catch (Exception ex)
             {

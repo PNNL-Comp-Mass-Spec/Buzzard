@@ -24,6 +24,35 @@ namespace BuzzardWPF.Data
         }
 
         /// <summary>
+        /// Replaces existing data with new data, unless <paramref name="newData"/> is an empty enumerable (then this is a no-op).
+        /// </summary>
+        /// <param name="newData">New data to place in the trie</param>
+        /// <returns>True if data was changed</returns>
+        public bool LoadData(IEnumerable<DMSData> newData)
+        {
+            var firstItem = true;
+            foreach (var datum in newData)
+            {
+                if (firstItem)
+                {
+                    // Avoid clearing the Trie when no data was returned.
+                    Clear();
+                    firstItem = false;
+                }
+
+                AddData(datum);
+            }
+
+            if (!firstItem)
+            {
+                // Only do this if we added data to the Trie
+                RemoveEmptyNodes();
+            }
+
+            return !firstItem;
+        }
+
+        /// <summary>
         /// Adds data to the trie.
         /// </summary>
         /// <param name="data"></param>
