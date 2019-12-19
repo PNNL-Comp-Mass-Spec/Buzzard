@@ -640,6 +640,11 @@
             Regex to use to test if a dataset name only contains valid characters
             </summary>
         </member>
+        <member name="M:LcmsNetData.Data.DMSData.Reset">
+            <summary>
+            Unlock the object and reset all properties to default values.
+            </summary>
+        </member>
         <member name="M:LcmsNetData.Data.DMSData.Clone">
             <summary>
             Clone - get a deep copy

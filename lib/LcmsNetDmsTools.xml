@@ -115,16 +115,51 @@
             Loads DMS configuration from file
             </summary>
         </member>
-        <member name="M:LcmsNetDmsTools.DMSDBTools.CheckDMSConnection">
+        <member name="M:LcmsNetDmsTools.DMSDBTools.GetConfigSetting(System.String,System.String)">
             <summary>
-            Test if we can query each of the needed DMS tables/views.
+            Lookup the value for the given setting
+            </summary>
+            <param name="configName">Setting name</param>
+            <param name="valueIfMissing">Value to return if configName is not defined in mConfiguration</param>
+            <returns></returns>
+        </member>
+        <member name="M:LcmsNetDmsTools.DMSDBTools.GetConnectionString">
+            <summary>
+            Gets DMS connection string from config file
             </summary>
             <returns></returns>
         </member>
-        <member name="M:LcmsNetDmsTools.DMSDBTools.LoadCacheFromDMS">
+        <member name="M:LcmsNetDmsTools.DMSDBTools.GetSingleColumnTableFromDMS(System.String,System.String)">
             <summary>
-            Loads all DMS data into cache
+            Generic method to retrieve data from a single-column table in DMS
             </summary>
+            <param name="cmdStr">SQL command to execute</param>
+            <param name="connStr">Database connection string</param>
+            <returns>List containing the table's contents</returns>
+        </member>
+        <member name="M:LcmsNetDmsTools.DMSDBTools.GetDataTable(System.String,System.String)">
+            <summary>
+            Retrieves a data table from DMS
+            </summary>
+            <param name="cmdStr">SQL command to retrieve table</param>
+            <param name="connStr">DMS connection string</param>
+            <returns>DataTable containing requested data</returns>
+            <remarks>This tends to use more memory than directly reading and parsing data.</remarks>
+        </member>
+        <member name="M:LcmsNetDmsTools.DMSDBTools.ExecuteSP(System.Data.SqlClient.SqlCommand,System.String)">
+            <summary>
+            Executes a stored procedure
+            </summary>
+            <param name="spCmd">SQL command object containing SP parameters</param>
+            <param name="connStr">Connection string</param>
+            <returns>SP result code</returns>
+        </member>
+        <member name="M:LcmsNetDmsTools.DMSDBTools.DecodePassword(System.String)">
+            <summary>
+            Decrypts password received from ini file
+            </summary>
+            <param name="enPwd">Encoded password</param>
+            <returns>Clear text password</returns>
         </member>
         <member name="M:LcmsNetDmsTools.DMSDBTools.GetCartConfigNamesFromDMS">
             <summary>
@@ -171,11 +206,23 @@
             Gets a list of instruments from DMS
             </summary>
         </member>
-        <member name="M:LcmsNetDmsTools.DMSDBTools.GetSamplesFromDMS``1(LcmsNetData.Data.SampleQueryData)">
+        <member name="M:LcmsNetDmsTools.DMSDBTools.ConvertWellStringToInt(System.String)">
             <summary>
-            Gets a list of samples (essentially requested runs) from DMS
+            Converts a letter/number or just number string representing a well/vial into an integer
             </summary>
-            <remarks>Retrieves data from view V_Scheduled_Run_Export</remarks>
+            <param name="vialPosition">Input string</param>
+            <returns>Integer position</returns>
+        </member>
+        <member name="M:LcmsNetDmsTools.DMSDBTools.CheckDMSConnection">
+            <summary>
+            Test if we can query each of the needed DMS tables/views.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LcmsNetDmsTools.DMSDBTools.LoadCacheFromDMS">
+            <summary>
+            Loads all DMS data into cache
+            </summary>
         </member>
         <member name="M:LcmsNetDmsTools.DMSDBTools.GetRequestedRunsFromDMS``1(LcmsNetData.Data.SampleQueryData)">
             <summary>
@@ -187,29 +234,15 @@
             <summary>
             Adds data for block of MRM files to file data list
             </summary>
-            <param name="FileIndxList">Comma-separated list of file indices needing data</param>
+            <param name="fileIndxList">Comma-separated list of file indices needing data</param>
             <param name="fileData">ist of file names and contents; new data will be appended to this list</param>
         </member>
         <member name="M:LcmsNetDmsTools.DMSDBTools.GetMRMFileListFromDMS(System.Int32,System.Int32)">
             <summary>
             Gets a list of MRM files to retrieve
             </summary>
-            <param name="MinID">Minimum request ID for MRM file search</param>
-            <param name="MaxID"></param>
-            <returns></returns>
-        </member>
-        <member name="M:LcmsNetDmsTools.DMSDBTools.GetConfigSetting(System.String,System.String)">
-            <summary>
-            Lookup the value for the given setting
-            </summary>
-            <param name="configName">Setting name</param>
-            <param name="valueIfMissing">Value to return if configName is not defined in mConfiguration</param>
-            <returns></returns>
-        </member>
-        <member name="M:LcmsNetDmsTools.DMSDBTools.GetConnectionString">
-            <summary>
-            Gets DMS connection string from config file
-            </summary>
+            <param name="minID">Minimum request ID for MRM file search</param>
+            <param name="maxID"></param>
             <returns></returns>
         </member>
         <member name="M:LcmsNetDmsTools.DMSDBTools.UpdateDMSCartAssignment(System.String,System.String,System.String,System.Boolean)">
@@ -221,51 +254,6 @@
             <param name="cartConfigName">Name of cart config name to assign</param>
             <param name="updateMode">TRUE for updating assignment; FALSE to clear assignment</param>
             <returns>TRUE for success; FALSE for error</returns>
-        </member>
-        <member name="M:LcmsNetDmsTools.DMSDBTools.GetSingleColumnTableFromDMS(System.String,System.String)">
-            <summary>
-            Generic method to retrieve data from a single-column table in DMS
-            </summary>
-            <param name="CmdStr">SQL command to execute</param>
-            <param name="ConnStr">Database connection string</param>
-            <returns>List containing the table's contents</returns>
-        </member>
-        <member name="M:LcmsNetDmsTools.DMSDBTools.GetDataTable(System.String,System.String)">
-            <summary>
-            Retrieves a data table from DMS
-            </summary>
-            <param name="cmdStr">SQL command to retrieve table</param>
-            <param name="connStr">DMS connection string</param>
-            <returns>DataTable containing requested data</returns>
-        </member>
-        <member name="M:LcmsNetDmsTools.DMSDBTools.ExecuteSP(System.Data.SqlClient.SqlCommand,System.String)">
-            <summary>
-            Executes a stored procedure
-            </summary>
-            <param name="spCmd">SQL command object containing SP parameters</param>
-            <param name="connStr">Connection string</param>
-            <returns>SP result code</returns>
-        </member>
-        <member name="M:LcmsNetDmsTools.DMSDBTools.ConvertWellStringToInt(System.String)">
-            <summary>
-            Converts a letter/number or just number string representing a well/vial into an integer
-            </summary>
-            <param name="vialPosition">Input string</param>
-            <returns>Integer position</returns>
-        </member>
-        <member name="M:LcmsNetDmsTools.DMSDBTools.DecodePassword(System.String)">
-            <summary>
-            Decrypts password received from ini file
-            </summary>
-            <param name="enPwd">Encoded password</param>
-            <returns>Clear text password</returns>
-        </member>
-        <member name="M:LcmsNetDmsTools.DMSDBTools.DbCint(System.Object)">
-            <summary>
-            Converts to integer while handling null values
-            </summary>
-            <param name="InpObj">Object to convert</param>
-            <returns>0 if null, otherwise integer version of InpObj</returns>
         </member>
         <member name="F:LcmsNetDmsTools.DMSSampleValidatorErrors.NoError">
             <summary>

@@ -10,7 +10,7 @@ using ReactiveUI;
 
 namespace BuzzardWPF.Data
 {
-    public class BuzzardDataset : ReactiveObject, ITriggerFileData
+    public class BuzzardDataset : ReactiveObject, ITriggerFileData, IDisposable
     {
         #region Attributes
         private string filePath;
@@ -55,6 +55,7 @@ namespace BuzzardWPF.Data
         #endregion
 
         #region Initialization
+
         public BuzzardDataset()
         {
             DmsData = new DMSData();
@@ -78,6 +79,44 @@ namespace BuzzardWPF.Data
                 .Select(x => x.Item2 ? DMSStatus.DMSResolved : DMSStatus.NoDMSRequest)
                 .ToProperty(this, x => x.DMSStatus);
         }
+
+        public void Dispose()
+        {
+            dmsStatus?.Dispose();
+            isMonitored?.Dispose();
+            ToggleMonitoringCommand?.Dispose();
+        }
+
+        public void Reset()
+        {
+            DMSDataLastUpdate = DateTime.UtcNow.Subtract(new TimeSpan(1, 0, 0));
+            NotOnlyDatasource = false;
+            DatasetSource = DatasetSource.Searcher;
+            DatasetStatus = DatasetStatus.Pending;
+            WaitTimePercentage = 0;
+            SecondsTillTriggerCreation = -1;
+            InterestRating = "Unreviewed";
+            IsFile = true;
+            ColumnName = "";
+            CaptureSubdirectoryPath = "";
+            TriggerFileStatus = TriggerFileStatus.Pending;
+            IsQC = false;
+            IsBlank = false;
+            MatchedMonitor = false;
+            InstrumentName = "";
+            Operator = "";
+            SeparationType = "";
+            TriggerCreationWarning = "";
+            CartConfigError = false;
+            FilePath = "";
+            RunStart = default(DateTime);
+            runFinish = default(DateTime);
+            RunFinish = RunStart.AddSeconds(1);
+            FileSize = 0;
+            FileLastChangedUtc = default(DateTime);
+            DmsData.Reset();
+        }
+
         #endregion
 
         #region UI data place holders
@@ -247,7 +286,10 @@ namespace BuzzardWPF.Data
             set => this.RaiseAndSetIfChanged(ref filePath, value, x =>
             {
                 this.RaisePropertyChanged(nameof(Extension));
-                UpdateFileProperties();
+                if (!string.IsNullOrWhiteSpace(filePath))
+                {
+                    UpdateFileProperties();
+                }
             });
         }
 
