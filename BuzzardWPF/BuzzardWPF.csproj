@@ -103,6 +103,9 @@
     <Compile Include="Data\DatasetTrieException.cs" />
     <Compile Include="Data\Enums.cs" />
     <Compile Include="Data\FilldownBuzzardDataset.cs" />
+    <Compile Include="Data\Trie\ITrieNode.cs" />
+    <Compile Include="Data\Trie\TrieNodeChar.cs" />
+    <Compile Include="Data\Trie\TrieNodeString.cs" />
     <Compile Include="DynamicSplashScreenWindow.xaml.cs">
       <DependentUpon>DynamicSplashScreenWindow.xaml</DependentUpon>
     </Compile>
