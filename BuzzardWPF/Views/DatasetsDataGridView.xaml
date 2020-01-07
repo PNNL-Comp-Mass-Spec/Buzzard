@@ -23,7 +23,6 @@
         <converters:WaitTimeToProgressValueConverter x:Key="ProgressBarConverter" />
         <converters:WaitTimeTextConverter x:Key="WaitTimeTextConverter" />
         <converters:EmptyRequestNameConverter x:Key="RequestNameConverter" />
-        <converters:ShowRowDetailConverter x:Key="ShowRowDetailsConverter" />
 
         <!--
             * This template lets us leverage the ability to display a specific
@@ -78,78 +77,6 @@
             <TextBlock Margin="2,2,6,2" Text="{Binding Path=UserName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
         </DataTemplate>
 
-        <DataTemplate x:Key="RowDetailsTemplate" DataType="data:BuzzardDataset">
-            <Grid Margin="0,0,0,14">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="auto" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-
-                <GroupBox
-                    Margin="2"
-                    Padding="1,2,1,1"
-                    Header="EMSL">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto" />
-                            <ColumnDefinition Width="auto" MinWidth="65" />
-                            <ColumnDefinition Width="auto" />
-                            <ColumnDefinition Width="auto" MinWidth="65" />
-                            <ColumnDefinition Width="auto" />
-                            <ColumnDefinition
-                                Width="*"
-                                MinWidth="200"
-                                MaxWidth="350" />
-                        </Grid.ColumnDefinitions>
-
-                        <Label
-                            Grid.Column="0"
-                            Margin="2"
-                            VerticalAlignment="Center">
-                            Usage:
-                        </Label>
-
-                        <TextBlock
-                            Grid.Column="1"
-                            Margin="2,2,8,2"
-                            VerticalAlignment="Center"
-                            Text="{Binding Path=DmsData.EMSLUsageType}" />
-                        <Label
-                            Grid.Column="2"
-                            Margin="2"
-                            VerticalAlignment="Center">
-                            Proposal ID:
-                        </Label>
-
-                        <TextBlock
-                            Grid.Column="3"
-                            Margin="2,2,8,2"
-                            VerticalAlignment="Center"
-                            Text="{Binding Path=DmsData.EMSLProposalID}" />
-                        <Label
-                            Grid.Column="4"
-                            Margin="2"
-                            VerticalAlignment="Center">
-                            Proposal Users:
-                        </Label>
-
-                        <ScrollViewer
-                            Grid.Column="5"
-                            HorizontalScrollBarVisibility="Auto"
-                            VerticalScrollBarVisibility="Disabled">
-                            <ListBox ItemTemplate="{StaticResource EMSLUserTemplate}" ItemsSource="{Binding Path=EMSLProposalUsers, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                                <ListBox.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <StackPanel Orientation="Horizontal" />
-                                    </ItemsPanelTemplate>
-                                </ListBox.ItemsPanel>
-                            </ListBox>
-                        </ScrollViewer>
-                    </Grid>
-                </GroupBox>
-            </Grid>
-        </DataTemplate>
-
         <!--  The CollectionViewSource wrapper allows us to set the default sort (Modification Date descending)  -->
         <CollectionViewSource x:Key="MyItemsViewSource" Source="{Binding Path=Datasets, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
             <CollectionViewSource.SortDescriptions>
@@ -168,8 +95,6 @@
         CellStyle="{StaticResource DataGridCellStyle}"
         IsTextSearchEnabled="True"
         ItemsSource="{Binding Source={StaticResource MyItemsViewSource}}"
-        RowDetailsTemplate="{StaticResource RowDetailsTemplate}"
-        RowDetailsVisibilityMode="{Binding Path=ShowGridItemDetail, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ShowRowDetailsConverter}}"
         RowStyle="{StaticResource DataGridRowStyle}"
         FrozenColumnCount="2"
         SelectionChanged="DatasetDataGrid_OnSelectionChanged">
@@ -443,6 +368,21 @@
                 Binding="{Binding DmsData.WorkPackage}"
                 Header="WP#"
                 IsReadOnly="True" />
+
+            <DataGridTextColumn
+                MinWidth="100"
+                Header="EMSL Usage Type"
+                CanUserSort="False"
+                Binding="{Binding Path=DmsData.EMSLUsageType, Mode=OneWay}"
+                IsReadOnly="True">
+                <DataGridTextColumn.CellStyle>
+                    <Style TargetType="DataGridCell" BasedOn="{StaticResource DataGridCellStyle}">
+                        <Style.Setters>
+                            <Setter Property="ToolTip" Value="{Binding EmslUserProposalText}" />
+                        </Style.Setters>
+                    </Style>
+                </DataGridTextColumn.CellStyle>
+            </DataGridTextColumn>
 
             <!--  File Information  -->
             <DataGridTextColumn

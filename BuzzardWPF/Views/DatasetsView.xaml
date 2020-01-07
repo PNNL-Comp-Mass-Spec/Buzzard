@@ -73,13 +73,7 @@
                 FontFamily="Arial"
                 FontSize="14"
                 Style="{StaticResource SimpleButtonStyle}" />
-            <Button
-                Width="153"
-                Margin="5,5,5,0"
-                Command="{Binding InvertShowDetailsCommand}"
-                Content="{Binding Path=ShowGridItemDetail, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ShowDetailButtonContentConverter}}"
-                FontFamily="Arial"
-                Style="{StaticResource SimpleButtonStyle}" />
+            <TextBlock FontStyle="Italic" FontSize="14" VerticalAlignment="Center" Text="Hover mouse over fields for details." />
         </StackPanel>
 
         <views:DatasetsDataGridView

@@ -23,7 +23,6 @@ namespace BuzzardWPF.ViewModels
 
         private readonly FilldownBuzzardDataset fillDownDataset = new FilldownBuzzardDataset();
 
-        private bool showGridItemDetail;
         private readonly ObservableAsPropertyHelper<bool> canSelectDatasets;
         private readonly ObservableAsPropertyHelper<bool> datasetSelected;
         private readonly ObservableAsPropertyHelper<bool> isCreatingTriggerFiles;
@@ -34,8 +33,6 @@ namespace BuzzardWPF.ViewModels
         #region Initialize
         public DatasetsViewModel()
         {
-            ShowGridItemDetail = false;
-
             DatasetManager.Datasets.Connect().ObserveOn(RxApp.MainThreadScheduler).Bind(out var datasets).Subscribe();
             Datasets = datasets;
 
@@ -75,7 +72,6 @@ namespace BuzzardWPF.ViewModels
 
             DatasetManager.WatcherMetadata.WhenAnyValue(x => x.CartName).Subscribe(UpdateCartConfigNames);
 
-            InvertShowDetailsCommand = ReactiveCommand.Create(InvertShowDetails);
             ClearAllDatasetsCommand = ReactiveCommand.Create(ClearAllDatasets, Datasets.WhenAnyValue(x => x.Count).Select(x => x > 0).ObserveOn(RxApp.MainThreadScheduler));
             ClearSelectedDatasetsCommand = ReactiveCommand.Create(ClearSelectedDatasets, SelectedDatasets.WhenAnyValue(x => x.Count).Select(x => x > 0).ObserveOn(RxApp.MainThreadScheduler));
             FixDatasetNamesCommand = ReactiveCommand.Create(FixDatasetNames, SelectedDatasets.WhenAnyValue(x => x.Count).Select(x => x > 0).ObserveOn(RxApp.MainThreadScheduler));
@@ -133,8 +129,6 @@ namespace BuzzardWPF.ViewModels
 
         public DatasetManager DatasetManager => DatasetManager.Manager;
         public DMS_DataAccessor DmsData => DMS_DataAccessor.Instance;
-
-        public ReactiveCommand<Unit, Unit> InvertShowDetailsCommand { get; }
         public ReactiveCommand<Unit, Unit> ClearAllDatasetsCommand { get; }
         public ReactiveCommand<Unit, Unit> ClearSelectedDatasetsCommand { get; }
         public ReactiveCommand<Unit, Unit> FixDatasetNamesCommand { get; }
@@ -159,19 +153,9 @@ namespace BuzzardWPF.ViewModels
 
         public bool IsCreatingTriggerFiles => isCreatingTriggerFiles.Value;
 
-        public bool ShowGridItemDetail
-        {
-            get => showGridItemDetail;
-            set => this.RaiseAndSetIfChanged(ref showGridItemDetail, value);
-        }
-
         #endregion
 
         #region Event Handlers
-        private void InvertShowDetails()
-        {
-            ShowGridItemDetail = !ShowGridItemDetail;
-        }
 
         /// <summary>
         /// Clears out all the datasets from the datagrid.

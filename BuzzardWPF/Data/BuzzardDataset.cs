@@ -53,6 +53,7 @@ namespace BuzzardWPF.Data
         private DateTime lastRecordedLastWriteTime;
         private readonly ObservableAsPropertyHelper<bool> isMonitored;
         private readonly List<IDisposable> disposables = new List<IDisposable>();
+        private readonly ObservableAsPropertyHelper<string> emslUserProposalText;
 
         #endregion
 
@@ -80,12 +81,17 @@ namespace BuzzardWPF.Data
             dmsStatus = this.WhenAnyValue(x => x.DmsData, x => x.DmsData.LockData)
                 .Select(x => x.Item2 ? DMSStatus.DMSResolved : DMSStatus.NoDMSRequest)
                 .ToProperty(this, x => x.DMSStatus);
+            emslUserProposalText =
+                this.WhenAnyValue(x => x.DmsData.EMSLUsageType, x => x.DmsData.EMSLProposalID,
+                        x => x.EMSLProposalUsers, x => x.EMSLProposalUsers.Count).Select(x => x.Item1 == "USER" ? $"ProposalID: {x.Item2}\nEMSL Users: {string.Join("; ", x.Item3.Select(y => y.UserName))}" : null)
+                    .ToProperty(this, x => x.EmslUserProposalText);
         }
 
         public void Dispose()
         {
             dmsStatus?.Dispose();
             isMonitored?.Dispose();
+            emslUserProposalText?.Dispose();
             ToggleMonitoringCommand?.Dispose();
             foreach (var disposable in disposables)
             {
@@ -176,6 +182,7 @@ namespace BuzzardWPF.Data
         }
 
         public bool IsMonitored => isMonitored.Value;
+        public string EmslUserProposalText => emslUserProposalText.Value;
 
         public ReactiveCommand<Unit, Unit> ToggleMonitoringCommand { get; }
 
