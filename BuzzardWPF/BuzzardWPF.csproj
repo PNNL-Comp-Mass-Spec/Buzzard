@@ -88,10 +88,8 @@
     <Compile Include="Converters\ByteFileSizeConverter.cs" />
     <Compile Include="Converters\EmptyRequestNameConverter.cs" />
     <Compile Include="Converters\EnumDescriptionConverter.cs" />
-    <Compile Include="Converters\InvertBoolConverter.cs" />
     <Compile Include="Converters\RedundantRequestBackgroundConverter.cs" />
     <Compile Include="Converters\SearchOptionValueConverter.cs" />
-    <Compile Include="Converters\TabLockSwitchConverter.cs" />
     <Compile Include="Converters\WaitTimeTextConverter.cs" />
     <Compile Include="Converters\WaitTimeToProgressValueConverter.cs" />
     <Compile Include="Data\BuzzardDataset.cs" />

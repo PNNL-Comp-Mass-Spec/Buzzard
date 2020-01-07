@@ -41,7 +41,6 @@
             x:Key="MonitorButtonContentConverter"
             FalseContent="Monitor"
             TrueContent="Stop" />
-        <converters:InvertBoolConverter x:Key="InvertBoolConverter" />
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
 
         <Style TargetType="TextBlock">

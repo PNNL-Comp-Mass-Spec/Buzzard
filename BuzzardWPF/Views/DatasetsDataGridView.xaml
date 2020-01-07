@@ -4,11 +4,8 @@
              xmlns:componentModel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
              xmlns:converters="clr-namespace:BuzzardWPF.Converters"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:data="clr-namespace:BuzzardWPF.Data"
-             xmlns:dmsData="clr-namespace:LcmsNetData.Data;assembly=LcmsNetData"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:BuzzardWPF.ViewModels"
-             xmlns:cueBannerOverlay="clr-namespace:WpfExtras.CueBannerOverlay;assembly=WpfExtras"
              xmlns:views="clr-namespace:BuzzardWPF.Views"
              d:DesignHeight="267"
              d:DesignWidth="749.4"
@@ -19,7 +16,6 @@
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
         <converters:ByteFileSizeConverter x:Key="FileSizeConverter" />
         <converters:EnumDescriptionConverter x:Key="EnumDescriptionConverter" />
-        <converters:TabLockSwitchConverter x:Key="LockSwitchConverter" />
         <converters:WaitTimeToProgressValueConverter x:Key="ProgressBarConverter" />
         <converters:WaitTimeTextConverter x:Key="WaitTimeTextConverter" />
         <converters:EmptyRequestNameConverter x:Key="RequestNameConverter" />
@@ -123,18 +119,6 @@
                 Binding="{Binding Path=DmsData.RequestName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource RequestNameConverter}}"
                 Header="Request Name"
                 IsReadOnly="True" />
-
-            <DataGridTextColumn
-                Width="100"
-                Binding="{Binding DMSStatus}"
-                Header="DMS Status"
-                IsReadOnly="True"
-                Visibility="Collapsed" />
-            <DataGridTextColumn
-                Binding="{Binding TriggerFileStatus}"
-                Header="Trigger File Status"
-                IsReadOnly="True"
-                Visibility="Collapsed" />
 
             <DataGridTextColumn
                 Binding="{Binding DatasetStatus, Converter={StaticResource EnumDescriptionConverter}}"
