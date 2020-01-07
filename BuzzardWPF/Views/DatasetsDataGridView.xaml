@@ -116,7 +116,7 @@
                 </DataGridTemplateColumn.CellTemplate>
             </DataGridTemplateColumn>
             <DataGridTextColumn
-                Binding="{Binding Path=DmsData.RequestName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource RequestNameConverter}}"
+                Binding="{Binding Path=DmsData.RequestName, Mode=OneWay, Converter={StaticResource RequestNameConverter}}"
                 Header="Request Name"
                 IsReadOnly="True" />
 
@@ -225,6 +225,19 @@
             </DataGridTemplateColumn>
 
             <DataGridTextColumn
+                Binding="{Binding Path=FileSize, Mode=OneWay, Converter={StaticResource FileSizeConverter}}"
+                Header="File Size"
+                IsReadOnly="True">
+                <DataGridTextColumn.CellStyle>
+                    <Style TargetType="DataGridCell" BasedOn="{StaticResource DataGridCellStyle}">
+                        <Style.Setters>
+                            <Setter Property="TextBlock.TextAlignment" Value="Right" />
+                        </Style.Setters>
+                    </Style>
+                </DataGridTextColumn.CellStyle>
+            </DataGridTextColumn>
+
+            <DataGridTextColumn
                 Width="115"
                 Binding="{Binding DmsData.Experiment}"
                 Header="Experiment Name"
@@ -317,18 +330,6 @@
             </DataGridTextColumn>
 
             <!--  File Information  -->
-            <DataGridTextColumn
-                Binding="{Binding Path=FileSize, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource FileSizeConverter}}"
-                Header="File Size"
-                IsReadOnly="True">
-                <DataGridTextColumn.CellStyle>
-                    <Style TargetType="DataGridCell" BasedOn="{StaticResource DataGridCellStyle}">
-                        <Style.Setters>
-                            <Setter Property="TextBlock.TextAlignment" Value="Right" />
-                        </Style.Setters>
-                    </Style>
-                </DataGridTextColumn.CellStyle>
-            </DataGridTextColumn>
             <DataGridTextColumn
                 Binding="{Binding Extension}"
                 Header="Extension"
