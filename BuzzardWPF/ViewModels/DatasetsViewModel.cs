@@ -128,7 +128,6 @@ namespace BuzzardWPF.ViewModels
         public bool DatasetSelected => datasetSelected.Value;
 
         public DatasetManager DatasetManager => DatasetManager.Manager;
-        public DMS_DataAccessor DmsData => DMS_DataAccessor.Instance;
         public ReactiveCommand<Unit, Unit> ClearAllDatasetsCommand { get; }
         public ReactiveCommand<Unit, Unit> ClearSelectedDatasetsCommand { get; }
         public ReactiveCommand<Unit, Unit> FixDatasetNamesCommand { get; }
@@ -419,7 +418,7 @@ namespace BuzzardWPF.ViewModels
             var filldownData = filldownWindowVm.Dataset;
 
             if (filldownData.UseLcColumn &&
-                !DmsData.ColumnData.Contains(filldownData.ColumnName))
+                !DMS_DataAccessor.Instance.ColumnData.Contains(filldownData.ColumnName))
             {
                 MessageBox.Show("Unknown LC column: " + filldownData.ColumnName +
                                 "; please use the dropdown to select a valid column name");

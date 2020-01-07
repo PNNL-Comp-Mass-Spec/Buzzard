@@ -249,113 +249,62 @@
                 Header="Experiment Name"
                 IsReadOnly="True" />
 
-            <DataGridTemplateColumn
+            <DataGridTextColumn
                 MinWidth="125"
-                CanUserSort="True"
                 Header="Operator"
                 SortDirection="Ascending"
-                SortMemberPath="Operator">
-                <DataGridTemplateColumn.CellTemplate>
-                    <DataTemplate>
-                        <ComboBox ItemsSource="{Binding Source={StaticResource BaseDC}, Path=Data.DmsData.OperatorData, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=Operator, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" cueBannerOverlay:CueBannerService.CueBanner="Select" />
-                    </DataTemplate>
-                </DataGridTemplateColumn.CellTemplate>
-            </DataGridTemplateColumn>
-            <DataGridTemplateColumn
+                SortMemberPath="Operator"
+                Binding="{Binding Path=Operator, Mode=OneWay}"
+                IsReadOnly="True" />
+            <DataGridTextColumn
                 MinWidth="100"
-                CanUserSort="True"
                 Header="Dataset Type"
                 SortDirection="Ascending"
-                SortMemberPath="DmsData.DatasetType">
-                <DataGridTemplateColumn.CellTemplate>
-                    <DataTemplate>
-                        <TabControl SelectedIndex="{Binding Path=., Converter={StaticResource LockSwitchConverter}}" Template="{StaticResource TabControlTemplate}">
-                            <TabItem>
-                                <ComboBox ItemsSource="{Binding Source={StaticResource BaseDC}, Path=Data.DmsData.DatasetTypes, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=DmsData.DatasetType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" cueBannerOverlay:CueBannerService.CueBanner="Select" />
-                            </TabItem>
-                            <TabItem>
-                                <TextBlock VerticalAlignment="Top" Text="{Binding Path=DmsData.DatasetType, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                            </TabItem>
-                        </TabControl>
-                    </DataTemplate>
-                </DataGridTemplateColumn.CellTemplate>
-            </DataGridTemplateColumn>
-            <DataGridTemplateColumn
+                SortMemberPath="DmsData.DatasetType"
+                Binding="{Binding Path=DmsData.DatasetType, Mode=OneWay}"
+                IsReadOnly="True" />
+            <DataGridTextColumn
                 MinWidth="100"
-                CanUserSort="True"
                 Header="LC Column"
                 SortDirection="Ascending"
-                SortMemberPath="ColumnName">
-                <DataGridTemplateColumn.CellTemplate>
-                    <DataTemplate>
-                        <ComboBox ItemsSource="{Binding Source={StaticResource BaseDC}, Path=Data.DmsData.ColumnData, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=ColumnName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" cueBannerOverlay:CueBannerService.CueBanner="Select" />
-                    </DataTemplate>
-                </DataGridTemplateColumn.CellTemplate>
-            </DataGridTemplateColumn>
-            <DataGridTemplateColumn
+                SortMemberPath="ColumnName"
+                Binding="{Binding Path=ColumnName, Mode=OneWay}"
+                IsReadOnly="True" />
+            <DataGridTextColumn
                 MinWidth="125"
-                CanUserSort="True"
                 Header="Instrument Name"
                 SortDirection="Ascending"
-                SortMemberPath="InstrumentName">
-                <DataGridTemplateColumn.CellTemplate>
-                    <DataTemplate>
-                        <ComboBox ItemsSource="{Binding Source={StaticResource BaseDC}, Path=Data.DmsData.InstrumentData, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=InstrumentName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" cueBannerOverlay:CueBannerService.CueBanner="Select" />
-                    </DataTemplate>
-                </DataGridTemplateColumn.CellTemplate>
-            </DataGridTemplateColumn>
-            <DataGridTemplateColumn
+                SortMemberPath="InstrumentName"
+                Binding="{Binding Path=InstrumentName, Mode=OneWay}"
+                IsReadOnly="True" />
+            <DataGridTextColumn
                 MinWidth="200"
-                CanUserSort="True"
                 Header="Separation Type"
                 SortDirection="Ascending"
-                SortMemberPath="SeparationType">
-                <DataGridTemplateColumn.CellTemplate>
-                    <DataTemplate>
-                        <ComboBox ItemsSource="{Binding Source={StaticResource BaseDC}, Path=Data.DmsData.SeparationTypes, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=SeparationType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" cueBannerOverlay:CueBannerService.CueBanner="Select" />
-                    </DataTemplate>
-                </DataGridTemplateColumn.CellTemplate>
-            </DataGridTemplateColumn>
+                SortMemberPath="SeparationType"
+                Binding="{Binding Path=SeparationType, Mode=OneWay}"
+                IsReadOnly="True" />
             <DataGridTextColumn
                 Binding="{Binding DmsData.CartName}"
                 Header="Cart"
                 IsReadOnly="True" />
-            <!--
-            <DataGridTemplateColumn
+            <DataGridTextColumn
                 MinWidth="100"
-                CanUserSort="True"
-                Header="Cart"
-                SortDirection="Ascending"
-                SortMemberPath="CartName">
-                <DataGridTemplateColumn.CellTemplate>
-                    <DataTemplate>
-                        <ComboBox ItemsSource="{Binding Source={StaticResource BaseDC}, Path=Data.CartNameListSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=CartName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" cueBannerOverlay:CueBannerService.CueBanner="Select" />
-                    </DataTemplate>
-                </DataGridTemplateColumn.CellTemplate>
-            </DataGridTemplateColumn>
-            -->
-            <DataGridTemplateColumn
-                MinWidth="100"
-                CanUserSort="True"
                 Header="LC Cart Config"
                 SortDirection="Ascending"
-                SortMemberPath="CartConfigName">
-                <DataGridTemplateColumn.CellTemplate>
-                    <DataTemplate>
-                        <ComboBox ItemsSource="{Binding Source={StaticResource BaseDC}, Path=Data.CartConfigNameListSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=DmsData.CartConfigName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" cueBannerOverlay:CueBannerService.CueBanner="Select">
-                            <ComboBox.Style>
-                                <Style TargetType="ComboBox">
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Path=CartConfigError}" Value="True">
-                                            <Setter Property="Background" Value="HotPink" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </ComboBox.Style>
-                        </ComboBox>
-                    </DataTemplate>
-                </DataGridTemplateColumn.CellTemplate>
-            </DataGridTemplateColumn>
+                SortMemberPath="DmsData.CartConfigName"
+                Binding="{Binding Path=DmsData.CartConfigName, Mode=OneWay}"
+                IsReadOnly="True">
+                <DataGridTextColumn.CellStyle>
+                    <Style TargetType="DataGridCell" BasedOn="{StaticResource DataGridCellStyle}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Path=CartConfigError}" Value="True">
+                                <Setter Property="Background" Value="HotPink" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGridTextColumn.CellStyle>
+            </DataGridTextColumn>
 
             <DataGridTextColumn
                 MinWidth="100"
