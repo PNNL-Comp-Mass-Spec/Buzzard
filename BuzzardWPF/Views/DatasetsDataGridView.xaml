@@ -17,6 +17,7 @@
              d:DataContext="{d:DesignInstance {x:Type viewModels:DatasetsViewModel}, IsDesignTimeCreatable=True}">
     <UserControl.Resources>
         <converters:BooleanToDataGridVisibilityModeConverter x:Key="boolConverter" />
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
         <converters:ByteFileSizeConverter x:Key="FileSizeConverter" />
         <converters:EnumDescriptionConverter x:Key="EnumDescriptionConverter" />
         <converters:TabLockSwitchConverter x:Key="LockSwitchConverter" />
@@ -100,6 +101,16 @@
         SelectionChanged="DatasetDataGrid_OnSelectionChanged">
         <DataGrid.Resources>
             <views:DatasetBindingProxy x:Key="BaseDC" Data="{Binding}" />
+            <ContextMenu x:Key="ColumnHeaderContextMenu">
+                <MenuItem Header="Show Dataset Type" IsCheckable="True" IsChecked="{Binding Data.ShowDatasetTypeColumn, Source={StaticResource BaseDC}}" StaysOpenOnClick="True" />
+                <MenuItem Header="Show Separation Type" IsCheckable="True" IsChecked="{Binding Data.ShowSeparationTypeColumn, Source={StaticResource BaseDC}}" StaysOpenOnClick="True" />
+                <MenuItem Header="Show Extension" IsCheckable="True" IsChecked="{Binding Data.ShowExtensionColumn, Source={StaticResource BaseDC}}" StaysOpenOnClick="True" />
+                <MenuItem Header="Show Source Path" IsCheckable="True" IsChecked="{Binding Data.ShowSourceDataPathColumn, Source={StaticResource BaseDC}}" StaysOpenOnClick="True" />
+                <MenuItem Header="Show Relative Parent Path" IsCheckable="True" IsChecked="{Binding Data.ShowRelativeParentPathColumn, Source={StaticResource BaseDC}}" StaysOpenOnClick="True" />
+            </ContextMenu>
+            <Style TargetType="{x:Type DataGridColumnHeader}">
+                <Setter Property="ContextMenu" Value="{StaticResource ColumnHeaderContextMenu}" />
+            </Style>
         </DataGrid.Resources>
 
         <DataGrid.Columns>
@@ -262,7 +273,8 @@
                 SortDirection="Ascending"
                 SortMemberPath="DmsData.DatasetType"
                 Binding="{Binding Path=DmsData.DatasetType, Mode=OneWay}"
-                IsReadOnly="True" />
+                IsReadOnly="True"
+                Visibility="{Binding Data.ShowDatasetTypeColumn, Source={StaticResource BaseDC}, Converter={StaticResource BoolToVis}}" />
             <DataGridTextColumn
                 MinWidth="100"
                 Header="LC Column"
@@ -283,7 +295,8 @@
                 SortDirection="Ascending"
                 SortMemberPath="SeparationType"
                 Binding="{Binding Path=SeparationType, Mode=OneWay}"
-                IsReadOnly="True" />
+                IsReadOnly="True"
+                Visibility="{Binding Data.ShowSeparationTypeColumn, Source={StaticResource BaseDC}, Converter={StaticResource BoolToVis}}" />
             <DataGridTextColumn
                 Binding="{Binding DmsData.CartName}"
                 Header="Cart"
@@ -349,7 +362,8 @@
             <DataGridTextColumn
                 Binding="{Binding Extension}"
                 Header="Extension"
-                IsReadOnly="True" />
+                IsReadOnly="True"
+                Visibility="{Binding Data.ShowExtensionColumn, Source={StaticResource BaseDC}, Converter={StaticResource BoolToVis}}" />
             <DataGridTextColumn
                 Binding="{Binding RunStart}"
                 Header="Created"
@@ -361,11 +375,13 @@
             <DataGridTextColumn
                 Binding="{Binding FilePath}"
                 Header="Source Data Path"
-                IsReadOnly="True" />
+                IsReadOnly="True"
+                Visibility="{Binding Data.ShowSourceDataPathColumn, Source={StaticResource BaseDC}, Converter={StaticResource BoolToVis}}" />
             <DataGridTextColumn
                 Binding="{Binding CaptureSubdirectoryPath}"
                 Header="Relative Parent Path"
-                IsReadOnly="True" />
+                IsReadOnly="True"
+                Visibility="{Binding Data.ShowRelativeParentPathColumn, Source={StaticResource BaseDC}, Converter={StaticResource BoolToVis}}" />
         </DataGrid.Columns>
     </DataGrid>
 </UserControl>

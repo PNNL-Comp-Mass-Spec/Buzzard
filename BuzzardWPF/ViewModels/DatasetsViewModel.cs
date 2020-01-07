@@ -28,6 +28,12 @@ namespace BuzzardWPF.ViewModels
         private readonly ObservableAsPropertyHelper<bool> isCreatingTriggerFiles;
         private IReadOnlyList<string> cartConfigNameListSource = new List<string>();
 
+        private bool showDatasetTypeColumn = true;
+        private bool showSeparationTypeColumn = true;
+        private bool showSourceDataPathColumn;
+        private bool showRelativeParentPathColumn;
+        private bool showExtensionColumn;
+
         #endregion
 
         #region Initialize
@@ -151,6 +157,36 @@ namespace BuzzardWPF.ViewModels
         public ReadOnlyObservableCollection<BuzzardDataset> Datasets { get; }
 
         public bool IsCreatingTriggerFiles => isCreatingTriggerFiles.Value;
+
+        public bool ShowDatasetTypeColumn
+        {
+            get => showDatasetTypeColumn;
+            set => this.RaiseAndSetIfChanged(ref showDatasetTypeColumn, value);
+        }
+
+        public bool ShowSeparationTypeColumn
+        {
+            get => showSeparationTypeColumn;
+            set => this.RaiseAndSetIfChanged(ref showSeparationTypeColumn, value);
+        }
+
+        public bool ShowSourceDataPathColumn
+        {
+            get => showSourceDataPathColumn;
+            set => this.RaiseAndSetIfChanged(ref showSourceDataPathColumn, value);
+        }
+
+        public bool ShowRelativeParentPathColumn
+        {
+            get => showRelativeParentPathColumn;
+            set => this.RaiseAndSetIfChanged(ref showRelativeParentPathColumn, value);
+        }
+
+        public bool ShowExtensionColumn
+        {
+            get => showExtensionColumn;
+            set => this.RaiseAndSetIfChanged(ref showExtensionColumn, value);
+        }
 
         #endregion
 
