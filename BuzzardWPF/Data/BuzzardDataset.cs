@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reactive;
@@ -51,6 +52,7 @@ namespace BuzzardWPF.Data
         private bool cartConfigError;
         private DateTime lastRecordedLastWriteTime;
         private readonly ObservableAsPropertyHelper<bool> isMonitored;
+        private readonly List<IDisposable> disposables = new List<IDisposable>();
 
         #endregion
 
@@ -72,9 +74,9 @@ namespace BuzzardWPF.Data
             IsFile = true;
             isMonitored = this.WhenAnyValue(x => x.DatasetSource).Select(x => x == DatasetSource.Watcher).ToProperty(this, x => x.IsMonitored);
             ToggleMonitoringCommand = ReactiveCommand.Create(ToggleMonitoring);
-            this.WhenAnyValue(x => x.EMSLProposalUsers, x => x.EMSLProposalUsers.Count).Subscribe(_ => SetEMSLUsersList());
-            this.WhenAnyValue(x => x.DmsData, x => x.DmsData.CartName, x => x.DmsData.CartConfigName)
-                .ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ => ValidateCartConfig());
+            disposables.Add(this.WhenAnyValue(x => x.EMSLProposalUsers, x => x.EMSLProposalUsers.Count).Subscribe(_ => SetEMSLUsersList()));
+            disposables.Add(this.WhenAnyValue(x => x.DmsData, x => x.DmsData.CartName, x => x.DmsData.CartConfigName)
+                .ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ => ValidateCartConfig()));
             dmsStatus = this.WhenAnyValue(x => x.DmsData, x => x.DmsData.LockData)
                 .Select(x => x.Item2 ? DMSStatus.DMSResolved : DMSStatus.NoDMSRequest)
                 .ToProperty(this, x => x.DMSStatus);
@@ -85,6 +87,10 @@ namespace BuzzardWPF.Data
             dmsStatus?.Dispose();
             isMonitored?.Dispose();
             ToggleMonitoringCommand?.Dispose();
+            foreach (var disposable in disposables)
+            {
+                disposable.Dispose();
+            }
         }
 
         public void Reset()
