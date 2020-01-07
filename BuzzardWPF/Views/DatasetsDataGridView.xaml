@@ -16,7 +16,6 @@
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance {x:Type viewModels:DatasetsViewModel}, IsDesignTimeCreatable=True}">
     <UserControl.Resources>
-        <converters:BooleanToDataGridVisibilityModeConverter x:Key="boolConverter" />
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
         <converters:ByteFileSizeConverter x:Key="FileSizeConverter" />
         <converters:EnumDescriptionConverter x:Key="EnumDescriptionConverter" />
@@ -24,15 +23,6 @@
         <converters:WaitTimeToProgressValueConverter x:Key="ProgressBarConverter" />
         <converters:WaitTimeTextConverter x:Key="WaitTimeTextConverter" />
         <converters:EmptyRequestNameConverter x:Key="RequestNameConverter" />
-
-        <!--
-            * This template lets us leverage the ability to display a specific
-            * tab and switch between tabs as we want, while hiding the tab
-            * selection abilities from the user.
-        -->
-        <ControlTemplate x:Key="TabControlTemplate" TargetType="TabControl">
-            <ContentPresenter Name="PART_SelectedContentHost" ContentSource="SelectedContent" />
-        </ControlTemplate>
 
         <Style x:Key="DataGridCellStyle" TargetType="DataGridCell">
             <Style.Triggers>
@@ -73,10 +63,6 @@
             Color="DarkGray" />
 
         <converters:RedundantRequestBackgroundConverter x:Key="RedundantBackgroundConverter" />
-
-        <DataTemplate x:Key="EMSLUserTemplate" DataType="dmsData:ProposalUser">
-            <TextBlock Margin="2,2,6,2" Text="{Binding Path=UserName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-        </DataTemplate>
 
         <!--  The CollectionViewSource wrapper allows us to set the default sort (Modification Date descending)  -->
         <CollectionViewSource x:Key="MyItemsViewSource" Source="{Binding Path=Datasets, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
