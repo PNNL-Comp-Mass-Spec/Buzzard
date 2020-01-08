@@ -386,6 +386,12 @@ namespace BuzzardWPF.Management
                     }
                 }
 
+                if (data == null)
+                {
+                    // The Trie didn't find the dataset but for some reason didn't throw an exception. Throw one here to avoid a NullReferenceException.
+                    throw new DatasetTrieException("Dataset not found in Trie.", 0, fileName);
+                }
+
                 // Cache the cart name and cart config name
                 var cartName = dataset.DmsData.CartName;
                 var cartConfigName = dataset.DmsData.CartConfigName;
