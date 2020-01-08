@@ -318,7 +318,7 @@
                 MinWidth="100"
                 Header="EMSL Usage Type"
                 CanUserSort="False"
-                Binding="{Binding Path=DmsData.EMSLUsageType, Mode=OneWay}"
+                Binding="{Binding Path=EmslProjectText, Mode=OneWay}"
                 IsReadOnly="True">
                 <DataGridTextColumn.CellStyle>
                     <Style TargetType="DataGridCell" BasedOn="{StaticResource DataGridCellStyle}">
