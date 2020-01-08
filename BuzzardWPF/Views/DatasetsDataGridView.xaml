@@ -171,36 +171,8 @@
                                             UpdateSourceTrigger="PropertyChanged" />
                                     </MultiBinding>
                                 </TextBlock.Text>
-                                <TextBlock.Foreground>
-                                    <!-- This is needed for the ColorAnimation defined below (including the x:Name) -->
-                                    <SolidColorBrush x:Name="ForegroundBrush" Color="Black" />
-                                </TextBlock.Foreground>
                             </TextBlock>
                         </Grid>
-                        <DataTemplate.Triggers>
-                            <DataTrigger Binding="{Binding PulseText}" Value="True">
-                                <DataTrigger.EnterActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <!--
-                                                * On RepeatBehavior, leaving the x out of it caused
-                                                * it to repeat forever on the prototype.
-                                                * -FCT
-                                            -->
-                                            <ColorAnimation
-                                                AutoReverse="True"
-                                                FillBehavior="Stop"
-                                                RepeatBehavior="2x"
-                                                Storyboard.TargetName="ForegroundBrush"
-                                                Storyboard.TargetProperty="Color"
-                                                From="#FF1100AF"
-                                                To="#FFAF0011"
-                                                Duration="0:0:0.67" />
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </DataTrigger.EnterActions>
-                            </DataTrigger>
-                        </DataTemplate.Triggers>
                     </DataTemplate>
                 </DataGridTemplateColumn.CellTemplate>
             </DataGridTemplateColumn>

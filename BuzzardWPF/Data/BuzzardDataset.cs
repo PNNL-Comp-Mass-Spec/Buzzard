@@ -45,8 +45,6 @@ namespace BuzzardWPF.Data
 
         private int secondsUntilTriggerCreation;
         private double waitTimePercentage;
-
-        private bool pulseText;
         private string interestRating;
 
         private bool cartConfigError;
@@ -161,11 +159,6 @@ namespace BuzzardWPF.Data
         #endregion
 
         #region UI data place holders
-        public bool PulseText
-        {
-            get => pulseText;
-            set => this.RaiseAndSetIfChanged(ref pulseText, value);
-        }
 
         public int SecondsTillTriggerCreation
         {

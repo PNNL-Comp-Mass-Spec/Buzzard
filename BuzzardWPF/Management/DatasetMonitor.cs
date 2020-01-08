@@ -135,8 +135,6 @@ namespace BuzzardWPF.Management
                         if (DMS_DataAccessor.Instance.CheckDatasetExists(datasetName))
                         {
                             dataset.DatasetStatus = DatasetStatus.DatasetAlreadyInDMS;
-                            dataset.PulseText = true;
-                            dataset.PulseText = false;
                             continue;
                         }
 
@@ -223,18 +221,9 @@ namespace BuzzardWPF.Management
                     // the display telling the user when it will be created.
                     var secondsLeft = Math.Max(totalSecondsToWait - timeWaited.TotalSeconds, 0);
                     var percentWaited = 100 * timeWaited.TotalSeconds / totalSecondsToWait;
-                    var secondsLeftInt = Convert.ToInt32(secondsLeft);
-
-                    var pulseIt = secondsLeftInt > dataset.SecondsTillTriggerCreation;
 
                     dataset.SecondsTillTriggerCreation = Convert.ToInt32(secondsLeft);
                     dataset.WaitTimePercentage = percentWaited;
-
-                    if (pulseIt)
-                    {
-                        dataset.PulseText = true;
-                        dataset.PulseText = false;
-                    }
 
                     if (dataset.DatasetStatus == DatasetStatus.TriggerFileSent ||
                         dataset.DatasetStatus == DatasetStatus.PendingFileStable ||
