@@ -84,11 +84,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Attributes.cs" />
-    <Compile Include="Converters\BoolToObjectConverter.cs" />
     <Compile Include="Converters\ByteFileSizeConverter.cs" />
     <Compile Include="Converters\EmptyRequestNameConverter.cs" />
     <Compile Include="Converters\EnumDescriptionConverter.cs" />
-    <Compile Include="Converters\RedundantRequestBackgroundConverter.cs" />
     <Compile Include="Converters\SearchOptionValueConverter.cs" />
     <Compile Include="Data\BuzzardDataset.cs" />
     <Compile Include="Data\DatasetSource.cs" />

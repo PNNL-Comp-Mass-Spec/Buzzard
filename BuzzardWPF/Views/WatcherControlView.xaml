@@ -2,7 +2,6 @@
     x:Class="BuzzardWPF.Views.WatcherControlView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:converters="clr-namespace:BuzzardWPF.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:toolKit="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Input.Toolkit"
@@ -16,11 +15,6 @@
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance {x:Type viewModels:WatcherControlViewModel}, IsDesignTimeCreatable=True}">
     <UserControl.Resources>
-        <converters:BoolToObjectConverter
-            x:Key="MonitorButtonContentConverter"
-            TrueContent="Monitor"
-            FalseContent="Stop" />
-
         <Style TargetType="TextBlock">
             <Setter Property="FontSize" Value="15" />
             <Setter Property="Margin" Value="1,2,2,2" />
@@ -182,9 +176,22 @@
                 <Label
                     Width="90"
                     VerticalContentAlignment="Center"
-                    Content="{Binding Path=IsNotMonitoring, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource MonitorButtonContentConverter}}"
                     DockPanel.Dock="Right"
-                    FontFamily="Arial" />
+                    FontFamily="Arial">
+                    <Label.Style>
+                        <Style TargetType="Label">
+                            <Style.Setters>
+                                <!-- Set content here so that we can override it with a DataTrigger -->
+                                <Setter Property="Content" Value="Monitor" />
+                            </Style.Setters>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsNotMonitoring}" Value="False">
+                                    <Setter Property="Content" Value="Stop" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Label.Style>
+                </Label>
                 <Image
                     Width="41"
                     Height="25"

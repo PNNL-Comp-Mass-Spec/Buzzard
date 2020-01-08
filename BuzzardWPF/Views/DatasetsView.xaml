@@ -14,11 +14,6 @@
     d:DataContext="{d:DesignInstance {x:Type viewModels:DatasetsViewModel}, IsDesignTimeCreatable=True}">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
-        <converters:BoolToObjectConverter
-            x:Key="ShowDetailButtonContentConverter"
-            FalseContent="Show Row Details"
-            NullContent="Not Possible"
-            TrueContent="Hide Details" />
 
         <Style TargetType="Button">
             <Setter Property="MinWidth" Value="95" />

@@ -56,8 +56,6 @@
             ShadowDepth="5"
             Color="DarkGray" />
 
-        <converters:RedundantRequestBackgroundConverter x:Key="RedundantBackgroundConverter" />
-
         <!--  The CollectionViewSource wrapper allows us to set the default sort (Modification Date descending)  -->
         <CollectionViewSource x:Key="MyItemsViewSource" Source="{Binding Path=Datasets, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
             <CollectionViewSource.SortDescriptions>
@@ -99,19 +97,22 @@
                 Binding="{Binding Path=DmsData.RequestID}"
                 Header="Request ID"
                 IsReadOnly="True" />
-            <DataGridTemplateColumn
+            <DataGridTextColumn
                 CanUserSort="True"
                 Header="Dataset Name"
-                SortMemberPath="DmsData.DatasetName">
-                <DataGridTemplateColumn.CellTemplate>
-                    <DataTemplate>
-                        <TextBlock
-                            VerticalAlignment="Top"
-                            Foreground="{Binding Path=NotOnlyDatasource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource RedundantBackgroundConverter}}"
-                            Text="{Binding Path=DmsData.DatasetName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-                    </DataTemplate>
-                </DataGridTemplateColumn.CellTemplate>
-            </DataGridTemplateColumn>
+                SortMemberPath="DmsData.DatasetName"
+                Binding="{Binding DmsData.DatasetName, Mode=OneWay}"
+                IsReadOnly="True">
+                <DataGridTextColumn.CellStyle>
+                    <Style TargetType="DataGridCell" BasedOn="{StaticResource DataGridCellStyle}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding NotOnlyDatasource}" Value="True">
+                                <Setter Property="Foreground" Value="Red" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGridTextColumn.CellStyle>
+            </DataGridTextColumn>
             <DataGridTextColumn
                 Binding="{Binding Path=DmsData.RequestName, Mode=OneWay, Converter={StaticResource RequestNameConverter}}"
                 Header="Request Name"

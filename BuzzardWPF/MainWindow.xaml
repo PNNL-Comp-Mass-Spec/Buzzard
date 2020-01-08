@@ -37,10 +37,6 @@
         </Style>
         <BitmapImage x:Key="BuzzardSource" UriSource="Resources\Buzzards.png" />
 
-        <converters:BoolToObjectConverter
-            x:Key="MonitorButtonContentConverter"
-            FalseContent="Monitor"
-            TrueContent="Stop" />
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
 
         <Style TargetType="TextBlock">
