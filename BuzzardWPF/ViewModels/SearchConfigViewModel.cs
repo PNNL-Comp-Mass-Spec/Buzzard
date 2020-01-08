@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using BuzzardWPF.Management;
 using BuzzardWPF.Searching;
-using DynamicData;
 using LcmsNetData.Logging;
 using ReactiveUI;
 
@@ -45,7 +44,6 @@ namespace BuzzardWPF.ViewModels
         /// </summary>
         public SearchConfigViewModel(IBuzzadier datasetSearcherImpl)
         {
-
             datasetSearcher = datasetSearcherImpl;
 
             m_folderDialog = new Ookii.Dialogs.Wpf.VistaFolderBrowserDialog { ShowNewFolderButton = true };
@@ -184,7 +182,7 @@ namespace BuzzardWPF.ViewModels
             }
 
             Searching = true;
-            DatasetManager.Datasets.Clear();
+            DatasetManager.ClearDatasets();
             searchCancelToken = new CancellationTokenSource();
             await datasetSearcher.SearchAsync(Config, searchCancelToken);
             Searching = false;

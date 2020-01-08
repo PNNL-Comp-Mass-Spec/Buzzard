@@ -197,7 +197,8 @@ namespace BuzzardWPF.ViewModels
         /// </summary>
         private void ClearAllDatasets()
         {
-            DatasetManager.Datasets.Clear();
+            DatasetManager.ClearDatasets();
+            SelectedDatasets.Clear();
         }
 
         /// <summary>
@@ -275,7 +276,7 @@ namespace BuzzardWPF.ViewModels
 
             foreach (var dataset in selectedDatasets)
             {
-                DatasetManager.Datasets.Remove(dataset);
+                DatasetManager.RemoveDataset(dataset);
             }
         }
 

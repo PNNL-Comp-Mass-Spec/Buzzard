@@ -437,6 +437,22 @@ namespace BuzzardWPF.Management
         }
         #endregion
 
+        public void ClearDatasets()
+        {
+            var datasetsRemoved = Datasets.Items.ToArray();
+            Datasets.Clear();
+            foreach (var obj in datasetsRemoved)
+            {
+                obj.Dispose();
+            }
+        }
+
+        public void RemoveDataset(BuzzardDataset dataset)
+        {
+            Datasets.Remove(dataset);
+            dataset.Dispose();
+        }
+
         /// <summary>
         ///
         /// </summary>
