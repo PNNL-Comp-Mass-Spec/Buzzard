@@ -10,27 +10,27 @@ namespace BuzzardWPF.Data
         /// <summary>
         /// File size is smaller than MinimumFileSizeKB
         /// </summary>
-        [Description("Pending: File Size")]
+        [Description("File Size < Minimum")]
         PendingFileSize,
         /// <summary>
         /// The trigger file could not be created.
         /// </summary>
-        [Description("Failed: File Error")]
+        [Description("File Error")]
         FailedFileError,
         /// <summary>
         /// The DMS Request could not be resolved.
         /// </summary>
-        [Description("Failed: No DMS Request")]
+        [Description("No DMS Request")]
         FailedNoDmsRequest,
         /// <summary>
         /// The dataset name matches more than one DMS Request
         /// </summary>
-        [Description("Failed: Ambiguous DMS Request")]
+        [Description("Matches Multiple Requests")]
         FailedAmbiguousDmsRequest,
         /// <summary>
         /// Failure is unknown.
         /// </summary>
-        [Description("Failed: Unknown")]
+        [Description("Unknown Error")]
         FailedUnknown,
         /// <summary>
         /// Pending creation of trigger file.
@@ -50,12 +50,12 @@ namespace BuzzardWPF.Data
         /// <summary>
         /// The trigger file was not made because required fields are not defined
         /// </summary>
-        [Description("Missing Required Info")]
+        [Description("Missing Info")]
         MissingRequiredInfo,
         /// <summary>
         /// The dataset file (or folder) was deleted or renamed
         /// </summary>
-        [Description("File Not Found")]
+        [Description("File Missing")]
         FileNotFound,
         /// <summary>
         /// The dataset starts with x_ and is thus assumed to have been captured
@@ -65,7 +65,7 @@ namespace BuzzardWPF.Data
         /// <summary>
         /// Checking whether the dataset file or folder is changing (over 30 seconds)
         /// </summary>
-        [Description("Validating Stable")]
+        [Description("In Progress")]
         ValidatingStable,
         /// <summary>
         /// Aborted manual trigger creation while validating that the file or folder is stable
@@ -75,7 +75,7 @@ namespace BuzzardWPF.Data
         /// <summary>
         /// Dataset size changed over 60 seconds
         /// </summary>
-        [Description("File Size Changed")]
+        [Description("Aborted, File Size Changed")]
         FileSizeChanged,
         /// <summary>
         /// The dataset already exists in DMS

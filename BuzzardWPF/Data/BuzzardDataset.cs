@@ -55,6 +55,7 @@ namespace BuzzardWPF.Data
         private readonly ObservableAsPropertyHelper<string> emslUserProposalText;
         private readonly ObservableAsPropertyHelper<bool> showProgress;
         private readonly ObservableAsPropertyHelper<double> progressValue;
+        private readonly ObservableAsPropertyHelper<string> formattedStatus;
 
         #endregion
 
@@ -109,6 +110,9 @@ namespace BuzzardWPF.Data
                 this.WhenAnyValue(x => x.DmsData.EMSLUsageType, x => x.DmsData.EMSLProposalID,
                         x => x.EMSLProposalUsers, x => x.EMSLProposalUsers.Count).Select(x => x.Item1 == "USER" ? $"ProposalID: {x.Item2}\nEMSL Users: {string.Join("; ", x.Item3.Select(y => y.UserName))}" : null)
                     .ToProperty(this, x => x.EmslUserProposalText);
+            formattedStatus = this.WhenAnyValue(x => x.SecondsTillTriggerCreation, x => x.DatasetStatus, x => x.DatasetSource)
+                .Select(x => FormatStatus(x.Item1, x.Item2, x.Item3))
+                .ToProperty(this, x => x.FormattedStatus);
         }
 
         public void Dispose()
@@ -120,6 +124,7 @@ namespace BuzzardWPF.Data
             ToggleMonitoringCommand?.Dispose();
             showProgress?.Dispose();
             progressValue?.Dispose();
+            formattedStatus?.Dispose();
             foreach (var disposable in disposables)
             {
                 disposable.Dispose();
@@ -208,6 +213,7 @@ namespace BuzzardWPF.Data
         public string EmslUserProposalText => emslUserProposalText.Value;
         public bool ShowProgress => showProgress.Value;
         public double ProgressValue => progressValue.Value;
+        public string FormattedStatus => formattedStatus.Value;
 
         public ReactiveCommand<Unit, Unit> ToggleMonitoringCommand { get; }
 
@@ -382,6 +388,56 @@ namespace BuzzardWPF.Data
             DmsData.UserList = string.Join(",", EMSLProposalUsers.Select(x => x.UserID));
         }
 
+        private static string FormatStatus(int waitSeconds, DatasetStatus status, DatasetSource source)
+        {
+            switch (status)
+            {
+                case DatasetStatus.TriggerFileSent:
+                    return "Trigger File Sent";
+                case DatasetStatus.DatasetMarkedCaptured:
+                    return "Dataset Captured";
+                case DatasetStatus.FailedFileError:
+                    return "File Error";
+                case DatasetStatus.FailedAmbiguousDmsRequest:
+                    return "Matches Multiple Requests";
+                case DatasetStatus.FailedNoDmsRequest:
+                    return "No DMS Request";
+                case DatasetStatus.FailedUnknown:
+                    return "Error";
+                case DatasetStatus.MissingRequiredInfo:
+                    return "Warning";
+                case DatasetStatus.FileNotFound:
+                    return "File Missing";
+                case DatasetStatus.ValidatingStable:
+                    return "In Progress";
+                case DatasetStatus.TriggerAborted:
+                    return "Aborted manual trigger";
+                case DatasetStatus.FileSizeChanged:
+                    return "Aborted, size changed";
+                case DatasetStatus.DatasetAlreadyInDMS:
+                    return "Already in DMS";
+                case DatasetStatus.PendingFileStable:
+                    return "Waiting for stable file";
+            }
+
+            if (source == DatasetSource.Searcher)
+            {
+                return "Waiting on User";
+            }
+
+            var minutes = waitSeconds / 60;
+            var seconds = waitSeconds % 60;
+
+            if (minutes >= 60)
+            {
+                var hours = minutes / 60;
+                minutes %= 60;
+                return $"Waiting: {hours}:{minutes:D2}:{seconds:D2}";
+            }
+
+            return $"Waiting: {minutes:D2}:{seconds:D2} ";
+        }
+
         private (bool Exists, long Size, int FileCount, DateTime CreationTime, DateTime LastWriteTime) GetDatasetStats()
         {
             var exists = false;
@@ -475,6 +531,8 @@ namespace BuzzardWPF.Data
         {
             if (DatasetSource == DatasetSource.Searcher)
             {
+                // Change the dataset status to something that will not trigger the countdown display first.
+                DatasetStatus = DatasetStatus.PendingFileStable;
                 DatasetSource = DatasetSource.Watcher;
             }
             else
