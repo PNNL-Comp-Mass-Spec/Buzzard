@@ -103,7 +103,6 @@
             <DataGridTemplateColumn
                 CanUserSort="True"
                 Header="Dataset Name"
-                SortDirection="Ascending"
                 SortMemberPath="DmsData.DatasetName">
                 <DataGridTemplateColumn.CellTemplate>
                     <DataTemplate>
@@ -132,7 +131,6 @@
                 MinWidth="130"
                 CanUserSort="True"
                 Header="Trigger File Creation"
-                SortDirection="Ascending"
                 SortMemberPath="SecondsTillTriggerCreation">
                 <DataGridTemplateColumn.CellTemplate>
                     <DataTemplate>
@@ -199,14 +197,12 @@
             <DataGridTextColumn
                 MinWidth="125"
                 Header="Operator"
-                SortDirection="Ascending"
                 SortMemberPath="Operator"
                 Binding="{Binding Path=Operator, Mode=OneWay}"
                 IsReadOnly="True" />
             <DataGridTextColumn
                 MinWidth="100"
                 Header="Dataset Type"
-                SortDirection="Ascending"
                 SortMemberPath="DmsData.DatasetType"
                 Binding="{Binding Path=DmsData.DatasetType, Mode=OneWay}"
                 IsReadOnly="True"
@@ -214,21 +210,18 @@
             <DataGridTextColumn
                 MinWidth="100"
                 Header="LC Column"
-                SortDirection="Ascending"
                 SortMemberPath="ColumnName"
                 Binding="{Binding Path=ColumnName, Mode=OneWay}"
                 IsReadOnly="True" />
             <DataGridTextColumn
                 MinWidth="125"
                 Header="Instrument Name"
-                SortDirection="Ascending"
                 SortMemberPath="InstrumentName"
                 Binding="{Binding Path=InstrumentName, Mode=OneWay}"
                 IsReadOnly="True" />
             <DataGridTextColumn
                 MinWidth="200"
                 Header="Separation Type"
-                SortDirection="Ascending"
                 SortMemberPath="SeparationType"
                 Binding="{Binding Path=SeparationType, Mode=OneWay}"
                 IsReadOnly="True"
@@ -240,7 +233,6 @@
             <DataGridTextColumn
                 MinWidth="100"
                 Header="LC Cart Config"
-                SortDirection="Ascending"
                 SortMemberPath="DmsData.CartConfigName"
                 Binding="{Binding Path=DmsData.CartConfigName, Mode=OneWay}"
                 IsReadOnly="True">
@@ -295,6 +287,7 @@
             <DataGridTextColumn
                 Binding="{Binding RunFinish}"
                 Header="Last Modified"
+                SortDirection="Descending"
                 IsReadOnly="True" />
             <DataGridTextColumn
                 Binding="{Binding FilePath}"
