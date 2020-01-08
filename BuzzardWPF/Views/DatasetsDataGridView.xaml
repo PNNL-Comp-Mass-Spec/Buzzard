@@ -16,7 +16,6 @@
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
         <converters:ByteFileSizeConverter x:Key="FileSizeConverter" />
         <converters:EnumDescriptionConverter x:Key="EnumDescriptionConverter" />
-        <converters:WaitTimeToProgressValueConverter x:Key="ProgressBarConverter" />
         <converters:WaitTimeTextConverter x:Key="WaitTimeTextConverter" />
         <converters:EmptyRequestNameConverter x:Key="RequestNameConverter" />
 
@@ -143,27 +142,9 @@
                                 Panel.ZIndex="0"
                                 Foreground="#FF01D428"
                                 Maximum="100"
-                                Minimum="0">
-                                <ProgressBar.Value>
-                                    <MultiBinding Converter="{StaticResource ProgressBarConverter}">
-                                        <Binding
-                                            Mode="OneWay"
-                                            NotifyOnSourceUpdated="True"
-                                            Path="WaitTimePercentage"
-                                            UpdateSourceTrigger="PropertyChanged" />
-                                        <Binding
-                                            Mode="OneWay"
-                                            NotifyOnSourceUpdated="True"
-                                            Path="DatasetStatus"
-                                            UpdateSourceTrigger="PropertyChanged" />
-                                        <Binding
-                                            Mode="OneWay"
-                                            NotifyOnSourceUpdated="True"
-                                            Path="DatasetSource"
-                                            UpdateSourceTrigger="PropertyChanged" />
-                                    </MultiBinding>
-                                </ProgressBar.Value>
-                            </ProgressBar>
+                                Minimum="0"
+                                Visibility="{Binding ShowProgress, Mode=OneWay, Converter={StaticResource BoolToVis}}"
+                                Value="{Binding ProgressValue, Mode=OneWay}" />
 
                             <TextBlock
                                 Margin="2"

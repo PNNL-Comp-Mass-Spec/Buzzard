@@ -91,7 +91,6 @@
     <Compile Include="Converters\RedundantRequestBackgroundConverter.cs" />
     <Compile Include="Converters\SearchOptionValueConverter.cs" />
     <Compile Include="Converters\WaitTimeTextConverter.cs" />
-    <Compile Include="Converters\WaitTimeToProgressValueConverter.cs" />
     <Compile Include="Data\BuzzardDataset.cs" />
     <Compile Include="Data\DatasetSource.cs" />
     <Compile Include="Data\DatasetStatus.cs" />

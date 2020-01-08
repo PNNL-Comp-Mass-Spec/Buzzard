@@ -55,6 +55,8 @@ namespace BuzzardWPF.Data
         private readonly List<IDisposable> disposables = new List<IDisposable>();
         private readonly ObservableAsPropertyHelper<string> emslProjectText;
         private readonly ObservableAsPropertyHelper<string> emslUserProposalText;
+        private readonly ObservableAsPropertyHelper<bool> showProgress;
+        private readonly ObservableAsPropertyHelper<double> progressValue;
 
         #endregion
 
@@ -75,6 +77,26 @@ namespace BuzzardWPF.Data
 
             IsFile = true;
             isMonitored = this.WhenAnyValue(x => x.DatasetSource).Select(x => x == DatasetSource.Watcher).ToProperty(this, x => x.IsMonitored);
+            showProgress = this.WhenAnyValue(x => x.DatasetStatus)
+                .Select(x =>
+                    x == DatasetStatus.Pending || x == DatasetStatus.PendingFileStable ||
+                    x == DatasetStatus.PendingFileSize || x == DatasetStatus.TriggerFileSent)
+                .ToProperty(this, x => x.ShowProgress);
+            progressValue = this.WhenAnyValue(x => x.DatasetStatus, x => x.DatasetSource, x => x.WaitTimePercentage)
+                .Select(x =>
+                    {
+                        if (x.Item1 == DatasetStatus.TriggerFileSent)
+                        {
+                            return 100.0;
+                        }
+
+                        if (x.Item1 == DatasetStatus.PendingFileStable || x.Item2 == DatasetSource.Searcher)
+                        {
+                            return 0.0;
+                        }
+
+                        return x.Item3;
+                    }).ToProperty(this, x => x.ProgressValue);
             ToggleMonitoringCommand = ReactiveCommand.Create(ToggleMonitoring);
             disposables.Add(this.WhenAnyValue(x => x.EMSLProposalUsers, x => x.EMSLProposalUsers.Count).Subscribe(_ => SetEMSLUsersList()));
             disposables.Add(this.WhenAnyValue(x => x.DmsData, x => x.DmsData.CartName, x => x.DmsData.CartConfigName)
@@ -98,6 +120,8 @@ namespace BuzzardWPF.Data
             emslProjectText?.Dispose();
             emslUserProposalText?.Dispose();
             ToggleMonitoringCommand?.Dispose();
+            showProgress?.Dispose();
+            progressValue?.Dispose();
             foreach (var disposable in disposables)
             {
                 disposable.Dispose();
@@ -189,6 +213,8 @@ namespace BuzzardWPF.Data
         public bool IsMonitored => isMonitored.Value;
         public string EmslProjectText => emslProjectText.Value;
         public string EmslUserProposalText => emslUserProposalText.Value;
+        public bool ShowProgress => showProgress.Value;
+        public double ProgressValue => progressValue.Value;
 
         public ReactiveCommand<Unit, Unit> ToggleMonitoringCommand { get; }
 
