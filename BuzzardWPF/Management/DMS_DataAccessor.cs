@@ -273,14 +273,15 @@ namespace BuzzardWPF.Management
             }
         }
 
-        public IEnumerable<SampleDataBasic> LoadDMSRequestedRuns()
+        public IEnumerable<DMSData> LoadDMSRequestedRuns()
         {
             // Instantiate SampleQueryData using default filters (essentially no filters)
             // Only active requested runs are retrieved
             var queryData = new SampleQueryData();
 
             // Load the samples (essentially requested runs) from DMS
-            return dmsDbTools.GetRequestedRunsFromDMS<SampleDataBasic>(queryData);
+            // Return clones of the objects; for some reason, if we don't, the SampleDataBasic objects are all kept alive (probably some database interaction logic)
+            return dmsDbTools.GetRequestedRunsFromDMS<SampleDataBasic>(queryData).Select(x => (DMSData)x.DmsData.Clone());
         }
 
         #endregion

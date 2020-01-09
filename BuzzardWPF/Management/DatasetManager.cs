@@ -173,7 +173,7 @@ namespace BuzzardWPF.Management
                 var requestedRunsUpdated = false;
                 lock (mRequestedRunTrie)
                 {
-                    requestedRunsUpdated = mRequestedRunTrie.LoadData(samples.Select(x => x.DmsData));
+                    requestedRunsUpdated = mRequestedRunTrie.LoadData(samples);
                 }
 
                 // We can use this to get an idea if any datasets already have trigger files that were sent.
