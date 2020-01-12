@@ -9,13 +9,11 @@
              xmlns:views="clr-namespace:BuzzardWPF.Views"
              d:DesignHeight="267"
              d:DesignWidth="749.4"
-             Background="{x:Null}"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance {x:Type viewModels:DatasetsViewModel}, IsDesignTimeCreatable=True}">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
         <converters:ByteFileSizeConverter x:Key="FileSizeConverter" />
-        <converters:EnumDescriptionConverter x:Key="EnumDescriptionConverter" />
         <converters:EmptyRequestNameConverter x:Key="RequestNameConverter" />
 
         <Style x:Key="DataGridCellStyle" TargetType="DataGridCell">
@@ -46,15 +44,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
-        <DropShadowEffect
-            x:Key="ShadowEffect"
-            BlurRadius="3"
-            Direction="-50"
-            Opacity="0.8"
-            RenderingBias="Performance"
-            ShadowDepth="5"
-            Color="DarkGray" />
 
         <!--  The CollectionViewSource wrapper allows us to set the default sort (Modification Date descending)  -->
         <CollectionViewSource x:Key="MyItemsViewSource" Source="{Binding Path=Datasets, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
@@ -145,7 +134,6 @@
                                 VerticalAlignment="Top"
                                 Panel.ZIndex="1"
                                 Background="Transparent"
-                                Effect="{StaticResource ShadowEffect}"
                                 FontSize="13"
                                 FontWeight="Bold"
                                 Text="{Binding FormattedStatus, Mode=OneWay}">
