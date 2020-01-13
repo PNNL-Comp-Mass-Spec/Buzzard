@@ -418,6 +418,8 @@ namespace BuzzardWPF.Data
                     return "Already in DMS";
                 case DatasetStatus.PendingFileStable:
                     return "Waiting for stable file";
+                case DatasetStatus.PendingFileSize:
+                    return "Waiting for file size";
             }
 
             if (source == DatasetSource.Searcher)

@@ -94,6 +94,7 @@
                 IsReadOnly="True">
                 <DataGridTextColumn.CellStyle>
                     <Style TargetType="DataGridCell" BasedOn="{StaticResource DataGridCellStyle}">
+                        <Setter Property="ToolTip" Value="{Binding FilePath}" />
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding NotOnlyDatasource}" Value="True">
                                 <Setter Property="Foreground" Value="Red" />
