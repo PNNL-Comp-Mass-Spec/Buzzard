@@ -231,7 +231,7 @@ namespace BuzzardWPF.Management
 
             // Force a garbage collection to clean up temporary objects related to reloading from DMS
             GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
-            GC.Collect(int.MaxValue, GCCollectionMode.Forced, true, true);
+            GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, true, true);
         }
 
         /// <summary>
