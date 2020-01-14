@@ -1399,11 +1399,6 @@
             </summary>
             <typeparam name="T"></typeparam>
         </member>
-        <member name="F:LcmsNetData.Logging.ThreadedLogger`1.buffer">
-            <summary>
-            This could almost be directly replaced with a BufferBlock (but I don't want to add the TPL dependency).
-            </summary>
-        </member>
         <member name="F:LcmsNetData.Logging.ThreadedLogger`1.isShutdown">
             <summary>
             True if the logger has been shut down.
@@ -1413,12 +1408,6 @@
             <summary>
             Consume all items, continuing until the queue is shutdown
             </summary>
-        </member>
-        <member name="M:LcmsNetData.Logging.ThreadedLogger`1.Consume">
-            <summary>
-            Consume a single item, asynchronously
-            </summary>
-            <returns></returns>
         </member>
         <member name="M:LcmsNetData.Logging.ThreadedLogger`1.AddItem(`0)">
             <summary>
@@ -1442,50 +1431,6 @@
             Create a consumer that will run on a separate thread than everything else for performance reasons
             </summary>
             <param name="actionOnConsume"></param>
-        </member>
-        <member name="T:LcmsNetData.Logging.ThreadedLogger`1.BufferQueue`1">
-            <summary>
-            Modeled after the idea of a BufferBlock, but not using a BufferBlock because that requires tracking a NuGet package.
-            </summary>
-            <typeparam name="TU"></typeparam>
-        </member>
-        <member name="P:LcmsNetData.Logging.ThreadedLogger`1.BufferQueue`1.IsComplete">
-            <summary>
-            True if the BufferQueue has been marked complete, and will accept new items
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Logging.ThreadedLogger`1.BufferQueue`1.HasItemsInQueue">
-            <summary>
-            True if there are items waiting to be consumed; only for checking in case of error
-            </summary>
-        </member>
-        <member name="M:LcmsNetData.Logging.ThreadedLogger`1.BufferQueue`1.OutputAvailableAsync">
-            <summary>
-            Returns true if there is available output, false if an error or marked complete (with no more output)
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:LcmsNetData.Logging.ThreadedLogger`1.BufferQueue`1.Receive">
-            <summary>
-            Retrieve an item off of the queue
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:LcmsNetData.Logging.ThreadedLogger`1.BufferQueue`1.Post(`1)">
-            <summary>
-            Add an item to the queue, notifying any consumer(s) of the available item.
-            </summary>
-            <param name="item"></param>
-        </member>
-        <member name="M:LcmsNetData.Logging.ThreadedLogger`1.BufferQueue`1.Complete">
-            <summary>
-            Mark the queue as complete, so that things will exit out properly
-            </summary>
-        </member>
-        <member name="M:LcmsNetData.Logging.ThreadedLogger`1.BufferQueue`1.Dispose">
-            <summary>
-            Clean up.
-            </summary>
         </member>
         <member name="T:LcmsNetData.MessageBoxDisplayExtension">
             <summary>
