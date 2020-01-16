@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:windows="clr-namespace:BuzzardWPF"
         Height="520" Width="809"
-        Title="DynamicSplash"
+        Title="Buzzard"
         WindowStyle="None" WindowStartupLocation="CenterScreen" ResizeMode="NoResize"
         ShowInTaskbar="True" SnapsToDevicePixels="True" Topmost="False" UseLayoutRounding="True"
         BorderThickness="10" BorderBrush="Maroon" Background="White"
