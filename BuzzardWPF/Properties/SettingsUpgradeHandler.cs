@@ -235,32 +235,6 @@ namespace BuzzardWPF.Properties
         [DebuggerNonUserCode]
         [DefaultSettingValue("")]
         [NoSettingsVersionUpgrade]
-        [Obsolete("Use " + nameof(WatcherQCEMSLProposalID), true)]
-        [SettingUpgradeName(nameof(WatcherQCEMSLProposalID))]
-        // ReSharper disable once UnusedMember.Global
-        public string QC_ProposalID { get; set; }
-
-        [UserScopedSetting]
-        [DebuggerNonUserCode]
-        [DefaultSettingValue("")]
-        [NoSettingsVersionUpgrade]
-        [Obsolete("Use " + nameof(WatcherQCEMSLUsageType), true)]
-        [SettingUpgradeName(nameof(WatcherQCEMSLUsageType))]
-        // ReSharper disable once UnusedMember.Global
-        public string QC_SelectedUsageType { get; set; }
-
-        [UserScopedSetting]
-        [DebuggerNonUserCode]
-        [NoSettingsVersionUpgrade]
-        [Obsolete("Use " + nameof(WatcherQCEMSLUsers), true)]
-        [SettingUpgradeName(nameof(WatcherQCEMSLUsers))]
-        // ReSharper disable once UnusedMember.Global
-        public global::System.Collections.Specialized.StringCollection QC_EMSL_Users { get; set; }
-
-        [UserScopedSetting]
-        [DebuggerNonUserCode]
-        [DefaultSettingValue("")]
-        [NoSettingsVersionUpgrade]
         [Obsolete("Use " + nameof(WatcherQCExperimentName), true)]
         [SettingUpgradeName(nameof(WatcherQCExperimentName))]
         // ReSharper disable once UnusedMember.Global

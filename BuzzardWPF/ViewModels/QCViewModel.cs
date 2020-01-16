@@ -13,17 +13,12 @@ using ReactiveUI;
 
 namespace BuzzardWPF.ViewModels
 {
-    public class QCViewModel : ReactiveObject, IEmslUsageData, IStoredSettingsMonitor
+    public class QCViewModel : ReactiveObject, IStoredSettingsMonitor
     {
         #region Initialize
         public QCViewModel()
         {
             isNotMonitoring = FileSystemWatcherManager.Instance.WhenAnyValue(x => x.IsMonitoring).Select(x => !x).ObserveOn(RxApp.MainThreadScheduler).ToProperty(this, x => x.IsNotMonitoring);
-
-            EmslUsageSelectionVm.BoundContainer = this;
-
-            EMSLUsageType = EmslUsageSelectionVm.UsageTypesSource[1];
-            EMSLProposalID = null;
             ExperimentName = null;
 
             datasetNameMatchHasError = this.WhenAnyValue(x => x.DatasetNameMatch, x => x.Monitor.QcMonitors, x => x.Monitor.QcMonitors.Count).Select(x =>
@@ -52,18 +47,13 @@ namespace BuzzardWPF.ViewModels
             }).ToProperty(this, x => x.DatasetNameMatchHasError);
 
             SelectExperimentCommand = ReactiveCommand.Create(SelectExperiment);
-            AddQcMonitorCommand = ReactiveCommand.Create(AddQcMonitor, this.WhenAnyValue(x => x.ExperimentName, x => x.DatasetNameMatch, x => x.EMSLUsageType, x => x.EMSLProposalID, x => x.EMSLProposalUsers, x => x.DatasetNameMatchHasError).Select(
+            AddQcMonitorCommand = ReactiveCommand.Create(AddQcMonitor, this.WhenAnyValue(x => x.ExperimentName, x => x.DatasetNameMatch, x => x.DatasetNameMatchHasError).Select(
                 x =>
                 {
-                    var musts = !string.IsNullOrWhiteSpace(x.Item1) && !string.IsNullOrWhiteSpace(x.Item2) && !string.IsNullOrWhiteSpace(x.Item3);
-                    if (!musts || x.Item6)
+                    var musts = !string.IsNullOrWhiteSpace(x.Item1) && !string.IsNullOrWhiteSpace(x.Item2);
+                    if (!musts || x.Item3)
                     {
                         return false;
-                    }
-
-                    if (x.Item3.Equals("USER", StringComparison.OrdinalIgnoreCase))
-                    {
-                        return !string.IsNullOrWhiteSpace(x.Item4);
                     }
 
                     return true;
@@ -72,14 +62,11 @@ namespace BuzzardWPF.ViewModels
             RemoveQcMonitorCommand = ReactiveCommand.Create(RemoveQcMonitor, this.WhenAnyValue(x => x.SelectedQcMonitor).Select(x => x != null));
 
             this.WhenAnyValue(x => x.ExperimentName).Subscribe(x => DatasetNameMatch = x);
-            this.WhenAnyValue(x => x.EMSLProposalUsers.Count).Subscribe(_ => SettingsChanged = true);
         }
         #endregion
 
         #region Properties
 
-        private string selectedEMSLUsageType;
-        private string emslProposalID;
         private string experimentName;
         private readonly ObservableAsPropertyHelper<bool> isNotMonitoring;
         private string datasetNameMatch;
@@ -94,21 +81,7 @@ namespace BuzzardWPF.ViewModels
         public ReactiveCommand<Unit, Unit> AddQcMonitorCommand { get; }
         public ReactiveCommand<Unit, Unit> RemoveQcMonitorCommand { get; }
 
-        public EmslUsageSelectionViewModel EmslUsageSelectionVm { get; } = new EmslUsageSelectionViewModel();
-
         public bool SettingsChanged { get; set; }
-
-        public string EMSLUsageType
-        {
-            get => selectedEMSLUsageType;
-            set => this.RaiseAndSetIfChangedMonitored(ref selectedEMSLUsageType, value);
-        }
-
-        public string EMSLProposalID
-        {
-            get => emslProposalID;
-            set => this.RaiseAndSetIfChangedMonitored(ref emslProposalID, value);
-        }
 
         public string ExperimentName
         {
@@ -117,8 +90,6 @@ namespace BuzzardWPF.ViewModels
         }
 
         public DatasetMonitor Monitor => DatasetMonitor.Monitor;
-
-        public ObservableCollectionExtended<ProposalUser> EMSLProposalUsers { get; } = new ObservableCollectionExtended<ProposalUser>();
 
         public string DatasetNameMatch
         {
@@ -169,15 +140,8 @@ namespace BuzzardWPF.ViewModels
             var qcMonitor = new QcMonitorData
             {
                 ExperimentName = ExperimentName,
-                EmslUsageType = EMSLUsageType,
                 DatasetNameMatch = DatasetNameMatch
             };
-
-            if (EMSLUsageType.Equals("USER", StringComparison.OrdinalIgnoreCase))
-            {
-                qcMonitor.EmslProposalId = EMSLProposalID;
-                qcMonitor.EmslProposalUsers.AddRange(EMSLProposalUsers);
-            }
 
             Monitor.QcMonitors.Add(qcMonitor);
         }
@@ -204,14 +168,6 @@ namespace BuzzardWPF.ViewModels
 
             // Still save the changes here...
             Settings.Default.WatcherQCExperimentName = ExperimentName;
-            Settings.Default.WatcherQCEMSLProposalID = EMSLProposalID;
-            Settings.Default.WatcherQCEMSLUsageType = EMSLUsageType;
-
-            var selectedEMSLUsers = new System.Collections.Specialized.StringCollection();
-            foreach (var user in EMSLProposalUsers)
-                selectedEMSLUsers.Add(user.UserID.ToString());
-
-            Settings.Default.WatcherQCEMSLUsers = selectedEMSLUsers;
 
             SettingsChanged = false;
 
@@ -221,31 +177,14 @@ namespace BuzzardWPF.ViewModels
         public void LoadSettings()
         {
             ExperimentName = Settings.Default.WatcherQCExperimentName;
-            EMSLProposalID = Settings.Default.WatcherQCEMSLProposalID;
-            EMSLUsageType = Settings.Default.WatcherQCEMSLUsageType;
-
-            List<string> selectedUsers;
-            if (Settings.Default.WatcherQCEMSLUsers == null)
-                selectedUsers = new List<string>();
-            else
-                selectedUsers = Settings.Default.WatcherQCEMSLUsers.Cast<string>().ToList();
-
-            EMSLProposalUsers.Load(DMS_DataAccessor.Instance.FindSavedEMSLProposalUsers(EMSLProposalID, selectedUsers));
 
             if (!string.IsNullOrWhiteSpace(ExperimentName) && string.IsNullOrWhiteSpace(Settings.Default.WatcherQCMonitors))
             {
                 var monitor = new QcMonitorData()
                 {
                     ExperimentName = ExperimentName,
-                    EmslUsageType = EMSLUsageType,
                     DatasetNameMatch = "*"
                 };
-
-                if (!string.IsNullOrWhiteSpace(monitor.EmslUsageType) && monitor.EmslUsageType.Equals("USER", StringComparison.OrdinalIgnoreCase))
-                {
-                    monitor.EmslProposalId = EMSLProposalID;
-                    monitor.EmslProposalUsers.AddRange(EMSLProposalUsers);
-                }
 
                 Monitor.QcMonitors.Add(monitor);
             }

@@ -42,6 +42,8 @@ namespace BuzzardWPF.Management
         public const string EXPERIMENT_NAME_DESCRIPTION = "Experiment";
         public const string WorkPackageDescription = "Work Package (use 'none' for no work package)";
         public const string QC_MONITORS_DESCRIPTION = "QC Monitor(s) (or uncheck uploading \"QCs with 'QC Samples' metadata\")";
+        public const string EmslUsageTypeDescription = "EMSL Usage Type";
+        public const string EmslProposalIdDescription = "EMSL Proposal ID";
 
         public bool SettingsChanged { get; set; }
 
@@ -316,6 +318,11 @@ namespace BuzzardWPF.Management
                 missingFields.Add("LC Column");
             else if (!DMS_DataAccessor.Instance.ColumnData.Contains(WatcherMetadata.LCColumn))
                 missingFields.Add("Invalid LC Column name");
+
+            if (string.IsNullOrWhiteSpace(WatcherMetadata.EMSLUsageType))
+                missingFields.Add(EmslUsageTypeDescription);
+            else if (WatcherMetadata.EMSLUsageType.Equals("USER", StringComparison.OrdinalIgnoreCase) && string.IsNullOrWhiteSpace(WatcherMetadata.EMSLProposalID))
+                missingFields.Add(EmslProposalIdDescription);
 
             if (QcMonitors.Count == 0)
                 missingFields.Add(QC_MONITORS_DESCRIPTION);

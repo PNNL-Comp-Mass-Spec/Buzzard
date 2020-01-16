@@ -12,7 +12,7 @@ namespace BuzzardWPF.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.1.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.4.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -486,41 +486,6 @@ namespace BuzzardWPF.Properties {
             }
             set {
                 this["WatcherInterestRating"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string WatcherQCEMSLProposalID {
-            get {
-                return ((string)(this["WatcherQCEMSLProposalID"]));
-            }
-            set {
-                this["WatcherQCEMSLProposalID"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string WatcherQCEMSLUsageType {
-            get {
-                return ((string)(this["WatcherQCEMSLUsageType"]));
-            }
-            set {
-                this["WatcherQCEMSLUsageType"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::System.Collections.Specialized.StringCollection WatcherQCEMSLUsers {
-            get {
-                return ((global::System.Collections.Specialized.StringCollection)(this["WatcherQCEMSLUsers"]));
-            }
-            set {
-                this["WatcherQCEMSLUsers"] = value;
             }
         }
         

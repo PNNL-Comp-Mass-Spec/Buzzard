@@ -291,10 +291,22 @@ namespace BuzzardWPF.Management
                     missingData.Remove(DatasetMonitor.QC_MONITORS_DESCRIPTION);
                 }
 
-                if (!Monitor.QcCreateTriggerOnDMSFail && !Monitor.CreateTriggerOnDMSFail &&
-                    missingData.Contains(DatasetMonitor.WorkPackageDescription))
+                if (!Monitor.QcCreateTriggerOnDMSFail && !Monitor.CreateTriggerOnDMSFail)
                 {
-                    missingData.Remove(DatasetMonitor.WorkPackageDescription);
+                    if (missingData.Contains(DatasetMonitor.WorkPackageDescription))
+                    {
+                        missingData.Remove(DatasetMonitor.WorkPackageDescription);
+                    }
+
+                    if (missingData.Contains(DatasetMonitor.EmslUsageTypeDescription))
+                    {
+                        missingData.Remove(DatasetMonitor.EmslUsageTypeDescription);
+                    }
+
+                    if (missingData.Contains(DatasetMonitor.EmslProposalIdDescription))
+                    {
+                        missingData.Remove(DatasetMonitor.EmslProposalIdDescription);
+                    }
                 }
             }
 

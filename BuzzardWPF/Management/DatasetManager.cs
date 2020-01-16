@@ -620,10 +620,6 @@ namespace BuzzardWPF.Management
                 if (string.IsNullOrWhiteSpace(dataset.ColumnName))
                     dataset.ColumnName = WatcherMetadata.LCColumn;
 
-                string emslUsageType;
-                string emslProposalId;
-                IEnumerable<ProposalUser> emslProposalUsers;
-
                 // QC data from the QC panel will override any previous data for given properties
                 if (dataset.IsQC || dataset.IsBlank)
                 {
@@ -643,9 +639,6 @@ namespace BuzzardWPF.Management
 
                         dataset.DmsData.Experiment = chosenMonitor.ExperimentName;
 
-                        emslUsageType = chosenMonitor.EmslUsageType;
-                        emslProposalId = chosenMonitor.EmslProposalId;
-                        emslProposalUsers = chosenMonitor.EmslProposalUsers;
                         dataset.InterestRating = "Released";
                         dataset.MatchedMonitor = true;
                     }
@@ -653,27 +646,21 @@ namespace BuzzardWPF.Management
                     {
                         ApplicationLogger.LogMessage(0, $"QC_Upload: No monitors matched, using general dataset information");
                         // No monitor matched, use the watcher information
-                        emslUsageType = WatcherMetadata.EMSLUsageType;
-                        emslProposalId = WatcherMetadata.EMSLProposalID;
-                        emslProposalUsers = WatcherMetadata.EMSLProposalUsers;
                         dataset.InterestRating = WatcherMetadata.InterestRating;
                         dataset.MatchedMonitor = false;
                     }
                 }
                 else
                 {
-                    emslUsageType = WatcherMetadata.EMSLUsageType;
-                    emslProposalId = WatcherMetadata.EMSLProposalID;
-                    emslProposalUsers = WatcherMetadata.EMSLProposalUsers;
                     dataset.InterestRating = WatcherMetadata.InterestRating;
                 }
 
-                dataset.DmsData.EMSLUsageType = emslUsageType;
+                dataset.DmsData.EMSLUsageType = WatcherMetadata.EMSLUsageType;
                 if (!string.IsNullOrWhiteSpace(dataset.DmsData.EMSLUsageType) &&
                     dataset.DmsData.EMSLUsageType.Equals("USER", StringComparison.OrdinalIgnoreCase))
                 {
-                    dataset.DmsData.EMSLProposalID = emslProposalId;
-                    dataset.EMSLProposalUsers.Load(emslProposalUsers);
+                    dataset.DmsData.EMSLProposalID = WatcherMetadata.EMSLProposalID;
+                    dataset.EMSLProposalUsers.Load(WatcherMetadata.EMSLProposalUsers);
                 }
                 else
                 {
@@ -697,9 +684,7 @@ namespace BuzzardWPF.Management
 
                 Datasets.Add(dataset);
 
-                ApplicationLogger.LogMessage(
-                    0,
-                    string.Format("Data source: '{0}' found.", datasetFileOrFolderPath));
+                ApplicationLogger.LogMessage(0, $"Data source: '{datasetFileOrFolderPath}' found.");
             }
 
             ResolveDms(dataset, newDatasetFound);

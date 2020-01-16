@@ -1,46 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive.Linq;
 using System.Text.RegularExpressions;
 using BuzzardWPF.Properties;
-using DynamicData.Binding;
-using LcmsNetData.Data;
 using ReactiveUI;
 
 namespace BuzzardWPF.Management
 {
     public class QcMonitorData : ReactiveObject
     {
-        private string emslUsageType;
-        private string emslProposalId;
         private string experimentName;
         private string datasetNameMatch;
-        private readonly ObservableAsPropertyHelper<string> emslProposalUsersNames;
 
         public QcMonitorData()
         {
-            emslProposalUsersNames = this.WhenAnyValue(x => x.EmslProposalUsers, x => x.EmslProposalUsers.Count)
-                .Select(x => string.Join("; ", x.Item1.Select(y => y.UserName)))
-                .ToProperty(this, x => x.EmslProposalUsersNames, initialValue: string.Join("; ", EmslProposalUsers.Select(y => y.UserName)));
-
             this.WhenAnyValue(x => x.DatasetNameMatch).Subscribe(_ => UpdateDatasetNameMatchRegex());
         }
-
-        public string EmslUsageType
-        {
-            get => emslUsageType;
-            set => this.RaiseAndSetIfChanged(ref emslUsageType, value);
-        }
-
-        public string EmslProposalId
-        {
-            get => emslProposalId;
-            set => this.RaiseAndSetIfChanged(ref emslProposalId, value);
-        }
-
-        public ObservableCollectionExtended<ProposalUser> EmslProposalUsers { get; } = new ObservableCollectionExtended<ProposalUser>();
-        public string EmslProposalUsersNames => emslProposalUsersNames.Value;
 
         public string ExperimentName
         {
@@ -64,24 +39,6 @@ namespace BuzzardWPF.Management
 
         public bool MatchesAny => string.IsNullOrWhiteSpace(DatasetNameMatch) || DatasetNameMatch == "*";
 
-        public string EmslUsageDisplayString
-        {
-            get
-            {
-                if (string.IsNullOrWhiteSpace(EmslUsageType) || !EmslUsageType.Equals("USER", StringComparison.OrdinalIgnoreCase))
-                {
-                    return null;
-                }
-
-                if (!EmslProposalUsers.Any())
-                {
-                    return EmslProposalId;
-                }
-
-                return $"{EmslProposalId}: {EmslProposalUsersNames}";
-            }
-        }
-
         private void UpdateDatasetNameMatchRegex()
         {
             if (string.IsNullOrWhiteSpace(datasetNameMatch) || datasetNameMatch.Equals("*"))
@@ -102,24 +59,11 @@ namespace BuzzardWPF.Management
             var split = qcMonitorData.Split(new[] {';'}, StringSplitOptions.None);
             ExperimentName = split[0];
             DatasetNameMatch = split[1];
-            EmslUsageType = split[2];
-            if (!string.IsNullOrWhiteSpace(EmslUsageType) && EmslUsageType.Equals("USER", StringComparison.OrdinalIgnoreCase))
-            {
-                EmslProposalId = split[3];
-                var emslUsers = split[4].Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries).ToList();
-                EmslProposalUsers.AddRange(DMS_DataAccessor.Instance.FindSavedEMSLProposalUsers(EmslProposalId, emslUsers));
-            }
         }
 
         private string SaveToString()
         {
-            var data = ExperimentName + ";" + DatasetNameMatch + ";" + EmslUsageType;
-            if (!string.IsNullOrWhiteSpace(EmslUsageType) && EmslUsageType.Equals("USER", StringComparison.OrdinalIgnoreCase))
-            {
-                data += ";" + EmslProposalId + ";" + string.Join(",", EmslProposalUsers.Select(x => x.UserID));
-            }
-
-            return data;
+            return ExperimentName + ";" + DatasetNameMatch;
         }
 
         public static IEnumerable<QcMonitorData> LoadSettings()

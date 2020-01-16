@@ -119,15 +119,6 @@
     <Setting Name="WatcherInterestRating" Type="System.String" Scope="User">
       <Value Profile="(Default)">Unreviewed</Value>
     </Setting>
-    <Setting Name="WatcherQCEMSLProposalID" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="WatcherQCEMSLUsageType" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="WatcherQCEMSLUsers" Type="System.Collections.Specialized.StringCollection" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
     <Setting Name="WatcherQCExperimentName" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
