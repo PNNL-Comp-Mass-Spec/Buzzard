@@ -89,7 +89,6 @@ namespace BuzzardWPF.Management
             datasetTypesSource.Dispose();
             separationTypesSource.Dispose();
             cartNamesSource.Dispose();
-            cartConfigNamesSource.Dispose();
         }
 
         static DMS_DataAccessor()
@@ -115,8 +114,11 @@ namespace BuzzardWPF.Management
 
             if (tempInstrumentData.Count != 0)
             {
-                instrumentDataSource.Clear();
-                instrumentDataSource.AddRange(tempInstrumentData.Select(instDatum => instDatum.DMSName));
+                instrumentDataSource.Edit(sourceList =>
+                {
+                    sourceList.Clear();
+                    sourceList.AddRange(tempInstrumentData.Select(instDatum => instDatum.DMSName));
+                });
 
                 InstrumentDetails.Clear();
 
@@ -124,7 +126,7 @@ namespace BuzzardWPF.Management
                 {
                     if (!InstrumentDetails.ContainsKey(instrument.DMSName))
                     {
-                        InstrumentDetails.Add(instrument.DMSName, instrument);
+                        InstrumentDetails.Add(instrument.DMSName, (InstrumentInfo)instrument.Clone());
                     }
                 }
             }
@@ -135,8 +137,11 @@ namespace BuzzardWPF.Management
                 ApplicationLogger.LogError(0, "User retrieval returned null.");
             else
             {
-                operatorDataSource.Clear();
-                operatorDataSource.AddRange(tempUserList.Select(userDatum => userDatum.UserName));
+                operatorDataSource.Edit(sourceList =>
+                {
+                    sourceList.Clear();
+                    sourceList.AddRange(tempUserList.Select(userDatum => userDatum.UserName));
+                });
             }
 
             // Load Dataset Types
@@ -145,8 +150,11 @@ namespace BuzzardWPF.Management
                 ApplicationLogger.LogError(0, "Dataset Types retrieval returned null.");
             else
             {
-                datasetTypesSource.Clear();
-                datasetTypesSource.AddRange(tempDatasetTypesList);
+                datasetTypesSource.Edit(sourceList =>
+                {
+                    sourceList.Clear();
+                    sourceList.AddRange(tempDatasetTypesList);
+                });
             }
 
             // Load Separation Types
@@ -155,8 +163,11 @@ namespace BuzzardWPF.Management
                 ApplicationLogger.LogError(0, "Separation types retrieval returned null.");
             else
             {
-                separationTypesSource.Clear();
-                separationTypesSource.AddRange(tempSeparationTypesList);
+                separationTypesSource.Edit(sourceList =>
+                {
+                    sourceList.Clear();
+                    sourceList.AddRange(tempSeparationTypesList);
+                });
             }
 
             // Load Cart Names
@@ -165,8 +176,15 @@ namespace BuzzardWPF.Management
                 ApplicationLogger.LogError(0, "LC Cart names list retrieval returned null.");
             else
             {
-                cartNamesSource.Clear();
-                cartNamesSource.AddRange(tempCartsList);
+                cartNamesSource.Edit(sourceList =>
+                {
+                    sourceList.Clear();
+                    sourceList.AddRange(tempCartsList);
+                    if (!sourceList.Contains("unknown"))
+                    {
+                        sourceList.Add("unknown");
+                    }
+                });
             }
 
             // Guarantee "unknown" cart name option
@@ -190,8 +208,11 @@ namespace BuzzardWPF.Management
                 ApplicationLogger.LogError(0, "Column data list retrieval returned null.");
             else
             {
-                columnDataSource.Clear();
-                columnDataSource.AddRange(tempColumnData);
+                columnDataSource.Edit(sourceList =>
+                {
+                    sourceList.Clear();
+                    sourceList.AddRange(tempColumnData);
+                });
             }
 
             // Load Experiments
@@ -200,8 +221,11 @@ namespace BuzzardWPF.Management
                 ApplicationLogger.LogError(0, "Experiment list retrieval returned null.");
             else
             {
-                Experiments.Clear();
-                Experiments.AddRange(CloneAndStringDeduplicateExperiments(experimentList));
+                Experiments.Edit(sourceList =>
+                {
+                    sourceList.Clear();
+                    sourceList.AddRange(CloneAndStringDeduplicateExperiments(experimentList));
+                });
             }
 
             // Load Work Packages
@@ -216,8 +240,11 @@ namespace BuzzardWPF.Management
                 }
 
                 WorkPackageMap = workPackageMap;
-                WorkPackages.Clear();
-                WorkPackages.AddRange(WorkPackageMap.Values.OrderBy(x => x.ChargeCode));
+                WorkPackages.Edit(sourceList =>
+                {
+                    sourceList.Clear();
+                    sourceList.AddRange(WorkPackageMap.Values.OrderBy(x => x.ChargeCode));
+                });
             }
 
             // Load EMSL Proposal information
@@ -325,7 +352,6 @@ namespace BuzzardWPF.Management
         private readonly SourceList<string> datasetTypesSource = new SourceList<string>();
         private readonly SourceList<string> separationTypesSource = new SourceList<string>();
         private readonly SourceList<string> cartNamesSource = new SourceList<string>();
-        private readonly SourceList<string> cartConfigNamesSource = new SourceList<string>();
 
         #endregion
 
@@ -639,9 +665,11 @@ namespace BuzzardWPF.Management
                 proposalUsersList.Clear();
                 proposalUsersList.AddRange(eusUsers);
 
-                proposalIDsSource.Clear();
-                proposalIDsSource.AddRange(pidIndexedCrossReferenceList.Keys);
-
+                proposalIDsSource.Edit(sourceList =>
+                {
+                    sourceList.Clear();
+                    sourceList.AddRange(pidIndexedCrossReferenceList.Keys);
+                });
             }
             catch (Exception ex)
             {
