@@ -335,6 +335,20 @@
                                     VerticalAlignment="Center"
                                     IsReadOnly="true"
                                     Text="%appdata%\Buzzard\Log" />
+                        <Button Grid.Row="4" Grid.Column="2"
+                            Width="160"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Command="{Binding OpenLogDirectoryCommand}"
+                            Content="Open Log Folder"
+                            Style="{StaticResource SimpleButtonStyle}" />
+                        <Button Grid.Row="4" Grid.Column="3"
+                            Width="160"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Command="{Binding OpenLogFileCommand}"
+                            Content="Open Log File"
+                            Style="{StaticResource SimpleButtonStyle}" />
                             </Grid>
                         </TabItem>
                     </TabControl>

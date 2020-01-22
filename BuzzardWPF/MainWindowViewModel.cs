@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Concurrency;
@@ -106,6 +107,8 @@ namespace BuzzardWPF
             SelectTriggerFileLocationCommand = ReactiveCommand.Create(SelectTriggerFileLocation);
             UseTestFolderCommand = ReactiveCommand.Create(UseTestFolder);
             ForceDmsReloadCommand = ReactiveCommand.CreateFromTask(ForceDmsReload);
+            OpenLogDirectoryCommand = ReactiveCommand.Create(OpenLogDirectory);
+            OpenLogFileCommand = ReactiveCommand.Create(OpenLogFile);
 
             // Auto-save settings every 5 minutes, on a background thread
             settingsSaveTimer = new Timer(SaveSettings_Tick, this, TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(5));
@@ -145,6 +148,8 @@ namespace BuzzardWPF
         public ReactiveCommand<Unit, Unit> SelectTriggerFileLocationCommand { get; }
         public ReactiveCommand<Unit, Unit> UseTestFolderCommand { get; }
         public ReactiveCommand<Unit, Unit> ForceDmsReloadCommand { get; }
+        public ReactiveCommand<Unit, Unit> OpenLogDirectoryCommand { get; }
+        public ReactiveCommand<Unit, Unit> OpenLogFileCommand { get; }
 
         /// <summary>
         /// Title to display in the window title bar
@@ -560,6 +565,31 @@ namespace BuzzardWPF
         private void UseTestFolder()
         {
             SetTriggerFolderToTestPath();
+        }
+
+        private void OpenLogDirectory()
+        {
+            var logPath = FileLogger.LogPath;
+            var logDirectory = Path.GetDirectoryName(logPath);
+            var process = new System.Diagnostics.Process();
+            process.StartInfo = new System.Diagnostics.ProcessStartInfo
+            {
+                UseShellExecute = true,
+                FileName = logDirectory,
+            };
+            process.Start();
+        }
+
+        private void OpenLogFile()
+        {
+            var logPath = FileLogger.LogPath;
+            var process = new System.Diagnostics.Process();
+            process.StartInfo = new System.Diagnostics.ProcessStartInfo
+            {
+                UseShellExecute = true,
+                FileName = logPath,
+            };
+            process.Start();
         }
     }
 }
