@@ -189,8 +189,7 @@ namespace BuzzardWPF.Management
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error loading data, task " + currentTask + ": " + ex.Message, "Error",
-                                MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                ApplicationLogger.LogError(LogLevel.Error, "Error loading data, task " + currentTask + ": " + ex.Message, ex);
             }
 
             // Force a garbage collection to try to clean up the freed memory from the trie
