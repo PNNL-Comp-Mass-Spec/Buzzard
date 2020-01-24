@@ -416,24 +416,30 @@ namespace BuzzardWPF.Management
                     organismStore.Add(exp.Organism, exp.Organism);
                 }
 
-                if (reasonStore.TryGetValue(exp.Reason, out var reason))
+                if (!string.IsNullOrWhiteSpace(exp.Reason))
                 {
-                    oExp.Reason = reason;
-                }
-                else
-                {
-                    oExp.Reason = exp.Reason;
-                    reasonStore.Add(exp.Reason, exp.Reason);
+                    if (reasonStore.TryGetValue(exp.Reason, out var reason))
+                    {
+                        oExp.Reason = reason;
+                    }
+                    else
+                    {
+                        oExp.Reason = exp.Reason;
+                        reasonStore.Add(exp.Reason, exp.Reason);
+                    }
                 }
 
-                if (researcherStore.TryGetValue(exp.Researcher, out var researcher))
+                if (!string.IsNullOrWhiteSpace(exp.Researcher))
                 {
-                    oExp.Researcher = researcher;
-                }
-                else
-                {
-                    oExp.Researcher = exp.Researcher;
-                    researcherStore.Add(exp.Researcher, exp.Researcher);
+                    if (researcherStore.TryGetValue(exp.Researcher, out var researcher))
+                    {
+                        oExp.Researcher = researcher;
+                    }
+                    else
+                    {
+                        oExp.Researcher = exp.Researcher;
+                        researcherStore.Add(exp.Researcher, exp.Researcher);
+                    }
                 }
 
                 yield return oExp;
@@ -444,14 +450,14 @@ namespace BuzzardWPF.Management
         {
             // Seems crazy to do this, but reading from the database results in many instances of identical strings.
             // This takes the strings that could be identical, checks them, and only keeps one copy of that string.
+            var experimentStore = new Dictionary<string, string>();
+            var cartNameStore = new Dictionary<string, string>();
+            var emslUsageTypeStore = new Dictionary<string, string>();
             var datasetTypeStore = new Dictionary<string, string>();
             var cartConfigNameStore = new Dictionary<string, string>();
             var workPackageStore = new Dictionary<string, string>();
-            var emslUsageTypeStore = new Dictionary<string, string>();
             var emslProposalIdStore = new Dictionary<string, string>();
             var userListStore = new Dictionary<string, string>();
-            var experimentStore = new Dictionary<string, string>();
-            var cartNameStore = new Dictionary<string, string>();
             var commentStore = new Dictionary<string, string>();
 
             foreach (var data in sourceData)
@@ -467,15 +473,113 @@ namespace BuzzardWPF.Management
                     MRMFileID = data.MRMFileID
                 };
 
-                if (datasetTypeStore.TryGetValue(data.DatasetType, out var datasetType)) { oData.DatasetType = datasetType; } else { oData.DatasetType = data.DatasetType; datasetTypeStore.Add(data.DatasetType, data.DatasetType); }
-                if (cartConfigNameStore.TryGetValue(data.CartConfigName, out var cartConfigName)) { oData.CartConfigName = cartConfigName; } else { oData.CartConfigName = data.CartConfigName; cartConfigNameStore.Add(data.CartConfigName, data.CartConfigName); }
-                if (workPackageStore.TryGetValue(data.WorkPackage, out var workPackage)) { oData.WorkPackage = workPackage; } else { oData.WorkPackage = data.WorkPackage; workPackageStore.Add(data.WorkPackage, data.WorkPackage); }
-                if (emslUsageTypeStore.TryGetValue(data.EMSLUsageType, out var emslUsageType)) { oData.EMSLUsageType = emslUsageType; } else { oData.EMSLUsageType = data.EMSLUsageType; emslUsageTypeStore.Add(data.EMSLUsageType, data.EMSLUsageType); }
-                if (emslProposalIdStore.TryGetValue(data.EMSLProposalID, out var emslProposalId)) { oData.EMSLProposalID = emslProposalId; } else { oData.EMSLProposalID = data.EMSLProposalID; emslProposalIdStore.Add(data.EMSLProposalID, data.EMSLProposalID); }
-                if (userListStore.TryGetValue(data.UserList, out var userList)) { oData.UserList = userList; } else { oData.UserList = data.UserList; userListStore.Add(data.UserList, data.UserList); }
-                if (experimentStore.TryGetValue(data.Experiment, out var experiment)) { oData.Experiment = experiment; } else { oData.Experiment = data.Experiment; experimentStore.Add(data.Experiment, data.Experiment); }
-                if (cartNameStore.TryGetValue(data.CartName, out var cartName)) { oData.CartName = cartName; } else { oData.CartName = data.CartName; cartNameStore.Add(data.CartName, data.CartName); }
-                if (commentStore.TryGetValue(data.Comment, out var comment)) { oData.Comment = comment; } else { oData.Comment = data.Comment; commentStore.Add(data.Comment, data.Comment); }
+                if (experimentStore.TryGetValue(data.Experiment, out var experiment))
+                {
+                    oData.Experiment = experiment;
+                }
+                else
+                {
+                    oData.Experiment = data.Experiment;
+                    experimentStore.Add(data.Experiment, data.Experiment);
+                }
+
+                if (cartNameStore.TryGetValue(data.CartName, out var cartName))
+                {
+                    oData.CartName = cartName;
+                }
+                else
+                {
+                    oData.CartName = data.CartName;
+                    cartNameStore.Add(data.CartName, data.CartName);
+                }
+
+                if (emslUsageTypeStore.TryGetValue(data.EMSLUsageType, out var emslUsageType))
+                {
+                    oData.EMSLUsageType = emslUsageType;
+                }
+                else
+                {
+                    oData.EMSLUsageType = data.EMSLUsageType;
+                    emslUsageTypeStore.Add(data.EMSLUsageType, data.EMSLUsageType);
+                }
+
+                if (!string.IsNullOrWhiteSpace(data.DatasetType))
+                {
+                    if (datasetTypeStore.TryGetValue(data.DatasetType, out var datasetType))
+                    {
+                        oData.DatasetType = datasetType;
+                    }
+                    else
+                    {
+                        oData.DatasetType = data.DatasetType;
+                        datasetTypeStore.Add(data.DatasetType, data.DatasetType);
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(data.CartConfigName))
+                {
+                    if (cartConfigNameStore.TryGetValue(data.CartConfigName, out var cartConfigName))
+                    {
+                        oData.CartConfigName = cartConfigName;
+                    }
+                    else
+                    {
+                        oData.CartConfigName = data.CartConfigName;
+                        cartConfigNameStore.Add(data.CartConfigName, data.CartConfigName);
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(data.WorkPackage))
+                {
+                    if (workPackageStore.TryGetValue(data.WorkPackage, out var workPackage))
+                    {
+                        oData.WorkPackage = workPackage;
+                    }
+                    else
+                    {
+                        oData.WorkPackage = data.WorkPackage;
+                        workPackageStore.Add(data.WorkPackage, data.WorkPackage);
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(data.EMSLProposalID))
+                {
+                    if (emslProposalIdStore.TryGetValue(data.EMSLProposalID, out var emslProposalId))
+                    {
+                        oData.EMSLProposalID = emslProposalId;
+                    }
+                    else
+                    {
+                        oData.EMSLProposalID = data.EMSLProposalID;
+                        emslProposalIdStore.Add(data.EMSLProposalID, data.EMSLProposalID);
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(data.UserList))
+                {
+                    if (userListStore.TryGetValue(data.UserList, out var userList))
+                    {
+                        oData.UserList = userList;
+                    }
+                    else
+                    {
+                        oData.UserList = data.UserList;
+                        userListStore.Add(data.UserList, data.UserList);
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(data.Comment))
+                {
+                    if (commentStore.TryGetValue(data.Comment, out var comment))
+                    {
+                        oData.Comment = comment;
+                    }
+                    else
+                    {
+                        oData.Comment = data.Comment;
+                        commentStore.Add(data.Comment, data.Comment);
+                    }
+                }
 
                 // TODO: Lock the data by setting "oData.LockData"...
 
