@@ -4,6 +4,14 @@
         <name>LcmsNetSQLiteTools</name>
     </assembly>
     <members>
+        <member name="M:LcmsNetSQLiteTools.ExtensionMethods.LimitStringDuplication(System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            Performs memory de-duplication of strings, since database reads can give us a large number of duplicated strings
+            </summary>
+            <param name="input"></param>
+            <param name="deDuplicationDictionary"></param>
+            <returns></returns>
+        </member>
         <member name="T:LcmsNetSQLiteTools.DatabaseConnectionStringException">
             <summary>
             Custom exception for reporting invalid database connection string
@@ -67,12 +75,23 @@
             Method for setting the property
             </summary>
         </member>
-        <member name="M:LcmsNetSQLiteTools.PropertyToColumnMapping.PropertyColumnMapping.#ctor(System.String,System.Type,System.Func{System.Object,System.Object},System.Action{System.Object,System.Object})">
+        <member name="P:LcmsNetSQLiteTools.PropertyToColumnMapping.PropertyColumnMapping.IsUniqueColumn">
+            <summary>
+            Is property is marked as a column with unique values
+            </summary>
+        </member>
+        <member name="P:LcmsNetSQLiteTools.PropertyToColumnMapping.PropertyColumnMapping.DoStringDeDuplication">
+            <summary>
+            True if the property type is string and the property is not marked as a unique value
+            </summary>
+        </member>
+        <member name="M:LcmsNetSQLiteTools.PropertyToColumnMapping.PropertyColumnMapping.#ctor(System.String,System.Type,System.Boolean,System.Func{System.Object,System.Object},System.Action{System.Object,System.Object})">
             <summary>
             Constructor
             </summary>
             <param name="columnName">SQLite table column name</param>
             <param name="propertyType">Type of the property, for conversion handling</param>
+            <param name="isUniqueColumn">If the column has a 'unique' constraint, or other reason to believe that duplicates never occur</param>
             <param name="readProperty">Method for reading the property</param>
             <param name="setProperty">Method for setting the property</param>
         </member>

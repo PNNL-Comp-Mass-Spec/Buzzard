@@ -102,11 +102,6 @@
             Name of the column
             </summary>
         </member>
-        <member name="F:LcmsNetData.Data.ColumnData.m_systemIndex">
-            <summary>
-            System index of the column.
-            </summary>
-        </member>
         <member name="F:LcmsNetData.Data.ColumnData.m_status">
             <summary>
             Status of the column
@@ -160,11 +155,6 @@
         <member name="P:LcmsNetData.Data.ColumnData.ID">
             <summary>
             Gets or sets the column index.
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Data.ColumnData.SystemID">
-            <summary>
-            Gets or sets the system index.
             </summary>
         </member>
         <member name="P:LcmsNetData.Data.ColumnData.Name">
@@ -241,7 +231,7 @@
             </summary>
             <remarks>Instrument name, then a space, then the instrument description</remarks>
         </member>
-        <member name="P:LcmsNetData.Data.InstrumentInfo.MethodName">
+        <member name="P:LcmsNetData.Data.InstrumentInfo.CaptureMethod">
             <summary>
             Gets or sets the name of the method used to capture data from this instrument
             </summary>
@@ -267,6 +257,53 @@
         <member name="M:LcmsNetData.Data.InstrumentInfo.Clone">
             <summary>
             Clone - make a deep copy
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:LcmsNetData.Data.IRequestedRunData">
+            <summary>
+            The necessary set of data objects needed to store DMS requested run information
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.IRequestedRunData.DmsData">
+            <summary>
+            Gets or sets the list of data downloaded from DMS for this sample
+            </summary>
+        </member>
+        <member name="T:LcmsNetData.Data.IRequestedRunDataWithPalData">
+            <summary>
+            The necessary set of data objects needed to store DMS requested run information,
+            including the wellplate/vial tray and well/vial location of the sample in the requested run
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.IRequestedRunDataWithPalData.PAL">
+            <summary>
+            Gets the pal data associated with this sample.
+            </summary>
+        </member>
+        <member name="T:LcmsNetData.Data.ISampleData">
+            <summary>
+            Interface for use by SQLiteTools to limit object types stored to a "Queue" cache
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.ISampleData.Operator">
+            <summary>
+            Name of operator (as entered in DMS)
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.ISampleData.InstrumentMethod">
+            <summary>
+            Gets or sets the instrument method.
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.ISampleData.Volume">
+            <summary>
+            Gets or sets the volume of the sample to inject.
+            </summary>
+        </member>
+        <member name="M:LcmsNetData.Data.ISampleData.GetNewNonDummy">
+            <summary>
+            Get a new non-dummy instance
             </summary>
             <returns></returns>
         </member>
@@ -426,6 +463,11 @@
             For special read handling: Supply the name of the method to use for reading the value (preferably using the "nameof(...)" compiler method). Needs to have a unique name, no parameters, and return the same type as the property.
             </summary>
         </member>
+        <member name="P:LcmsNetData.Data.PersistenceSettingAttribute.IsUniqueColumn">
+            <summary>
+            For special read handling: Supply the name of the method to use for reading the value (preferably using the "nameof(...)" compiler method). Needs to have a unique name, no parameters, and return the same type as the property.
+            </summary>
+        </member>
         <member name="M:LcmsNetData.Data.PersistenceSettingAttribute.#ctor">
             <summary>
             Default constructor
@@ -436,87 +478,6 @@
             Constructor to simply set a prefix
             </summary>
             <param name="prefix"></param>
-        </member>
-        <member name="F:LcmsNetData.Data.SampleDataBasic.dmsData">
-            <summary>
-            DMS Data structure.
-            </summary>
-        </member>
-        <member name="F:LcmsNetData.Data.SampleDataBasic.palData">
-            <summary>
-            Pal Data reference.
-            </summary>
-        </member>
-        <member name="F:LcmsNetData.Data.SampleDataBasic.columnData">
-            <summary>
-            Information regarding what column the sample is to be, or did run on.
-            </summary>
-        </member>
-        <member name="F:LcmsNetData.Data.SampleDataBasic.methodBasic">
-            <summary>
-            LC Method that controls all of the hardware via the scheduling interface - UI consistent version.
-            </summary>
-        </member>
-        <member name="F:LcmsNetData.Data.SampleDataBasic.instrumentData">
-            <summary>
-            Instrument info.
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Data.SampleDataBasic.InstrumentData">
-            <summary>
-            Gets or sets the instrument object data.
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Data.SampleDataBasic.ActualLCMethodBasic">
-            <summary>
-            Gets or sets the experiment setup object data.
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Data.SampleDataBasic.LCMethodBasic">
-            <summary>
-            Gets or sets the experiment setup object data.
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Data.SampleDataBasic.DmsData">
-            <summary>
-            Gets or sets the list of data downloaded from DMS for this sample
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Data.SampleDataBasic.PAL">
-            <summary>
-            Gets or sets the pal data associated with this sample.
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Data.SampleDataBasic.ColumnData">
-            <summary>
-            Gets or sets the column data this sample is/was run on.
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Data.SampleDataBasic.Operator">
-            <summary>
-            Operator performing LC run
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Data.SampleDataBasic.RunStart">
-            <inheritdoc />
-        </member>
-        <member name="P:LcmsNetData.Data.SampleDataBasic.RunFinish">
-            <inheritdoc />
-        </member>
-        <member name="P:LcmsNetData.Data.SampleDataBasic.ColumnName">
-            <inheritdoc />
-        </member>
-        <member name="P:LcmsNetData.Data.SampleDataBasic.InstrumentName">
-            <inheritdoc />
-        </member>
-        <member name="P:LcmsNetData.Data.SampleDataBasic.SeparationType">
-            <inheritdoc />
-        </member>
-        <member name="P:LcmsNetData.Data.SampleDataBasic.CaptureSubdirectoryPath">
-            <inheritdoc />
-        </member>
-        <member name="P:LcmsNetData.Data.SampleDataBasic.InterestRating">
-            <inheritdoc />
         </member>
         <member name="T:LcmsNetData.Data.SampleQueryData">
             <summary>
@@ -1087,43 +1048,43 @@
             Fired when the application has an error.
             </summary>
         </member>
-        <member name="M:LcmsNetData.Logging.ApplicationLogger.LogError(System.Int32,System.String,System.Exception,LcmsNetData.Data.SampleDataBasic)">
+        <member name="M:LcmsNetData.Logging.ApplicationLogger.LogError(System.Int32,System.String,System.Exception,System.Object)">
             <summary>
             Logs an error to the listening error output streams
             </summary>
             <param name="errorLevel">Level of the error message so more verbose errors can be filtered (0 is most important, 5 is least important)</param>
             <param name="message">Error message</param>
             <param name="ex">Exception</param>
-            <param name="sample">Data for a sample</param>
+            <param name="errorObject">Data for a sample</param>
         </member>
-        <member name="M:LcmsNetData.Logging.ApplicationLogger.LogError(LcmsNetData.Logging.LogLevel,System.String,System.Exception,LcmsNetData.Data.SampleDataBasic)">
+        <member name="M:LcmsNetData.Logging.ApplicationLogger.LogError(LcmsNetData.Logging.LogLevel,System.String,System.Exception,System.Object)">
             <summary>
             Logs an error to the listening error output streams
             </summary>
             <param name="errorLevel">Level of the error message so more verbose errors can be filtered</param>
             <param name="message">Error message</param>
             <param name="ex">Exception</param>
-            <param name="sample">Data for a sample</param>
+            <param name="errorObject">Data for a sample</param>
         </member>
-        <member name="M:LcmsNetData.Logging.ApplicationLogger.LogMessage(System.Int32,System.String,LcmsNetData.Data.SampleDataBasic)">
+        <member name="M:LcmsNetData.Logging.ApplicationLogger.LogMessage(System.Int32,System.String,System.Object)">
             <summary>
             Logs a message to the listening message output streams.
             </summary>
             <param name="messageLevel">Level of the message so more verbose messages can be filtered (0 is most important, 5 is least important)</param>
             <param name="message">Message to log</param>
-            <param name="sample">Sample data</param>
+            <param name="errorObject">Sample data</param>
             <remarks>
             When MessageLevel is 0, only critical errors are logged
             When MessageLevel is 5, all messages are logged
             </remarks>
         </member>
-        <member name="M:LcmsNetData.Logging.ApplicationLogger.LogMessage(LcmsNetData.Logging.LogLevel,System.String,LcmsNetData.Data.SampleDataBasic)">
+        <member name="M:LcmsNetData.Logging.ApplicationLogger.LogMessage(LcmsNetData.Logging.LogLevel,System.String,System.Object)">
             <summary>
             Logs a message to the listening message output streams.
             </summary>
             <param name="messageLevel">Level of the message so more verbose messages can be filtered</param>
             <param name="message">Message to log</param>
-            <param name="sample">Sample data</param>
+            <param name="errorObject">Sample data</param>
             <remarks>
             When MessageLevel is 0, only critical errors are logged
             When MessageLevel is 5, all messages are logged
@@ -1150,12 +1111,12 @@
             </summary>
             <param name="message">Error message</param>
         </member>
-        <member name="M:LcmsNetData.Logging.ErrorLoggerArgs.#ctor(System.String,LcmsNetData.Data.SampleDataBasic)">
+        <member name="M:LcmsNetData.Logging.ErrorLoggerArgs.#ctor(System.String,System.Object)">
             <summary>
             Constructor that takes the error message.
             </summary>
             <param name="message">Error message</param>
-            <param name="sample"></param>
+            <param name="errorObject"></param>
         </member>
         <member name="M:LcmsNetData.Logging.ErrorLoggerArgs.#ctor(System.String,System.Exception)">
             <summary>
@@ -1164,22 +1125,22 @@
             <param name="message">Error message</param>
             <param name="ex">Exception found</param>
         </member>
-        <member name="M:LcmsNetData.Logging.ErrorLoggerArgs.#ctor(System.String,System.Exception,LcmsNetData.Data.SampleDataBasic)">
+        <member name="M:LcmsNetData.Logging.ErrorLoggerArgs.#ctor(System.String,System.Exception,System.Object)">
             <summary>
             Constructor that takes an error message and an exception.
             </summary>
             <param name="message">Error message</param>
             <param name="ex">Exception found</param>
-            <param name="sample"></param>
+            <param name="errorObject"></param>
         </member>
-        <member name="M:LcmsNetData.Logging.ErrorLoggerArgs.#ctor(System.Int32,System.String,System.Exception,LcmsNetData.Data.SampleDataBasic)">
+        <member name="M:LcmsNetData.Logging.ErrorLoggerArgs.#ctor(System.Int32,System.String,System.Exception,System.Object)">
             <summary>
             Constructor that takes an error message and an exception.
             </summary>
             <param name="logLevel">Error logging level</param>
             <param name="message">Error message</param>
             <param name="ex">Exception found</param>
-            <param name="sample"></param>
+            <param name="errorObject"></param>
         </member>
         <member name="P:LcmsNetData.Logging.ErrorLoggerArgs.Exception">
             <summary>
@@ -1368,27 +1329,27 @@
             </summary>
             <param name="message">Error message</param>
         </member>
-        <member name="M:LcmsNetData.Logging.MessageLoggerArgs.#ctor(System.String,LcmsNetData.Data.SampleDataBasic)">
+        <member name="M:LcmsNetData.Logging.MessageLoggerArgs.#ctor(System.String,System.Object)">
             <summary>
             Constructor that takes the error message.
             </summary>
             <param name="message">Error message</param>
-            <param name="sample"></param>
+            <param name="errorObject"></param>
         </member>
-        <member name="M:LcmsNetData.Logging.MessageLoggerArgs.#ctor(System.Int32,System.String,LcmsNetData.Data.SampleDataBasic)">
+        <member name="M:LcmsNetData.Logging.MessageLoggerArgs.#ctor(System.Int32,System.String,System.Object)">
             <summary>
             Constructor that takes the error message.
             </summary>
             <param name="logLevel">Error logging level</param>
             <param name="message">Error message</param>
-            <param name="sample"></param>
+            <param name="errorObject"></param>
         </member>
         <member name="P:LcmsNetData.Logging.MessageLoggerArgs.Message">
             <summary>
             Gets the error message associated with the error.
             </summary>
         </member>
-        <member name="P:LcmsNetData.Logging.MessageLoggerArgs.Sample">
+        <member name="P:LcmsNetData.Logging.MessageLoggerArgs.ErrorObject">
             <summary>
             Gets the sample data associated with this method.
             </summary>
@@ -1449,90 +1410,6 @@
             <param name="defaultResult">default result of the message box</param>
             <param name="options">message box options</param>
             <returns>Result specifying what button the user clicked</returns>
-        </member>
-        <member name="M:LcmsNetData.Method.LCMethodBasic.#ctor">
-            <summary>
-            Default Constructor
-            </summary>
-        </member>
-        <member name="F:LcmsNetData.Method.LCMethodBasic.startTime">
-            <summary>
-            Start time of the method
-            </summary>
-        </member>
-        <member name="F:LcmsNetData.Method.LCMethodBasic.methodDuration">
-            <summary>
-            Duration of the method.
-            </summary>
-        </member>
-        <member name="F:LcmsNetData.Method.LCMethodBasic.endTime">
-            <summary>
-            End date only calculated at call of End property to get around serialization issues.
-            </summary>
-        </member>
-        <member name="F:LcmsNetData.Method.LCMethodBasic.actualStart">
-            <summary>
-            Actual start time of the method
-            </summary>
-        </member>
-        <member name="F:LcmsNetData.Method.LCMethodBasic.actualEnd">
-            <summary>
-            Actual end time of the method
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Method.LCMethodBasic.Duration">
-            <summary>
-            Gets or sets the duration for this action.
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Method.LCMethodBasic.End">
-            <summary>
-            Gets the end time of the action.
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Method.LCMethodBasic.Name">
-            <summary>
-            Gets or sets the name of the Method.
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Method.LCMethodBasic.Start">
-            <summary>
-            Gets the start time of this action.
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Method.LCMethodBasic.ActualStart">
-            <summary>
-            Gets the actual start of the sample.
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Method.LCMethodBasic.ActualEnd">
-            <summary>
-            Gets the actual end time of the sample.
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Method.LCMethodBasic.ActualDuration">
-            <summary>
-            Gets the actual duration of the experiment that was run.
-            </summary>
-        </member>
-        <member name="M:LcmsNetData.Method.LCMethodBasic.SetStartTime(System.DateTime)">
-            <summary>
-            Sets the start time for the method and updates the internal event start times.
-            </summary>
-            <param name="start">Time to start the method.</param>
-        </member>
-        <member name="M:LcmsNetData.Method.LCMethodBasic.SetStartTimeAndDuration(System.DateTime,System.TimeSpan)">
-            <summary>
-            Set the method start time and duration
-            </summary>
-            <param name="start"></param>
-            <param name="duration"></param>
-        </member>
-        <member name="M:LcmsNetData.Method.LCMethodBasic.ToString">
-            <summary>
-            Returns the name of the method.
-            </summary>
-            <returns></returns>
         </member>
         <member name="P:LcmsNetData.System.PersistDataPaths.AppName">
             <summary>

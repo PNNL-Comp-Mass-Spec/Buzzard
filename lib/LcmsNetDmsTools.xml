@@ -26,6 +26,14 @@
             <param name="conversionFunction">Function to convert the value to T (should handle null)</param>
             <returns>Converted value</returns>
         </member>
+        <member name="M:LcmsNetDmsTools.ExtensionMethods.LimitStringDuplication(System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            Performs memory de-duplication of strings, since database reads can give us a large number of duplicated strings
+            </summary>
+            <param name="input"></param>
+            <param name="deDuplicationDictionary"></param>
+            <returns></returns>
+        </member>
         <member name="T:LcmsNetDmsTools.DMSDBTools">
             <summary>
             Class for interacting with DMS database
@@ -300,49 +308,49 @@
             Indicates this item is tied to a EMSL user proposal that is not tied to a request in DMS.
             </summary>
         </member>
-        <member name="M:LcmsNetDmsTools.DMSSampleValidator.IsSampleValid(LcmsNetData.Data.SampleDataBasic)">
+        <member name="M:LcmsNetDmsTools.DMSSampleValidator.IsSampleValid(LcmsNetData.Data.IRequestedRunData)">
             <summary>
             Validates a sample based on DMS criteria.
             </summary>
             <param name="sample"></param>
             <returns>True if valid, false if invalid</returns>
         </member>
-        <member name="M:LcmsNetDmsTools.DMSSampleValidator.IsSampleValidDetailed(LcmsNetData.Data.SampleDataBasic)">
+        <member name="M:LcmsNetDmsTools.DMSSampleValidator.IsSampleValidDetailed(LcmsNetData.Data.IRequestedRunData)">
             <summary>
             Validates a sample based on DMS criteria.
             </summary>
             <param name="sample"></param>
             <returns>True if valid, false if invalid</returns>
         </member>
-        <member name="M:LcmsNetDmsTools.DMSSampleValidator.IsEMSLProposalIDValid(LcmsNetData.Data.SampleDataBasic)">
+        <member name="M:LcmsNetDmsTools.DMSSampleValidator.IsEMSLProposalIDValid(LcmsNetData.Data.IRequestedRunData)">
             <summary>
             Validates EUS Proposal ID
             </summary>
             <param name="sample"></param>
             <returns></returns>
         </member>
-        <member name="M:LcmsNetDmsTools.DMSSampleValidator.IsEMSLUserValid(LcmsNetData.Data.SampleDataBasic)">
+        <member name="M:LcmsNetDmsTools.DMSSampleValidator.IsEMSLUserValid(LcmsNetData.Data.IRequestedRunData)">
             <summary>
             Validate EUS Users
             </summary>
             <param name="sample"></param>
             <returns></returns>
         </member>
-        <member name="M:LcmsNetDmsTools.DMSSampleValidator.IsEMSLUsageTypeValid(LcmsNetData.Data.SampleDataBasic)">
+        <member name="M:LcmsNetDmsTools.DMSSampleValidator.IsEMSLUsageTypeValid(LcmsNetData.Data.IRequestedRunData)">
             <summary>
             Validate EUS Usage
             </summary>
             <param name="sample"></param>
             <returns></returns>
         </member>
-        <member name="M:LcmsNetDmsTools.DMSSampleValidator.IsExperimentNameValid(LcmsNetData.Data.SampleDataBasic)">
+        <member name="M:LcmsNetDmsTools.DMSSampleValidator.IsExperimentNameValid(LcmsNetData.Data.IRequestedRunData)">
             <summary>
             Validate experiment name
             </summary>
             <param name="sample"></param>
             <returns></returns>
         </member>
-        <member name="M:LcmsNetDmsTools.DMSSampleValidator.IsCartConfigValid(LcmsNetData.Data.SampleDataBasic)">
+        <member name="M:LcmsNetDmsTools.DMSSampleValidator.IsCartConfigValid(LcmsNetData.Data.IRequestedRunData)">
             <summary>
             Validate cart config setting
             </summary>
