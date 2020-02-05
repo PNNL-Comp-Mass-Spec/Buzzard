@@ -19,7 +19,6 @@ namespace BuzzardWPF.ViewModels
         private string workPackageToolTipText;
         private bool workPackageWarning = false;
         private bool workPackageError = false;
-        private readonly ObservableAsPropertyHelper<string> emslProposalUsersText;
         private IReadOnlyList<string> cartConfigNameListSource = new List<string>();
 
         #endregion
@@ -41,8 +40,6 @@ namespace BuzzardWPF.ViewModels
             UseAllCommand = ReactiveCommand.Create(() => UseAllSettings(true));
             UseNoneCommand = ReactiveCommand.Create(() => UseAllSettings(false));
 
-            emslProposalUsersText = this.WhenAnyValue(x => x.Dataset.EMSLProposalUsers, x => x.Dataset.EMSLProposalUsers.Count)
-                .Select(x => x.Item1).Select(x => string.Join("; ", x.Select(y => y.UserName))).ToProperty(this, x => x.EmslProposalUsersText, initialValue:string.Join("; ", Dataset.EMSLProposalUsers.Select(y => y.UserName)));
             this.WhenAnyValue(x => x.Dataset.DmsData, x => x.Dataset.DmsData.EMSLProposalID).Subscribe(_ => UpdateProposalUsersSource());
             this.WhenAnyValue(x => x.Dataset.DmsData, x => x.Dataset.DmsData.WorkPackage).Subscribe(_ => UpdateWorkPackageToolTip());
             this.WhenAnyValue(x => x.Dataset.DmsData.CartName).ObserveOn(RxApp.MainThreadScheduler).Subscribe(LoadCartConfigsForCart);
@@ -50,7 +47,6 @@ namespace BuzzardWPF.ViewModels
 
         public void Dispose()
         {
-            emslProposalUsersText?.Dispose();
             PickExperimentCommand?.Dispose();
             PickWorkPackageCommand?.Dispose();
             UseAllCommand?.Dispose();
@@ -82,8 +78,6 @@ namespace BuzzardWPF.ViewModels
             get => emslProposalUsersSource;
             private set => this.RaiseAndSetIfChanged(ref emslProposalUsersSource, value);
         }
-
-        public string EmslProposalUsersText => emslProposalUsersText?.Value;
 
         public string WorkPackageToolTipText
         {
@@ -200,18 +194,20 @@ namespace BuzzardWPF.ViewModels
                 EMSLProposalUsersSource = DMS_DataAccessor.Instance.GetProposalUsers(Dataset.DmsData.EMSLProposalID);
             }
 
-            // Keep selected any users in the old selected users list that are part of the newly-selected proposal
-            var oldUsers = Dataset.EMSLProposalUsers.ToList();
-            Dataset.EMSLProposalUsers.Clear();
-            foreach (var user in oldUsers)
+            // Keep the EMSL proposal user only if they are also listed under the new proposal
+            var oldUser = Dataset.EMSLProposalUser;
+            Dataset.EMSLProposalUser = null;
+            if (oldUser == null)
             {
-                foreach (var proposalUser in emslProposalUsersSource)
+                return;
+            }
+
+            foreach (var proposalUser in emslProposalUsersSource)
+            {
+                if (oldUser.UserID.Equals(proposalUser.UserID))
                 {
-                    if (user.UserID.Equals(proposalUser.UserID))
-                    {
-                        Dataset.EMSLProposalUsers.Add(proposalUser);
-                        break;
-                    }
+                    Dataset.EMSLProposalUser = proposalUser;
+                    break;
                 }
             }
         }
@@ -236,7 +232,7 @@ namespace BuzzardWPF.ViewModels
 
             Dataset.UseLcColumn = shouldWe;
             Dataset.UseInterestRating = shouldWe;
-            Dataset.UseEMSLProposalUsers = shouldWe;
+            Dataset.UseEMSLProposalUser = shouldWe;
             Dataset.UseComment = shouldWe;
         }
 

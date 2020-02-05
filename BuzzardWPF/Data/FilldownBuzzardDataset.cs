@@ -24,7 +24,7 @@ namespace BuzzardWPF.Data
         private bool useLcColumn;
         private bool useComment;
         private bool useInterestRating;
-        private bool useEMSLProposalUsers;
+        private bool useEMSLProposalUser;
         private bool useWorkPackage;
         #endregion
 
@@ -45,7 +45,7 @@ namespace BuzzardWPF.Data
 
             UseLcColumn = true;
             UseInterestRating = true;
-            UseEMSLProposalUsers = true;
+            UseEMSLProposalUser = true;
             UseComment = true;
 
             DmsData.WorkPackage = "none";
@@ -129,10 +129,10 @@ namespace BuzzardWPF.Data
             set => this.RaiseAndSetIfChanged(ref useInterestRating, value);
         }
 
-        public bool UseEMSLProposalUsers
+        public bool UseEMSLProposalUser
         {
-            get => useEMSLProposalUsers;
-            set => this.RaiseAndSetIfChanged(ref useEMSLProposalUsers, value);
+            get => useEMSLProposalUser;
+            set => this.RaiseAndSetIfChanged(ref useEMSLProposalUser, value);
         }
 
         public bool UseWorkPackage
@@ -165,12 +165,7 @@ namespace BuzzardWPF.Data
             Settings.Default.FilldownEMSLProposal = DmsData.EMSLProposalID;
             Settings.Default.FilldownExperimentName = DmsData.Experiment;
             Settings.Default.FillDownWorkPackage = DmsData.WorkPackage;
-
-            var selectedEmslUsers = new StringCollection();
-            foreach (var user in EMSLProposalUsers)
-                selectedEmslUsers.Add(user.UserID.ToString());
-
-            Settings.Default.FilldownEMSLUsers = selectedEmslUsers;
+            Settings.Default.FilldownEMSLUser = EMSLProposalUser?.UserID.ToString();
 
             return true;
         }
@@ -189,6 +184,7 @@ namespace BuzzardWPF.Data
 
             DmsData.EMSLUsageType = Settings.Default.FilldownEMSLUsageType;
             DmsData.EMSLProposalID = Settings.Default.FilldownEMSLProposal;
+            EMSLProposalUser = DMS_DataAccessor.Instance.FindSavedEMSLProposalUser(DmsData.EMSLProposalID, Settings.Default.FilldownEMSLUser);
             DmsData.DatasetType = Settings.Default.FilldownDatasetType;
             DmsData.WorkPackage = Settings.Default.FillDownWorkPackage;
 
@@ -196,14 +192,6 @@ namespace BuzzardWPF.Data
             {
                 DmsData.WorkPackage = "none";
             }
-
-            List<string> selectedUsers;
-            if (Settings.Default.FilldownEMSLUsers == null)
-                selectedUsers = new List<string>();
-            else
-                selectedUsers = Settings.Default.FilldownEMSLUsers.Cast<string>().ToList();
-
-            EMSLProposalUsers.Load(DMS_DataAccessor.Instance.FindSavedEMSLProposalUsers(DmsData.EMSLProposalID, selectedUsers));
         }
     }
 }

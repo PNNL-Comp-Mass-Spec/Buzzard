@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-using DynamicData.Binding;
 using LcmsNetData.Data;
 
 namespace BuzzardWPF.ViewModels
@@ -8,6 +7,6 @@ namespace BuzzardWPF.ViewModels
     {
         string EMSLUsageType { get; set; }
         string EMSLProposalID { get; set; }
-        ObservableCollectionExtended<ProposalUser> EMSLProposalUsers { get; }
+        ProposalUser EMSLProposalUser { get; set; }
     }
 }

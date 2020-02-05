@@ -664,15 +664,15 @@ namespace BuzzardWPF.Management
         }
 
         /// <summary>
-        /// Search cached EUS proposal users for each user ID in keys
+        /// Search cached EUS proposal users for the user ID in key
         /// </summary>
         /// <param name="proposalID"></param>
-        /// <param name="keys"></param>
-        /// <returns>IEnumerable of matched users</returns>
-        public IEnumerable<ProposalUser> FindSavedEMSLProposalUsers(string proposalID, List<string> keys)
+        /// <param name="key"></param>
+        /// <returns>Matched user</returns>
+        public ProposalUser FindSavedEMSLProposalUser(string proposalID, string key)
         {
-            if (string.IsNullOrWhiteSpace(proposalID) || keys == null || keys.Count == 0)
-                return Enumerable.Empty<ProposalUser>();
+            if (string.IsNullOrWhiteSpace(proposalID) || string.IsNullOrWhiteSpace(key))
+                return null;
 
             // We won't return this collection because this collection is supposed to be
             // inmutable and the items this method was designed for will be altering their
@@ -680,9 +680,9 @@ namespace BuzzardWPF.Management
             var allProposalUsers = GetProposalUsers(proposalID);
 
             if (allProposalUsers == null || allProposalUsers.Count == 0)
-                return Enumerable.Empty<ProposalUser>();
+                return null;
 
-            return allProposalUsers.Where(x => keys.Contains(x.UserID.ToString()));
+            return allProposalUsers.FirstOrDefault(x => key.Equals(x.UserID.ToString()));
         }
 
         /// <summary>

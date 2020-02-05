@@ -25,6 +25,7 @@ namespace BuzzardWPF.Management
         private string datasetType;
         private string emslUsageType;
         private string emslProposalId;
+        private ProposalUser emslProposalUser;
         private string userComments;
         private string interestRating;
         private IReadOnlyList<string> cartConfigNameListForCart = new List<string>();
@@ -39,9 +40,8 @@ namespace BuzzardWPF.Management
             SeparationType = null;
             EMSLUsageType = null;
             EMSLProposalID = null;
+            EMSLProposalUser = null;
             WorkPackage = "none";
-
-            this.WhenAnyValue(x => x.EMSLProposalUsers.Count).Subscribe(_ => SettingsChanged = true);
 
             this.WhenAnyValue(x => x.CartName).ObserveOn(RxApp.MainThreadScheduler).Subscribe(x =>
             {
@@ -194,6 +194,12 @@ namespace BuzzardWPF.Management
             set => this.RaiseAndSetIfChangedMonitored(ref emslProposalId, value);
         }
 
+        public ProposalUser EMSLProposalUser
+        {
+            get => emslProposalUser;
+            set => this.RaiseAndSetIfChangedMonitored(ref emslProposalUser, value);
+        }
+
         public string UserComments
         {
             get => userComments;
@@ -205,8 +211,6 @@ namespace BuzzardWPF.Management
             get => interestRating;
             set => this.RaiseAndSetIfChangedMonitored(ref interestRating, value);
         }
-
-        public ObservableCollectionExtended<ProposalUser> EMSLProposalUsers { get; } = new ObservableCollectionExtended<ProposalUser>();
 
         public bool SettingsChanged { get; set; }
 
@@ -230,12 +234,7 @@ namespace BuzzardWPF.Management
             Settings.Default.WatcherEMSLProposalID = EMSLProposalID;
             Settings.Default.WatcherInterestRating = InterestRating;
             Settings.Default.WatcherWorkPackage = WorkPackage;
-
-            var selectedEmslUsers = new StringCollection();
-            foreach (var user in EMSLProposalUsers)
-                selectedEmslUsers.Add(user.UserID.ToString());
-
-            Settings.Default.WatcherEMSLUsers = selectedEmslUsers;
+            Settings.Default.WatcherEMSLUser = EMSLProposalUser?.UserID.ToString();
 
             SettingsChanged = false;
 
@@ -247,14 +246,7 @@ namespace BuzzardWPF.Management
             ExperimentName = Settings.Default.WatcherExperimentName;
             EMSLUsageType = Settings.Default.WatcherEMSLUsageType;
             EMSLProposalID = Settings.Default.WatcherEMSLProposalID;
-
-            List<string> selectedUsers;
-            if (Settings.Default.WatcherEMSLUsers == null)
-                selectedUsers = new List<string>();
-            else
-                selectedUsers = Settings.Default.WatcherEMSLUsers.Cast<string>().ToList();
-
-            EMSLProposalUsers.Load(DMS_DataAccessor.Instance.FindSavedEMSLProposalUsers(EMSLProposalID, selectedUsers));
+            EMSLProposalUser = DMS_DataAccessor.Instance.FindSavedEMSLProposalUser(EMSLProposalID, Settings.Default.WatcherEMSLUser);
 
             UserComments = Settings.Default.WatcherComment;
             InterestRating = Settings.Default.WatcherInterestRating;

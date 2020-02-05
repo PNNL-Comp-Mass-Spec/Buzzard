@@ -142,7 +142,6 @@
     <Compile Include="ViewModels\WatcherConfigViewModel.cs" />
     <Compile Include="ViewModels\WatcherControlViewModel.cs" />
     <Compile Include="ViewModels\WorkPackageSelectionViewModel.cs" />
-    <Compile Include="Views\CheckComboBoxOverlayable.cs" />
     <Compile Include="Views\DatasetBindingProxy.cs" />
     <Compile Include="Views\DatasetOverwriteDialogWindow.xaml.cs">
       <DependentUpon>DatasetOverwriteDialogWindow.xaml</DependentUpon>

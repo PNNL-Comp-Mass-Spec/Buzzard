@@ -56,7 +56,7 @@
     <Setting Name="FilldownEMSLUsageType" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="FilldownEMSLUsers" Type="System.Collections.Specialized.StringCollection" Scope="User">
+    <Setting Name="FilldownEMSLUser" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="FilldownExperimentName" Type="System.String" Scope="User">
@@ -98,7 +98,7 @@
     <Setting Name="WatcherEMSLUsageType" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="WatcherEMSLUsers" Type="System.Collections.Specialized.StringCollection" Scope="User">
+    <Setting Name="WatcherEMSLUser" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="WatcherExperimentName" Type="System.String" Scope="User">

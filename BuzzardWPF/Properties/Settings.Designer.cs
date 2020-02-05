@@ -241,12 +241,13 @@ namespace BuzzardWPF.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::System.Collections.Specialized.StringCollection FilldownEMSLUsers {
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string FilldownEMSLUser {
             get {
-                return ((global::System.Collections.Specialized.StringCollection)(this["FilldownEMSLUsers"]));
+                return ((string)(this["FilldownEMSLUser"]));
             }
             set {
-                this["FilldownEMSLUsers"] = value;
+                this["FilldownEMSLUser"] = value;
             }
         }
         
@@ -408,12 +409,13 @@ namespace BuzzardWPF.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::System.Collections.Specialized.StringCollection WatcherEMSLUsers {
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string WatcherEMSLUser {
             get {
-                return ((global::System.Collections.Specialized.StringCollection)(this["WatcherEMSLUsers"]));
+                return ((string)(this["WatcherEMSLUser"]));
             }
             set {
-                this["WatcherEMSLUsers"] = value;
+                this["WatcherEMSLUser"] = value;
             }
         }
         

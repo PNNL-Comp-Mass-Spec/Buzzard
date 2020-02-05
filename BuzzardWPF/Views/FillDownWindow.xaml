@@ -342,24 +342,22 @@
             <ToggleButton
                 Grid.Row="10"
                 Grid.Column="0"
-                IsChecked="{Binding Path=Dataset.UseEMSLProposalUsers, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                IsChecked="{Binding Path=Dataset.UseEMSLProposalUser, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock
                 Grid.Row="10"
                 Grid.Column="1"
-                Text="EMSL Proposal Users:" />
-            <views:CheckComboBoxOverlayable
+                Text="EMSL Proposal User:" />
+            <ComboBox
                 Grid.Row="10"
                 Grid.Column="2"
                 Margin="2"
-                Delimiter="; "
                 DisplayMemberPath="UserName"
                 ItemsSource="{Binding Path=EMSLProposalUsersSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                SelectedItemsOverride="{Binding Path=Dataset.EMSLProposalUsers}"
-                Text="{Binding EmslProposalUsersText}">
+                SelectedItem="{Binding Path=Dataset.EMSLProposalUser}">
                 <cueBannerOverlay:CueBannerService.CueBanner>
                     <TextBlock Text="Select" Margin="0" FontWeight="Regular" />
                 </cueBannerOverlay:CueBannerService.CueBanner>
-            </views:CheckComboBoxOverlayable>
+            </ComboBox>
 
                 <!--  Experiment Name  -->
             <ToggleButton

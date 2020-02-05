@@ -30,7 +30,6 @@ namespace BuzzardWPF.ViewModels
 
         private IEmslUsageData boundContainer;
         private IReadOnlyList<ProposalUser> proposalUsers;
-        private string proposalUsersText;
 
         #endregion
 
@@ -38,8 +37,6 @@ namespace BuzzardWPF.ViewModels
         public EmslUsageSelectionViewModel()
         {
             UsageTypesSource = EMSL_USAGE_TYPES;
-
-            this.WhenAnyValue(x => x.BoundContainer.EMSLProposalUsers, x => x.BoundContainer.EMSLProposalUsers.Count).ObserveOn(RxApp.MainThreadScheduler).Subscribe(x => UpdateSelectedUsersText());
         }
 
         #endregion
@@ -79,12 +76,6 @@ namespace BuzzardWPF.ViewModels
             set => this.RaiseAndSetIfChanged(ref proposalUsers, value);
         }
 
-        public string ProposalUsersText
-        {
-            get => proposalUsersText;
-            set => this.RaiseAndSetIfChanged(ref proposalUsersText, value);
-        }
-
         #endregion
 
         #region Event Handlers
@@ -94,51 +85,14 @@ namespace BuzzardWPF.ViewModels
             {
                 ProposalUsers = DMS_DataAccessor.Instance.GetProposalUsers(BoundContainer.EMSLProposalID);
 
-                BoundContainer?.EMSLProposalUsers.Clear();
-                ProposalUsersText = string.Empty;
-            }
-        }
-
-        private void PropodalIDSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (BoundContainer == null)
-            {
-                ApplicationLogger.LogError(
-                    0,
-                    "EMSL Usage Selection View has no bound container to pass selected Proposal ID values to.");
-                //PID_Selector.SelectedIndex = -1;
-
-                return;
+                if (BoundContainer != null)
+                {
+                    BoundContainer.EMSLProposalUser = null;
+                }
             }
         }
 
         #endregion
-
-        #region Methods
-        /// <summary>
-        /// The control used to select the Proposal Users is from a library of prototype tools
-        /// for WPF, meaning it's not perfect. This tool has a drop-down selection area and
-        /// selection text display area. When the selection is updated through binding, the
-        /// text display area isn't automatically updated to display the change in the selection.
-        /// This method will cause it to update.
-        /// </summary>
-        public void UpdateSelectedUsersText()
-        {
-            if (BoundContainer?.EMSLProposalUsers == null)
-            {
-                return;
-            }
-
-            var userString = string.Empty;
-            foreach (var user in BoundContainer.EMSLProposalUsers)
-            {
-                userString += user.UserName + "; ";
-            }
-
-            ProposalUsersText = userString;
-        }
-        #endregion
-
     }
 
     public class EnableProposalIDConverter

@@ -526,8 +526,8 @@ namespace BuzzardWPF.ViewModels
                 if (filldownData.UseEMSLUsageType)
                     dataset.DmsData.EMSLUsageType = filldownData.DmsData.EMSLUsageType;
 
-                if (filldownData.UseEMSLProposalUsers)
-                    dataset.EMSLProposalUsers.Load(filldownData.EMSLProposalUsers);
+                if (filldownData.UseEMSLProposalUser)
+                    dataset.EMSLProposalUser = filldownData.EMSLProposalUser;
             }
         }
         #endregion

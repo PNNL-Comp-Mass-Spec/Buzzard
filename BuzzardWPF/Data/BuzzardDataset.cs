@@ -5,7 +5,6 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using BuzzardWPF.Management;
-using DynamicData.Binding;
 using LcmsNetData.Data;
 using ReactiveUI;
 
@@ -46,6 +45,7 @@ namespace BuzzardWPF.Data
         private int secondsUntilTriggerCreation;
         private double waitTimePercentage;
         private string interestRating;
+        private ProposalUser emslProposalUser;
 
         private bool cartConfigError;
         private DateTime lastRecordedLastWriteTime;
@@ -97,7 +97,7 @@ namespace BuzzardWPF.Data
                         return x.Item3;
                     }).ToProperty(this, x => x.ProgressValue);
             ToggleMonitoringCommand = ReactiveCommand.Create(ToggleMonitoring);
-            disposables.Add(this.WhenAnyValue(x => x.EMSLProposalUsers, x => x.EMSLProposalUsers.Count).Subscribe(_ => SetEMSLUsersList()));
+            disposables.Add(this.WhenAnyValue(x => x.EMSLProposalUser).Subscribe(_ => DmsData.EMSLProposalUser = EMSLProposalUser?.UserID.ToString() ?? ""));
             disposables.Add(this.WhenAnyValue(x => x.DmsData, x => x.DmsData.CartName, x => x.DmsData.CartConfigName)
                 .ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ => ValidateCartConfig()));
             dmsStatus = this.WhenAnyValue(x => x.DmsData, x => x.DmsData.LockData)
@@ -108,7 +108,7 @@ namespace BuzzardWPF.Data
                     .ToProperty(this, x => x.EmslProjectText);
             emslUserProposalText =
                 this.WhenAnyValue(x => x.DmsData.EMSLUsageType, x => x.DmsData.EMSLProposalID,
-                        x => x.EMSLProposalUsers, x => x.EMSLProposalUsers.Count).Select(x => x.Item1 == "USER" ? $"ProposalID: {x.Item2}\nEMSL Users: {string.Join("; ", x.Item3.Select(y => y.UserName))}" : null)
+                        x => x.EMSLProposalUser).Select(x => x.Item1 == "USER" ? $"ProposalID: {x.Item2}\nEMSL User: {x.Item3?.UserName}" : null)
                     .ToProperty(this, x => x.EmslUserProposalText);
             formattedStatus = this.WhenAnyValue(x => x.SecondsTillTriggerCreation, x => x.DatasetStatus, x => x.DatasetSource)
                 .Select(x => FormatStatus(x.Item1, x.Item2, x.Item3))
@@ -180,7 +180,11 @@ namespace BuzzardWPF.Data
 
         #region Datagrid Properties
 
-        public ObservableCollectionExtended<ProposalUser> EMSLProposalUsers { get; } = new ObservableCollectionExtended<ProposalUser>();
+        public ProposalUser EMSLProposalUser
+        {
+            get => emslProposalUser;
+            set => this.RaiseAndSetIfChanged(ref emslProposalUser, value);
+        }
 
         public string ColumnName
         {
@@ -382,11 +386,6 @@ namespace BuzzardWPF.Data
         public bool IsFile { get; set; }
 
         #endregion
-
-        private void SetEMSLUsersList()
-        {
-            DmsData.UserList = string.Join(",", EMSLProposalUsers.Select(x => x.UserID));
-        }
 
         private static string FormatStatus(int waitSeconds, DatasetStatus status, DatasetSource source)
         {

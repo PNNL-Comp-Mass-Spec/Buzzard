@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+// ReSharper disable InconsistentNaming
 
 namespace BuzzardWPF.Properties
 {
@@ -68,7 +69,13 @@ namespace BuzzardWPF.Properties
                     if (string.Equals(setting.DefaultValue?.ToString(), this[setting.Name]?.ToString())
                         || this[setting.Name] is StringCollection sc && sc.Count == 0)
                     {
-                        this[oldSetting.UpgradeName.Name] = previousValue;
+                        if (previousValue is StringCollection osc && setting.PropertyType == typeof(string))
+                        {
+                            // Old property was StringCollection, new one is just 'string', just keep the first item in the StringCollection
+                            previousValue = osc[0];
+                        }
+
+                        this[setting.Name] = previousValue;
                     }
                 }
 
@@ -123,6 +130,15 @@ namespace BuzzardWPF.Properties
         [SettingUpgradeName(nameof(FilldownEMSLUsageType))]
         // ReSharper disable once UnusedMember.Global
         public string FilldownEMSLUsage { get; set; }
+
+        [UserScopedSetting]
+        [DebuggerNonUserCode]
+        [DefaultSettingValue("")]
+        [NoSettingsVersionUpgrade]
+        [Obsolete("Use  " + nameof(FilldownEMSLUser), true)]
+        [SettingUpgradeName(nameof(FilldownEMSLUser))]
+        // ReSharper disable once UnusedMember.Global
+        public global::System.Collections.Specialized.StringCollection FilldownEMSLUsers { get; set; }
 
         [UserScopedSetting]
         [DebuggerNonUserCode]
@@ -190,10 +206,19 @@ namespace BuzzardWPF.Properties
         [UserScopedSetting]
         [DebuggerNonUserCode]
         [NoSettingsVersionUpgrade]
-        [Obsolete("Use " + nameof(WatcherEMSLUsers), true)]
-        [SettingUpgradeName(nameof(WatcherEMSLUsers))]
+        [Obsolete("Use " + nameof(WatcherEMSLUser), true)]
+        [SettingUpgradeName(nameof(WatcherEMSLUser))]
         // ReSharper disable once UnusedMember.Global
         public global::System.Collections.Specialized.StringCollection Watcher_EMSL_Users { get; set; }
+
+        [UserScopedSetting]
+        [DebuggerNonUserCode]
+        [DefaultSettingValue("")]
+        [NoSettingsVersionUpgrade]
+        [Obsolete("Use  " + nameof(WatcherEMSLUser), true)]
+        [SettingUpgradeName(nameof(WatcherEMSLUser))]
+        // ReSharper disable once UnusedMember.Global
+        public global::System.Collections.Specialized.StringCollection WatcherEMSLUsers { get; set; }
 
         [UserScopedSetting]
         [DebuggerNonUserCode]

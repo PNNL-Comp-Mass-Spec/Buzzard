@@ -242,7 +242,7 @@
             <summary>
             Adds data for block of MRM files to file data list
             </summary>
-            <param name="fileIndxList">Comma-separated list of file indices needing data</param>
+            <param name="fileIndexList">Comma-separated list of file indices needing data</param>
             <param name="fileData">ist of file names and contents; new data will be appended to this list</param>
         </member>
         <member name="M:LcmsNetDmsTools.DMSDBTools.GetMRMFileListFromDMS(System.Int32,System.Int32)">
@@ -258,7 +258,7 @@
             Updates the cart assignment in DMS
             </summary>
             <param name="requestList">Comma-delimited string of request ID's (must be less than 8000 chars long)</param>
-            <param name="cartName">Name of cart to assign (ignored for removing aasignment)</param>
+            <param name="cartName">Name of cart to assign (ignored for removing assignment)</param>
             <param name="cartConfigName">Name of cart config name to assign</param>
             <param name="updateMode">TRUE for updating assignment; FALSE to clear assignment</param>
             <returns>TRUE for success; FALSE for error</returns>

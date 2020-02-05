@@ -4,44 +4,6 @@
         <name>LcmsNetData</name>
     </assembly>
     <members>
-        <member name="T:LcmsNetData.Configuration.CartConfiguration">
-            <summary>
-            Class that encapsulates the configuration of the cart from
-            systems to columns.
-            </summary>
-        </member>
-        <member name="F:LcmsNetData.Configuration.CartConfiguration.MinimumSampleVolume">
-            <summary>
-            The minimum sample volume for this system.
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Configuration.CartConfiguration.NumberOfEnabledColumns">
-            <summary>
-            Gets the number of enabled columns.
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Configuration.CartConfiguration.Columns">
-            <summary>
-            Gets or sets the list of columns available.
-            </summary>
-        </member>
-        <member name="M:LcmsNetData.Configuration.CartConfiguration.BuildColumnList(System.Boolean)">
-            <summary>
-            Builds a list of columns from the cart configuration object.
-            </summary>
-            <param name="orderByFirst">Orders the list by the first selected column. e.g. list[0] = column3 iff column3.First = True</param>
-            <returns>List of columns stored in cart configuration.</returns>
-        </member>
-        <member name="P:LcmsNetData.Configuration.CartConfiguration.CartName">
-            <summary>
-            Gets or sets the name of the cart.
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Configuration.CartConfiguration.CartConfigName">
-            <summary>
-            Gets or sets the name of the cart configuration in use
-            </summary>
-        </member>
         <member name="T:LcmsNetData.Data.CartConfigInfo">
             <summary>
             Class to hold information about a single LC Cart Config
@@ -67,109 +29,6 @@
         <member name="M:LcmsNetData.Data.CartConfigInfo.#ctor">
             <summary>
             Constructor: for auto-population
-            </summary>
-        </member>
-        <member name="T:LcmsNetData.Data.ColumnData">
-            <summary>
-            Class that manages all of the information about a given column
-            </summary>
-        </member>
-        <member name="M:LcmsNetData.Data.ColumnData.#ctor">
-            <summary>
-            Default constructor.
-            </summary>
-        </member>
-        <member name="M:LcmsNetData.Data.ColumnData.Clone">
-            <summary>
-            Clone - get a deep copy
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="T:LcmsNetData.Data.ColumnData.DelegateFirstChanged">
-            <summary>
-            Delegate definition called if the column first value is changed.
-            </summary>
-            <param name="sender"></param>
-            <param name="first"></param>
-        </member>
-        <member name="F:LcmsNetData.Data.ColumnData.m_columnIndex">
-            <summary>
-            Index of the column.
-            </summary>
-        </member>
-        <member name="F:LcmsNetData.Data.ColumnData.m_name">
-            <summary>
-            Name of the column
-            </summary>
-        </member>
-        <member name="F:LcmsNetData.Data.ColumnData.m_status">
-            <summary>
-            Status of the column
-            </summary>
-        </member>
-        <member name="E:LcmsNetData.Data.ColumnData.StatusChanged">
-            <summary>
-            Fired when the status of a column changes.
-            </summary>
-        </member>
-        <member name="E:LcmsNetData.Data.ColumnData.ColorChanged">
-            <summary>
-            Fired when the color of the column changes.
-            </summary>
-        </member>
-        <member name="E:LcmsNetData.Data.ColumnData.FirstChanged">
-            <summary>
-            Fired if the first value of this column is changed.
-            </summary>
-        </member>
-        <member name="E:LcmsNetData.Data.ColumnData.NameChanged">
-            <summary>
-            An event that indicates the name of the column has changed.
-            </summary>
-        </member>
-        <member name="F:LcmsNetData.Data.ColumnData.m_columnColor">
-            <summary>
-            Color of the column.
-            </summary>
-        </member>
-        <member name="F:LcmsNetData.Data.ColumnData.colorString">
-            <summary>
-            Handles serialization of the column color.
-            </summary>
-        </member>
-        <member name="F:LcmsNetData.Data.ColumnData.m_first">
-            <summary>
-            Flag indicating if this is the first column to run.
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Data.ColumnData.First">
-            <summary>
-            Gets or sets if the column is the first column designated to run.
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Data.ColumnData.Status">
-            <summary>
-            Gets or sets when the status changes.
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Data.ColumnData.ID">
-            <summary>
-            Gets or sets the column index.
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Data.ColumnData.Name">
-            <summary>
-            Gets or sets the name of the column.
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Data.ColumnData.Color">
-            <summary>
-            Gets or sets the color of the column.
-            </summary>
-        </member>
-        <member name="T:LcmsNetData.Data.ColumnStatus">
-            <summary>
-            Enumeration describing the status of a column.
             </summary>
         </member>
         <member name="T:LcmsNetData.Data.ConvertVialPosition">
@@ -546,41 +405,6 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="T:LcmsNetData.Data.SampleRunningStatus">
-            <summary>
-            Enumeration describing the status of a sample.
-            </summary>
-        </member>
-        <member name="F:LcmsNetData.Data.SampleRunningStatus.Queued">
-            <summary>
-            Queued but not told to execute.
-            </summary>
-        </member>
-        <member name="F:LcmsNetData.Data.SampleRunningStatus.Stopped">
-            <summary>
-            Stopped
-            </summary>
-        </member>
-        <member name="F:LcmsNetData.Data.SampleRunningStatus.WaitingToRun">
-            <summary>
-            Waiting to run.
-            </summary>
-        </member>
-        <member name="F:LcmsNetData.Data.SampleRunningStatus.Running">
-            <summary>
-            Sample is currently running.
-            </summary>
-        </member>
-        <member name="F:LcmsNetData.Data.SampleRunningStatus.Complete">
-            <summary>
-            Sample successfully finished running.
-            </summary>
-        </member>
-        <member name="F:LcmsNetData.Data.SampleRunningStatus.Error">
-            <summary>
-            Error occurred during the run.
-            </summary>
-        </member>
         <member name="T:LcmsNetData.Data.DMSData">
             <summary>
             Dataset information supplied by or required by DMS; includes run request information
@@ -672,7 +496,7 @@
             EUS user proposal ID
             </summary>
         </member>
-        <member name="P:LcmsNetData.Data.DMSData.UserList">
+        <member name="P:LcmsNetData.Data.DMSData.EMSLProposalUser">
             <summary>
             EUS user list
             </summary>
@@ -865,18 +689,6 @@
             ToString override for debugging.
             </summary>
             <returns></returns>
-        </member>
-        <member name="T:LcmsNetData.EnumExtensions">
-            <summary>
-            Extensions for enum types
-            </summary>
-        </member>
-        <member name="M:LcmsNetData.EnumExtensions.GetEnumDescription(System.Enum)">
-            <summary>
-            Get the description from the description attribute of the enum value
-            </summary>
-            <param name="value"></param>
-            <returns>Description from description attribute; if it doesn't exist, returns <paramref name="value"/>.ToString()</returns>
         </member>
         <member name="F:LcmsNetData.ProgressEventArgs.CurrentTask">
             <summary>
@@ -1252,12 +1064,12 @@
         </member>
         <member name="F:LcmsNetData.Logging.LogLevel.Error">
             <summary>
-            Errors that don't cause program shutdown, but are undesireable and probably should be shown to the user
+            Errors that don't cause program shutdown, but are undesirable and probably should be shown to the user
             </summary>
         </member>
         <member name="F:LcmsNetData.Logging.LogLevel.Warning">
             <summary>
-            Warnings or anamolies in program execution that might be of interest
+            Warnings or anomalies in program execution that might be of interest
             </summary>
         </member>
         <member name="F:LcmsNetData.Logging.LogLevel.Info">
@@ -1504,18 +1316,6 @@
             Get current time as defined by the currently selected timezone
             </summary>
             <remarks>The time will be adjusted for daylight savings, as appropriate</remarks>
-        </member>
-        <member name="T:LcmsNetData.WpfConversions">
-            <summary>
-            Utility functions for WPF, particularly for conversions from WinForms formatting values to WPF formatting values
-            </summary>
-        </member>
-        <member name="M:LcmsNetData.WpfConversions.GetWpfLength(System.String)">
-            <summary>
-            Converts a size, like what can be specified in xaml, to the pixel size.
-            </summary>
-            <param name="srcLength">Desired length, with units. Format should be like "8pt" (no space), supported units are 'px', 'in', 'cm', and 'pt', no units assumes 'px'.</param>
-            <returns></returns>
         </member>
     </members>
 </doc>

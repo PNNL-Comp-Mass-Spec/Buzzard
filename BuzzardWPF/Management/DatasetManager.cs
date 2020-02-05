@@ -659,12 +659,12 @@ namespace BuzzardWPF.Management
                     dataset.DmsData.EMSLUsageType.Equals("USER", StringComparison.OrdinalIgnoreCase))
                 {
                     dataset.DmsData.EMSLProposalID = WatcherMetadata.EMSLProposalID;
-                    dataset.EMSLProposalUsers.Load(WatcherMetadata.EMSLProposalUsers);
+                    dataset.EMSLProposalUser = WatcherMetadata.EMSLProposalUser;
                 }
                 else
                 {
                     dataset.DmsData.EMSLProposalID = null;
-                    dataset.EMSLProposalUsers.Clear();
+                    dataset.EMSLProposalUser = null;
                 }
             }
 

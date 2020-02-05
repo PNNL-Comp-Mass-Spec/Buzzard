@@ -5,7 +5,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:BuzzardWPF.ViewModels"
-    xmlns:views="clr-namespace:BuzzardWPF.Views"
     xmlns:cueBannerOverlay="clr-namespace:WpfExtras.CueBannerOverlay;assembly=WpfExtras"
     d:DesignHeight="152.8"
     d:DesignWidth="600"
@@ -116,20 +115,19 @@
                     Grid.Column="0"
                     Style="{StaticResource TextBlockStyle}"
                     Text="Proposal User:" />
-                <views:CheckComboBoxOverlayable
+                <ComboBox
                     x:Name="PUserSelector"
                     Grid.Row="2"
                     Grid.Column="1"
                     Margin="3"
-                    Delimiter="; "
                     DisplayMemberPath="UserName"
                     IsEnabled="{Binding Path=BoundContainer.EMSLUsageType, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource EnableProposalIDConverter}}"
                     ItemsSource="{Binding Path=ProposalUsers, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                    SelectedItemsOverride="{Binding Path=BoundContainer.EMSLProposalUsers}">
+                    SelectedItem="{Binding Path=BoundContainer.EMSLProposalUser}">
                     <cueBannerOverlay:CueBannerService.CueBanner>
                         <TextBlock Text="Select" Margin="0" FontWeight="Regular" Style="{StaticResource TextBlockStyle}" />
                     </cueBannerOverlay:CueBannerService.CueBanner>
-                </views:CheckComboBoxOverlayable>
+                </ComboBox>
             </Grid>
         </GroupBox>
     </StackPanel>
