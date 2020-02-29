@@ -71,6 +71,12 @@ namespace BuzzardWPF.Data.Trie
                     splitIndex = datasetNamePart.Length;
                 }
 
+                // Don't allow zero-length keys when adding children.
+                if (keyCharCount <= 0 && Count == 0)
+                {
+                    keyCharCount = (byte)splitIndex;
+                }
+
                 if (splitIndex == 1 && keyCharCount > 1 && datasetNamePart.Length > 1)
                 {
                     // Avoid single-char keys, if possible.
@@ -164,7 +170,8 @@ namespace BuzzardWPF.Data.Trie
             }
 
             // For nodes with an EdgeCount of 1 and no RequestID, and immediate sub-node EdgeCount of 1, consolidate, and adjust keyCharCount
-            if (Count == 1 && RequestID == -1 && Values.First().Count == 1)
+            // Don't permit consolidation when the child has a valid request ID (because it leads to improper matches)
+            if (Count == 1 && RequestID == -1 && Values.First().Count == 1 && Values.First().RequestID == -1)
             {
                 var content = this.First();
                 var key = content.Key;

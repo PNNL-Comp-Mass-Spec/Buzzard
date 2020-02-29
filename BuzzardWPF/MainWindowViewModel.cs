@@ -240,7 +240,7 @@ namespace BuzzardWPF
 
             // Create an action to place the message string into the property that
             // holds the last message. Then place action into a call for the UI
-            // thread's dipatcher.
+            // thread's dispatcher.
             RxApp.MainThreadScheduler.Schedule(() => LastStatusMessage = args.Message);
         }
 
@@ -253,7 +253,7 @@ namespace BuzzardWPF
 
             // Create an action to place the message string into the property that
             // holds the last message. Then place action into a call for the UI
-            // thread's dipatcher.
+            // thread's dispatcher.
             RxApp.MainThreadScheduler.Schedule(() => LastStatusMessage = args.Message);
         }
 
