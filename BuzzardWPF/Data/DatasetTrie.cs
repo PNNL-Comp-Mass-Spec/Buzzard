@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using BuzzardWPF.Data.Trie;
 using LcmsNetData.Data;
 
@@ -85,7 +86,7 @@ namespace BuzzardWPF.Data
         public DMSData FindData(string datasetName)
         {
             var requestId = rootNode.FindRequestIdForName(datasetName, out var searchDepth);
-            if (requestId < 0 || !requestIDToDMSMap.TryGetValue(requestId, out var dmsData))
+            if (requestId < 0 || !requestIDToDMSMap.TryGetValue(requestId, out var dmsData) || !datasetName.StartsWith(dmsData.RequestName, StringComparison.OrdinalIgnoreCase))
             {
                 throw new DatasetTrieException("Could not resolve the dataset name. The dataset is just not available in this trie.", searchDepth, datasetName);
             }
