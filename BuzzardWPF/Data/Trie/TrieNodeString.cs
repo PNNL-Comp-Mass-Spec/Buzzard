@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using LcmsNetData.Logging;
 
 namespace BuzzardWPF.Data.Trie
 {
@@ -85,18 +87,35 @@ namespace BuzzardWPF.Data.Trie
 
                 if (splitIndex < keyCharCount)
                 {
-                    // Need to adjust the length of the key. Copy all old data to handle it appropriately.
-                    foreach (var oldNode in this.ToList())
+                    try
                     {
-                        // Remove the old key
-                        Remove(oldNode.Key);
-                        // Add the information from the old node to a new node, with the appropriate key
-                        var newNode = new TrieNodeString { keyCharCount = (byte)(keyCharCount - splitIndex) };
-                        newNode.Add(oldNode.Key.Substring(splitIndex), oldNode.Value);
-                        Add(oldNode.Key.Substring(0, splitIndex), newNode);
-                    }
+                        // Need to adjust the length of the key. Copy all old data to handle it appropriately.
+                        foreach (var oldNode in this.ToList())
+                        {
+                            // Remove the old key
+                            Remove(oldNode.Key);
+                            // Add the information from the old node to a new node, with the appropriate key
+                            var newKey = oldNode.Key.Substring(0, splitIndex);
+                            if (!TryGetValue(newKey, out var newNode))
+                            {
+                                newNode = new TrieNodeString { keyCharCount = (byte)(keyCharCount - splitIndex) };
+                                Add(newKey, newNode);
+                            }
 
-                    keyCharCount = (byte)splitIndex;
+                            newNode.Add(oldNode.Key.Substring(splitIndex), oldNode.Value);
+                        }
+
+                        keyCharCount = (byte) splitIndex;
+                    }
+                    catch (Exception ex)
+                    {
+                        ApplicationLogger.LogError(LogLevel.Error, "Requested runs missing - issue adjusting Trie", ex);
+                        // For safety, remove the incomplete node contents
+                        Clear();
+
+                        // Also, don't try to do anything else with this data; we've determined there is an issue adding it.
+                        return;
+                    }
                 }
 
                 var key = datasetNamePart.Substring(0, keyCharCount);
