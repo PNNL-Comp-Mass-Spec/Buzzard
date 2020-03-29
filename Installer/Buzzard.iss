@@ -17,19 +17,25 @@
 ; Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{C617288A-CBA4-44C7-9899-153B4AC1F34F}}
+; As AnyCPU, we can install as 32-bit or 64-bit, so allow installing on 32-bit Windows, but make sure it installs as 64-bit on 64-bit Windows
+; We need a method to un-install the 32-bit version when updating to the 64-bit version (not that it matters, we compile as AnyCPU, so it's just changing where it installs) 
+;ArchitecturesAllowed=x64 x86
+;ArchitecturesInstallIn64BitMode=x64
 AppName={#MyAppName}
 ;AppVerName={#MyAppVerName}
 AppVerName={#MyAppName}_{#ReleaseVersion}
 AppVersion={#ReleaseVersion}
 VersionInfoVersion={#ReleaseVersion}
 AppPublisher={#MyAppPublisher}
-DefaultDirName={pf}\{#MyAppName}
+DefaultDirName={autopf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 OutputDir={#InstallerFolder}
 OutputBaseFilename={#MyAppVerName}_{#MyAppVis}_{#MyDateTime}
 SourceDir={#MySource}
 Compression=lzma
 SolidCompression=yes
+DisableWelcomePage=no
+WizardStyle=modern
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
