@@ -1,39 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.IO;
-
-using LcmsNetDataClasses.Data;
-using LcmsNetDataClasses;
-
-using NUnit.Core;
-using NUnit;
-using NUnit.Util;
+using LcmsNetData.Data;
 using NUnit.Framework;
 
 namespace BuzzardTests
-{    
+{
     [TestFixture]
     public class TrieTest
     {
-        private List<classDMSData> m_datasets;
+        private List<DMSData> m_datasets;
         private List<string> m_datasetNames;
         private List<string> m_fileNames;
         private Dictionary<int, string> m_valids;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void TestSetup()
         {
-            m_datasets      = new List<classDMSData>();
+            m_datasets      = new List<DMSData>();
             m_datasetNames  = new List<string>();
             m_datasetNames.Add("SysVirol_SCL012_icSARS-DORF6_36h_1_Met");
 
             foreach(string name in m_datasetNames)
             {
-                classDMSData dms = new classDMSData();
+                DMSData dms = new DMSData();
                 dms.RequestName  = name;
- 
+
                 m_datasets.Add(dms);
             }
 
@@ -70,7 +61,6 @@ namespace BuzzardTests
             m_fileNames.Add(@"m:\buzzardtestdata\GCMS_DMS_uploading_5.D\DATA.MS");
             m_fileNames.Add(@"m:\buzzardtestdata\GCMS_DMS_uploading_6.D\DATA.MS");
 
-
             m_valids = new Dictionary<int, string>();
             foreach(string name in m_datasetNames)
             {
@@ -87,15 +77,15 @@ namespace BuzzardTests
         [Test]
         public void TestTrieBuilding()
         {
-            Buzzard.Data.classDatasetTrie trie = new Buzzard.Data.classDatasetTrie();
-            foreach (classDMSData datum in m_datasets)
+            BuzzardWPF.Data.DatasetTrie trie = new BuzzardWPF.Data.DatasetTrie();
+            foreach (var datum in m_datasets)
             {
                 trie.AddData(datum);
             }
 
             foreach (string name in m_valids.Values)
             {
-                classDMSData datum  = null;
+                DMSData datum  = null;
                 string nname        = Path.GetFileNameWithoutExtension(name);
                 try
                 {
