@@ -107,6 +107,7 @@ namespace BuzzardWPF
             SelectTriggerFileLocationCommand = ReactiveCommand.Create(SelectTriggerFileLocation);
             UseTestFolderCommand = ReactiveCommand.Create(UseTestFolder);
             ForceDmsReloadCommand = ReactiveCommand.CreateFromTask(ForceDmsReload);
+            BackupCalibrationFilesCommand = ReactiveCommand.CreateFromTask(BackupCalibrationFiles);
             OpenLogDirectoryCommand = ReactiveCommand.Create(OpenLogDirectory);
             OpenLogFileCommand = ReactiveCommand.Create(OpenLogFile);
 
@@ -148,6 +149,7 @@ namespace BuzzardWPF
         public ReactiveCommand<Unit, Unit> SelectTriggerFileLocationCommand { get; }
         public ReactiveCommand<Unit, Unit> UseTestFolderCommand { get; }
         public ReactiveCommand<Unit, Unit> ForceDmsReloadCommand { get; }
+        public ReactiveCommand<Unit, Unit> BackupCalibrationFilesCommand { get; }
         public ReactiveCommand<Unit, Unit> OpenLogDirectoryCommand { get; }
         public ReactiveCommand<Unit, Unit> OpenLogFileCommand { get; }
 
@@ -163,6 +165,7 @@ namespace BuzzardWPF
         public QCViewModel QCVm { get; } = new QCViewModel();
         public DatasetManager DatasetManager => DatasetManager.Manager;
         public DMS_DataAccessor DMSData => DMS_DataAccessor.Instance;
+        public InstrumentCriticalFiles CriticalsBackups => InstrumentCriticalFiles.Instance;
 
         /// <summary>
         /// Error message importance level (0 is most important, 5 is least important)
@@ -183,8 +186,8 @@ namespace BuzzardWPF
         /// </summary>
         public LogLevel ErrorLogLevel
         {
-            get { return ApplicationLogger.ConvertIntToLogLevel(ErrorLevel); }
-            set { ErrorLevel = (int)value; }
+            get => ApplicationLogger.ConvertIntToLogLevel(ErrorLevel);
+            set => ErrorLevel = (int)value;
         }
 
         /// <summary>
@@ -192,8 +195,8 @@ namespace BuzzardWPF
         /// </summary>
         public LogLevel MessageLogLevel
         {
-            get { return ApplicationLogger.ConvertIntToLogLevel(MessageLevel); }
-            set { MessageLevel = (int)value; }
+            get => ApplicationLogger.ConvertIntToLogLevel(MessageLevel);
+            set => MessageLevel = (int)value;
         }
 
         public bool RemoteFolderLocationIsEnabled
@@ -560,6 +563,11 @@ namespace BuzzardWPF
 
             // Also force an update on DMS_DataAccessor.Instance
             await DMS_DataAccessor.Instance.UpdateCacheNow("ForceDmsReload");
+        }
+
+        private async Task BackupCalibrationFiles()
+        {
+            await Task.Run(CriticalsBackups.CopyCriticalFilesToServer);
         }
 
         private void UseTestFolder()

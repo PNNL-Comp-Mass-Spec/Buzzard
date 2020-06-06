@@ -276,6 +276,8 @@ namespace BuzzardWPF.Management
 
                 TriggerMonitor.AddNewTriggerFile(triggerFilePath);
 
+                InstrumentCriticalFiles.Instance.CopyCriticalFilesToServer();
+
                 return triggerFilePath;
             }
             catch (DirectoryNotFoundException ex)

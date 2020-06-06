@@ -38,6 +38,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CriticalFileTests.cs" />
     <Compile Include="TrieTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

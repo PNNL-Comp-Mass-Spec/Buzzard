@@ -112,6 +112,7 @@
     <Compile Include="Management\DMSConfig.cs" />
     <Compile Include="Management\DMS_DataAccessor.cs" />
     <Compile Include="Management\FileSystemWatcherManager.cs" />
+    <Compile Include="Management\InstrumentCriticalFiles.cs" />
     <Compile Include="Management\IStoredSettingsMonitor.cs" />
     <Compile Include="Management\QcMonitorData.cs" />
     <Compile Include="Management\RenameDataRequest.cs" />

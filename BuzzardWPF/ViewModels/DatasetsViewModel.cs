@@ -557,6 +557,8 @@ namespace BuzzardWPF.ViewModels
                 return;
 
             TriggerFileCreationManager.Instance.CreateTriggers(selectedItems);
+
+            InstrumentCriticalFiles.Instance.CopyCriticalFilesToServer();
         }
 
         #endregion
