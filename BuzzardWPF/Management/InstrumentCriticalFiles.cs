@@ -98,28 +98,36 @@ namespace BuzzardWPF.Management
                 return;
             }
 
-            try
+            if (!Directory.Exists(BackupDir))
             {
-                if (!Directory.Exists(BackupDir))
+                try
                 {
                     Directory.CreateDirectory(BackupDir);
                 }
-
-                foreach (var calFile in calFiles)
+                catch (Exception e)
                 {
-                    var targetPath = Path.Combine(BackupDir, calFile.GetExtendedName());
+                    ApplicationLogger.LogError(LogLevel.Error, $"Error uploading calibration files: Could not create missing target directory \"{BackupDir}\".", e);
+                    return;
+                }
+            }
 
-                    if (!File.Exists(targetPath))
+            foreach (var calFile in calFiles)
+            {
+                var targetPath = Path.Combine(BackupDir, calFile.GetExtendedName());
+
+                if (!File.Exists(targetPath))
+                {
+                    try
                     {
                         //Console.WriteLine("Copy \"{0}\" to \"{1}\"", calFile.CalFile.FullName, targetPath);
                         calFile.File.CopyTo(targetPath);
                         ApplicationLogger.LogMessage(LogLevel.Info, $"Backed up Calibration/Tune file \"{calFile.File.FullName}\" to \"{targetPath}\"");
                     }
+                    catch (Exception e)
+                    {
+                        ApplicationLogger.LogError(LogLevel.Error, $"Error uploading calibration file \"{calFile.File.FullName}\"", e);
+                    }
                 }
-            }
-            catch (Exception e)
-            {
-                ApplicationLogger.LogError(LogLevel.Error, $"Error uploading calibration files.", e);
             }
         }
 
