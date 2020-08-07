@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.DirectoryServices.AccountManagement;
 using System.IO;
 using System.Linq;
 using System.Management;
+using System.Security.AccessControl;
 using LcmsNetData.Data;
 using LcmsNetData.Logging;
 
@@ -69,7 +71,7 @@ namespace BuzzardWPF.Searching
         /// Dictionary where key is the share name and path is the local path to that share.
         /// For example, "ProteomicsData" and "C:\ProteomicsData"
         /// </returns>
-        protected Dictionary<string, string> GetLocalWindowsShares()
+        protected static Dictionary<string, string> GetLocalWindowsShares()
         {
             var shareList = new Dictionary<string, string>();
 
@@ -87,6 +89,226 @@ namespace BuzzardWPF.Searching
             }
 
             return shareList;
+        }
+
+        /// <summary>
+        /// Checks what effective permissions the provided user has on the provided shared directory.
+        /// </summary>
+        /// <param name="path">The full path to the target directory</param>
+        /// <param name="userName"></param>
+        /// <param name="hasModifyPermissions">true if the user has write, modify, or full control permissions on the shared directory</param>
+        /// <param name="sharePath">If the path is shared, the full share path (does not include FQDN)</param>
+        /// <returns>true if the user has read permissions on the shared directory</returns>
+        public static bool CheckDirectorySharingAndPermissions(string path, string userName, out bool hasModifyPermissions, out string sharePath)
+        {
+            var shareName = "";
+            sharePath = "";
+            hasModifyPermissions = false;
+            if (!Directory.Exists(path))
+            {
+                return false;
+            }
+
+            var trimPath = path.TrimEnd('\\');
+            foreach (var sharedDir in GetLocalWindowsShares().Where(x => !x.Key.EndsWith("$") /* Exclude Admin shares */)
+                .OrderBy(x => x.Value.Length /* By default use the most specific share */))
+            {
+                if (sharedDir.Value.Equals(trimPath, StringComparison.OrdinalIgnoreCase) ||
+                    (!string.IsNullOrWhiteSpace(sharedDir.Value) && path.StartsWith(sharedDir.Value, StringComparison.OrdinalIgnoreCase)))
+                {
+                    shareName = sharedDir.Key;
+                    sharePath = $"\\\\{Environment.MachineName}\\{shareName}";
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(sharePath))
+            {
+                // No share exists for this path, permissions checks are pointless
+                return false;
+            }
+
+            var canReadDir = CheckDirectoryPermissions(path, userName, out var canModifyDir);
+            var canReadShare = CheckSharePermissions(shareName, userName, out var canChangeShare);
+
+            hasModifyPermissions = canModifyDir && canChangeShare;
+
+            return canReadDir && canReadShare;
+        }
+
+        /// <summary>
+        /// Checks what permissions the provided user has on the provided directory.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="userName"></param>
+        /// <param name="hasModifyPermissions">true if the user has write, modify, or full control permissions on the directory</param>
+        /// <returns>true if the user has read permissions on the directory</returns>
+        public static bool CheckDirectoryPermissions(string path, string userName, out bool hasModifyPermissions)
+        {
+            var hasReadPermissions = false;
+            hasModifyPermissions = false;
+            if (!Directory.Exists(path))
+            {
+                return false;
+            }
+
+            // owner and rules always appear to have a domain/workspace/scope context, in the form of '[Domain]\[User or group]'.
+            // The methods to get a user and group only has a scope specified for a domain, not for local accounts.
+            // Change the user/groups to require matching a backslash (\).
+            var userAndGroups = GetLocalUserAndGroups(userName).Select(x => x.Contains("\\") ? x : $"\\{x}").ToList();
+
+            var security = Directory.GetAccessControl(path);
+            var owner = security.GetOwner(typeof(System.Security.Principal.NTAccount)).Value;
+            var rules = security.GetAccessRules(true, true, typeof(System.Security.Principal.NTAccount));
+
+            // owner and rules always appear to have a domain/workspace/scope context, in the form of '[Domain]\[User or group]'.
+            // Check permissions accordingly
+            foreach (var id in userAndGroups)
+            {
+                if (owner.EndsWith(id, StringComparison.OrdinalIgnoreCase))
+                {
+                    //Console.WriteLine("{0} is directory owner, {1} should have full privileges", owner, userName);
+                    hasReadPermissions = true;
+                    hasModifyPermissions = true;
+                }
+
+                foreach (var rule in rules.Cast<FileSystemAccessRule>())
+                {
+                    var ruleId = rule.IdentityReference.Value;
+                    if (ruleId.EndsWith(id, StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (rule.FileSystemRights.HasFlag(FileSystemRights.FullControl) ||
+                            rule.FileSystemRights.HasFlag(FileSystemRights.Modify) ||
+                            rule.FileSystemRights.HasFlag(FileSystemRights.Write))
+                        {
+                            //Console.WriteLine("{0} has directory modify permissions '{1}', {2} can use these permissions", ruleId, rule.FileSystemRights, userName);
+                            hasReadPermissions = true;
+                            hasModifyPermissions = true;
+                        }
+                        else if (rule.FileSystemRights.HasFlag(FileSystemRights.Read))
+                        {
+                            //Console.WriteLine("{0} has directory read permissions '{1}', {2} can use these permissions", ruleId, rule.FileSystemRights, userName);
+                            hasReadPermissions = true;
+                        }
+                        else
+                        {
+                            //Console.WriteLine("{0} has directory permissions '{1}', {2} can use these permissions", ruleId, rule.FileSystemRights, userName);
+                        }
+                    }
+                }
+            }
+
+            return hasReadPermissions;
+        }
+
+        /// <summary>
+        /// Checks what permissions the provided user has on the provided local shared directory.
+        /// </summary>
+        /// <param name="shareName">Name of the share</param>
+        /// <param name="userName"></param>
+        /// <param name="hasModifyPermissions">true if the user has write, modify, or full control permissions on the shared directory</param>
+        /// <returns>true if the user has read permissions on the shared directory</returns>
+        public static bool CheckSharePermissions(string shareName, string userName, out bool hasModifyPermissions)
+        {
+            var hasReadPermissions = false;
+            hasModifyPermissions = false;
+            var sharePath = $"\\\\{Environment.MachineName}\\{shareName}";
+            if (!Directory.Exists(sharePath))
+            {
+                return false;
+            }
+
+            // See https://docs.microsoft.com/en-us/windows/win32/wmisdk/file-and-directory-access-rights-constants for the breakdown of these magic numbers
+            const uint shareRead = 1179817; // 0x1200A9 (0x1, 0x8, 0x20, 0x80, 0x20000, 0x100000)
+            const uint shareChange = 1245631; // 0x1301BF, shareRead + 65814 (0x10116) (0x2, 0x4, 0x10, 0x100, 0x10000)
+            const uint shareFullControl = 2032127; // 0x1F01FF, shareChange + 786496 (0xC0040) (0x40, 0x40000, 0x80000)
+
+            var userAndGroups = GetLocalUserAndGroups(userName);
+
+            //using (var managementClass = new ManagementClass("Win32_LogicalShareSecuritySetting"))
+            //using (var results = managementClass.GetInstances())
+            using (var searcher = new ManagementObjectSearcher($"SELECT * FROM Win32_LogicalShareSecuritySetting WHERE Name = '{shareName}'"))
+            using (var results = searcher.Get())
+            {
+                foreach (var share in results.Cast<object>().Where(x => x is ManagementObject).Cast<ManagementObject>())
+                {
+                    if (!share["Name"].ToString().Equals(shareName))
+                    {
+                        continue;
+                    }
+
+                    var inParams = share.GetMethodParameters("GetSecurityDescriptor");
+                    using (var permissions = share.InvokeMethod("GetSecurityDescriptor", inParams, new InvokeMethodOptions()))
+                    {
+                        if (!((permissions?["Descriptor"] as ManagementBaseObject)?["DACL"] is Array daclList))
+                        {
+                            continue;
+                        }
+
+                        foreach (ManagementBaseObject dacl in daclList)
+                        {
+                            var trusteeDom = ((ManagementBaseObject)dacl["Trustee"])["Domain"]?.ToString();
+                            var trustee = ((ManagementBaseObject)dacl["Trustee"])["Name"].ToString();
+                            var accessMask = (uint)dacl["AccessMask"];
+
+                            foreach (var id in userAndGroups)
+                            {
+                                if (trustee.Equals(id, StringComparison.OrdinalIgnoreCase) &&
+                                    (trusteeDom == null ||
+                                     trusteeDom.Equals(Environment.MachineName, StringComparison.OrdinalIgnoreCase) ||
+                                     trusteeDom.Equals("BUILTIN", StringComparison.OrdinalIgnoreCase) ||
+                                     trusteeDom.Equals("NT AUTHORITY", StringComparison.OrdinalIgnoreCase)
+                                     ))
+                                {
+                                    if (accessMask == shareRead)
+                                    {
+                                        //Console.WriteLine("{0} has share 'read' permission, {1} can use this permission", trustee, userName);
+                                        hasReadPermissions = true;
+                                    }
+
+                                    if (accessMask == shareChange || accessMask == shareFullControl)
+                                    {
+                                        //Console.WriteLine("{0} has share 'change' or 'full control' permission, {1} can use this permission", trustee, userName);
+                                        hasReadPermissions = true;
+                                        hasModifyPermissions = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return hasReadPermissions;
+        }
+
+        public static List<string> GetLocalUserAndGroups(string localUserName)
+        {
+            var userAndValidGroups = new List<string>(10)
+            {
+                localUserName,
+                "Authenticated Users", // Never returned by a group inquiry
+                "Everyone", // Never returned by a group inquiry
+            };
+            userAndValidGroups.AddRange(GetLocalUserGroupsNames(localUserName));
+
+            return userAndValidGroups;
+        }
+
+        public static List<string> GetLocalUserGroupsNames(string localUserName)
+        {
+            // does not work with a domain account, because we limit the scope to the local machine
+            using (var principalContext = new PrincipalContext(ContextType.Machine))
+            using (var user = UserPrincipal.FindByIdentity(principalContext, localUserName))
+            {
+                if (user == null)
+                {
+                    return new List<string>();
+                }
+
+                var results = user.GetGroups();
+                var groups = results.Select(x => x.Name).ToList();
+                return groups;
+            }
         }
 
         protected static string StandardizePath(string path)
@@ -186,6 +408,7 @@ namespace BuzzardWPF.Searching
                             sharePath = string.Join(@"\", pathParts.Skip(1));
                         }
 
+                        // TODO: Check 'CaptureMethod'; 'secfso' means 'ftms' account is used, 'fso' means svc-dms is used
                         if (!sharePathsInDMS.ContainsKey(shareName))
                         {
                             sharePathsInDMS.Add(shareName, sharePath);
@@ -229,6 +452,8 @@ namespace BuzzardWPF.Searching
                     if (string.Equals(baseFolderPathToUse, knownShare.Value, StringComparison.CurrentCultureIgnoreCase))
                         return true;
                 }
+
+                // TODO: Allow use of non-default paths with shares that have the needed permissions!!!
 
                 expectedBaseFolderPath = knownLocalShares.FirstOrDefault().Value;
                 if (expectedBaseFolderPath.StartsWith(REMOTE_COMPUTER_PREFIX))
