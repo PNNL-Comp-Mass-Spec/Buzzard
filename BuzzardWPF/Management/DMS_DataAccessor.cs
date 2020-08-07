@@ -757,6 +757,7 @@ namespace BuzzardWPF.Management
         /// Instrument details (Name, status, source hostname, source share name, capture method
         /// </summary>
         /// <remarks>Key is instrument name, value is the details</remarks>
+        /// <remarks>Data is pulled from DMS view V_Instrument_Info_LCMSNet</remarks>
         public Dictionary<string, InstrumentInfo> InstrumentDetails { get; } = new Dictionary<string, InstrumentInfo>();
 
         /// <summary>

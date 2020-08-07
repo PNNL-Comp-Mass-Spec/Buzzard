@@ -55,7 +55,7 @@ namespace BuzzardWPF.Searching
                     var sharePath = share["Path"].ToString();
                     // var shareCaption = share["Caption"].ToString();
 
-                    shareList.Add(shareName, StandarizePath(sharePath));
+                    shareList.Add(shareName, StandardizePath(sharePath));
                 }
             }
 
@@ -73,19 +73,23 @@ namespace BuzzardWPF.Searching
         {
             var shareList = new Dictionary<string, string>();
 
-            foreach (var share in new ManagementObjectSearcher("SELECT * FROM Win32_Share").Get())
+            using (var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_Share"))
+            using (var results = searcher.Get())
             {
-                var shareName = share["Name"].ToString();
-                var sharePath = share["Path"].ToString();
-                // var shareCaption = share["Caption"].ToString();
+                foreach (var share in results)
+                {
+                    var shareName = share["Name"].ToString();
+                    var sharePath = share["Path"].ToString();
+                    // var shareCaption = share["Caption"].ToString();
 
-                shareList.Add(shareName, StandarizePath(sharePath));
+                    shareList.Add(shareName, StandardizePath(sharePath));
+                }
             }
 
             return shareList;
         }
 
-        protected string StandarizePath(string path)
+        protected static string StandardizePath(string path)
         {
             var trimChars = new char[] {' ', '\\'};
             return path.Trim().TrimEnd(trimChars);
@@ -110,7 +114,7 @@ namespace BuzzardWPF.Searching
                 // will have a single entry with key "ProteomicsData" and value "ProteomicsData"
                 Dictionary<string, string> localShares;
 
-                var baseFolderPath = StandarizePath(diBaseFolder.FullName);
+                var baseFolderPath = StandardizePath(diBaseFolder.FullName);
 
                 if (baseFolderPath.StartsWith(@"\\"))
                 {
@@ -172,7 +176,7 @@ namespace BuzzardWPF.Searching
                     {
                         // Host names match
                         // Examine the share path, for example ProteomicsData\ or UserData\Nikola\AMOLF\
-                        var pathParts = StandarizePath(instrument.Value.SharePath).Split('\\').ToList();
+                        var pathParts = StandardizePath(instrument.Value.SharePath).Split('\\').ToList();
 
                         var shareName = pathParts[0];
                         var sharePath = string.Empty;
@@ -180,14 +184,12 @@ namespace BuzzardWPF.Searching
                         if (pathParts.Count > 1)
                         {
                             sharePath = string.Join(@"\", pathParts.Skip(1));
-
                         }
 
                         if (!sharePathsInDMS.ContainsKey(shareName))
                         {
                             sharePathsInDMS.Add(shareName, sharePath);
                         }
-
                     }
                 }
 
@@ -205,7 +207,7 @@ namespace BuzzardWPF.Searching
                                 knownLocalShares.Add(dmsTrackedShare.Key, localShare.Value);
                             else
                             {
-                                // Share has multiple aparts; append the additional information now
+                                // Share has multiple parts; append the additional information now
                                 knownLocalShares.Add(dmsTrackedShare.Key,
                                                      Path.Combine(localShare.Value, dmsTrackedShare.Value));
                             }
