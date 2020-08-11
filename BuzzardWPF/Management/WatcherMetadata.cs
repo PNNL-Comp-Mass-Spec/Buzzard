@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using BuzzardWPF.Properties;
 using BuzzardWPF.ViewModels;
-using DynamicData.Binding;
 using LcmsNetData.Data;
 using LcmsNetData.Logging;
 using ReactiveUI;
@@ -43,16 +42,7 @@ namespace BuzzardWPF.Management
             EMSLProposalUser = null;
             WorkPackage = "none";
 
-            this.WhenAnyValue(x => x.CartName).ObserveOn(RxApp.MainThreadScheduler).Subscribe(x =>
-            {
-                if (string.IsNullOrWhiteSpace(x))
-                {
-                    CartConfigNameListForCart = new List<string>();
-                    return;
-                }
-
-                CartConfigNameListForCart = DMS_DataAccessor.Instance.GetCartConfigNamesForCart(x);
-            });
+            this.WhenAnyValue(x => x.CartName).ObserveOn(RxApp.MainThreadScheduler).Subscribe(x => LoadCartConfigsForCartName());
         }
 
         /// <summary>
@@ -210,6 +200,25 @@ namespace BuzzardWPF.Management
         {
             get => interestRating;
             set => this.RaiseAndSetIfChangedMonitored(ref interestRating, value);
+        }
+
+        /// <summary>
+        /// Reloads data lists for lists that are filtered based on the current value of a property.
+        /// </summary>
+        public void ReloadPropertyDependentData()
+        {
+            RxApp.MainThreadScheduler.Schedule(() => LoadCartConfigsForCartName());
+        }
+
+        private void LoadCartConfigsForCartName()
+        {
+            if (string.IsNullOrWhiteSpace(CartName))
+            {
+                CartConfigNameListForCart = new List<string>();
+                return;
+            }
+
+            CartConfigNameListForCart = DMS_DataAccessor.Instance.GetCartConfigNamesForCart(CartName);
         }
 
         public bool SettingsChanged { get; set; }

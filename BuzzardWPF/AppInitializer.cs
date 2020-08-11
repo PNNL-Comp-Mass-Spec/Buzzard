@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using BuzzardWPF.Management;
@@ -240,6 +241,7 @@ namespace BuzzardWPF
         /// </summary>
         public static async Task<bool> InitializeApplication(Window displayWindow, Action<string> instrumentNameAction = null)
         {
+            //Thread.Sleep(10000);
             var openMainWindow = false;
 
             CreatePath("Log");

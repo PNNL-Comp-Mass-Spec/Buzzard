@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reactive;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using BuzzardWPF.Data;
 using BuzzardWPF.Management;
@@ -234,6 +234,14 @@ namespace BuzzardWPF.ViewModels
             Dataset.UseInterestRating = shouldWe;
             Dataset.UseEMSLProposalUser = shouldWe;
             Dataset.UseComment = shouldWe;
+        }
+
+        /// <summary>
+        /// Reloads data lists for lists that are filtered based on the current value of a property.
+        /// </summary>
+        public void ReloadPropertyDependentData()
+        {
+            RxApp.MainThreadScheduler.Schedule(() => LoadCartConfigsForCart(Dataset.DmsData.CartName));
         }
 
         private void LoadCartConfigsForCart(string cartName)

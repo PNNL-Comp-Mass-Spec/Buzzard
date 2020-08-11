@@ -33,11 +33,20 @@ namespace BuzzardWPF.Management
 
         public FillDownWindowViewModel GetFillDownVm(FilldownBuzzardDataset fillDownDataset)
         {
-            if (fillDownVm == null)
+            if (fillDownVm == null || !ReferenceEquals(fillDownDataset, fillDownVm.Dataset))
             {
                 fillDownVm = new FillDownWindowViewModel(fillDownDataset);
             }
 
+            return fillDownVm;
+        }
+
+        /// <summary>
+        /// Returns the current FillDownViewModel. May return null.
+        /// </summary>
+        /// <returns></returns>
+        public FillDownWindowViewModel GetFillDownVm()
+        {
             return fillDownVm;
         }
 
