@@ -326,7 +326,7 @@ namespace BuzzardWPF.Management
 
             var baseFolderValidator = new InstrumentFolderValidator(DMS_DataAccessor.Instance.InstrumentDetails);
 
-            if (!baseFolderValidator.ValidateBaseFolder(diBaseFolder, out var expectedBaseFolderPath))
+            if (!baseFolderValidator.ValidateBaseFolder(diBaseFolder, out var expectedBaseFolderPath, out var shareName))
             {
                 if (string.IsNullOrWhiteSpace(baseFolderValidator.ErrorMessage))
                     ReportError("Base folder not valid for this instrument; should be " + expectedBaseFolderPath);
@@ -334,6 +334,8 @@ namespace BuzzardWPF.Management
                     ReportError(baseFolderValidator.ErrorMessage);
                 return;
             }
+
+            Config.ShareName = shareName;
 
             mFileSystemWatcher.Path = diBaseFolder.FullName;
             // Set a larger than default buffer

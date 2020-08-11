@@ -23,6 +23,7 @@ namespace BuzzardWPF.Data
         private DatasetSource datasetSource;
         private TriggerFileStatus triggerFileStatus;
         private string columnName;
+        private string captureShareName = string.Empty;
         private string captureSubdirectoryPath = string.Empty;
 
         private bool isQC;
@@ -142,6 +143,7 @@ namespace BuzzardWPF.Data
             InterestRating = "Unreviewed";
             IsFile = true;
             ColumnName = "";
+            CaptureShareName = "";
             CaptureSubdirectoryPath = "";
             TriggerFileStatus = TriggerFileStatus.Pending;
             IsQC = false;
@@ -190,6 +192,12 @@ namespace BuzzardWPF.Data
         {
             get => columnName;
             set => this.RaiseAndSetIfChanged(ref columnName, value);
+        }
+
+        public string CaptureShareName
+        {
+            get => captureShareName;
+            set => this.RaiseAndSetIfChanged(ref captureShareName, value);
         }
 
         public string CaptureSubdirectoryPath

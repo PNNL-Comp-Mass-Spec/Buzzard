@@ -206,6 +206,11 @@
             Name of operator (as entered in DMS)
             </summary>
         </member>
+        <member name="P:LcmsNetData.Data.ITriggerFileData.CaptureShareName">
+            <summary>
+            Name of the shared directory used to access the dataset. If empty, the instrument default (in DMS) is used.
+            </summary>
+        </member>
         <member name="P:LcmsNetData.Data.ITriggerFileData.CaptureSubdirectoryPath">
             <summary>
             Subdirectory containing the dataset

@@ -34,7 +34,7 @@ namespace BuzzardWPF.Searching
         }
 
         /// <summary>
-        ///
+        /// Gets all Windows shared directories for <paramref name="hostName"/>
         /// </summary>
         /// <param name="hostName"></param>
         /// <returns>
@@ -65,7 +65,7 @@ namespace BuzzardWPF.Searching
         }
 
         /// <summary>
-        ///
+        /// Gets all local Windows shared directories
         /// </summary>
         /// <returns>
         /// Dictionary where key is the share name and path is the local path to that share.
@@ -97,12 +97,13 @@ namespace BuzzardWPF.Searching
         /// <param name="path">The full path to the target directory</param>
         /// <param name="userName"></param>
         /// <param name="hasModifyPermissions">true if the user has write, modify, or full control permissions on the shared directory</param>
-        /// <param name="sharePath">If the path is shared, the full share path (does not include FQDN)</param>
+        /// <param name="shareName">If the path is shared, the name of the share</param>
+        /// <param name="sharedDirectory">The directory that is shared by <paramref name="shareName"/></param>
         /// <returns>true if the user has read permissions on the shared directory</returns>
-        public static bool CheckDirectorySharingAndPermissions(string path, string userName, out bool hasModifyPermissions, out string sharePath)
+        public static bool CheckDirectorySharingAndPermissions(string path, string userName, out bool hasModifyPermissions, out string shareName, out string sharedDirectory)
         {
-            var shareName = "";
-            sharePath = "";
+            shareName = "";
+            sharedDirectory = "";
             hasModifyPermissions = false;
             if (!Directory.Exists(path))
             {
@@ -110,18 +111,18 @@ namespace BuzzardWPF.Searching
             }
 
             var trimPath = path.TrimEnd('\\');
-            foreach (var sharedDir in GetLocalWindowsShares().Where(x => !x.Key.EndsWith("$") /* Exclude Admin shares */)
+            foreach (var share in GetLocalWindowsShares().Where(x => !x.Key.EndsWith("$") /* Exclude Admin shares */)
                 .OrderBy(x => x.Value.Length /* By default use the most specific share */))
             {
-                if (sharedDir.Value.Equals(trimPath, StringComparison.OrdinalIgnoreCase) ||
-                    (!string.IsNullOrWhiteSpace(sharedDir.Value) && path.StartsWith(sharedDir.Value, StringComparison.OrdinalIgnoreCase)))
+                if (share.Value.Equals(trimPath, StringComparison.OrdinalIgnoreCase) ||
+                    (!string.IsNullOrWhiteSpace(share.Value) && path.StartsWith(share.Value, StringComparison.OrdinalIgnoreCase)))
                 {
-                    shareName = sharedDir.Key;
-                    sharePath = $"\\\\{Environment.MachineName}\\{shareName}";
+                    shareName = share.Key;
+                    sharedDirectory = share.Value;
                 }
             }
 
-            if (string.IsNullOrWhiteSpace(sharePath))
+            if (string.IsNullOrWhiteSpace(shareName))
             {
                 // No share exists for this path, permissions checks are pointless
                 return false;
@@ -317,12 +318,20 @@ namespace BuzzardWPF.Searching
             return path.Trim().TrimEnd(trimChars);
         }
 
-        public bool ValidateBaseFolder(DirectoryInfo diBaseFolder, out string expectedBaseFolderPath)
+        /// <summary>
+        /// Validate if the base directory being searched/watched is accessible via the network and DMS
+        /// </summary>
+        /// <param name="diBaseDirectory"></param>
+        /// <param name="expectedBaseDirectoryPath"></param>
+        /// <param name="netShareName">The name of the shared directory used to access the directory <paramref name="diBaseDirectory"/>, if it is not the default share name listed in DMS</param>
+        /// <returns></returns>
+        public bool ValidateBaseFolder(DirectoryInfo diBaseDirectory, out string expectedBaseDirectoryPath, out string netShareName)
         {
             const string GENERIC_REMOTE_COMPUTER = "RemoteComputer";
             const string REMOTE_COMPUTER_PREFIX = @"\\" + GENERIC_REMOTE_COMPUTER + @"\";
 
-            expectedBaseFolderPath = string.Empty;
+            expectedBaseDirectoryPath = string.Empty;
+            netShareName = string.Empty;
             ErrorMessage = string.Empty;
 
             try
@@ -336,7 +345,7 @@ namespace BuzzardWPF.Searching
                 // will have a single entry with key "ProteomicsData" and value "ProteomicsData"
                 Dictionary<string, string> localShares;
 
-                var baseFolderPath = StandardizePath(diBaseFolder.FullName);
+                var baseFolderPath = StandardizePath(diBaseDirectory.FullName);
 
                 if (baseFolderPath.StartsWith(@"\\"))
                 {
@@ -351,7 +360,7 @@ namespace BuzzardWPF.Searching
                     {
                         // Invalid base folder path; cannot validate
                         ErrorMessage = "Invalid base folder path; share name not specified after the remote computer name: " + baseFolderPath;
-                        expectedBaseFolderPath = Path.Combine(baseFolderPath, "ProteomicsData");
+                        expectedBaseDirectoryPath = Path.Combine(baseFolderPath, "ProteomicsData");
                         return false;
                     }
 
@@ -385,6 +394,7 @@ namespace BuzzardWPF.Searching
                 // In this case the key in this dictionary is "UserData" and the value is "Nikola\AMOLF"
 
                 var sharePathsInDMS = new Dictionary<string, string>();
+                var captureWithFtmsUser = false;
 
                 // Look shares associated with baseFolderHostName in mInstrumentInfo
                 // There will normally only be one share tracked for a given host
@@ -408,10 +418,15 @@ namespace BuzzardWPF.Searching
                             sharePath = string.Join(@"\", pathParts.Skip(1));
                         }
 
-                        // TODO: Check 'CaptureMethod'; 'secfso' means 'ftms' account is used, 'fso' means svc-dms is used
                         if (!sharePathsInDMS.ContainsKey(shareName))
                         {
                             sharePathsInDMS.Add(shareName, sharePath);
+                        }
+
+                        // Check 'CaptureMethod'; 'secfso' means 'ftms' account is used, 'fso' means svc-dms is used
+                        if (instrument.Value.CaptureMethod.Equals("secfso", StringComparison.OrdinalIgnoreCase))
+                        {
+                            captureWithFtmsUser = true;
                         }
                     }
                 }
@@ -451,21 +466,39 @@ namespace BuzzardWPF.Searching
                 {
                     if (string.Equals(baseFolderPathToUse, knownShare.Value, StringComparison.CurrentCultureIgnoreCase))
                         return true;
+
+                    if (baseFolderPathToUse.StartsWith(knownShare.Value, StringComparison.OrdinalIgnoreCase))
+                        return true;
                 }
 
-                // TODO: Allow use of non-default paths with shares that have the needed permissions!!!
-
-                expectedBaseFolderPath = knownLocalShares.FirstOrDefault().Value;
-                if (expectedBaseFolderPath.StartsWith(REMOTE_COMPUTER_PREFIX))
+                // There is a valid share with DMS, but the baseFolderPath is not accessible via that share.
+                // Check if there is a share with the needed permissions that can access the baseFolderPath
+                // Only check if the capture method is 'secfso', since the code currently will fail with a domain user.
+                if (captureWithFtmsUser)
                 {
-                    expectedBaseFolderPath = @"\\" + baseFolderHostName + @"\" +
-                                             expectedBaseFolderPath.Substring(REMOTE_COMPUTER_PREFIX.Length);
+                    var readAccess = CheckDirectorySharingAndPermissions(baseFolderPathToUse, "ftms", out var changeAccess, out var tempShareName, out var sharedDir);
+                    if (readAccess)
+                    {
+                        netShareName = tempShareName;
+
+                        if (!changeAccess)
+                        {
+                            ApplicationLogger.LogMessage(LogLevel.Warning, $"FTMS user does not have 'change' access on the file share '{netShareName}' ('{sharedDir}'). Upload will succeed, but datasets will not be renamed after archiving.");
+                        }
+
+                        return true;
+                    }
                 }
 
-                ErrorMessage = "Base folder not valid for this instrument; " + diBaseFolder.FullName + " " +
-                               "does not match the expected base folder of " +
-                               expectedBaseFolderPath +
-                               " -- dataset upload will fail; search aborted";
+                expectedBaseDirectoryPath = knownLocalShares.FirstOrDefault().Value;
+                if (expectedBaseDirectoryPath.StartsWith(REMOTE_COMPUTER_PREFIX))
+                {
+                    expectedBaseDirectoryPath = @"\\" + baseFolderHostName + @"\" +
+                                             expectedBaseDirectoryPath.Substring(REMOTE_COMPUTER_PREFIX.Length);
+                }
+
+                // TODO: Improve this message!!!
+                ErrorMessage = "Search folder not valid; it should be " + expectedBaseDirectoryPath + " or a subfolder; -- dataset upload will fail; search aborted";
 
                 return false;
 

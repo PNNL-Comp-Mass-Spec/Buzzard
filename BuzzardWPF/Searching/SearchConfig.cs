@@ -54,6 +54,11 @@ namespace BuzzardWPF.Searching
         public bool SettingsChanged { get; set; }
 
         /// <summary>
+        /// The share name that corresponds to Directory Path. Empty string when the share is the default specified in DMS.
+        /// </summary>
+        public string ShareName { get; set; } = string.Empty;
+
+        /// <summary>
         /// Gets or sets the path to search in.
         /// </summary>
         public string DirectoryPath

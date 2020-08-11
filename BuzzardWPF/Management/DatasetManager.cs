@@ -505,6 +505,7 @@ namespace BuzzardWPF.Management
                             dataset = datasetEntry;
                             dataset.FilePath = datasetFileOrFolderPath;
                             dataset.CaptureSubdirectoryPath = captureSubfolderPath;
+                            dataset.CaptureShareName = Config.ShareName;
                             dataset.UpdateFileProperties();
                             break;
                         }
@@ -532,8 +533,8 @@ namespace BuzzardWPF.Management
 
             if (dataset != null)
             {
-
                 dataset.CaptureSubdirectoryPath = captureSubfolderPath;
+                dataset.CaptureShareName = Config.ShareName;
                 if (isArchived)
                     dataset.FilePath = datasetFileOrFolderPath;
                 else
@@ -575,6 +576,7 @@ namespace BuzzardWPF.Management
                 }
 
                 dataset.CaptureSubdirectoryPath = captureSubfolderPath;
+                dataset.CaptureShareName = Config.ShareName;
                 dataset.DmsData.CommentAddition = WatcherMetadata.UserComments;
 
                 BuzzardTriggerFileTools.ValidateDatasetName(dataset);
