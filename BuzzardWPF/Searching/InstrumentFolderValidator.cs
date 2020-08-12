@@ -65,7 +65,7 @@ namespace BuzzardWPF.Searching
         }
 
         /// <summary>
-        /// Gets all local Windows shared directories
+        /// Gets all local Windows shared directories, excluding ADMIN (ending in '$') shares
         /// </summary>
         /// <returns>
         /// Dictionary where key is the share name and path is the local path to that share.
@@ -84,7 +84,10 @@ namespace BuzzardWPF.Searching
                     var sharePath = share["Path"].ToString();
                     // var shareCaption = share["Caption"].ToString();
 
-                    shareList.Add(shareName, StandardizePath(sharePath));
+                    if (!shareName.EndsWith("$"))
+                    {
+                        shareList.Add(shareName, StandardizePath(sharePath));
+                    }
                 }
             }
 
@@ -155,7 +158,15 @@ namespace BuzzardWPF.Searching
             // owner and rules always appear to have a domain/workspace/scope context, in the form of '[Domain]\[User or group]'.
             // The methods to get a user and group only has a scope specified for a domain, not for local accounts.
             // Change the user/groups to require matching a backslash (\).
-            var userAndGroups = GetLocalUserAndGroups(userName).Select(x => x.Contains("\\") ? x : $"\\{x}").ToList();
+            var userAndGroups = GetLocalUserAndGroups(userName).Select(x =>
+            {
+                // 'Everyone' never has a 'scope' for permissions (but funnily enough, all other built-in/automatic groups do, even 'NT AUTHORITY\ANONYMOUS LOGON')
+                if (x.Equals("everyone", StringComparison.OrdinalIgnoreCase))
+                {
+                    return x;
+                }
+                return x.Contains("\\") ? x : $"\\{x}";
+            }).ToList();
 
             var security = Directory.GetAccessControl(path);
             var owner = security.GetOwner(typeof(System.Security.Principal.NTAccount)).Value;
@@ -168,6 +179,7 @@ namespace BuzzardWPF.Searching
                 if (owner.EndsWith(id, StringComparison.OrdinalIgnoreCase))
                 {
                     //Console.WriteLine("{0} is directory owner, {1} should have full privileges", owner, userName);
+                    ApplicationLogger.LogMessage(LogLevel.Trace, $"{nameof(InstrumentFolderValidator)}: {owner} is directory owner, {userName} should have full privileges");
                     hasReadPermissions = true;
                     hasModifyPermissions = true;
                 }
@@ -182,17 +194,20 @@ namespace BuzzardWPF.Searching
                             rule.FileSystemRights.HasFlag(FileSystemRights.Write))
                         {
                             //Console.WriteLine("{0} has directory modify permissions '{1}', {2} can use these permissions", ruleId, rule.FileSystemRights, userName);
+                            ApplicationLogger.LogMessage(LogLevel.Trace, $"{nameof(InstrumentFolderValidator)}: {ruleId} has directory modify permissions '{rule.FileSystemRights}', {userName} can use these permissions");
                             hasReadPermissions = true;
                             hasModifyPermissions = true;
                         }
                         else if (rule.FileSystemRights.HasFlag(FileSystemRights.Read))
                         {
                             //Console.WriteLine("{0} has directory read permissions '{1}', {2} can use these permissions", ruleId, rule.FileSystemRights, userName);
+                            ApplicationLogger.LogMessage(LogLevel.Trace, $"{nameof(InstrumentFolderValidator)}: {ruleId} has directory read permissions '{rule.FileSystemRights}', {userName} can use these permissions");
                             hasReadPermissions = true;
                         }
                         else
                         {
                             //Console.WriteLine("{0} has directory permissions '{1}', {2} can use these permissions", ruleId, rule.FileSystemRights, userName);
+                            ApplicationLogger.LogMessage(LogLevel.Trace, $"{nameof(InstrumentFolderValidator)}: {ruleId} has directory other permissions '{rule.FileSystemRights}', {userName} can use these permissions");
                         }
                     }
                 }
@@ -263,12 +278,14 @@ namespace BuzzardWPF.Searching
                                     if (accessMask == shareRead)
                                     {
                                         //Console.WriteLine("{0} has share 'read' permission, {1} can use this permission", trustee, userName);
+                                        ApplicationLogger.LogMessage(LogLevel.Trace, $"{nameof(InstrumentFolderValidator)}: {trustee} has share 'read' permission, {userName} can use this permission");
                                         hasReadPermissions = true;
                                     }
 
                                     if (accessMask == shareChange || accessMask == shareFullControl)
                                     {
                                         //Console.WriteLine("{0} has share 'change' or 'full control' permission, {1} can use this permission", trustee, userName);
+                                        ApplicationLogger.LogMessage(LogLevel.Trace, $"{nameof(InstrumentFolderValidator)}: {trustee} has share 'change' or 'full control' permission, {userName} can use this permission");
                                         hasReadPermissions = true;
                                         hasModifyPermissions = true;
                                     }
@@ -398,37 +415,37 @@ namespace BuzzardWPF.Searching
 
                 // Look shares associated with baseFolderHostName in mInstrumentInfo
                 // There will normally only be one share tracked for a given host
-                foreach (var instrument in mInstrumentInfo)
+                // The host name tracked by DMS might have periods in it; use Split() to account for that
+                var instrument = mInstrumentInfo
+                    .FirstOrDefault(x => string.Equals(baseFolderHostName, x.Value.HostName.Split('.').FirstOrDefault(), StringComparison.OrdinalIgnoreCase)).Value;
+                if (instrument != null)
                 {
-                    // The host name tracked by DMS might have periods in it; use Split() to account for that
+                    // Host names match
+                    // Examine the share path, for example ProteomicsData\ or UserData\Nikola\AMOLF\
+                    var pathParts = StandardizePath(instrument.SharePath).Split('\\').ToList();
 
-                    var instrumentHostInDMS = instrument.Value.HostName.Split('.').FirstOrDefault();
+                    var shareName = pathParts[0];
+                    var sharePath = string.Empty;
 
-                    if (string.Equals(baseFolderHostName, instrumentHostInDMS, StringComparison.CurrentCultureIgnoreCase))
+                    if (pathParts.Count > 1)
                     {
-                        // Host names match
-                        // Examine the share path, for example ProteomicsData\ or UserData\Nikola\AMOLF\
-                        var pathParts = StandardizePath(instrument.Value.SharePath).Split('\\').ToList();
-
-                        var shareName = pathParts[0];
-                        var sharePath = string.Empty;
-
-                        if (pathParts.Count > 1)
-                        {
-                            sharePath = string.Join(@"\", pathParts.Skip(1));
-                        }
-
-                        if (!sharePathsInDMS.ContainsKey(shareName))
-                        {
-                            sharePathsInDMS.Add(shareName, sharePath);
-                        }
-
-                        // Check 'CaptureMethod'; 'secfso' means 'ftms' account is used, 'fso' means svc-dms is used
-                        if (instrument.Value.CaptureMethod.Equals("secfso", StringComparison.OrdinalIgnoreCase))
-                        {
-                            captureWithFtmsUser = true;
-                        }
+                        sharePath = string.Join(@"\", pathParts.Skip(1));
                     }
+
+                    if (!sharePathsInDMS.ContainsKey(shareName))
+                    {
+                        sharePathsInDMS.Add(shareName, sharePath);
+                    }
+
+                    // Check 'CaptureMethod'; 'secfso' means 'ftms' account is used, 'fso' means svc-dms is used
+                    if (instrument.CaptureMethod.Equals("secfso", StringComparison.OrdinalIgnoreCase))
+                    {
+                        captureWithFtmsUser = true;
+                    }
+                }
+                else
+                {
+                    ApplicationLogger.LogMessage(LogLevel.Debug, $"{nameof(InstrumentFolderValidator)}: No instrument found in DMS that matches hostname {baseFolderHostName}!");
                 }
 
                 var knownLocalShares = new Dictionary<string, string>();
@@ -438,7 +455,7 @@ namespace BuzzardWPF.Searching
                 {
                     foreach (var dmsTrackedShare in sharePathsInDMS)
                     {
-                        if (string.Equals(dmsTrackedShare.Key, localShare.Key, StringComparison.CurrentCultureIgnoreCase))
+                        if (string.Equals(dmsTrackedShare.Key, localShare.Key, StringComparison.OrdinalIgnoreCase))
                         {
                             // Match found
                             if (string.IsNullOrWhiteSpace(dmsTrackedShare.Value))
@@ -458,18 +475,21 @@ namespace BuzzardWPF.Searching
                 if (knownLocalShares.Count == 0)
                 {
                     // No known local shares; cannot validate the base folder
+                    ApplicationLogger.LogMessage(LogLevel.Debug, $"{nameof(InstrumentFolderValidator)}: No local shares that match a share in DMS for host {baseFolderHostName}!");
                     return true;
                 }
 
                 // Now step through the list of known local shares and look for a match to the base folder in use
                 foreach (var knownShare in knownLocalShares)
                 {
-                    if (string.Equals(baseFolderPathToUse, knownShare.Value, StringComparison.CurrentCultureIgnoreCase))
+                    if (string.Equals(baseFolderPathToUse, knownShare.Value, StringComparison.OrdinalIgnoreCase))
                         return true;
 
                     if (baseFolderPathToUse.StartsWith(knownShare.Value, StringComparison.OrdinalIgnoreCase))
                         return true;
                 }
+
+                ApplicationLogger.LogMessage(LogLevel.Debug, $"{nameof(InstrumentFolderValidator)}: Base path of {baseFolderPathToUse} does not match any share known to DMS");
 
                 // There is a valid share with DMS, but the baseFolderPath is not accessible via that share.
                 // Check if there is a share with the needed permissions that can access the baseFolderPath
@@ -477,6 +497,7 @@ namespace BuzzardWPF.Searching
                 if (captureWithFtmsUser)
                 {
                     var readAccess = CheckDirectorySharingAndPermissions(baseFolderPathToUse, "ftms", out var changeAccess, out var tempShareName, out var sharedDir);
+                    ApplicationLogger.LogMessage(LogLevel.Debug, $"{nameof(InstrumentFolderValidator)}: Checked path {baseFolderPathToUse} for alternate shares. Got sharename '{tempShareName}' for directory '{sharedDir}', read '{readAccess}', write '{changeAccess}'.");
                     if (readAccess)
                     {
                         netShareName = tempShareName;
