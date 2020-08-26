@@ -59,6 +59,11 @@ namespace BuzzardWPF.Searching
         public string ShareName { get; set; } = string.Empty;
 
         /// <summary>
+        /// Any components of the searched path that are not
+        /// </summary>
+        public string BaseCaptureSubdirectory { get; set; } = string.Empty;
+
+        /// <summary>
         /// Gets or sets the path to search in.
         /// </summary>
         public string DirectoryPath

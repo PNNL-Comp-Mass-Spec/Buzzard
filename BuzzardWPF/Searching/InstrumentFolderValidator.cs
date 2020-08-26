@@ -341,13 +341,15 @@ namespace BuzzardWPF.Searching
         /// <param name="diBaseDirectory"></param>
         /// <param name="expectedBaseDirectoryPath"></param>
         /// <param name="netShareName">The name of the shared directory used to access the directory <paramref name="diBaseDirectory"/>, if it is not the default share name listed in DMS</param>
+        /// <param name="additionalSubdirectories">Any additional path information needed after <paramref name="expectedBaseDirectoryPath"/> or <paramref name="netShareName"/> to access the <paramref name="diBaseDirectory"/></param>
         /// <returns></returns>
-        public bool ValidateBaseFolder(DirectoryInfo diBaseDirectory, out string expectedBaseDirectoryPath, out string netShareName)
+        public bool ValidateBaseFolder(DirectoryInfo diBaseDirectory, out string expectedBaseDirectoryPath, out string netShareName, out string additionalSubdirectories)
         {
             const string GENERIC_REMOTE_COMPUTER = "RemoteComputer";
             const string REMOTE_COMPUTER_PREFIX = @"\\" + GENERIC_REMOTE_COMPUTER + @"\";
 
             expectedBaseDirectoryPath = string.Empty;
+            additionalSubdirectories = string.Empty;
             netShareName = string.Empty;
             ErrorMessage = string.Empty;
 
@@ -482,11 +484,16 @@ namespace BuzzardWPF.Searching
                 // Now step through the list of known local shares and look for a match to the base folder in use
                 foreach (var knownShare in knownLocalShares)
                 {
+                    // Default share path
                     if (string.Equals(baseFolderPathToUse, knownShare.Value, StringComparison.OrdinalIgnoreCase))
                         return true;
 
+                    // Subfolder of the default share path; must make sure the capture subfolder is set appropriately.
                     if (baseFolderPathToUse.StartsWith(knownShare.Value, StringComparison.OrdinalIgnoreCase))
+                    {
+                        additionalSubdirectories = baseFolderPathToUse.Substring(knownShare.Value.Length).Trim('\\', '/');
                         return true;
+                    }
                 }
 
                 ApplicationLogger.LogMessage(LogLevel.Debug, $"{nameof(InstrumentFolderValidator)}: Base path of {baseFolderPathToUse} does not match any share known to DMS");
@@ -507,6 +514,7 @@ namespace BuzzardWPF.Searching
                             ApplicationLogger.LogMessage(LogLevel.Warning, $"FTMS user does not have 'change' access on the file share '{netShareName}' ('{sharedDir}'). Upload will succeed, but datasets will not be renamed after archiving.");
                         }
 
+                        additionalSubdirectories = baseFolderPathToUse.Substring(sharedDir.Length).Trim('\\', '/');
                         return true;
                     }
                 }

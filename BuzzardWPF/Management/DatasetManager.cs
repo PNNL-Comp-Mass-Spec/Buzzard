@@ -507,6 +507,12 @@ namespace BuzzardWPF.Management
                             dataset.CaptureSubdirectoryPath = captureSubfolderPath;
                             dataset.CaptureShareName = Config.ShareName;
                             dataset.UpdateFileProperties();
+
+                            if (!string.IsNullOrWhiteSpace(Config.BaseCaptureSubdirectory))
+                            {
+                                dataset.CaptureSubdirectoryPath = Path.Combine(Config.BaseCaptureSubdirectory, captureSubfolderPath);
+                            }
+
                             break;
                         }
                     }
@@ -535,6 +541,12 @@ namespace BuzzardWPF.Management
             {
                 dataset.CaptureSubdirectoryPath = captureSubfolderPath;
                 dataset.CaptureShareName = Config.ShareName;
+
+                if (!string.IsNullOrWhiteSpace(Config.BaseCaptureSubdirectory))
+                {
+                    dataset.CaptureSubdirectoryPath = Path.Combine(Config.BaseCaptureSubdirectory, captureSubfolderPath);
+                }
+
                 if (isArchived)
                     dataset.FilePath = datasetFileOrFolderPath;
                 else
@@ -578,6 +590,11 @@ namespace BuzzardWPF.Management
                 dataset.CaptureSubdirectoryPath = captureSubfolderPath;
                 dataset.CaptureShareName = Config.ShareName;
                 dataset.DmsData.CommentAddition = WatcherMetadata.UserComments;
+
+                if (!string.IsNullOrWhiteSpace(Config.BaseCaptureSubdirectory))
+                {
+                    dataset.CaptureSubdirectoryPath = Path.Combine(Config.BaseCaptureSubdirectory, captureSubfolderPath);
+                }
 
                 BuzzardTriggerFileTools.ValidateDatasetName(dataset);
 

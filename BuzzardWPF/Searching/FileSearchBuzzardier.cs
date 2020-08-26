@@ -164,7 +164,7 @@ namespace BuzzardWPF.Searching
                     var baseFolderValidator = new InstrumentFolderValidator(mInstrumentInfo);
 
                     string expectedBaseFolderPath;
-                    if (!baseFolderValidator.ValidateBaseFolder(diBaseFolder, out expectedBaseFolderPath, out var shareName))
+                    if (!baseFolderValidator.ValidateBaseFolder(diBaseFolder, out expectedBaseFolderPath, out var shareName, out var baseCaptureSubdirectory))
                     {
                         if (string.IsNullOrWhiteSpace(baseFolderValidator.ErrorMessage))
                             ReportError("Base folder not valid for this instrument; should be " + expectedBaseFolderPath);
@@ -173,6 +173,7 @@ namespace BuzzardWPF.Searching
                         return;
                     }
 
+                    config.BaseCaptureSubdirectory = baseCaptureSubdirectory;
                     config.ShareName = shareName;
                 }
 

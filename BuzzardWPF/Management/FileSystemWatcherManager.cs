@@ -326,7 +326,7 @@ namespace BuzzardWPF.Management
 
             var baseFolderValidator = new InstrumentFolderValidator(DMS_DataAccessor.Instance.InstrumentDetails);
 
-            if (!baseFolderValidator.ValidateBaseFolder(diBaseFolder, out var expectedBaseFolderPath, out var shareName))
+            if (!baseFolderValidator.ValidateBaseFolder(diBaseFolder, out var expectedBaseFolderPath, out var shareName, out var baseCaptureSubdirectory))
             {
                 if (string.IsNullOrWhiteSpace(baseFolderValidator.ErrorMessage))
                     ReportError("Base folder not valid for this instrument; should be " + expectedBaseFolderPath);
@@ -335,6 +335,7 @@ namespace BuzzardWPF.Management
                 return;
             }
 
+            Config.BaseCaptureSubdirectory = baseCaptureSubdirectory;
             Config.ShareName = shareName;
 
             mFileSystemWatcher.Path = diBaseFolder.FullName;
