@@ -121,7 +121,7 @@ namespace BuzzardWPF.Searching
             searchingAsync = false;
         }
 
-        private bool searchingAsync = false;
+        private bool searchingAsync;
         private CancellationTokenSource asyncCancelToken;
 
         private void SearchAsyncImpl(SearchConfig config, CancellationToken cancelToken)
@@ -165,8 +165,7 @@ namespace BuzzardWPF.Searching
                 {
                     var baseFolderValidator = new InstrumentFolderValidator(mInstrumentInfo);
 
-                    string expectedBaseFolderPath;
-                    if (!baseFolderValidator.ValidateBaseFolder(diBaseFolder, out expectedBaseFolderPath, out var shareName, out var baseCaptureSubdirectory))
+                    if (!baseFolderValidator.ValidateBaseFolder(diBaseFolder, out var expectedBaseFolderPath, out var shareName, out var baseCaptureSubdirectory))
                     {
                         if (string.IsNullOrWhiteSpace(baseFolderValidator.ErrorMessage))
                             ReportError("Base folder not valid for this instrument; should be " + expectedBaseFolderPath);
@@ -245,7 +244,7 @@ namespace BuzzardWPF.Searching
                         {
                             if (!string.IsNullOrWhiteSpace(config.FilenameFilter))
                             {
-                                if (!datasetEntry.Value.Name.ToLower().Contains(config.FilenameFilter.ToLower()))
+                                if (!(datasetEntry.Value.Name.IndexOf(config.FilenameFilter, StringComparison.OrdinalIgnoreCase) >= 0))
                                     continue;
                             }
 

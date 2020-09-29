@@ -13,19 +13,19 @@ namespace BuzzardWPF.Converters
 
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            var data = "";
-            var option = (SearchOption)value;
+            if (value == null)
+                return "Null value sent toSearchOptionValueConverter";
 
-            switch (option)
+            switch ((SearchOption)value)
             {
                 case SearchOption.AllDirectories:
-                    data = ALL_DIRECTORIES;
-                    break;
+                    return ALL_DIRECTORIES;
+
                 case SearchOption.TopDirectoryOnly:
-                    data = TOP_DIRECTORY;
-                    break;
+                    return TOP_DIRECTORY;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(value), value, null);
             }
-            return data;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

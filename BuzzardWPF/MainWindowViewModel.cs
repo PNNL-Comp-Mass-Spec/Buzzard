@@ -49,7 +49,7 @@ namespace BuzzardWPF
         /// </summary>
         private readonly Timer m_animationTimer;
 
-        private bool animationEnabled = false;
+        private bool animationEnabled;
 
         private int m_counter;
         private Collection<BitmapImage> m_images;  // TODO: Handle these differently?
@@ -100,7 +100,7 @@ namespace BuzzardWPF
             LoadImages();
             ApplicationLogger.LogMessage(0, "Ready");
 
-            if (Environment.MachineName.ToLower() == "monroe5" || Environment.MachineName.ToLower() == "we27655")
+            if (string.Equals(Environment.MachineName, "monroe5", StringComparison.OrdinalIgnoreCase) || string.Equals(Environment.MachineName, "we27655", StringComparison.OrdinalIgnoreCase))
                 IsTestFolderVisible = true;
             else
                 IsTestFolderVisible = false;
@@ -564,7 +564,7 @@ namespace BuzzardWPF
             await DatasetManager.LoadRequestedRunsCache();
 
             // Also force an update on DMS_DataAccessor.Instance
-            await DMS_DataAccessor.Instance.UpdateCacheNow("ForceDmsReload");
+            await DMS_DataAccessor.Instance.UpdateCacheNow();
         }
 
         private async Task BackupCalibrationFiles()
@@ -581,11 +581,17 @@ namespace BuzzardWPF
         {
             var logPath = FileLogger.LogPath;
             var logDirectory = Path.GetDirectoryName(logPath);
-            var process = new System.Diagnostics.Process();
-            process.StartInfo = new System.Diagnostics.ProcessStartInfo
+            if (string.IsNullOrWhiteSpace(logDirectory))
             {
-                UseShellExecute = true,
-                FileName = logDirectory,
+                logDirectory = Path.GetTempPath();
+            }
+
+            var process = new System.Diagnostics.Process
+            {
+                StartInfo = new System.Diagnostics.ProcessStartInfo {
+                    UseShellExecute = true,
+                    FileName = logDirectory
+                }
             };
             process.Start();
         }
@@ -593,11 +599,12 @@ namespace BuzzardWPF
         private void OpenLogFile()
         {
             var logPath = FileLogger.LogPath;
-            var process = new System.Diagnostics.Process();
-            process.StartInfo = new System.Diagnostics.ProcessStartInfo
+            var process = new System.Diagnostics.Process
             {
-                UseShellExecute = true,
-                FileName = logPath,
+                StartInfo = new System.Diagnostics.ProcessStartInfo {
+                    UseShellExecute = true,
+                    FileName = logPath
+                }
             };
             process.Start();
         }

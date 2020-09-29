@@ -334,7 +334,7 @@ namespace BuzzardWPF.Searching
 
         protected static string StandardizePath(string path)
         {
-            var trimChars = new char[] {' ', '\\'};
+            var trimChars = new[] {' ', '\\'};
             return path.Trim().TrimEnd(trimChars);
         }
 
@@ -456,7 +456,7 @@ namespace BuzzardWPF.Searching
                 }
                 else
                 {
-                    ApplicationLogger.LogMessage(LogLevel.Debug, $"{nameof(InstrumentFolderValidator)}: No instrument found in DMS that matches hostname {baseFolderHostName}!");
+                    ApplicationLogger.LogMessage(LogLevel.Debug, $"{nameof(InstrumentFolderValidator)}: No instrument found in DMS that matches host name {baseFolderHostName}!");
                 }
 
                 var knownLocalShares = new Dictionary<string, string>();
@@ -513,7 +513,10 @@ namespace BuzzardWPF.Searching
                 if (captureWithFtmsUser)
                 {
                     var readAccess = CheckDirectorySharingAndPermissions(baseFolderPathToUse, "ftms", out var changeAccess, out var tempShareName, out var sharedDir);
-                    ApplicationLogger.LogMessage(LogLevel.Debug, $"{nameof(InstrumentFolderValidator)}: Checked path {baseFolderPathToUse} for alternate shares. Got sharename '{tempShareName}' for directory '{sharedDir}', read '{readAccess}', write '{changeAccess}'.");
+                    ApplicationLogger.LogMessage(LogLevel.Debug,
+                        $"{nameof(InstrumentFolderValidator)}: Checked path {baseFolderPathToUse} for alternate shares. " +
+                        $"Got share name '{tempShareName}' for directory '{sharedDir}', read '{readAccess}', write '{changeAccess}'.");
+
                     if (readAccess)
                     {
                         netShareName = tempShareName;

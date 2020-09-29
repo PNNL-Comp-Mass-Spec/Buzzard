@@ -19,8 +19,8 @@ namespace BuzzardWPF.ViewModels
         #region Attributes
         private IReadOnlyList<ProposalUser> emslProposalUsersSource;
         private string workPackageToolTipText;
-        private bool workPackageWarning = false;
-        private bool workPackageError = false;
+        private bool workPackageWarning;
+        private bool workPackageError;
         private IReadOnlyList<string> cartConfigNameListSource = new List<string>();
 
         #endregion
@@ -166,7 +166,7 @@ namespace BuzzardWPF.ViewModels
 
             if (dialog.ShowDialog() ?? false)
             {
-                Dataset.DmsData.Experiment = dialogVm.SelectedExperiment.Experiment; ;
+                Dataset.DmsData.Experiment = dialogVm.SelectedExperiment.Experiment;
             }
         }
 

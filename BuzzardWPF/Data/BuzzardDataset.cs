@@ -158,11 +158,11 @@ namespace BuzzardWPF.Data
             TriggerCreationWarning = "";
             CartConfigError = false;
             FilePath = "";
-            RunStart = default(DateTime);
-            runFinish = default(DateTime);
+            RunStart = default;
+            runFinish = default;
             RunFinish = RunStart.AddSeconds(1);
             FileSize = 0;
-            FileLastChangedUtc = default(DateTime);
+            FileLastChangedUtc = default;
             DmsData.Reset();
         }
 
@@ -183,7 +183,7 @@ namespace BuzzardWPF.Data
         }
         #endregion
 
-        #region Datagrid Properties
+        #region DataGrid Properties
 
         public ProposalUser EMSLProposalUser
         {

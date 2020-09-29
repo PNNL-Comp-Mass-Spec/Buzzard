@@ -4,17 +4,18 @@ using System.Runtime.Serialization;
 namespace BuzzardWPF.Data
 {
     [Serializable()]
-    public class DatasetTrieException : SystemException, ISerializable
+    public class DatasetTrieException : SystemException
     {
         public int SearchDepth { get; set; }
 
         public string DatasetName { get; set; }
 
-        public DatasetTrieException() : base() { }
+        public DatasetTrieException()
+        { }
 
         public DatasetTrieException(string message) : base(message) { }
 
-        public DatasetTrieException(string message, System.Exception inner) : base(message, inner) { }
+        public DatasetTrieException(string message, Exception inner) : base(message, inner) { }
 
         public DatasetTrieException(SerializationInfo info, StreamingContext context) : base(info, context) { }
 
@@ -25,7 +26,7 @@ namespace BuzzardWPF.Data
             this.DatasetName = datasetName;
         }
 
-        public DatasetTrieException(string message, int searchDepth, string datasetName, System.Exception inner)
+        public DatasetTrieException(string message, int searchDepth, string datasetName, Exception inner)
             : base(message, inner)
         {
             this.SearchDepth = searchDepth;

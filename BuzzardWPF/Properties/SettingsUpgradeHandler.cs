@@ -43,7 +43,7 @@ namespace BuzzardWPF.Properties
                 else if (settingData.DefaultValue != null && settingData.PropertyType != typeof(StringCollection))
                 {
                     var defaultEmpty = string.IsNullOrWhiteSpace(settingData.DefaultValue.ToString());
-                    var valueEmpty = string.IsNullOrWhiteSpace(previousValue?.ToString());
+                    var valueEmpty = string.IsNullOrWhiteSpace(previousValue.ToString());
                     if (defaultEmpty && valueEmpty)
                     {
                         valueDefault = true;
@@ -89,8 +89,10 @@ namespace BuzzardWPF.Properties
             Reload();
         }
 
+
         #region Obsolete Settings Properties
 
+        [AttributeUsage(AttributeTargets.All)]
         private class SettingUpgradeNameAttribute : Attribute
         {
             public string Name { get; }

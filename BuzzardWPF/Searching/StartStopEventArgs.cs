@@ -15,7 +15,6 @@ namespace BuzzardWPF.Searching
         public bool Monitoring
         {
             get;
-            private set;
         }
     }
 }

@@ -25,8 +25,8 @@ namespace BuzzardWPF.Management
         {
         }
 
-        private bool abortTriggerCreationNow = false;
-        private bool isCreatingTriggerFiles = false;
+        private bool abortTriggerCreationNow;
+        private bool isCreatingTriggerFiles;
 
         public bool IsCreatingTriggerFiles
         {
@@ -82,7 +82,7 @@ namespace BuzzardWPF.Management
             RxApp.MainThreadScheduler.Schedule(_ => IsCreatingTriggerFiles = false);
         }
 
-        private void CreateTriggerFiles(List<BuzzardDataset> selectedDatasets)
+        private void CreateTriggerFiles(IReadOnlyCollection<BuzzardDataset> selectedDatasets)
         {
             /*
             // If we're on the wrong thread, then put in
@@ -127,8 +127,7 @@ namespace BuzzardWPF.Management
                     }
                 }
 
-                List<BuzzardDataset> validDatasets;
-                var success = SimulateTriggerCreation(selectedDatasets, out validDatasets);
+                var success = SimulateTriggerCreation(selectedDatasets, out var validDatasets);
                 if (!success)
                     return;
 
@@ -171,7 +170,7 @@ namespace BuzzardWPF.Management
             }
         }
 
-        private void MarkAborted(List<BuzzardDataset> selectedDatasets)
+        private void MarkAborted(IEnumerable<BuzzardDataset> selectedDatasets)
         {
             foreach (var dataset in selectedDatasets)
                 dataset.DatasetStatus = DatasetStatus.TriggerAborted;
@@ -183,7 +182,7 @@ namespace BuzzardWPF.Management
         /// <param name="selectedDatasets"></param>
         /// <param name="validDatasets"></param>
         /// <returns>True if no problems, False if a problem with one or more datasets</returns>
-        private bool SimulateTriggerCreation(List<BuzzardDataset> selectedDatasets, out List<BuzzardDataset> validDatasets)
+        private bool SimulateTriggerCreation(IReadOnlyCollection<BuzzardDataset> selectedDatasets, out List<BuzzardDataset> validDatasets)
         {
             validDatasets = new List<BuzzardDataset>();
             var datasetsAlreadyInDMS = 0;
@@ -238,7 +237,7 @@ namespace BuzzardWPF.Management
             return false;
         }
 
-        private List<BuzzardDataset> VerifyDatasetsStable(List<BuzzardDataset> selectedDatasets)
+        private List<BuzzardDataset> VerifyDatasetsStable(IReadOnlyCollection<BuzzardDataset> selectedDatasets)
         {
             const int SECONDS_TO_WAIT = 30;
 

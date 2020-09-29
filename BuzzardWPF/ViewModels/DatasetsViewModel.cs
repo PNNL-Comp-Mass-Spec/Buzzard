@@ -48,7 +48,7 @@ namespace BuzzardWPF.ViewModels
             datasetSelected = this.WhenAnyValue(x => x.SelectedDatasets.Count).Select(x => x > 0).ToProperty(this, x => x.DatasetSelected);
             isCreatingTriggerFiles = TriggerFileCreationManager.Instance.WhenAnyValue(x => x.IsCreatingTriggerFiles).ObserveOn(RxApp.MainThreadScheduler).ToProperty(this, x => x.IsCreatingTriggerFiles);
 
-            DatasetManager.Datasets.Connect().ObserveOn(RxApp.TaskpoolScheduler).WhereReasonsAre(new []{ ListChangeReason.Add, ListChangeReason.AddRange, ListChangeReason.Remove, ListChangeReason.RemoveRange }).Subscribe(
+            DatasetManager.Datasets.Connect().ObserveOn(RxApp.TaskpoolScheduler).WhereReasonsAre(ListChangeReason.Add, ListChangeReason.AddRange, ListChangeReason.Remove, ListChangeReason.RemoveRange).Subscribe(
                 x =>
                 {
                     foreach (var changeSet in x)
@@ -89,7 +89,7 @@ namespace BuzzardWPF.ViewModels
             CreateTriggersCommand = ReactiveCommand.Create(CreateTriggers, SelectedDatasets.WhenAnyValue(x => x.Count).Select(x => x > 0).ObserveOn(RxApp.MainThreadScheduler));
         }
 
-        private bool settingsChanged = false;
+        private bool settingsChanged;
 
         public bool SaveSettings(bool force = false)
         {
@@ -385,7 +385,7 @@ namespace BuzzardWPF.ViewModels
             var selectedItems = SelectedDatasets.ToList();
 
             // If nothing was selected, inform the user and get out
-            if (selectedItems == null || selectedItems.Count == 0)
+            if (selectedItems.Count == 0)
             {
                 ApplicationLogger.LogMessage(0, "No datasets were selected.");
                 return;

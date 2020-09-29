@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Linq;
 using BuzzardWPF.Management;
@@ -27,8 +26,8 @@ namespace BuzzardWPF.ViewModels
         #region Properties
 
         private string workPackageToolTipText;
-        private bool workPackageWarning = false;
-        private bool workPackageError = false;
+        private bool workPackageWarning;
+        private bool workPackageError;
         private readonly ObservableAsPropertyHelper<bool> isNotMonitoring;
 
         public EmslUsageSelectionViewModel EmslUsageSelectionVm { get; } = new EmslUsageSelectionViewModel();

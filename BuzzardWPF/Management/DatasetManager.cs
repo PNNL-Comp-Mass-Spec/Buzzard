@@ -7,7 +7,6 @@ using System.Reactive.Concurrency;
 using System.Runtime;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Windows;
 using BuzzardWPF.Data;
 using BuzzardWPF.IO;
 using BuzzardWPF.Properties;
@@ -172,7 +171,7 @@ namespace BuzzardWPF.Management
 
                 currentTask = "Populating mRequestedRunTrie";
 
-                var requestedRunsUpdated = false;
+                bool requestedRunsUpdated;
                 lock (mRequestedRunTrie)
                 {
                     requestedRunsUpdated = mRequestedRunTrie.LoadData(samples);
@@ -482,8 +481,7 @@ namespace BuzzardWPF.Management
             DatasetSource howWasItFound = DatasetSource.Searcher,
             string oldFullPath = "")
         {
-            bool isArchived;
-            var originalPath = ValidateFileOrFolderPath(datasetFileOrFolderPath, allowFolderMatch, out isArchived);
+            var originalPath = ValidateFileOrFolderPath(datasetFileOrFolderPath, allowFolderMatch, out var isArchived);
             if (string.IsNullOrEmpty(originalPath))
                 return;
 
@@ -666,7 +664,7 @@ namespace BuzzardWPF.Management
                     }
                     else
                     {
-                        ApplicationLogger.LogMessage(0, $"QC_Upload: No monitors matched, using general dataset information");
+                        ApplicationLogger.LogMessage(0, "QC_Upload: No monitors matched, using general dataset information");
                         // No monitor matched, use the watcher information
                         dataset.InterestRating = WatcherMetadata.InterestRating;
                         dataset.MatchedMonitor = false;
@@ -750,8 +748,7 @@ namespace BuzzardWPF.Management
         public void UpdateDataset(string path)
         {
             // TODO: Does more of this need to be run on the main thread using RxApp.MainThreadScheduler?
-            bool isArchived;
-            var pathToUse = ValidateFileOrFolderPath(path, true, out isArchived);
+            var pathToUse = ValidateFileOrFolderPath(path, true, out _);
 
             foreach (var datasetEntry in Datasets.Items)
             {

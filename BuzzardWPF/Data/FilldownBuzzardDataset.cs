@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Linq;
 using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
 using ReactiveUI;

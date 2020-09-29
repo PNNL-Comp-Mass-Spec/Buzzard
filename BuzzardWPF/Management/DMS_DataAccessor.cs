@@ -388,7 +388,7 @@ namespace BuzzardWPF.Management
             // Set the Last Update time to now to prevent this function from calling UpdateCacheNow repeatedly if the DMS update takes over 30 seconds
             LastSqliteCacheUpdateUtc = DateTime.UtcNow;
 
-            await UpdateCacheNow("AutoUpdateTimer_Tick");
+            await UpdateCacheNow();
         }
 
         /// <summary>
@@ -508,8 +508,7 @@ namespace BuzzardWPF.Management
             {
                 try
                 {
-                    string userName;
-                    if (userIDtoNameMap.TryGetValue(user.UserID, out userName))
+                    if (userIDtoNameMap.TryGetValue(user.UserID, out var userName))
                     {
                         AddUserToProposalIdMap(proposalUserToIDMap, userName, user, uniqueifier);
                     }
@@ -542,12 +541,9 @@ namespace BuzzardWPF.Management
         {
             try
             {
-                List<ProposalUser> eusUsers;
-
                 // Keys in this dictionary are proposal numbers; values are the users for that proposal
-                Dictionary<string, List<UserIDPIDCrossReferenceEntry>> proposalUserMapping;
 
-                SQLiteTools.GetProposalUsers(out eusUsers, out proposalUserMapping);
+                SQLiteTools.GetProposalUsers(out var eusUsers, out var proposalUserMapping);
 
                 if (eusUsers.Count == 0)
                     ApplicationLogger.LogError(0, "No Proposal Users found");

@@ -2,12 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Reactive.Linq;
-using System.Windows.Controls;
 using System.Windows.Data;
 using BuzzardWPF.Management;
 using LcmsNetData.Data;
-using LcmsNetData.Logging;
 using ReactiveUI;
 
 namespace BuzzardWPF.ViewModels

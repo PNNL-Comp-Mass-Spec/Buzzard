@@ -207,7 +207,7 @@ namespace BuzzardWPF.Management
         /// </summary>
         public void ReloadPropertyDependentData()
         {
-            RxApp.MainThreadScheduler.Schedule(() => LoadCartConfigsForCartName());
+            RxApp.MainThreadScheduler.Schedule(LoadCartConfigsForCartName);
         }
 
         private void LoadCartConfigsForCartName()

@@ -3,12 +3,8 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reactive;
 using System.Reactive.Concurrency;
-using System.Reactive.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using BuzzardWPF.Data;
 using BuzzardWPF.IO;
@@ -49,8 +45,8 @@ namespace BuzzardWPF.Management
         // Dictionary to limit the number of "change" entries that are added to filePathsToProcess
         private readonly ConcurrentDictionary<string, bool> filePathEntryLimiter;
         private readonly Timer mFileUpdateHandler;
-        private bool fileUpdateHandlerEnabled = false;
-        private bool isMonitoring = false;
+        private bool fileUpdateHandlerEnabled;
+        private bool isMonitoring;
         private readonly FileSystemWatcher mFileSystemWatcher;
 
         #endregion
@@ -157,7 +153,7 @@ namespace BuzzardWPF.Management
                     // We include subdirectories for MatchFolders regardless of the SearchDepth settings so that we monitor changes of files in those folders
                     // We do this because it allows the monitor to pick up folder datasets where the folder was created before monitoring started.
                     var monitoredPath = mFileSystemWatcher.Path;
-                    var splitChars = new char[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar };
+                    var splitChars = new[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar };
                     var monitoredPathItems = monitoredPath.Split(splitChars, StringSplitOptions.RemoveEmptyEntries).Length;
                     var pathSplit = fullFilePath.Split(splitChars, StringSplitOptions.RemoveEmptyEntries);
                     var matchFound = false;
@@ -165,7 +161,7 @@ namespace BuzzardWPF.Management
                     for (var i = 0; i < pathSplit.Length - monitoredPathItems; i++)
                     {
                         // Always assume that the first x path items match the monitored path.
-                        var currentPart = pathSplit[i + monitoredPathItems] ?? "";
+                        var currentPart = pathSplit[i + monitoredPathItems];
                         if (Path.GetExtension(currentPart).Equals(Config.FileExtension, StringComparison.OrdinalIgnoreCase))
                         {
                             fullFilePath = string.Join(Path.DirectorySeparatorChar.ToString(), pathSplit.Take(i + monitoredPathItems + 1));

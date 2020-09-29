@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using ReactiveUI;
-// ReSharper disable UnusedMember.Global
 
 namespace BuzzardWPF.Management
 {

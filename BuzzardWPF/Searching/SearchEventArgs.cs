@@ -21,7 +21,6 @@ namespace BuzzardWPF.Searching
         public SearchConfig Config
         {
             get;
-            private set;
         }
     }
 }

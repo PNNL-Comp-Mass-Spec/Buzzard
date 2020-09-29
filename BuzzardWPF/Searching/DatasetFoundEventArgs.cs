@@ -28,7 +28,6 @@ namespace BuzzardWPF.Searching
         public SearchConfig CurrentSearchConfig
         {
             get;
-            private set;
         }
 
         /// <summary>
@@ -37,7 +36,6 @@ namespace BuzzardWPF.Searching
         public string Path
         {
             get;
-            private set;
         }
 
         /// <summary>
@@ -46,7 +44,6 @@ namespace BuzzardWPF.Searching
         public string CaptureSubfolderPath
         {
             get;
-            private set;
         }
 
     }

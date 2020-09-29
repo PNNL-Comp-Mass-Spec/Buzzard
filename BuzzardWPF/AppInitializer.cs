@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using BuzzardWPF.Management;
@@ -193,7 +192,7 @@ namespace BuzzardWPF
 
                 var installerVersion = new Version(fileVersionInfo.FileMajorPart, fileVersionInfo.FileMinorPart, fileVersionInfo.FileBuildPart, fileVersionInfo.FilePrivatePart);
 
-                var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+                var assembly = Assembly.GetExecutingAssembly();
                 var versionRunning = assembly.GetName().Version.ToString();
 
                 if (string.IsNullOrWhiteSpace(versionRunning))
@@ -206,7 +205,7 @@ namespace BuzzardWPF
                     var updateMsg = "A new version of Buzzard is available at " + installerFolderPath + "; Install the new version now?";
                     updateMsg += $"\n\nCurrent Version:\t{runningVersion}\nNew Version:\t{installerVersion}" + (isTestDir ? " (TESTING)" : "");
 
-                    var eResponse = MessageBoxResult.None;
+                    MessageBoxResult eResponse;
                     if (currentWindow != null)
                     {
                         eResponse = currentWindow.ShowMessage(updateMsg, @"Upgrade Advised", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);

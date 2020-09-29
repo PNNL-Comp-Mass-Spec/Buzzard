@@ -12,7 +12,6 @@ namespace BuzzardWPF.Searching
         public string ErrorMessage
         {
             get;
-            private set;
         }
     }
 }

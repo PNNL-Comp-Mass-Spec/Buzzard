@@ -78,7 +78,7 @@ namespace BuzzardWPF
 
             var ex = e.Exception;
             var buzzardLcmsNetFound = false;
-            while (ex != null && ex.StackTrace != null && !buzzardLcmsNetFound)
+            while (ex?.StackTrace != null && !buzzardLcmsNetFound)
             {
                 var stacktrace = ex.StackTrace.ToLower();
                 buzzardLcmsNetFound = stacktrace.Contains("buzzard") || stacktrace.Contains("lcmsnet");
@@ -127,12 +127,12 @@ namespace BuzzardWPF
         /// </summary>
         private DynamicSplashScreenWindow splashScreen;
 
-        private bool splashScreenEnded = false;
+        private bool splashScreenEnded;
 
         private ManualResetEvent resetSplashCreated;
 
         private static readonly IDisposable sqliteDisposable = SQLiteTools.GetDisposable();
-        private static DMS_DataAccessor dmsDataAccessorInstance = null;
+        private static DMS_DataAccessor dmsDataAccessorInstance;
 
         /// <summary>
         /// The main entry point for the application.

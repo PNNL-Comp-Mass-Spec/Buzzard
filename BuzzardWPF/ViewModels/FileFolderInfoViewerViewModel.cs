@@ -8,6 +8,7 @@ namespace BuzzardWPF.ViewModels
     public class FileFolderInfoViewerViewModel : ReactiveObject
     {
         #region Attributes
+
         private string m_pathName;
         private bool m_itemFound;
         private DateTime m_creationDate;
@@ -16,14 +17,8 @@ namespace BuzzardWPF.ViewModels
         private bool m_isFile;
         private int m_fileCount;
         private int m_folderCount;
-        private int selectedTabIndex = 0;
+        private int selectedTabIndex;
 
-        #endregion
-
-        #region Initialization
-        public FileFolderInfoViewerViewModel()
-        {
-        }
         #endregion
 
         #region Properties
