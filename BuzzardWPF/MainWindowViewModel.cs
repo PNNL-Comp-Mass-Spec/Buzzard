@@ -18,7 +18,7 @@ using ReactiveUI;
 
 namespace BuzzardWPF
 {
-    public class MainWindowViewModel : ReactiveObject, IHandlesLogging
+    public class MainWindowViewModel : ReactiveObject, IHandlesLogging, IDisposable
     {
         // Ignore Spelling: Bionet
 
@@ -594,13 +594,19 @@ namespace BuzzardWPF
             process.Start();
         }
 
-        /// <summary>
-        /// Destructor
-        /// </summary>
-        ~MainWindowViewModel()
+        public void Dispose()
         {
-            m_animationTimer.Dispose();
-            m_dmsCheckTimer.Dispose();
+            m_animationTimer?.Dispose();
+            m_dmsCheckTimer?.Dispose();
+            settingsSaveTimer?.Dispose();
+            isNotMonitoring?.Dispose();
+            UseDefaultTriggerFileLocationCommand?.Dispose();
+            SelectTriggerFileLocationCommand?.Dispose();
+            UseTestFolderCommand?.Dispose();
+            ForceDmsReloadCommand?.Dispose();
+            BackupCalibrationFilesCommand?.Dispose();
+            OpenLogDirectoryCommand?.Dispose();
+            OpenLogFileCommand?.Dispose();
         }
     }
 }

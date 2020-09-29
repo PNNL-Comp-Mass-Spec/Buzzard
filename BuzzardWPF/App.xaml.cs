@@ -113,6 +113,7 @@ namespace BuzzardWPF
             sqliteDisposable.Dispose();
             dmsDataAccessorInstance?.Dispose();
             ViewModelCache.Instance.Dispose();
+            mainWindowViewModel?.Dispose();
             ShutDownLogging();
         }
 
@@ -133,6 +134,8 @@ namespace BuzzardWPF
 
         private static readonly IDisposable sqliteDisposable = SQLiteTools.GetDisposable();
         private static DMS_DataAccessor dmsDataAccessorInstance;
+
+        private static MainWindowViewModel mainWindowViewModel;
 
         /// <summary>
         /// The main entry point for the application.
@@ -160,14 +163,15 @@ namespace BuzzardWPF
             if (openMainWindow)
             {
                 dmsDataAccessorInstance = DMS_DataAccessor.Instance;
-                var mainVm = new MainWindowViewModel();
+                mainWindowViewModel = new MainWindowViewModel();
+
                 // Load the saved configuration settings on application startup.
                 // Uncomment the following line to test with default settings.
                 //BuzzardWPF.Properties.Settings.Default.Reset();
-                mainVm.LoadSettings();
+                mainWindowViewModel.LoadSettings();
                 var mainWindow = new MainWindow()
                 {
-                    DataContext = mainVm,
+                    DataContext = mainWindowViewModel
                 };
                 Application.Current.MainWindow = mainWindow;
                 MainWindow = mainWindow;
@@ -176,9 +180,9 @@ namespace BuzzardWPF
                 // When logLevel is 0, only critical messages are logged
                 // When logLevel is 5, all messages are logged
                 var logLevel = LCMSSettings.GetParameter("LoggingErrorLevel", MainWindowViewModel.CONST_DEFAULT_ERROR_LOG_LEVEL);
-                mainVm.ErrorLevel = logLevel;
+                mainWindowViewModel.ErrorLevel = logLevel;
 
-                mainVm.MessageLevel = MainWindowViewModel.CONST_DEFAULT_MESSAGE_LOG_LEVEL;
+                mainWindowViewModel.MessageLevel = MainWindowViewModel.CONST_DEFAULT_MESSAGE_LOG_LEVEL;
 
                 // Do this here so that closing the splash screen doesn't minimize/throw to the background the main window.
                 splashScreen.LoadComplete();
