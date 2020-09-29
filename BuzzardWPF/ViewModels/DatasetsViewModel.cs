@@ -130,8 +130,6 @@ namespace BuzzardWPF.ViewModels
 
         #region Properties
 
-        private FileSystemWatcherManager Watcher => FileSystemWatcherManager.Instance;
-
         public bool CanSelectDatasets => canSelectDatasets.Value;
         public bool DatasetSelected => datasetSelected.Value;
 

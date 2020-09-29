@@ -38,12 +38,6 @@ namespace BuzzardWPF.Searching
         /// Call to start searching.
         /// </summary>
         /// <param name="config"></param>
-        void Search(SearchConfig config);
-
-        /// <summary>
-        /// Call to start searching.
-        /// </summary>
-        /// <param name="config"></param>
         /// <param name="cancelToken"></param>
         Task SearchAsync(SearchConfig config, CancellationTokenSource cancelToken);
 

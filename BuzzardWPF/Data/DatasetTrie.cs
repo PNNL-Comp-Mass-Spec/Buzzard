@@ -69,17 +69,6 @@ namespace BuzzardWPF.Data
         }
 
         /// <summary>
-        /// Finds the dataset data that for the given request key
-        /// </summary>
-        public DMSData FindData(int requestID)
-        {
-            if (!requestIDToDMSMap.ContainsKey(requestID))
-                throw new DatasetTrieException("Could not resolve the Request ID. The dataset is just not available.");
-
-            return requestIDToDMSMap[requestID];
-        }
-
-        /// <summary>
         /// Finds the dataset data that closest resembles the dataset name.
         /// </summary>
         /// <exception cref="DatasetTrieException">Thrown if the dataset name does not exist in the trie, or if the dataset name cannot resolve the data.</exception>

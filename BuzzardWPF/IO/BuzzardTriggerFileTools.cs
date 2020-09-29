@@ -81,9 +81,6 @@ namespace BuzzardWPF.IO
             // Create and initialize the document
             var dmsData = dataset.DmsData;
 
-            if (string.Compare(dataset.DmsData.CommentAddition, "HailWhiteshoes", StringComparison.CurrentCultureIgnoreCase) == 0)
-                dataset.DmsData.CommentAddition = string.Empty;
-
             if (!string.IsNullOrWhiteSpace(dataset.DmsData.CommentAddition))
                 dataset.DmsData.CommentAdditionPrefix = "Buzzard: ";
 

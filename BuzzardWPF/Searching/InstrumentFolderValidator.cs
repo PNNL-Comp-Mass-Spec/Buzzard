@@ -36,38 +36,6 @@ namespace BuzzardWPF.Searching
         }
 
         /// <summary>
-        /// Gets all Windows shared directories for <paramref name="hostName"/>
-        /// </summary>
-        /// <param name="hostName"></param>
-        /// <returns>
-        /// Dictionary where key is the share name and path is the local path to that share.
-        /// For example, "ProteomicsData" and "C:\ProteomicsData"
-        /// </returns>
-        [Obsolete("Unused")]
-        private Dictionary<string, string> GetWindowsShares(string hostName)
-        {
-            var shareList = new Dictionary<string, string>();
-
-            using (var shares = new ManagementClass(@"\\" + hostName + @"\root\cimv2", "Win32_Share", new ObjectGetOptions()))
-            {
-                foreach (var shareObject in shares.GetInstances())
-                {
-                    var share = shareObject as ManagementObject;
-                    if (share == null)
-                        continue;
-
-                    var shareName = share["Name"].ToString();
-                    var sharePath = share["Path"].ToString();
-                    // var shareCaption = share["Caption"].ToString();
-
-                    shareList.Add(shareName, StandardizePath(sharePath));
-                }
-            }
-
-            return shareList;
-        }
-
-        /// <summary>
         /// Gets all local Windows shared directories, excluding ADMIN (ending in '$') shares
         /// </summary>
         /// <returns>

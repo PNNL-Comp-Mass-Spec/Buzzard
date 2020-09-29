@@ -121,13 +121,6 @@ namespace BuzzardWPF.Management
             }
         }
 
-        private void MonitorStartStop()
-        {
-            if (IsMonitoring)
-                StopWatching();
-            else
-                StartWatching();
-        }
         #endregion
 
         private void ProcessFilePathQueue()

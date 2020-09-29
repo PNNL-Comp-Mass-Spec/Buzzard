@@ -53,12 +53,12 @@ namespace BuzzardWPF
 
         private int m_counter;
         private Collection<BitmapImage> m_images;  // TODO: Handle these differently?
-        private Collection<BitmapImage> m_imagesEaster;
         private Collection<BitmapImage> m_animationImages;
         private IBuzzadier m_buzzadier;
         private string m_lastStatusMessage;
 
         private bool m_firstTimeLoading;
+
         // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
         private readonly Timer m_dmsCheckTimer;
 
@@ -122,22 +122,15 @@ namespace BuzzardWPF
         /// </summary>
         private void LoadImages()
         {
-            m_images = new Collection<BitmapImage>();
-            m_imagesEaster = new Collection<BitmapImage>();
-
-            m_images.Add((BitmapImage)Application.Current.Resources["Buzzards"]);
-            m_images.Add((BitmapImage)Application.Current.Resources["Buzzards1"]);
-            m_images.Add((BitmapImage)Application.Current.Resources["Buzzards2"]);
-            m_images.Add((BitmapImage)Application.Current.Resources["Buzzards3"]);
-            m_images.Add((BitmapImage)Application.Current.Resources["Buzzards4"]);
-            m_images.Add((BitmapImage)Application.Current.Resources["Buzzards5"]);
-
-            m_imagesEaster.Add((BitmapImage)Application.Current.Resources["Buzzardsz"]);
-            m_imagesEaster.Add((BitmapImage)Application.Current.Resources["Buzzardsz1"]);
-            m_imagesEaster.Add((BitmapImage)Application.Current.Resources["Buzzardsz2"]);
-            m_imagesEaster.Add((BitmapImage)Application.Current.Resources["Buzzardsz3"]);
-            m_imagesEaster.Add((BitmapImage)Application.Current.Resources["Buzzardsz4"]);
-            m_imagesEaster.Add((BitmapImage)Application.Current.Resources["Buzzardsz5"]);
+            m_images = new Collection<BitmapImage>
+            {
+                (BitmapImage)Application.Current.Resources["Buzzards"],
+                (BitmapImage)Application.Current.Resources["Buzzards1"],
+                (BitmapImage)Application.Current.Resources["Buzzards2"],
+                (BitmapImage)Application.Current.Resources["Buzzards3"],
+                (BitmapImage)Application.Current.Resources["Buzzards4"],
+                (BitmapImage)Application.Current.Resources["Buzzards5"]
+            };
 
             m_animationImages = m_images;
             CurrentImage = m_animationImages[0];
@@ -313,7 +306,7 @@ namespace BuzzardWPF
             AddDataset(e.Path, e.CaptureSubfolderPath, e.CurrentSearchConfig);
         }
 
-        private void m_buzzadier_ErrorEvent(object sender, BuzzardWPF.Searching.ErrorEventArgs e)
+        private void m_buzzadier_ErrorEvent(object sender, Searching.ErrorEventArgs e)
         {
             MessageBox.Show(e.ErrorMessage, "Search Error", MessageBoxButton.OK, MessageBoxImage.Exclamation);
         }
@@ -495,16 +488,6 @@ namespace BuzzardWPF
             {
                 CurrentImage = m_animationImages[0];
             }
-        }
-
-        /// <summary>
-        /// Will turn the buzzard image animation on and off.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        public void TurnAnimationOnOrOff_Click(object sender, RoutedEventArgs e)
-        {
-            ControlAnimation(!animationEnabled);
         }
 
         #endregion
