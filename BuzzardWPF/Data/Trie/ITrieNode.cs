@@ -5,6 +5,8 @@
     /// </summary>
     internal interface ITrieNode
     {
+        // Ignore Spelling: Trie
+
         /// <summary>
         /// Clears all matches out of the trie, but doesn't remove any nodes (reduces memory allocations and garbage collections)
         /// </summary>

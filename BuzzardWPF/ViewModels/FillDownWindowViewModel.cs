@@ -14,6 +14,8 @@ namespace BuzzardWPF.ViewModels
 {
     public class FillDownWindowViewModel : ReactiveObject, IDisposable
     {
+        // Ignore Spelling: Filldown
+
         #region Attributes
         private IReadOnlyList<ProposalUser> emslProposalUsersSource;
         private string workPackageToolTipText;
@@ -23,7 +25,8 @@ namespace BuzzardWPF.ViewModels
 
         #endregion
 
-         [Obsolete("For WPF Design-time use only", true)]
+        [Obsolete("For WPF Design-time use only", true)]
+        // ReSharper disable once UnusedMember.Global
         public FillDownWindowViewModel() : this(new FilldownBuzzardDataset())
         {
         }

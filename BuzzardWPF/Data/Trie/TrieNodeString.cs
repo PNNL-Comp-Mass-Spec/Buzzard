@@ -17,6 +17,8 @@ namespace BuzzardWPF.Data.Trie
     /// </remarks>
     public class TrieNodeString : Dictionary<string, TrieNodeString>, ITrieNode
     {
+        // Ignore Spelling: Trie
+
         public int RequestID { get; set; } = -1;
 
         private byte keyCharCount = byte.MaxValue;

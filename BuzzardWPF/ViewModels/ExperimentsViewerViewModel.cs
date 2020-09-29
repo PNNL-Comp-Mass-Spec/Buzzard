@@ -109,7 +109,7 @@ namespace BuzzardWPF.ViewModels
 
         #region Methods
         /// <summary>
-        /// Gives the autofill box a list of times to use as its source based on the selected filter to use.
+        /// Gives the AutoFill box a list of times to use as its source based on the selected filter to use.
         /// </summary>
         private void SetAutoCompleteList()
         {

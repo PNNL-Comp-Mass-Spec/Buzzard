@@ -27,6 +27,7 @@ namespace BuzzardWPF.Management
     public class DatasetManager : ReactiveObject, IStoredSettingsMonitor, IDisposable
     {
         public const string PREVIEW_TRIGGERFILE_FLAG = "Nonexistent_Fake_TriggerFile.xmL";
+        // Ignore Spelling: Altis, AgtVoyAcgEng, AgtVoyAcqEng, msinsctl, trie, xxx
 
         // Thermo General: 'HomePage', 'ThermoFisher.Foundation.AcquisitionService'
         // Thermo Lumos: Thermo General + 'Thermo.TNG.InstrumentServer'
@@ -96,11 +97,11 @@ namespace BuzzardWPF.Management
 
         /// <summary>
         /// This value tells the DatasetManager whether or not
-        /// to create a dataset for an archived datasource that
+        /// to create a dataset for an archived data source that
         /// is found by the searcher.
         /// </summary>
         /// <remarks>
-        /// the SearchConvfigView is responsible for setting this.
+        /// the SearchConfigView is responsible for setting this.
         /// </remarks>
         public bool IncludeArchivedItems
         {
@@ -461,16 +462,16 @@ namespace BuzzardWPF.Management
         }
 
         /// <summary>
-        ///
+        /// Creating a trigger file for a dataset
         /// </summary>
         /// <param name="datasetFileOrFolderPath"></param>
-        /// <param name="captureSubfolderPath">Capture subfolder (relative path); typically empty</param>
+        /// <param name="captureSubfolderPath">Capture subdirectory (relative path); typically empty</param>
         /// <param name="allowFolderMatch">True to allow a dataset to be a folder</param>
         /// <param name="howWasItFound"></param>
         /// <param name="oldFullPath">Use this parameter when a file is renamed</param>
         /// <remarks>
         /// This is not a thread safe method. In fact, if someone were to mess
-        /// with the contents of the Datasets property while this method is
+        /// with the contents of the Dataset's property while this method is
         /// executing, they could crash the program.
         /// </remarks>
         public void CreatePendingDataset(

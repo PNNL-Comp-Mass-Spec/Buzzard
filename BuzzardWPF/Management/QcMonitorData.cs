@@ -24,7 +24,7 @@ namespace BuzzardWPF.Management
         }
 
         /// <summary>
-        /// Start of dataset name, case insensitive; use "*" for "match any" (lowest priority, only one allowed in the QcMonitors)
+        /// Start of dataset name, case insensitive; use "*" for "match any" (lowest priority, only one allowed in the QCMonitors)
         /// </summary>
         public string DatasetNameMatch
         {
@@ -33,7 +33,7 @@ namespace BuzzardWPF.Management
         }
 
         /// <summary>
-        /// Dataset name match regex, allows case-insensitivity and dash-vs-underscore swaps.
+        /// Dataset name match RegEx, allows case-insensitivity and dash-vs-underscore swaps.
         /// </summary>
         public Regex DatasetNameMatchRegex { get; private set; }
 
@@ -43,7 +43,7 @@ namespace BuzzardWPF.Management
         {
             if (string.IsNullOrWhiteSpace(datasetNameMatch) || datasetNameMatch.Equals("*"))
             {
-                // A regex that won't match any valid dataset name
+                // A RegEx that won't match any valid dataset name
                 DatasetNameMatchRegex = new Regex(@"^\\/%$", RegexOptions.Compiled);
                 return;
             }

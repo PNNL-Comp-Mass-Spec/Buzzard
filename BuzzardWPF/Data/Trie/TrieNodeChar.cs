@@ -11,6 +11,8 @@ namespace BuzzardWPF.Data.Trie
     /// Adding new data to this trie is also faster than adding to a <see cref="TrieNodeString"/> because the key is always a fixed length of 1.</remarks>
     public class TrieNodeChar : Dictionary<char, TrieNodeChar>, ITrieNode
     {
+        // Ignore Spelling: Trie
+
         public int RequestID { get; set; } = -1;
 
         /// <summary>

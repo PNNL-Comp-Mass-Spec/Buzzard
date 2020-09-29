@@ -14,6 +14,8 @@ namespace BuzzardWPF
     /// </summary>
     public partial class App
     {
+        // Ignore Spelling: trie, lcmsnet
+
         private void ApplicationStartup(object sender, StartupEventArgs e)
         {
             AppDomain.CurrentDomain.FirstChanceException += CurrentDomainOnFirstChanceException;

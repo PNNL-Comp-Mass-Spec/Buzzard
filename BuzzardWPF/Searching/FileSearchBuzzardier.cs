@@ -15,6 +15,8 @@ namespace BuzzardWPF.Searching
     /// </summary>
     public class FileSearchBuzzardier : IBuzzadier
     {
+        // Ignore Spelling: Buzzardier
+
         #region Events
 
         /// <summary>
@@ -57,7 +59,7 @@ namespace BuzzardWPF.Searching
         #region Members
 
         /// <summary>
-        /// Flag inidicating whether to search
+        /// Flag indicating whether to search
         /// </summary>
         private volatile bool m_keepSearching;
 
@@ -68,7 +70,7 @@ namespace BuzzardWPF.Searching
         #region Searching and Threading Methods
 
         /// <summary>
-        ///  Constructor
+        /// Constructor
         /// </summary>
         public FileSearchBuzzardier(Dictionary<string, InstrumentInfo> instrumentInfo)
         {

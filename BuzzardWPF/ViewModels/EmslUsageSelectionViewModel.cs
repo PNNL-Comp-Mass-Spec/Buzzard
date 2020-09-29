@@ -20,7 +20,7 @@ namespace BuzzardWPF.ViewModels
         /// EMSL Usage Types
         /// </summary>
         /// <remarks>Previously used, but deprecated in April 2017 is USER_UNKNOWN</remarks>
-        private static readonly string[] EMSL_USAGE_TYPES = // TODO: Load these from DMS?
+        private static readonly string[] EMSL_USAGE_TYPES =
         {
             "BROKEN",
             "CAP_DEV",

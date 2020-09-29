@@ -12,6 +12,8 @@ namespace BuzzardWPF.Searching
 {
     public class InstrumentFolderValidator
     {
+        // Ignore Spelling: fso, secfso, ftms
+
         #region "Member Variables"
 
         private readonly Dictionary<string, InstrumentInfo> mInstrumentInfo;
@@ -41,7 +43,8 @@ namespace BuzzardWPF.Searching
         /// Dictionary where key is the share name and path is the local path to that share.
         /// For example, "ProteomicsData" and "C:\ProteomicsData"
         /// </returns>
-        protected Dictionary<string, string> GetWindowsShares(string hostName)
+        [Obsolete("Unused")]
+        private Dictionary<string, string> GetWindowsShares(string hostName)
         {
             var shareList = new Dictionary<string, string>();
 
@@ -406,7 +409,7 @@ namespace BuzzardWPF.Searching
                     baseFolderPathToUse = baseFolderPath;
                 }
 
-                // Keys in the dictionary are the share name; values are additional subfolders to append to the share name
+                // Keys in the dictionary are the share name; values are additional subdirectories to append to the share name
                 // Typically the key will be a single name, e.g. ProteomicsData, and the value will be empty
 
                 // But, we also support the share path being "UserData\Nikola\AMOLF"
@@ -488,7 +491,7 @@ namespace BuzzardWPF.Searching
                     if (string.Equals(baseFolderPathToUse, knownShare.Value, StringComparison.OrdinalIgnoreCase))
                         return true;
 
-                    // Subfolder of the default share path; must make sure the capture subfolder is set appropriately.
+                    // Subdirectory of the default share path; must make sure the capture subdirectory is set appropriately.
                     if (baseFolderPathToUse.StartsWith(knownShare.Value, StringComparison.OrdinalIgnoreCase))
                     {
                         additionalSubdirectories = baseFolderPathToUse.Substring(knownShare.Value.Length).Trim('\\', '/');
@@ -527,7 +530,7 @@ namespace BuzzardWPF.Searching
                 }
 
                 // TODO: Improve this message!!!
-                ErrorMessage = "Search folder not valid; it should be " + expectedBaseDirectoryPath + " or a subfolder; -- dataset upload will fail; search aborted";
+                ErrorMessage = "Search folder not valid; it should be " + expectedBaseDirectoryPath + " or a subdirectory; -- dataset upload will fail; search aborted";
 
                 return false;
 

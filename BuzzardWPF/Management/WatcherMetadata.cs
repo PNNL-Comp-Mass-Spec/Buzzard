@@ -134,7 +134,7 @@ namespace BuzzardWPF.Management
         }
 
         /// <summary>
-        /// This item contains a copy of the SelectedSeperationType value of
+        /// This item contains a copy of the SelectedSeparationType value of
         /// the WatcherConfig tool.
         /// </summary>
         /// <remarks>

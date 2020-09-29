@@ -5,21 +5,24 @@ namespace BuzzardWPF.Converters
 {
     /// <summary>
     /// Converts an int64 containing a size in bytes, into a double containing the
-    /// size in Bs/KB/MBs/GBs. This double is then converted into a string in the form of "[0..9] B|KB|MB|GB" which is returned.
+    /// size in Bytes, KB, MB, etc. This double is then converted into a string in the form of "[0..9] B|KB|MB|GB|TB" which is returned.
     /// </summary>
     /// <remarks>
-    /// Sizes less than 10 KB|MB|GB will have one digit shown after the decimal point
-    /// Sizes less than 2 KB|MB|GB will have two digits shown after the decimal point</remarks>
+    /// Sizes less than 10 KB|MB|GB|TB will have one digit shown after the decimal point
+    /// Sizes less than 2 KB|MB|GB|TB will have two digits shown after the decimal point</remarks>
     [ValueConversion(typeof(string), typeof(long))]
     public class ByteFileSizeConverter
         : IValueConverter
     {
         private enum FileSizeUnits
         {
+            // ReSharper disable UnusedMember.Local
             B = 0,
             KB = 1,
             MB = 2,
             GB = 3,
+            TB = 4
+            // ReSharper restore UnusedMember.Local
         }
 
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

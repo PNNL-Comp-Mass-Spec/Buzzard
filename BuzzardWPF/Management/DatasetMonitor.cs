@@ -15,6 +15,8 @@ namespace BuzzardWPF.Management
 {
     public class DatasetMonitor : ReactiveObject, IStoredSettingsMonitor, IDisposable
     {
+        // Ignore Spelling: uncheck
+
         static DatasetMonitor()
         {
             Monitor = new DatasetMonitor();
@@ -55,7 +57,7 @@ namespace BuzzardWPF.Management
 
         /// <summary>
         /// This values tells the DatasetManager if it can create
-        /// a trigger file for datasets that fail to resulve their
+        /// a trigger file for datasets that fail to resolve their
         /// DMS data. This only applies when the reason for the
         /// trigger file creation is due to the count down running
         /// out. If a user wants to create the trigger file without

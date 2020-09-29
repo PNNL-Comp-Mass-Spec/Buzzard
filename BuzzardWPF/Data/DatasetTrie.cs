@@ -10,6 +10,8 @@ namespace BuzzardWPF.Data
     /// </summary>
     public class DatasetTrie
     {
+        // Ignore Spelling: trie
+
         private readonly ITrieNode rootNode = new TrieNodeString();
         private readonly Dictionary<int, DMSData> requestIDToDMSMap = new Dictionary<int, DMSData>();
 

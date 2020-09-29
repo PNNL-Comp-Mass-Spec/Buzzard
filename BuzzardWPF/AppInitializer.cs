@@ -16,6 +16,8 @@ namespace BuzzardWPF
 {
     public static class AppInitializer
     {
+        // Ignore Spelling: Bionet, userprofile, appdata
+
         #region "Constants and members"
 
         public static string AssemblyDate { get; }
@@ -146,16 +148,16 @@ namespace BuzzardWPF
         }
         #endregion
 
-        ///  <summary>
-        ///
-        ///  </summary>
-        ///  <param name="installerFolderPath"></param>
+        /// <summary>
+        /// Check for a new version
+        /// </summary>
+        /// <param name="installerFolderPath"></param>
         /// <param name="isTestDir"></param>
         /// <param name="currentWindow"></param>
         /// <returns>
-        ///  True if a new version exists and the user launched the installer
-        ///  In that case, this program will exit, thus allowing the installer to complete successfully
-        ///  </returns>
+        /// True if a new version exists and the user launched the installer
+        /// In that case, this program will exit, thus allowing the installer to complete successfully
+        /// </returns>
         private static bool CheckForNewVersion(string installerFolderPath = DefaultInstallerFolder, bool isTestDir = false, Window currentWindow = null)
         {
             if (isTestDir && DefaultInstallerFolder.Equals(installerFolderPath))

@@ -35,6 +35,7 @@ namespace BuzzardWPF.ViewModels
         /// Constructor for valid design-time data context
         /// </summary>
         [Obsolete("For WPF design-time view only", true)]
+        // ReSharper disable once UnusedMember.Global
         public SearchConfigViewModel() : this(null)
         {
         }

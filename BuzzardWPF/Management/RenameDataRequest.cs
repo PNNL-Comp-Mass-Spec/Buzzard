@@ -11,6 +11,8 @@ namespace BuzzardWPF.Management
 {
     public class RenameDataRequest
     {
+        // Ignore Spelling: yyyyMMdd
+
         /// <summary>
         /// File path to fix invalid characters in
         /// </summary>
@@ -155,7 +157,7 @@ namespace BuzzardWPF.Management
 
             if (fixedName.Length < BuzzardTriggerFileTools.MINIMUM_DATASET_NAME_LENGTH)
             {
-                // Add a datestamp
+                // Add a date stamp
                 var fiSourceFile = new FileInfo(sourceDataPath);
                 if (fiSourceFile.Exists)
                     fixedName.Append(fiSourceFile.LastWriteTime.ToString("_yyyyMMdd"));

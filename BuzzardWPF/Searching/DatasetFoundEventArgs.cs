@@ -7,6 +7,8 @@ namespace BuzzardWPF.Searching
     /// </summary>
     public class DatasetFoundEventArgs : EventArgs
     {
+        // Ignore Spelling: Buzzadier
+
         /// <summary>
         /// Constructor.
         /// </summary>

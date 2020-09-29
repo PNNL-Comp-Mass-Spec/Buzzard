@@ -19,6 +19,8 @@ namespace BuzzardWPF.Management
 {
     public class DMS_DataAccessor : ReactiveObject, IDisposable
     {
+        // Ignore Spelling: Unreviewed, uniqueifier
+
         #region Constants
 
         public const int RecentExperimentMonths = 18;
@@ -252,7 +254,7 @@ namespace BuzzardWPF.Management
 
             LastLoadFromSqliteCacheUtc = DateTime.UtcNow;
 
-            // Now that data has been loaded, enable the timer that will auto-update the data every mDataRefreshIntervalHours hours
+            // Now that data has been loaded, enable the timer that will auto-update the data every mDataRefreshIntervalHours
             // It's okay to re-set this every time we run an update.
             autoUpdateTimer.Change(TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(5));
 
@@ -392,7 +394,7 @@ namespace BuzzardWPF.Management
         /// <summary>
         /// Update data from DMS, with optional extra logging
         /// </summary>
-        /// <param name="progressEventHandler">Handler to report progress information from DMSDBTools</param>
+        /// <param name="progressEventHandler">Handler to report progress information from dmsDbTools</param>
         /// <param name="errorAction">Handler to report exception information</param>
         /// <returns></returns>
         public bool UpdateSQLiteCacheFromDms(ProgressEventHandler progressEventHandler = null, Action<string, Exception> errorAction = null)
@@ -400,6 +402,8 @@ namespace BuzzardWPF.Management
             var retries = 3;
             var dmsAvailable = dmsDbTools.CheckDMSConnection();
             var result = false;
+
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             while (retries > 0)
             {
                 retries--;
@@ -460,7 +464,7 @@ namespace BuzzardWPF.Management
         #region EMSL Proposal User Items
 
         /// <summary>
-        /// Adds the given username and user UserIDPIDCrossReference entry to the dictionary
+        /// Adds the given username and User ID PID CrossReference entry to the dictionary
         /// </summary>
         /// <param name="proposalUserToIdMap"></param>
         /// <param name="userName"></param>
@@ -679,7 +683,7 @@ namespace BuzzardWPF.Management
                 return null;
 
             // We won't return this collection because this collection is supposed to be
-            // inmutable and the items this method was designed for will be altering their
+            // immutable and the items this method was designed for will be altering their
             // collections.
             var allProposalUsers = GetProposalUsers(proposalID);
 
@@ -758,7 +762,7 @@ namespace BuzzardWPF.Management
         public ReadOnlyObservableCollection<string> InstrumentData { get; }
 
         /// <summary>
-        /// Instrument details (Name, status, source hostname, source share name, capture method
+        /// Instrument details (Name, status, source host name, source share name, capture method
         /// </summary>
         /// <remarks>Key is instrument name, value is the details</remarks>
         /// <remarks>Data is pulled from DMS view V_Instrument_Info_LCMSNet</remarks>

@@ -20,6 +20,8 @@ namespace BuzzardWPF
 {
     public class MainWindowViewModel : ReactiveObject, IHandlesLogging
     {
+        // Ignore Spelling: Bionet
+
         #region Constants
 
         /// <summary>
@@ -328,7 +330,7 @@ namespace BuzzardWPF
                 // There's nothing to create a dataset from
                 ApplicationLogger.LogError(
                     0,
-                    "No path was given for found datasource. Can not create Dataset.");
+                    "No path was given for found datasetFileOrFolderPath. Can not create Dataset.");
                 return;
             }
 
@@ -394,7 +396,7 @@ namespace BuzzardWPF
         /// </summary>
         private void Animation_Tick(object state)
         {
-            // Increment the counter and wrap it around if neccessary
+            // Increment the counter and wrap it around if necessary
             m_counter++;
             var n = m_animationImages.Count;
 

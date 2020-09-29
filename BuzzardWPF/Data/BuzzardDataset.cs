@@ -12,6 +12,8 @@ namespace BuzzardWPF.Data
 {
     public class BuzzardDataset : ReactiveObject, ITriggerFileData, IDisposable
     {
+        // Ignore Spelling: Unreviewed
+
         #region Attributes
         private string filePath;
 
@@ -132,6 +134,7 @@ namespace BuzzardWPF.Data
             }
         }
 
+        // ReSharper disable once UnusedMember.Global
         public void Reset()
         {
             DMSDataLastUpdate = DateTime.UtcNow.Subtract(new TimeSpan(1, 0, 0));

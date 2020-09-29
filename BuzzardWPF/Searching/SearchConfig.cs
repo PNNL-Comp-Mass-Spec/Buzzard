@@ -105,7 +105,7 @@ namespace BuzzardWPF.Searching
 
                 if (!this.RaiseAndSetIfChangedMonitoredBool(ref mFileExtension, value) && changed)
                 {
-                    // if we cleaned the value, we need to report that the value changed to remove the invalid characters from the textbox.
+                    // if we cleaned the value, we need to report that the value changed to remove the invalid characters from the TextBox.
                     this.RaisePropertyChanged();
                 }
             }

@@ -38,7 +38,7 @@
             <Run Text="Instrument: " />
             <Run Text="{Binding Path=InstrumentName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
         </TextBlock>
-        <TextBlock Grid.Row="3" Margin="233,9.6,233.8,9.6" Width="322" Height="44" MaxWidth="350" FontSize="12" Style="{StaticResource TextBlockStyle}" TextWrapping="WrapWithOverflow" Text="Matthew Monroe, Danny Orton, Brian LaMarche, Tom Metz, Gary Kiebel, Ron Moore, Francisco Chavez, and Gordon Anderson" />
+        <TextBlock Grid.Row="3" Margin="217,7.8,218.6,8.2" Width="354" Height="44" MaxWidth="350" FontSize="12" Style="{StaticResource TextBlockStyle}" TextWrapping="WrapWithOverflow" Text="Written by Bryson Gibbons, Brian LaMarche, and Matthew Monroe, with input from Gary Kiebel, Tom Metz, Ron Moore, Danny Orton, and Gordon Anderson" />
         <TextBlock Grid.Row="4" Margin="10,0,9.8,2.6" Width="769" Height="31" VerticalAlignment="Bottom" FontSize="14" FontWeight="Bold" Style="{StaticResource TextBlockStyle}" Text="{Binding Path=LastLoggedItem, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='Log messages'}" TextAlignment="Center" TextWrapping="WrapWithOverflow" />
         <TextBlock Grid.Row="5" Margin="0,2.4,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="12" IsEnabled="False" Text="{Binding Path=LogFilePath, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='Log file path'}" TextWrapping="Wrap" />
     </Grid>

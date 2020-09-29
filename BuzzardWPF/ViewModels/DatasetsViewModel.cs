@@ -19,6 +19,8 @@ namespace BuzzardWPF.ViewModels
 {
     public class DatasetsViewModel : ReactiveObject
     {
+        // Ignore Spelling: ds, Filldown
+
         #region Attributes
 
         private readonly FilldownBuzzardDataset fillDownDataset = new FilldownBuzzardDataset();
@@ -193,7 +195,7 @@ namespace BuzzardWPF.ViewModels
         #region Event Handlers
 
         /// <summary>
-        /// Clears out all the datasets from the datagrid.
+        /// Clears out all the datasets from the DataGrid.
         /// </summary>
         private void ClearAllDatasets()
         {
@@ -265,7 +267,7 @@ namespace BuzzardWPF.ViewModels
         }
 
         /// <summary>
-        /// Clear out the selected datasets from the datagrid.
+        /// Clear out the selected datasets from the DataGrid.
         /// </summary>
         private void ClearSelectedDatasets()
         {
@@ -431,7 +433,7 @@ namespace BuzzardWPF.ViewModels
         private void OpenFilldown()
         {
             //
-            // Get a list of which which Datasets are currently selected
+            // Get a list of which Datasets are currently selected
             //
             var selectedDatasets = SelectedDatasets.ToList();
 
@@ -458,7 +460,7 @@ namespace BuzzardWPF.ViewModels
                 !DMS_DataAccessor.Instance.ColumnData.Contains(filldownData.ColumnName))
             {
                 MessageBox.Show("Unknown LC column: " + filldownData.ColumnName +
-                                "; please use the dropdown to select a valid column name");
+                                "; please use the drop down to select a valid column name");
                 return;
             }
 
