@@ -49,11 +49,11 @@ namespace BuzzardWPF.Data
 
             // Monitors for propertyChanged events
             this.WhenAnyValue(x => x.DmsData, x => x.DmsData.DatasetType, x => x.DmsData.EMSLUsageType, x => x.DmsData.EMSLProposalID)
-                .Subscribe(x => SettingsChanged = true);
+                .Subscribe(_ => SettingsChanged = true);
             this.WhenAnyValue(x => x.DmsData.CommentAddition, x => x.Operator, x => x.SeparationType, x => x.ColumnName, x => x.InstrumentName)
-                .Subscribe(x => SettingsChanged = true);
+                .Subscribe(_ => SettingsChanged = true);
             this.WhenAnyValue(x => x.DmsData.CartName, x => x.DmsData.CartConfigName, x => x.InterestRating, x => x.DmsData.Experiment, x => x.DmsData.WorkPackage)
-                .Subscribe(x => SettingsChanged = true);
+                .Subscribe(_ => SettingsChanged = true);
 
             LoadSettings();
         }

@@ -91,7 +91,7 @@ namespace BuzzardWPF.ViewModels
 
         private bool settingsChanged;
 
-        public bool SaveSettings(bool force = false)
+        public bool SaveSettings()
         {
             if (!settingsChanged)
             {
@@ -205,7 +205,7 @@ namespace BuzzardWPF.ViewModels
         /// When an item is added to the dataset collection, this will be called
         /// </summary>
         /// <param name="dataset"></param>
-        void DatasetAdded(BuzzardDataset dataset)
+        private void DatasetAdded(BuzzardDataset dataset)
         {
             // Loop through every Dataset we've already got, and if its request name
             // matches the new Dataset's request name, then mark it as a redundant
@@ -221,6 +221,7 @@ namespace BuzzardWPF.ViewModels
                 // and move on to checking the next one.
                 else if (string.IsNullOrWhiteSpace(ds.DmsData.DatasetName) || string.IsNullOrWhiteSpace(dataset.DmsData.DatasetName))
                 {
+                    continue;
                 }
                 // Both request names are the same
                 else if (ds.DmsData.DatasetName.Equals(dataset.DmsData.DatasetName, StringComparison.OrdinalIgnoreCase))
@@ -228,7 +229,10 @@ namespace BuzzardWPF.ViewModels
                     // If ds and dataset are the same Dataset object, then it doesn't
                     // matter that they have the same DatasetName value.
                     if (ds == dataset)
+                    {
                         continue;
+                    }
+
                     isRedundantName = true;
                 }
 
@@ -247,7 +251,7 @@ namespace BuzzardWPF.ViewModels
         /// When an item is removed from the dataset collection, this will be called
         /// </summary>
         /// <param name="dataset"></param>
-        void DatasetRemoved(BuzzardDataset dataset)
+        private void DatasetRemoved(BuzzardDataset dataset)
         {
             if (dataset.NotOnlyDatasource)
             {
@@ -256,11 +260,15 @@ namespace BuzzardWPF.ViewModels
                     .ToList();
 
                 if (otherSets.Count < 2)
+                {
                     RxApp.MainThreadScheduler.Schedule(() =>
                     {
                         foreach (var ds in otherSets)
+                        {
                             ds.NotOnlyDatasource = false;
+                        }
                     });
+                }
             }
         }
 
@@ -270,7 +278,9 @@ namespace BuzzardWPF.ViewModels
         private void ClearSelectedDatasets()
         {
             if (Datasets == null)
+            {
                 return;
+            }
 
             var selectedDatasets = SelectedDatasets.ToList();
 
@@ -285,7 +295,6 @@ namespace BuzzardWPF.ViewModels
         /// </summary>
         private void FixDatasetNames()
         {
-
             //
             // Get list of selected datasets
             //
@@ -315,7 +324,9 @@ namespace BuzzardWPF.ViewModels
                 if (BuzzardTriggerFileTools.NameHasInvalidCharacters(currentName) ||
                     currentName.Length < BuzzardTriggerFileTools.MINIMUM_DATASET_NAME_LENGTH ||
                     currentName.Length > BuzzardTriggerFileTools.MAXIMUM_DATASET_NAME_LENGTH)
+                {
                     datasetsToRename.Add(dataset);
+                }
             }
 
             // If there's nothing to process, then exit
@@ -450,7 +461,9 @@ namespace BuzzardWPF.ViewModels
             var stopDoingThis = filldownWindow.ShowDialog() != true;
 
             if (stopDoingThis)
+            {
                 return;
+            }
 
             var filldownData = filldownWindowVm.Dataset;
 
@@ -485,19 +498,29 @@ namespace BuzzardWPF.ViewModels
                     dataset.DmsData.CartConfigName = filldownData.DmsData.CartConfigName;
                 }
                 if (filldownData.UseDatasetType)
+                {
                     dataset.DmsData.DatasetType = filldownData.DmsData.DatasetType;
+                }
 
                 if (filldownData.UseInstrumentType)
+                {
                     dataset.InstrumentName = filldownData.InstrumentName;
+                }
 
                 if (filldownData.UseOperator)
+                {
                     dataset.Operator = filldownData.Operator;
+                }
 
                 if (filldownData.UseSeparationType)
+                {
                     dataset.SeparationType = filldownData.SeparationType;
+                }
 
                 if (filldownData.UseExperimentName)
+                {
                     dataset.DmsData.Experiment = filldownData.DmsData.Experiment;
+                }
 
                 if (filldownData.UseLcColumn)
                 {
@@ -505,7 +528,9 @@ namespace BuzzardWPF.ViewModels
                 }
 
                 if (filldownData.UseInterestRating)
+                {
                     dataset.InterestRating = filldownData.InterestRating;
+                }
 
                 if (filldownData.UseComment)
                 {
@@ -521,13 +546,19 @@ namespace BuzzardWPF.ViewModels
                 // related to each other when it comes to use.
                 // -FCT
                 if (filldownData.UseEMSLProposalID)
+                {
                     dataset.DmsData.EMSLProposalID = filldownData.DmsData.EMSLProposalID;
+                }
 
                 if (filldownData.UseEMSLUsageType)
+                {
                     dataset.DmsData.EMSLUsageType = filldownData.DmsData.EMSLUsageType;
+                }
 
                 if (filldownData.UseEMSLProposalUser)
+                {
                     dataset.EMSLProposalUser = filldownData.EMSLProposalUser;
+                }
             }
         }
         #endregion
@@ -554,7 +585,9 @@ namespace BuzzardWPF.ViewModels
             //
             var selectedItems = SelectedDatasets.ToList();
             if (selectedItems.Count == 0)
+            {
                 return;
+            }
 
             TriggerFileCreationManager.Instance.CreateTriggers(selectedItems);
 

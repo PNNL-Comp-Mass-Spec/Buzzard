@@ -37,7 +37,7 @@ namespace BuzzardWPF.ViewModels
         public bool IsFile
         {
             get => m_isFile;
-            private set => this.RaiseAndSetIfChanged(ref m_isFile, value, x => UpdateViewsPage());
+            private set => this.RaiseAndSetIfChanged(ref m_isFile, value, _ => UpdateViewsPage());
         }
 
         public long SizeBytes
@@ -61,13 +61,13 @@ namespace BuzzardWPF.ViewModels
         public bool ItemFound
         {
             get => m_itemFound;
-            private set => this.RaiseAndSetIfChanged(ref m_itemFound, value, x => UpdateViewsPage());
+            private set => this.RaiseAndSetIfChanged(ref m_itemFound, value, _ => UpdateViewsPage());
         }
 
         public string PathName
         {
             get => m_pathName;
-            set => this.RaiseAndSetIfChanged(ref m_pathName, value, x => GetPathInfo());
+            set => this.RaiseAndSetIfChanged(ref m_pathName, value, _ => GetPathInfo());
         }
 
         public int SelectedTabIndex
@@ -82,11 +82,17 @@ namespace BuzzardWPF.ViewModels
         private void UpdateViewsPage()
         {
             if (!ItemFound)
+            {
                 SelectedTabIndex = 0;
+            }
             else if (IsFile)
+            {
                 SelectedTabIndex = 1;
+            }
             else
+            {
                 SelectedTabIndex = 2;
+            }
         }
 
         private void GetPathInfo()
@@ -132,7 +138,6 @@ namespace BuzzardWPF.ViewModels
                     FolderCount = 0;
                 }
             }
-
         }
 
         private void GetPathInfoForFile(FileInfo fiFile)
@@ -173,7 +178,6 @@ namespace BuzzardWPF.ViewModels
             {
                 // Ignore errors here
             }
-
         }
         #endregion
     }

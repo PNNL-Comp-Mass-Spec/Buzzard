@@ -12,7 +12,7 @@ namespace BuzzardWPF.ViewModels
 {
     public class WatcherControlViewModel : ReactiveObject
     {
-        readonly Ookii.Dialogs.Wpf.VistaFolderBrowserDialog mFolderDialog;
+        private readonly Ookii.Dialogs.Wpf.VistaFolderBrowserDialog mFolderDialog;
         private string[] directorySelectorOptionsList;
         private readonly ObservableAsPropertyHelper<bool> isNotMonitoring;
 
@@ -37,7 +37,7 @@ namespace BuzzardWPF.ViewModels
             ResetToDefaultsCommand = ReactiveCommand.Create(ResetToDefaults);
             MonitorStartStopCommand = ReactiveCommand.Create(MonitorStartStop);
 
-            this.WhenAnyValue(x => x.Config.DirectoryPath).ObserveOn(RxApp.MainThreadScheduler).Subscribe(x => SetDirectorySelectorOptionsList());
+            this.WhenAnyValue(x => x.Config.DirectoryPath).ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ => SetDirectorySelectorOptionsList());
         }
 
         private void ResetToDefaults()
@@ -107,7 +107,7 @@ namespace BuzzardWPF.ViewModels
 
             var result = mFolderDialog.ShowDialog();
 
-            if (result.HasValue && result.Value)
+            if (result == true)
             {
                 Config.DirectoryPath = mFolderDialog.SelectedPath;
             }
@@ -116,9 +116,13 @@ namespace BuzzardWPF.ViewModels
         private void MonitorStartStop()
         {
             if (Watcher.IsMonitoring)
+            {
                 Watcher.StopWatching();
+            }
             else
+            {
                 Watcher.StartWatching();
+            }
         }
     }
 }

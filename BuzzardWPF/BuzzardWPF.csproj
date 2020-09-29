@@ -101,6 +101,7 @@
     <Compile Include="DynamicSplashScreenWindow.xaml.cs">
       <DependentUpon>DynamicSplashScreenWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="IO\BuzzardTriggerFileTools.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

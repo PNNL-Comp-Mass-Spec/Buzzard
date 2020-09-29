@@ -78,7 +78,6 @@ namespace BuzzardWPF.Management
                         string.Format("Skipping {0}", SourceDataPath));
                     return;
                 }
-
             }
 
             if (File.Exists(SourceDataPath))
@@ -115,7 +114,9 @@ namespace BuzzardWPF.Management
         private string FixFileName(string sourceDataPath)
         {
             if (string.IsNullOrWhiteSpace(sourceDataPath))
+            {
                 return string.Empty;
+            }
 
             var fiFile = new FileInfo(sourceDataPath);
             var parentFolder = fiFile.DirectoryName ?? string.Empty;
@@ -128,7 +129,9 @@ namespace BuzzardWPF.Management
             var fixedName = FixName(sourceDataPath, datasetName);
 
             if (hasArchivePrefix)
+            {
                 fixedName = "x_" + fixedName;
+            }
 
             var newPath = Path.Combine(parentFolder, fixedName + fileExtension);
 
@@ -139,7 +142,9 @@ namespace BuzzardWPF.Management
         {
             // Auto-replace percent signs with "pct"
             if (datasetName.Contains("%"))
+            {
                 datasetName = datasetName.Replace("%", "pct");
+            }
 
             var fixedName = new StringBuilder(datasetName.Length);
 
@@ -148,7 +153,9 @@ namespace BuzzardWPF.Management
             foreach (var letter in datasetName)
             {
                 if (BuzzardTriggerFileTools.NameHasInvalidCharacters(letter.ToString()))
+                {
                     fixedName.Append('_');
+                }
                 else
                 {
                     fixedName.Append(letter);
@@ -160,9 +167,13 @@ namespace BuzzardWPF.Management
                 // Add a date stamp
                 var fiSourceFile = new FileInfo(sourceDataPath);
                 if (fiSourceFile.Exists)
+                {
                     fixedName.Append(fiSourceFile.LastWriteTime.ToString("_yyyyMMdd"));
+                }
                 else
+                {
                     fixedName.Append(DateTime.Now.ToString("_yyyyMMdd"));
+                }
             }
 
             return fixedName.ToString();
@@ -173,7 +184,7 @@ namespace BuzzardWPF.Management
             var hasFile = File.Exists(FixedDataPath);
             var hasFolder = Directory.Exists(FixedDataPath);
 
-            return (hasFile || hasFolder);
+            return hasFile || hasFolder;
         }
 
         private void RenameFile()
@@ -181,7 +192,9 @@ namespace BuzzardWPF.Management
             try
             {
                 if (File.Exists(FixedDataPath))
+                {
                     File.Delete(FixedDataPath);
+                }
 
                 File.Move(SourceDataPath, FixedDataPath);
                 Dataset.FilePath = FixedDataPath;
@@ -202,7 +215,9 @@ namespace BuzzardWPF.Management
             try
             {
                 if (Directory.Exists(FixedDataPath))
+                {
                     Directory.Delete(FixedDataPath, true);
+                }
 
                 Directory.Move(SourceDataPath, FixedDataPath);
                 Dataset.FilePath = FixedDataPath;
@@ -217,6 +232,5 @@ namespace BuzzardWPF.Management
                     ex);
             }
         }
-
     }
 }

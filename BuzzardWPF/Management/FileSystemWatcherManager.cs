@@ -67,7 +67,7 @@ namespace BuzzardWPF.Management
 
         #region Event Handlers
 
-        void SystemWatcher_Changed(object sender, FileSystemEventArgs e)
+        private void SystemWatcher_Changed(object sender, FileSystemEventArgs e)
         {
             // NOTE: Microsoft Documentation recommends keeping the FileSystemWatcher event handling code as short as possible to avoid missing events.
             // limit 'changed' entries for a single path
@@ -80,19 +80,19 @@ namespace BuzzardWPF.Management
             filePathsToProcess.Enqueue(e);
         }
 
-        void SystemWatcher_FileCreated(object sender, FileSystemEventArgs e)
+        private void SystemWatcher_FileCreated(object sender, FileSystemEventArgs e)
         {
             // NOTE: Microsoft Documentation recommends keeping the FileSystemWatcher event handling code as short as possible to avoid missing events.
             filePathsToProcess.Enqueue(e);
         }
 
-        void SystemWatcher_FileRenamed(object sender, RenamedEventArgs e)
+        private void SystemWatcher_FileRenamed(object sender, RenamedEventArgs e)
         {
             // NOTE: Microsoft Documentation recommends keeping the FileSystemWatcher event handling code as short as possible to avoid missing events.
             filePathsToProcess.Enqueue(e);
         }
 
-        void SystemWatcher_FileDeleted(object sender, FileSystemEventArgs e)
+        private void SystemWatcher_FileDeleted(object sender, FileSystemEventArgs e)
         {
             // NOTE: Microsoft Documentation recommends keeping the FileSystemWatcher event handling code as short as possible to avoid missing events.
             // The monitor will auto-notify the user of this (if a trigger file has not yet been sent)
@@ -125,9 +125,10 @@ namespace BuzzardWPF.Management
 
         private void ProcessFilePathQueue()
         {
-
             if (filePathsToProcess.Count == 0)
+            {
                 return;
+            }
 
             ControlFileMonitor(false);
 
@@ -138,7 +139,9 @@ namespace BuzzardWPF.Management
             {
                 var fullFilePath = fseArgs.FullPath;
                 if (string.IsNullOrWhiteSpace(fullFilePath) || fullFilePath.Contains('$'))
+                {
                     continue;
+                }
 
                 if (Config.MatchFolders)
                 {
@@ -307,7 +310,9 @@ namespace BuzzardWPF.Management
                 {
                     msg += missingData[i];
                     if (i < missingData.Count - 1)
+                    {
                         msg += ", ";
+                    }
                 }
 
                 MessageBox.Show(msg, "Error", MessageBoxButton.OK, MessageBoxImage.Exclamation);
@@ -319,9 +324,14 @@ namespace BuzzardWPF.Management
             if (!baseFolderValidator.ValidateBaseFolder(diBaseFolder, out var expectedBaseFolderPath, out var shareName, out var baseCaptureSubdirectory))
             {
                 if (string.IsNullOrWhiteSpace(baseFolderValidator.ErrorMessage))
+                {
                     ReportError("Base folder not valid for this instrument; should be " + expectedBaseFolderPath);
+                }
                 else
+                {
                     ReportError(baseFolderValidator.ErrorMessage);
+                }
+
                 return;
             }
 

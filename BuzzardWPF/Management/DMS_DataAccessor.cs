@@ -17,7 +17,7 @@ using ReactiveUI;
 
 namespace BuzzardWPF.Management
 {
-    public class DMS_DataAccessor : ReactiveObject, IDisposable
+    public sealed class DMS_DataAccessor : ReactiveObject, IDisposable
     {
         // Ignore Spelling: Unreviewed, uniqueifier
 
@@ -105,14 +105,18 @@ namespace BuzzardWPF.Management
         public void LoadDMSDataFromCache(bool forceLoad = false)
         {
             if (DateTime.UtcNow.Subtract(LastLoadFromSqliteCacheUtc).TotalMinutes < 1 && !forceLoad)
+            {
                 return;
+            }
 
             const bool forceReloadFromCache = true;
 
             // Load Instrument Data
             var tempInstrumentData = SQLiteTools.GetInstrumentList(forceReloadFromCache).ToList();
             if (tempInstrumentData.Count == 0)
+            {
                 ApplicationLogger.LogError(0, "No instruments found.");
+            }
 
             if (tempInstrumentData.Count != 0)
             {
@@ -136,7 +140,9 @@ namespace BuzzardWPF.Management
             // Load Operator Data
             var tempUserList = SQLiteTools.GetUserList(forceReloadFromCache);
             if (tempUserList == null)
+            {
                 ApplicationLogger.LogError(0, "User retrieval returned null.");
+            }
             else
             {
                 operatorDataSource.Edit(sourceList =>
@@ -149,7 +155,9 @@ namespace BuzzardWPF.Management
             // Load Dataset Types
             var tempDatasetTypesList = SQLiteTools.GetDatasetTypeList(forceReloadFromCache);
             if (tempDatasetTypesList == null)
+            {
                 ApplicationLogger.LogError(0, "Dataset Types retrieval returned null.");
+            }
             else
             {
                 datasetTypesSource.Edit(sourceList =>
@@ -162,7 +170,9 @@ namespace BuzzardWPF.Management
             // Load Separation Types
             var tempSeparationTypesList = SQLiteTools.GetSepTypeList(forceReloadFromCache);
             if (tempSeparationTypesList == null)
+            {
                 ApplicationLogger.LogError(0, "Separation types retrieval returned null.");
+            }
             else
             {
                 separationTypesSource.Edit(sourceList =>
@@ -175,7 +185,9 @@ namespace BuzzardWPF.Management
             // Load Cart Names
             var tempCartsList = SQLiteTools.GetCartNameList();
             if (tempCartsList == null)
+            {
                 ApplicationLogger.LogError(0, "LC Cart names list retrieval returned null.");
+            }
             else
             {
                 cartNamesSource.Edit(sourceList =>
@@ -198,7 +210,9 @@ namespace BuzzardWPF.Management
             // Load CartConfigNameMap
             var tempCartConfigNameMap = SQLiteTools.GetCartConfigNameMap(forceReloadFromCache);
             if (tempCartConfigNameMap == null)
+            {
                 ApplicationLogger.LogError(0, "LC Cart config names map retrieval returned null.");
+            }
             else
             {
                 cartConfigNameMap = tempCartConfigNameMap;
@@ -207,7 +221,9 @@ namespace BuzzardWPF.Management
             // Load column data
             var tempColumnData = SQLiteTools.GetColumnList(forceReloadFromCache);
             if (tempColumnData == null)
+            {
                 ApplicationLogger.LogError(0, "Column data list retrieval returned null.");
+            }
             else
             {
                 columnDataSource.Edit(sourceList =>
@@ -220,7 +236,9 @@ namespace BuzzardWPF.Management
             // Load Experiments
             var experimentList = SQLiteTools.GetExperimentList();
             if (experimentList == null)
+            {
                 ApplicationLogger.LogError(0, "Experiment list retrieval returned null.");
+            }
             else
             {
                 Experiments.Edit(sourceList =>
@@ -233,7 +251,9 @@ namespace BuzzardWPF.Management
             // Load Work Packages
             var workPackageMap = SQLiteTools.GetWorkPackageMap(forceReloadFromCache);
             if (workPackageMap == null)
+            {
                 ApplicationLogger.LogError(0, "Work package list retrieval returned null.");
+            }
             else
             {
                 if (!workPackageMap.ContainsKey("none"))
@@ -378,7 +398,9 @@ namespace BuzzardWPF.Management
         private async void AutoUpdateTimer_Tick(object state)
         {
             if (DataRefreshIntervalHours <= 0)
+            {
                 return;
+            }
 
             if (!(DateTime.UtcNow.Subtract(LastSqliteCacheUpdateUtc).TotalHours >= DataRefreshIntervalHours))
             {
@@ -388,7 +410,7 @@ namespace BuzzardWPF.Management
             // Set the Last Update time to now to prevent this function from calling UpdateCacheNow repeatedly if the DMS update takes over 30 seconds
             LastSqliteCacheUpdateUtc = DateTime.UtcNow;
 
-            await UpdateCacheNow();
+            await UpdateCacheNow().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -432,7 +454,7 @@ namespace BuzzardWPF.Management
                 }
                 catch (Exception ex)
                 {
-                    var message = "Error loading data from DMS and updating the SQLite cache file!";
+                    const string message = "Error loading data from DMS and updating the SQLite cache file!";
                     ApplicationLogger.LogError(0, message, ex);
                     if (SQLiteTools.DatabaseImageBad && dmsAvailable && retries > 0)
                     {
@@ -481,9 +503,13 @@ namespace BuzzardWPF.Management
             int uniqueifier)
         {
             if (proposalUserToIdMap.ContainsKey(userName))
+            {
                 proposalUserToIdMap.Add(userName + uniqueifier, user);
+            }
             else
+            {
                 proposalUserToIdMap.Add(userName, user);
+            }
         }
 
         /// <summary>
@@ -546,7 +572,9 @@ namespace BuzzardWPF.Management
                 SQLiteTools.GetProposalUsers(out var eusUsers, out var proposalUserMapping);
 
                 if (eusUsers.Count == 0)
+                {
                     ApplicationLogger.LogError(0, "No Proposal Users found");
+                }
 
                 var userIDtoNameMap = new Dictionary<int, string>();
                 foreach (var user in eusUsers)
@@ -558,7 +586,9 @@ namespace BuzzardWPF.Management
                 foreach (var items in proposalUserMapping)
                 {
                     if (items.Value.Count == 0)
+                    {
                         ApplicationLogger.LogError(0, string.Format("EUS Proposal {0} has no users.", items.Key));
+                    }
 
                     // Store the users for this proposal sorted by user last name
                     var sortedProposalUsers = GetSortedUsers(items.Value, userIDtoNameMap);
@@ -589,7 +619,9 @@ namespace BuzzardWPF.Management
         public IReadOnlyList<ProposalUser> GetProposalUsers(string proposalID, bool returnAllWhenEmpty = false)
         {
             if (string.IsNullOrWhiteSpace(proposalID))
+            {
                 proposalID = string.Empty;
+            }
 
             // We haven't built a quick reference collection for this PID
             // yet, so lets do that.
@@ -676,7 +708,9 @@ namespace BuzzardWPF.Management
         public ProposalUser FindSavedEMSLProposalUser(string proposalID, string key)
         {
             if (string.IsNullOrWhiteSpace(proposalID) || string.IsNullOrWhiteSpace(key))
+            {
                 return null;
+            }
 
             // We won't return this collection because this collection is supposed to be
             // immutable and the items this method was designed for will be altering their
@@ -684,7 +718,9 @@ namespace BuzzardWPF.Management
             var allProposalUsers = GetProposalUsers(proposalID);
 
             if (allProposalUsers == null || allProposalUsers.Count == 0)
+            {
                 return null;
+            }
 
             return allProposalUsers.FirstOrDefault(x => key.Equals(x.UserID.ToString()));
         }
@@ -741,7 +777,9 @@ namespace BuzzardWPF.Management
             set
             {
                 if (value < 0.5)
+                {
                     value = 0.5f;
+                }
 
                 dataRefreshIntervalHours = value;
             }

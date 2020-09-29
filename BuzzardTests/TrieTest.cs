@@ -89,7 +89,6 @@ namespace BuzzardTests
                 string nname        = Path.GetFileNameWithoutExtension(name);
                 try
                 {
-
                     datum = trie.FindData(nname);
                     if (datum != null)
                     {

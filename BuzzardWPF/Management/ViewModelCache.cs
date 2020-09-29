@@ -52,22 +52,12 @@ namespace BuzzardWPF.Management
 
         public ExperimentsViewerViewModel GetExperimentsVm()
         {
-            if (experimentsVm == null)
-            {
-                experimentsVm = new ExperimentsViewerViewModel();
-            }
-
-            return experimentsVm;
+            return experimentsVm ?? (experimentsVm = new ExperimentsViewerViewModel());
         }
 
         public WorkPackageSelectionViewModel GetWorkPackageVm()
         {
-            if (workPackageVm == null)
-            {
-                workPackageVm = new WorkPackageSelectionViewModel();
-            }
-
-            return workPackageVm;
+            return workPackageVm ?? (workPackageVm = new WorkPackageSelectionViewModel());
         }
     }
 }

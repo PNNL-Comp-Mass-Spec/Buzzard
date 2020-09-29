@@ -19,7 +19,7 @@ namespace BuzzardWPF.ViewModels
     {
         #region Attributes
 
-        readonly Ookii.Dialogs.Wpf.VistaFolderBrowserDialog m_folderDialog;
+        private readonly Ookii.Dialogs.Wpf.VistaFolderBrowserDialog m_folderDialog;
         private string[] directoryPathOptions;
 
         private readonly IBuzzadier datasetSearcher;
@@ -67,7 +67,7 @@ namespace BuzzardWPF.ViewModels
             StopSearchCommand = ReactiveCommand.Create(StopSearch, this.WhenAnyValue(x => x.Searching).ObserveOn(RxApp.MainThreadScheduler));
             ResetDateRangeCommand = ReactiveCommand.Create(ResetDateRange);
 
-            this.WhenAnyValue(x => x.Config.DirectoryPath).ObserveOn(RxApp.MainThreadScheduler).Subscribe(x => SetDirectoryPathOptions());
+            this.WhenAnyValue(x => x.Config.DirectoryPath).ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ => SetDirectoryPathOptions());
         }
 
         #region Properties
@@ -115,7 +115,9 @@ namespace BuzzardWPF.ViewModels
         private void ExploreDirectory()
         {
             if (Config == null)
+            {
                 return;
+            }
 
             var path = Config.DirectoryPath;
             if (string.IsNullOrEmpty(path) || !Directory.Exists(path))
@@ -185,20 +187,24 @@ namespace BuzzardWPF.ViewModels
             Searching = true;
             DatasetManager.ClearDatasets();
             searchCancelToken = new CancellationTokenSource();
-            await datasetSearcher.SearchAsync(Config, searchCancelToken);
+            await datasetSearcher.SearchAsync(Config, searchCancelToken).ConfigureAwait(false);
             Searching = false;
         }
 
         private void StopSearch()
         {
             if (Searching)
+            {
                 searchCancelToken.Cancel();
+            }
         }
 
         private void BrowseForPath()
         {
             if (Config == null)
+            {
                 return;
+            }
 
             if (!string.IsNullOrEmpty(Config.DirectoryPath))
             {
@@ -209,7 +215,7 @@ namespace BuzzardWPF.ViewModels
             }
 
             var result = m_folderDialog.ShowDialog();
-            if (result.HasValue && result.Value)
+            if (result == true)
             {
                 Config.DirectoryPath = m_folderDialog.SelectedPath;
             }
@@ -218,7 +224,9 @@ namespace BuzzardWPF.ViewModels
         private void ResetToDefaults()
         {
             if (Config == null)
+            {
                 return;
+            }
 
             Config.ResetToDefaults(false);
             DatasetManager.IncludeArchivedItems = false;

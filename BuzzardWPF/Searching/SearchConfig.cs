@@ -90,7 +90,7 @@ namespace BuzzardWPF.Searching
                 var changed = false;
                 if (!string.IsNullOrWhiteSpace(value))
                 {
-                    var value2 = string.Join("", value.Split(Path.GetInvalidFileNameChars()));
+                    var value2 = string.Concat(value.Split(Path.GetInvalidFileNameChars()));
                     if (!value2.StartsWith("."))
                     {
                         value2 = "." + value2;
@@ -187,7 +187,9 @@ namespace BuzzardWPF.Searching
         public void ResetToDefaults(bool resetDirectoryPath)
         {
             if (resetDirectoryPath)
+            {
                 DirectoryPath = @"c:\";
+            }
 
             FileExtension = DEFAULT_FILE_EXTENSION;
             SearchDepth = DEFAULT_SEARCH_DEPTH;
@@ -208,10 +210,14 @@ namespace BuzzardWPF.Searching
             Settings.Default.Search_MatchFolders = MatchFolders;
 
             if (StartDate.HasValue)
+            {
                 Settings.Default.SearchDateFrom = StartDate.Value;
+            }
 
             if (EndDate.HasValue)
+            {
                 Settings.Default.SearchDateTo = EndDate.Value;
+            }
 
             Settings.Default.SearchExtension = FileExtension;
             Settings.Default.SearchPath = DirectoryPath;

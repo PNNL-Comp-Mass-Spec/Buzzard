@@ -50,7 +50,9 @@ namespace BuzzardWPF.Management
         public void CreateTriggers(List<BuzzardDataset> selectedDatasets)
         {
             if (selectedDatasets.Count == 0)
+            {
                 return;
+            }
 
             if (IsCreatingTriggerFiles)
             {
@@ -123,19 +125,25 @@ namespace BuzzardWPF.Management
                     {
                         var diFolder = new DirectoryInfo(dataset.FilePath);
                         if (diFolder.Exists && dataset.IsFile)
+                        {
                             dataset.IsFile = false;
+                        }
                     }
                 }
 
                 var success = SimulateTriggerCreation(selectedDatasets, out var validDatasets);
                 if (!success)
+                {
                     return;
+                }
 
                 // Confirm that the dataset are not changing and are thus safe to create trigger files for
                 var stableDatasets = VerifyDatasetsStable(validDatasets);
 
                 if (abortTriggerCreationNow)
+                {
                     return;
+                }
 
                 var completedDatasets = new List<BuzzardDataset>();
 
@@ -173,7 +181,9 @@ namespace BuzzardWPF.Management
         private void MarkAborted(IEnumerable<BuzzardDataset> selectedDatasets)
         {
             foreach (var dataset in selectedDatasets)
+            {
                 dataset.DatasetStatus = DatasetStatus.TriggerAborted;
+            }
         }
 
         /// <summary>
@@ -198,14 +208,16 @@ namespace BuzzardWPF.Management
                     return false;
                 }
 
-                if ((dataset.DatasetStatus == DatasetStatus.Pending ||
-                     dataset.DatasetStatus == DatasetStatus.ValidatingStable))
+                if (dataset.DatasetStatus == DatasetStatus.Pending ||
+                    dataset.DatasetStatus == DatasetStatus.ValidatingStable)
                 {
                     validDatasets.Add(dataset);
                 }
 
                 if (dataset.DatasetStatus == DatasetStatus.DatasetAlreadyInDMS)
+                {
                     datasetsAlreadyInDMS++;
+                }
             }
 
             if (datasetsAlreadyInDMS > 0 && datasetsAlreadyInDMS == selectedDatasets.Count)

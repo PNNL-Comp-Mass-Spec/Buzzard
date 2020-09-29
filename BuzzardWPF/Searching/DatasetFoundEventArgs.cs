@@ -45,6 +45,5 @@ namespace BuzzardWPF.Searching
         {
             get;
         }
-
     }
 }

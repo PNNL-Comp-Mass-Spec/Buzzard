@@ -120,7 +120,9 @@ namespace BuzzardWPF.Management
 
                 // If there aren't any, then we're done.
                 if (datasets.Count == 0)
+                {
                     return;
+                }
 
                 var now = DateTime.Now;
                 var timeToWait = new TimeSpan(0, TriggerFileCreationWaitTime, 0);
@@ -191,7 +193,9 @@ namespace BuzzardWPF.Management
                         catch (Exception ex)
                         {
                             if (string.IsNullOrWhiteSpace(datasetName))
+                            {
                                 datasetName = "??";
+                            }
 
                             ApplicationLogger.LogError(
                             0,
@@ -275,12 +279,13 @@ namespace BuzzardWPF.Management
 
                 var fiTriggerFile = new FileInfo(triggerFilePath);
                 TriggerMonitor.AddNewTriggerFile(fiTriggerFile.FullName);
-
             }
             catch (Exception ex)
             {
                 if (string.IsNullOrWhiteSpace(datasetName))
+                {
                     datasetName = "??";
+                }
 
                 ApplicationLogger.LogError(
                     0,
@@ -293,41 +298,67 @@ namespace BuzzardWPF.Management
             var missingFields = new List<string>();
 
             if (string.IsNullOrWhiteSpace(WatcherMetadata.Instrument))
+            {
                 missingFields.Add("Instrument");
+            }
 
             if (string.IsNullOrWhiteSpace(WatcherMetadata.CartName))
+            {
                 missingFields.Add("LC Cart");
+            }
 
             if (string.IsNullOrWhiteSpace(WatcherMetadata.CartConfigName))
+            {
                 missingFields.Add("LC Cart Config");
+            }
 
             if (string.IsNullOrWhiteSpace(WatcherMetadata.SeparationType))
+            {
                 missingFields.Add("Separation Type");
+            }
 
             if (string.IsNullOrWhiteSpace(WatcherMetadata.DatasetType))
+            {
                 missingFields.Add("Dataset Type");
+            }
 
             if (string.IsNullOrWhiteSpace(WatcherMetadata.InstrumentOperator))
+            {
                 missingFields.Add("Operator");
+            }
 
             if (string.IsNullOrWhiteSpace(WatcherMetadata.ExperimentName))
+            {
                 missingFields.Add(EXPERIMENT_NAME_DESCRIPTION);
+            }
 
             if (string.IsNullOrWhiteSpace(WatcherMetadata.WorkPackage))
+            {
                 missingFields.Add(WorkPackageDescription);
+            }
 
             if (string.IsNullOrWhiteSpace(WatcherMetadata.LCColumn))
+            {
                 missingFields.Add("LC Column");
+            }
             else if (!DMS_DataAccessor.Instance.ColumnData.Contains(WatcherMetadata.LCColumn))
+            {
                 missingFields.Add("Invalid LC Column name");
+            }
 
             if (string.IsNullOrWhiteSpace(WatcherMetadata.EMSLUsageType))
+            {
                 missingFields.Add(EmslUsageTypeDescription);
+            }
             else if (WatcherMetadata.EMSLUsageType.Equals("USER", StringComparison.OrdinalIgnoreCase) && string.IsNullOrWhiteSpace(WatcherMetadata.EMSLProposalID))
+            {
                 missingFields.Add(EmslProposalIdDescription);
+            }
 
             if (QcMonitors.Count == 0)
+            {
                 missingFields.Add(QC_MONITORS_DESCRIPTION);
+            }
 
             return missingFields;
         }

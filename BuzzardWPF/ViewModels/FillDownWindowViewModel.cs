@@ -180,7 +180,9 @@ namespace BuzzardWPF.ViewModels
 
             var stop = dialog.ShowDialog() != true;
             if (stop)
+            {
                 return;
+            }
 
             var selectedWorkPackage = dialogVm.SelectedWorkPackage;
             Dataset.DmsData.WorkPackage = selectedWorkPackage.ChargeCode;

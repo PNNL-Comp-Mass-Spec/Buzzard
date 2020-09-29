@@ -160,24 +160,24 @@ namespace BuzzardWPF.Searching
                     var ruleId = rule.IdentityReference.Value;
                     if (ruleId.EndsWith(id, StringComparison.OrdinalIgnoreCase))
                     {
-                        if (rule.FileSystemRights.HasFlag(FileSystemRights.FullControl) ||
-                            rule.FileSystemRights.HasFlag(FileSystemRights.Modify) ||
-                            rule.FileSystemRights.HasFlag(FileSystemRights.Write))
+                        if ((rule.FileSystemRights & FileSystemRights.FullControl) != 0 ||
+                            (rule.FileSystemRights & FileSystemRights.Modify) != 0 ||
+                            (rule.FileSystemRights & FileSystemRights.Write) != 0)
                         {
-                            //Console.WriteLine("{0} has directory modify permissions '{1}', {2} can use these permissions", ruleId, rule.FileSystemRights, userName);
+                            // Console.WriteLine("{0} has directory modify permissions '{1}', {2} can use these permissions", ruleId, rule.FileSystemRights, userName);
                             ApplicationLogger.LogMessage(LogLevel.Trace, $"{nameof(InstrumentFolderValidator)}: {ruleId} has directory modify permissions '{rule.FileSystemRights}', {userName} can use these permissions");
                             hasReadPermissions = true;
                             hasModifyPermissions = true;
                         }
-                        else if (rule.FileSystemRights.HasFlag(FileSystemRights.Read))
+                        else if ((rule.FileSystemRights & FileSystemRights.Read) != 0)
                         {
-                            //Console.WriteLine("{0} has directory read permissions '{1}', {2} can use these permissions", ruleId, rule.FileSystemRights, userName);
+                            // Console.WriteLine("{0} has directory read permissions '{1}', {2} can use these permissions", ruleId, rule.FileSystemRights, userName);
                             ApplicationLogger.LogMessage(LogLevel.Trace, $"{nameof(InstrumentFolderValidator)}: {ruleId} has directory read permissions '{rule.FileSystemRights}', {userName} can use these permissions");
                             hasReadPermissions = true;
                         }
                         else
                         {
-                            //Console.WriteLine("{0} has directory permissions '{1}', {2} can use these permissions", ruleId, rule.FileSystemRights, userName);
+                            // Console.WriteLine("{0} has directory permissions '{1}', {2} can use these permissions", ruleId, rule.FileSystemRights, userName);
                             ApplicationLogger.LogMessage(LogLevel.Trace, $"{nameof(InstrumentFolderValidator)}: {ruleId} has directory other permissions '{rule.FileSystemRights}', {userName} can use these permissions");
                         }
                     }
@@ -216,7 +216,7 @@ namespace BuzzardWPF.Searching
             using (var searcher = new ManagementObjectSearcher($"SELECT * FROM Win32_LogicalShareSecuritySetting WHERE Name = '{shareName}'"))
             using (var results = searcher.Get())
             {
-                foreach (var share in results.Cast<object>().Where(x => x is ManagementObject).Cast<ManagementObject>())
+                foreach (var share in results.Cast<object>().OfType<ManagementObject>())
                 {
                     if (!share["Name"].ToString().Equals(shareName))
                     {
@@ -437,7 +437,9 @@ namespace BuzzardWPF.Searching
                         {
                             // Match found
                             if (string.IsNullOrWhiteSpace(dmsTrackedShare.Value))
+                            {
                                 knownLocalShares.Add(dmsTrackedShare.Key, localShare.Value);
+                            }
                             else
                             {
                                 // Share has multiple parts; append the additional information now
@@ -462,7 +464,9 @@ namespace BuzzardWPF.Searching
                 {
                     // Default share path
                     if (string.Equals(baseFolderPathToUse, knownShare.Value, StringComparison.OrdinalIgnoreCase))
+                    {
                         return true;
+                    }
 
                     // Subdirectory of the default share path; must make sure the capture subdirectory is set appropriately.
                     if (baseFolderPathToUse.StartsWith(knownShare.Value, StringComparison.OrdinalIgnoreCase))
@@ -509,7 +513,6 @@ namespace BuzzardWPF.Searching
                 ErrorMessage = "Search folder not valid; it should be " + expectedBaseDirectoryPath + " or a subdirectory; -- dataset upload will fail; search aborted";
 
                 return false;
-
             }
             catch (Exception ex)
             {

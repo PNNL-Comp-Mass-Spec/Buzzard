@@ -65,7 +65,9 @@ namespace BuzzardWPF.Data
             rootNode.AddDataset(data.RequestName, data.RequestID);
 
             if (!requestIDToDMSMap.ContainsKey(data.RequestID))
+            {
                 requestIDToDMSMap.Add(data.RequestID, data);
+            }
         }
 
         /// <summary>

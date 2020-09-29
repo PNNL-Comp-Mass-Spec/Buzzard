@@ -93,7 +93,6 @@ namespace BuzzardWPF.ViewModels
             }
         }
 
-
         public List<string> AutoCompleteBoxItems
         {
             get => autoCompleteBoxItems;

@@ -102,10 +102,15 @@ namespace BuzzardWPF
             LoadImages();
             ApplicationLogger.LogMessage(0, "Ready");
 
-            if (string.Equals(Environment.MachineName, "monroe5", StringComparison.OrdinalIgnoreCase) || string.Equals(Environment.MachineName, "we27655", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(Environment.MachineName, "monroe5", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(Environment.MachineName, "we27655", StringComparison.OrdinalIgnoreCase))
+            {
                 IsTestFolderVisible = true;
+            }
             else
+            {
                 IsTestFolderVisible = false;
+            }
 
             UseDefaultTriggerFileLocationCommand = ReactiveCommand.Create(UseDefaultTriggerFileLocation);
             SelectTriggerFileLocationCommand = ReactiveCommand.Create(SelectTriggerFileLocation);
@@ -337,7 +342,9 @@ namespace BuzzardWPF
                     // This dataset is most likely an empty-dummy dataset,
                     // and the new one is being made from a file
                     if (string.IsNullOrWhiteSpace(ds.FilePath))
+                    {
                         return false;
+                    }
 
                     return ds.FilePath.Equals(datasetFileOrFolderPath, StringComparison.OrdinalIgnoreCase);
                 });
@@ -431,7 +438,7 @@ namespace BuzzardWPF
             // Save settings
             ApplicationLogger.LogMessage(msgLevel, "Starting to save settings to config.");
             var settingsChanged = false;
-            settingsChanged |= DatasetsVm.SaveSettings(force);
+            settingsChanged |= DatasetsVm.SaveSettings();
             settingsChanged |= QCVm.SaveSettings(force);
             settingsChanged |= DatasetManager.SaveSettings(force);
             if (settingsChanged || force)
@@ -498,19 +505,23 @@ namespace BuzzardWPF
         {
             var eResult =
                 MessageBox.Show(
-                    @"This path should nearly always be " + DEFAULT_TRIGGER_FOLDER_PATH + "; only change this if you are debugging the software.  Continue?",
+                    "This path should nearly always be " + DEFAULT_TRIGGER_FOLDER_PATH + "; only change this if you are debugging the software.  Continue?",
                     "Warning", MessageBoxButton.YesNoCancel, MessageBoxImage.Exclamation, MessageBoxResult.Cancel);
 
             if (eResult != MessageBoxResult.Yes)
+            {
                 return;
+            }
 
             var folderDialog = new Ookii.Dialogs.Wpf.VistaFolderBrowserDialog();
             if (!string.IsNullOrWhiteSpace(DatasetManager.TriggerFileLocation))
+            {
                 folderDialog.SelectedPath = DatasetManager.TriggerFileLocation;
+            }
 
             var result = folderDialog.ShowDialog();
 
-            if (result.HasValue && result.Value)
+            if (result == true)
             {
                 DatasetManager.TriggerFileLocation = folderDialog.SelectedPath;
                 RemoteFolderLocationIsEnabled = true;
@@ -531,7 +542,7 @@ namespace BuzzardWPF
             }
 
             // Load active requested runs from DMS
-            await DatasetManager.LoadRequestedRunsCache();
+            await DatasetManager.LoadRequestedRunsCache().ConfigureAwait(false);
 
             // Do not call DMS_DataAccessor.Instance.UpdateCacheNow()
             // That class has its own timer for updating the data
@@ -546,15 +557,15 @@ namespace BuzzardWPF
 
             // Load active requested runs from DMS
             // Run this first, so that the SQLite cache update can garbage collect from this method.
-            await DatasetManager.LoadRequestedRunsCache();
+            await DatasetManager.LoadRequestedRunsCache().ConfigureAwait(false);
 
             // Also force an update on DMS_DataAccessor.Instance
-            await DMS_DataAccessor.Instance.UpdateCacheNow();
+            await DMS_DataAccessor.Instance.UpdateCacheNow().ConfigureAwait(false);
         }
 
         private async Task BackupCalibrationFiles()
         {
-            await Task.Run(CriticalsBackups.CopyCriticalFilesToServer);
+            await Task.Run(CriticalsBackups.CopyCriticalFilesToServer).ConfigureAwait(false);
         }
 
         private void UseTestFolder()

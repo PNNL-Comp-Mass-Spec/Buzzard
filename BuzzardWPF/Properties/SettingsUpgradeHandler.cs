@@ -89,7 +89,6 @@ namespace BuzzardWPF.Properties
             Reload();
         }
 
-
         #region Obsolete Settings Properties
 
         [AttributeUsage(AttributeTargets.All)]

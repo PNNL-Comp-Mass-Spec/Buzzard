@@ -99,7 +99,7 @@ namespace BuzzardWPF.Searching
         /// <param name="config"></param>
         public async void Search(SearchConfig config)
         {
-            await SearchAsync(config, new CancellationTokenSource());
+            await SearchAsync(config, new CancellationTokenSource()).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -117,7 +117,7 @@ namespace BuzzardWPF.Searching
             searchingAsync = true;
             asyncCancelToken = cancelToken;
             m_keepSearching = true;
-            await Task.Run(() => SearchAsyncImpl(config, cancelToken.Token));
+            await Task.Run(() => SearchAsyncImpl(config, cancelToken.Token)).ConfigureAwait(false);
             searchingAsync = false;
         }
 
@@ -168,9 +168,14 @@ namespace BuzzardWPF.Searching
                     if (!baseFolderValidator.ValidateBaseFolder(diBaseFolder, out var expectedBaseFolderPath, out var shareName, out var baseCaptureSubdirectory))
                     {
                         if (string.IsNullOrWhiteSpace(baseFolderValidator.ErrorMessage))
+                        {
                             ReportError("Base folder not valid for this instrument; should be " + expectedBaseFolderPath);
+                        }
                         else
+                        {
                             ReportError(baseFolderValidator.ErrorMessage);
+                        }
+
                         return;
                     }
 
@@ -181,7 +186,9 @@ namespace BuzzardWPF.Searching
                 var folderNameFilterLCase = string.Empty;
 
                 if (!string.IsNullOrWhiteSpace(config.FolderNameFilter))
+                {
                     folderNameFilterLCase = config.FolderNameFilter.ToLower();
+                }
 
                 // Breadth first search across directories as to make it fast and responsive to a listening UI
                 var paths = new Queue<string>();
@@ -205,7 +212,9 @@ namespace BuzzardWPF.Searching
                         if (!string.IsNullOrWhiteSpace(folderNameFilterLCase))
                         {
                             if (!currentDirectory.FullName.ToLower().Contains(folderNameFilterLCase))
+                            {
                                 processFolder = false;
+                            }
                         }
 
                         if (processFolder)
@@ -242,10 +251,10 @@ namespace BuzzardWPF.Searching
                     {
                         try
                         {
-                            if (!string.IsNullOrWhiteSpace(config.FilenameFilter))
+                            if (!string.IsNullOrWhiteSpace(config.FilenameFilter) &&
+                                datasetEntry.Value.Name.IndexOf(config.FilenameFilter, StringComparison.OrdinalIgnoreCase) < 0)
                             {
-                                if (!(datasetEntry.Value.Name.IndexOf(config.FilenameFilter, StringComparison.OrdinalIgnoreCase) >= 0))
-                                    continue;
+                                continue;
                             }
 
                             DateTime creationDate;
@@ -277,13 +286,17 @@ namespace BuzzardWPF.Searching
 
                             // If the file predates the date-range we want, skip it.
                             if (config.StartDate > creationDate && config.StartDate > lastWriteDate)
+                            {
                                 continue;
+                            }
 
                             // If the file postdates the date-range we want, skip it.
                             if (config.EndDate != null)
                             {
                                 if (endDate < creationDate || endDate < lastWriteDate)
+                                {
                                     continue;
+                                }
                             }
 
                             DatasetFound?.Invoke(this, new DatasetFoundEventArgs(datasetEntry.Value.FullName, parentFolderPath, config));
@@ -310,9 +323,13 @@ namespace BuzzardWPF.Searching
         private void ReportError(string errorMessage, Exception ex = null)
         {
             if (ex == null)
+            {
                 ApplicationLogger.LogError(0, errorMessage);
+            }
             else
+            {
                 ApplicationLogger.LogError(0, errorMessage, ex);
+            }
 
             ErrorEvent?.Invoke(this, new ErrorEventArgs(errorMessage));
         }

@@ -80,7 +80,7 @@ namespace BuzzardWPF
         #endregion
 
         #region Event Handlers
-        void ApplicationLogger_ItemLogged(int messageLevel, MessageLoggerArgs args)
+        private void ApplicationLogger_ItemLogged(int messageLevel, MessageLoggerArgs args)
         {
             try
             {
@@ -97,7 +97,7 @@ namespace BuzzardWPF
             Dispatcher.Invoke(() => InstrumentName = name, DispatcherPriority.Send);
         }
 
-        void ApplicationLogger_LogFilePathDefined(MessageLoggerArgs args)
+        private void ApplicationLogger_LogFilePathDefined(MessageLoggerArgs args)
         {
             try
             {

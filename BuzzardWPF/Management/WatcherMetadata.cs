@@ -42,7 +42,7 @@ namespace BuzzardWPF.Management
             EMSLProposalUser = null;
             WorkPackage = "none";
 
-            this.WhenAnyValue(x => x.CartName).ObserveOn(RxApp.MainThreadScheduler).Subscribe(x => LoadCartConfigsForCartName());
+            this.WhenAnyValue(x => x.CartName).ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ => LoadCartConfigsForCartName());
         }
 
         /// <summary>
@@ -324,32 +324,31 @@ namespace BuzzardWPF.Management
         /// </remarks>
         private string CheckSetting(string setting, IEnumerable<string> options, string errorIntro)
         {
-            var s = " was not found when restoring settings for the File Watcher Configuration.";
+            const string suffix = " was not found when restoring settings for the File Watcher Configuration.";
 
             if (string.IsNullOrWhiteSpace(setting))
             {
                 // there is no setting, so return something
                 // that will make sure that nothing is selected
                 // in the UI.
-                setting = null;
-            }
-            else if (!options.Contains(setting))
-            {
-                // The setting is not valid. Log the error
-                // and return something that will make sure
-                // the UI doesn't select anything for this
-                // setting.
-                ApplicationLogger.LogError(
-                    0,
-                    string.Format(
-                        "{2} {0}{1}",
-                        setting,
-                        s,
-                        errorIntro));
-                setting = null;
+                return null;
             }
 
-            return setting;
+            if (options.Contains(setting))
+                return setting;
+
+            // The setting is not valid.
+            // Log the error and return something that will make sure
+            // the UI doesn't select anything for this setting.
+            ApplicationLogger.LogError(
+                0,
+                string.Format(
+                    "{0} {1}{2}",
+                    errorIntro,
+                    setting,
+                    suffix
+                ));
+            return null;
         }
     }
 }

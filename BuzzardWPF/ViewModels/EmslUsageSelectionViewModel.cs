@@ -47,7 +47,9 @@ namespace BuzzardWPF.ViewModels
                 if (boundContainer != value)
                 {
                     if (boundContainer != null)
+                    {
                         boundContainer.PropertyChanged -= BoundContainer_PropertyChanged;
+                    }
 
                     boundContainer = value;
                     this.RaisePropertyChanged();
@@ -55,7 +57,9 @@ namespace BuzzardWPF.ViewModels
                     if (boundContainer != null)
                     {
                         if (!string.IsNullOrWhiteSpace(boundContainer.EMSLProposalID))
+                        {
                             ProposalUsers = DMS_DataAccessor.Instance.GetProposalUsers(BoundContainer.EMSLProposalID);
+                        }
 
                         boundContainer.PropertyChanged += BoundContainer_PropertyChanged;
                     }
@@ -98,7 +102,9 @@ namespace BuzzardWPF.ViewModels
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             if (value == null)
+            {
                 return false;
+            }
 
             var s = value.ToString();
 

@@ -33,5 +33,4 @@ namespace BuzzardWPF.Data
             this.DatasetName = datasetName;
         }
     }
-
 }

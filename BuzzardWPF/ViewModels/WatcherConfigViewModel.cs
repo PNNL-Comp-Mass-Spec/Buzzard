@@ -97,7 +97,9 @@ namespace BuzzardWPF.ViewModels
             };
             var stop = dialog.ShowDialog() != true;
             if (stop)
+            {
                 return;
+            }
 
             DatasetManager.WatcherMetadata.WorkPackage = dialogVm.SelectedWorkPackage.ChargeCode;
         }

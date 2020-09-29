@@ -39,8 +39,8 @@ namespace BuzzardWPF.Management
         // Agilent GC-MS: msinsctl
         public const string BlockingProcessNamesRegExString = @"HomePage|ThermoFisher\.Foundation\.AcquisitionService|Thermo\.TNG\.InstrumentServer|LTQManager|AgtVoyAcgEng|msinsctl";
 
-        public const string QcDatasetNameRegExString = @"^QC(_|-).*";
-        public const string BlankDatasetNameRegExString = @"^BLANK(_|-).*";
+        public const string QcDatasetNameRegExString = "^QC(_|-).*";
+        public const string BlankDatasetNameRegExString = "^BLANK(_|-).*";
 
         #region Members
 
@@ -233,7 +233,9 @@ namespace BuzzardWPF.Management
             try
             {
                 if (dataset.DatasetStatus == DatasetStatus.TriggerFileSent && !forceSend && !preview)
+                {
                     return null;
+                }
 
                 if (string.IsNullOrWhiteSpace(dataset.DmsData.DatasetName))
                 {
@@ -251,12 +253,16 @@ namespace BuzzardWPF.Management
                 {
                     if (!(dataset.DatasetStatus == DatasetStatus.Pending ||
                           dataset.DatasetStatus == DatasetStatus.ValidatingStable))
+                    {
                         dataset.DatasetStatus = DatasetStatus.Pending;
+                    }
 
                     var triggerXML = BuzzardTriggerFileTools.CreateTriggerString(dataset);
 
                     if (dataset.DatasetStatus == DatasetStatus.MissingRequiredInfo)
+                    {
                         return null;
+                    }
 
                     return PREVIEW_TRIGGER_FILE_FLAG;
                 }
@@ -270,7 +276,9 @@ namespace BuzzardWPF.Management
                 var triggerFilePath = BuzzardTriggerFileTools.VerifyAndGenerateTriggerFile(dataset);
 
                 if (string.IsNullOrEmpty(triggerFilePath))
+                {
                     return null;
+                }
 
                 ApplicationLogger.LogMessage(0, string.Format("Saved Trigger File: {0} for {1}", DateTime.Now, dataset.DmsData.DatasetName));
                 dataset.DatasetStatus = DatasetStatus.TriggerFileSent;
@@ -294,7 +302,6 @@ namespace BuzzardWPF.Management
             }
 
             return null;
-
         }
 
         #endregion
@@ -307,7 +314,9 @@ namespace BuzzardWPF.Management
         public void ResolveDms(IEnumerable<BuzzardDataset> datasets)
         {
             if (datasets == null)
+            {
                 return;
+            }
 
             foreach (var dataset in datasets)
             {
@@ -323,7 +332,9 @@ namespace BuzzardWPF.Management
             const int SEARCH_DEPTH_AMBIGUOUS_MATCH = 5;
 
             if (dataset == null)
+            {
                 return;
+            }
 
             // Here we don't want to resolve the dataset in DMS. if it was told to be ignored...or if we already sent it...
             switch (dataset.DatasetStatus)
@@ -343,7 +354,9 @@ namespace BuzzardWPF.Management
             {
                 // Update the DMS info every 2 minutes
                 if (DateTime.UtcNow.Subtract(dataset.DMSDataLastUpdate).TotalMinutes < 2)
+                {
                     return;
+                }
             }
 
             var fiDataset = new FileInfo(dataset.FilePath);
@@ -378,7 +391,9 @@ namespace BuzzardWPF.Management
                             {
                                 // No match to the folder name
                                 if (ex.SearchDepth >= SEARCH_DEPTH_AMBIGUOUS_MATCH)
+                                {
                                     throw new DatasetTrieException(ex.Message, ex.SearchDepth, ex.DatasetName, ex);
+                                }
 
                                 throw;
                             }
@@ -419,16 +434,22 @@ namespace BuzzardWPF.Management
             catch (DatasetTrieException ex)
             {
                 if (fiDataset.Name.StartsWith("x_", StringComparison.OrdinalIgnoreCase))
+                {
                     RxApp.MainThreadScheduler.Schedule(() => dataset.DatasetStatus = DatasetStatus.DatasetMarkedCaptured);
+                }
                 else
                 {
                     if (!Monitor.CreateTriggerOnDMSFail)
                     {
                         // Either there was no match, or it was an ambiguous match
                         if (ex.SearchDepth >= SEARCH_DEPTH_AMBIGUOUS_MATCH)
+                        {
                             RxApp.MainThreadScheduler.Schedule(() => dataset.DatasetStatus = DatasetStatus.FailedAmbiguousDmsRequest);
+                        }
                         else
+                        {
                             RxApp.MainThreadScheduler.Schedule(() => dataset.DatasetStatus = DatasetStatus.FailedNoDmsRequest);
+                        }
                     }
                 }
             }
@@ -441,7 +462,9 @@ namespace BuzzardWPF.Management
             {
                 // Look for a match to an existing dataset in DMS
                 if (DMS_DataAccessor.Instance.CheckDatasetExists(datasetName))
+                {
                     RxApp.MainThreadScheduler.Schedule(() => dataset.DatasetStatus = DatasetStatus.DatasetAlreadyInDMS);
+                }
             }
         }
         #endregion
@@ -484,7 +507,9 @@ namespace BuzzardWPF.Management
         {
             var originalPath = ValidateFileOrFolderPath(datasetFileOrFolderPath, allowFolderMatch, out var isArchived);
             if (string.IsNullOrEmpty(originalPath))
+            {
                 return;
+            }
 
             BuzzardDataset dataset = null;
             var newDatasetFound = false;
@@ -517,7 +542,6 @@ namespace BuzzardWPF.Management
                             break;
                         }
                     }
-
                 }
             }
 
@@ -549,10 +573,13 @@ namespace BuzzardWPF.Management
                 }
 
                 if (isArchived)
+                {
                     dataset.FilePath = datasetFileOrFolderPath;
+                }
                 else
+                {
                     dataset.UpdateFileProperties();
-
+                }
             }
             else if (howWasItFound == DatasetSource.Searcher
                      && isArchived
@@ -615,31 +642,49 @@ namespace BuzzardWPF.Management
                 // in the watcher config tool. Yet, we don't want to
                 // overwrite something that was set by the user.
                 if (string.IsNullOrWhiteSpace(dataset.InstrumentName))
+                {
                     dataset.InstrumentName = WatcherMetadata.Instrument;
+                }
 
                 if (string.IsNullOrWhiteSpace(dataset.DmsData.CartName))
+                {
                     dataset.DmsData.CartName = WatcherMetadata.CartName;
+                }
 
                 if (string.IsNullOrWhiteSpace(dataset.DmsData.CartConfigName))
+                {
                     dataset.DmsData.CartConfigName = WatcherMetadata.CartConfigName;
+                }
 
                 if (string.IsNullOrWhiteSpace(dataset.SeparationType))
+                {
                     dataset.SeparationType = WatcherMetadata.SeparationType;
+                }
 
                 if (string.IsNullOrWhiteSpace(dataset.DmsData.DatasetType))
+                {
                     dataset.DmsData.DatasetType = WatcherMetadata.DatasetType;
+                }
 
                 if (string.IsNullOrWhiteSpace(dataset.Operator))
+                {
                     dataset.Operator = WatcherMetadata.InstrumentOperator;
+                }
 
                 if (string.IsNullOrWhiteSpace(dataset.DmsData.Experiment))
+                {
                     dataset.DmsData.Experiment = WatcherMetadata.ExperimentName;
+                }
 
                 if (string.IsNullOrWhiteSpace(dataset.DmsData.WorkPackage))
+                {
                     dataset.DmsData.WorkPackage = WatcherMetadata.WorkPackage;
+                }
 
                 if (string.IsNullOrWhiteSpace(dataset.ColumnName))
+                {
                     dataset.ColumnName = WatcherMetadata.LCColumn;
+                }
 
                 // QC data from the QC panel will override any previous data for given properties
                 if (dataset.IsQC || dataset.IsBlank)
@@ -782,7 +827,6 @@ namespace BuzzardWPF.Management
 
             if (fiDatasetFile.Exists)
             {
-
                 isArchived = fiDatasetFile.Name.StartsWith("x_", StringComparison.OrdinalIgnoreCase);
 
                 if (isArchived && fiDatasetFile.Name.Length > 2)

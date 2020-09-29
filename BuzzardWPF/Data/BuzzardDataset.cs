@@ -342,7 +342,7 @@ namespace BuzzardWPF.Data
         public string FilePath
         {
             get => filePath;
-            set => this.RaiseAndSetIfChanged(ref filePath, value, x =>
+            set => this.RaiseAndSetIfChanged(ref filePath, value, _ =>
             {
                 this.RaisePropertyChanged(nameof(Extension));
                 if (!string.IsNullOrWhiteSpace(filePath))

@@ -49,8 +49,8 @@ namespace BuzzardWPF.Management
             }
 
             // Allow replacement of dashes with underscores and vice-versa, and keep a case insensitive match
-            var horBarMatch = new Regex(@"[-_]+");
-            var modMatchString = "^" + horBarMatch.Replace(datasetNameMatch, @"[-_]+");
+            var horBarMatch = new Regex("[-_]+");
+            var modMatchString = "^" + horBarMatch.Replace(datasetNameMatch, "[-_]+");
             DatasetNameMatchRegex = new Regex(modMatchString, RegexOptions.Compiled | RegexOptions.IgnoreCase);
         }
 

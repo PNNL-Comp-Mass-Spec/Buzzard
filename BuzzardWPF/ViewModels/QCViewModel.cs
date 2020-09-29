@@ -48,12 +48,7 @@ namespace BuzzardWPF.ViewModels
                 x =>
                 {
                     var musts = !string.IsNullOrWhiteSpace(x.Item1) && !string.IsNullOrWhiteSpace(x.Item2);
-                    if (!musts || x.Item3)
-                    {
-                        return false;
-                    }
-
-                    return true;
+                    return musts && !x.Item3;
                 }));
 
             RemoveQcMonitorCommand = ReactiveCommand.Create(RemoveQcMonitor, this.WhenAnyValue(x => x.SelectedQcMonitor).Select(x => x != null));
@@ -71,7 +66,7 @@ namespace BuzzardWPF.ViewModels
         private QcMonitorData selectedQcMonitor;
         private readonly ObservableAsPropertyHelper<bool> datasetNameMatchHasError;
 
-        private const string ValidNameMatchRegexString = @"(BLANK|QC)(_|-).*";
+        private const string ValidNameMatchRegexString = "(BLANK|QC)(_|-).*";
         private readonly Regex validNameMatchRegex = new Regex(ValidNameMatchRegexString, RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         public ReactiveCommand<Unit, Unit> SelectExperimentCommand { get; }

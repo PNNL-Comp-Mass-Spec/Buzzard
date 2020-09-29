@@ -10,7 +10,9 @@ namespace BuzzardWPF.Converters
         {
             var s = value as string;
             if (string.IsNullOrWhiteSpace(s))
+            {
                 s = "    (none)    ";
+            }
 
             return s;
         }

@@ -47,7 +47,7 @@ namespace BuzzardWPF
         /// Loads the application settings.
         /// </summary>
         /// <returns>An object that holds the application settings.</returns>
-        static void LoadSettings()
+        private static void LoadSettings()
         {
             // Note that settings are persisted in file user.config in a randomly named folder below %userprofile%\appdata\local
             // For example:
@@ -70,7 +70,9 @@ namespace BuzzardWPF
                 var propertyValue = string.Empty;
 
                 if (Properties.Settings.Default[propertyName] != null)
+                {
                     propertyValue = Properties.Settings.Default[propertyName].ToString();
+                }
 
                 if (propertyName == LCMSSettings.PARAM_TRIGGERFILEFOLDER && string.IsNullOrWhiteSpace(propertyValue))
                 {
@@ -82,13 +84,20 @@ namespace BuzzardWPF
             }
 
             // Add path to executable as a saved setting
-            var fi = new FileInfo(Assembly.GetEntryAssembly().Location);
-            LCMSSettings.SetParameter("ApplicationPath", fi.DirectoryName);
+            var entryAssembly = Assembly.GetEntryAssembly();
+
+            if (entryAssembly == null)
+            {
+                ApplicationLogger.LogMessage(0, "Could not determine the entry assembly; cannot load saved settings");
+            }
+            else
+            {
+                var exeInfo = new FileInfo(entryAssembly.Location);
+                LCMSSettings.SetParameter("ApplicationPath", exeInfo.DirectoryName);
+            }
 
             Properties.Settings.Default.PropertyChanged += (sender, args) =>
-            {
                 LCMSSettings.SetParameter(args.PropertyName, Properties.Settings.Default[args.PropertyName]?.ToString());
-            };
         }
 
         #endregion
@@ -117,17 +126,17 @@ namespace BuzzardWPF
         /// Creates the path required for local operation.
         /// </summary>
         /// <param name="localPath">Local path to create.</param>
-        static void CreatePath(string localPath)
+        private static void CreatePath(string localPath)
         {
-
             var appPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
 
             var path = Path.Combine(appPath, "Buzzard", localPath);
 
-            //
             // See if the logging directory exists
-            //
-            if (Directory.Exists(path)) return;
+            if (Directory.Exists(path))
+            {
+                return;
+            }
 
             try
             {
@@ -135,9 +144,7 @@ namespace BuzzardWPF
             }
             catch (UnauthorizedAccessException ex)
             {
-                //
                 // Not much we can do here...
-                //
                 var errorMessage = string.Format("Buzzard could not create missing folder {0} required for operation. " +
                                                  "Please update directory permissions or run Buzzard as an administrator: {1}",
                                                  localPath, ex.Message);
@@ -169,12 +176,16 @@ namespace BuzzardWPF
                 var diInstallerFolder = new DirectoryInfo(installerFolderPath);
 
                 if (!diInstallerFolder.Exists)
+                {
                     return false;
+                }
 
                 // Look for one or more installers; keep the newest one
-                var installers = diInstallerFolder.GetFiles("Buzzard*PNNL*.exe").OrderBy(info => info.LastWriteTimeUtc).Reverse().ToList();
+                var installers = diInstallerFolder.GetFiles("Buzzard*PNNL*.exe").OrderByDescending(info => info.LastWriteTimeUtc).ToList();
                 if (installers.Count == 0)
+                {
                     return false;
+                }
 
                 var fiInstaller = installers.FirstOrDefault();
 
@@ -188,7 +199,9 @@ namespace BuzzardWPF
                 var fileVersion = fileVersionInfo.FileVersion.Trim();
 
                 if (string.IsNullOrWhiteSpace(fileVersion))
+                {
                     return false;
+                }
 
                 var installerVersion = new Version(fileVersionInfo.FileMajorPart, fileVersionInfo.FileMinorPart, fileVersionInfo.FileBuildPart, fileVersionInfo.FilePrivatePart);
 
@@ -196,7 +209,9 @@ namespace BuzzardWPF
                 var versionRunning = assembly.GetName().Version.ToString();
 
                 if (string.IsNullOrWhiteSpace(versionRunning))
+                {
                     return false;
+                }
 
                 var runningVersion = assembly.GetName().Version;
 
@@ -208,11 +223,11 @@ namespace BuzzardWPF
                     MessageBoxResult eResponse;
                     if (currentWindow != null)
                     {
-                        eResponse = currentWindow.ShowMessage(updateMsg, @"Upgrade Advised", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+                        eResponse = currentWindow.ShowMessage(updateMsg, "Upgrade Advised", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
                     }
                     else
                     {
-                        eResponse = MessageBox.Show(updateMsg, @"Upgrade Advised", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+                        eResponse = MessageBox.Show(updateMsg, "Upgrade Advised", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
                     }
 
                     if (eResponse == MessageBoxResult.Yes)
@@ -311,7 +326,7 @@ namespace BuzzardWPF
             ApplicationLogger.LogMessage(-1, "Loading DMS data");
 
             // Load the needed data from DMS into the SQLite cache file, with progress updates and special error reporting
-            DMS_DataAccessor.Instance.UpdateSQLiteCacheFromDms(dbTools_ProgressEvent, (msq, ex) => LogCriticalError(msq, ex));
+            DMS_DataAccessor.Instance.UpdateSQLiteCacheFromDms(DbTools_ProgressEvent, (msq, ex) => LogCriticalError(msq, ex));
 
             ApplicationLogger.LogMessage(-1, "Checking For Local Trigger Files");
 
@@ -332,8 +347,7 @@ namespace BuzzardWPF
             }
             catch (Exception ex)
             {
-                var errorMessage = "Error processing existing local trigger files!";
-                LogCriticalError(errorMessage, ex);
+                LogCriticalError("Error processing existing local trigger files!", ex);
             }
 
             ApplicationLogger.LogMessage(-1, "Training the last of the buzzards...Loading DMS Cache");
@@ -367,7 +381,7 @@ namespace BuzzardWPF
             return openMainWindow;
         }
 
-        static void dbTools_ProgressEvent(object sender, ProgressEventArgs e)
+        private static void DbTools_ProgressEvent(object sender, ProgressEventArgs e)
         {
             ApplicationLogger.LogMessage(-1, "Loading DMS data: " + e.CurrentTask);
         }
@@ -397,7 +411,6 @@ namespace BuzzardWPF
                 ApplicationLogger.LogMessage(0, "Error launching the installer for the new version (" + localInstallerPath + "): " + ex.Message);
                 System.Threading.Thread.Sleep(750);
             }
-
         }
 
         private static void LogCriticalError(string errorMessage, Exception ex, bool showPopup = true)
@@ -405,7 +418,9 @@ namespace BuzzardWPF
             var exceptionMessage = string.Empty;
 
             if (ex == null)
+            {
                 FileLogger.Instance.LogError(0, new ErrorLoggerArgs(0, errorMessage));
+            }
             else
             {
                 FileLogger.Instance.LogError(0, new ErrorLoggerArgs(0, errorMessage, ex));
@@ -414,7 +429,7 @@ namespace BuzzardWPF
 
             if (showPopup)
             {
-                MessageBox.Show(errorMessage + @"  " + exceptionMessage, @"Error", MessageBoxButton.OK,
+                MessageBox.Show(errorMessage + "  " + exceptionMessage, "Error", MessageBoxButton.OK,
                                 MessageBoxImage.Exclamation);
             }
         }
