@@ -117,6 +117,7 @@ namespace BuzzardWPF.Management
         private string triggerFileLocation;
         private bool includeArchivedItems;
         private DateTime requestedRunsLastUpdated;
+        private readonly object lockObject = new object();
 
         public string TriggerFileLocation
         {
@@ -138,7 +139,7 @@ namespace BuzzardWPF.Management
 
         public async Task LoadRequestedRunsCache()
         {
-            lock (this)
+            lock (lockObject)
             {
                 if (IsLoading)
                 {
@@ -150,7 +151,7 @@ namespace BuzzardWPF.Management
 
             await Task.Run(LoadRequestedRuns).ConfigureAwait(false);
 
-            lock (this)
+            lock (lockObject)
             {
                 IsLoading = false;
             }
