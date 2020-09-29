@@ -78,7 +78,7 @@ namespace BuzzardWPF.Management
             // Limit dates uploaded to files less than 2 years old; limits number of default files uploaded
             var oldestFileDate = DateTime.Now.AddYears(-2);
 
-            FindThermoCriticalFiles(criticalFiles, oldestFileDate);
+            FindThermoCriticalFiles(criticalFiles);
             FindAgilentCriticalFiles(criticalFiles, oldestFileDate);
 
             return criticalFiles;
@@ -133,7 +133,7 @@ namespace BuzzardWPF.Management
             }
         }
 
-        private static void FindThermoCriticalFiles(List<InstrumentCriticalFileInfo> criticalFiles, DateTime oldestFileDate)
+        private static void FindThermoCriticalFiles(List<InstrumentCriticalFileInfo> criticalFiles)
         {
             // QExactive (Plus, HF, HF-X)
             const string qePath = @"C:\Xcalibur\system\Exactive\instrument\msx_instrument_files";
