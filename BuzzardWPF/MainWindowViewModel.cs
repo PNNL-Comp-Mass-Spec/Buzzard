@@ -59,7 +59,9 @@ namespace BuzzardWPF
 
         private bool m_firstTimeLoading;
 
-        // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
+        /// <summary>
+        /// This timer will call DatasetManager.LoadRequestedRuns every 10 minutes
+        /// </summary>
         private readonly Timer m_dmsCheckTimer;
 
         private BitmapImage m_CurrentImage;
@@ -590,6 +592,15 @@ namespace BuzzardWPF
                 }
             };
             process.Start();
+        }
+
+        /// <summary>
+        /// Destructor
+        /// </summary>
+        ~MainWindowViewModel()
+        {
+            m_animationTimer.Dispose();
+            m_dmsCheckTimer.Dispose();
         }
     }
 }
