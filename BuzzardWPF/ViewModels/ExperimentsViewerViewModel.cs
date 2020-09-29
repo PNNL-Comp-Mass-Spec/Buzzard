@@ -42,7 +42,7 @@ namespace BuzzardWPF.ViewModels
                                 return true;
                             }
                             var value = fieldSelector(y);
-                            return value != null && value.StartsWith(x, StringComparison.OrdinalIgnoreCase);
+                            return value?.StartsWith(x, StringComparison.OrdinalIgnoreCase) == true;
                         }));
 
             connectionDisposable = DMS_DataAccessor.Instance.Experiments.Connect().Filter(filter).ObserveOn(RxApp.MainThreadScheduler).Bind(out var filteredExperiments).Subscribe();

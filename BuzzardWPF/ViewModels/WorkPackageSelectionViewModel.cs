@@ -33,7 +33,7 @@ namespace BuzzardWPF.ViewModels
                         return true;
                     }
                     var value = fieldSelector(y);
-                    return value != null && value.StartsWith(x, StringComparison.OrdinalIgnoreCase);
+                    return value?.StartsWith(x, StringComparison.OrdinalIgnoreCase) == true;
                 }));
 
             connectionDisposable = DMS_DataAccessor.Instance.WorkPackages.Connect().Filter(wpFilter).ObserveOn(RxApp.MainThreadScheduler)

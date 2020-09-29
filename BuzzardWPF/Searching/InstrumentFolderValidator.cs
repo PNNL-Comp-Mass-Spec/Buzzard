@@ -240,8 +240,7 @@ namespace BuzzardWPF.Searching
                             foreach (var id in userAndGroups)
                             {
                                 if (trustee.Equals(id, StringComparison.OrdinalIgnoreCase) &&
-                                    (trusteeDom == null ||
-                                     trusteeDom.Equals(Environment.MachineName, StringComparison.OrdinalIgnoreCase) ||
+                                    (trusteeDom?.Equals(Environment.MachineName, StringComparison.OrdinalIgnoreCase) != false ||
                                      trusteeDom.Equals("BUILTIN", StringComparison.OrdinalIgnoreCase) ||
                                      trusteeDom.Equals("NT AUTHORITY", StringComparison.OrdinalIgnoreCase)
                                      ))

@@ -175,7 +175,7 @@ namespace BuzzardWPF.IO
         {
             var datasetName = Path.GetFileNameWithoutExtension(filePath);
 
-            if (datasetName != null && (datasetName.StartsWith("x_", StringComparison.OrdinalIgnoreCase) && datasetName.Length > 2))
+            if ((datasetName?.StartsWith("x_", StringComparison.OrdinalIgnoreCase) == true && datasetName.Length > 2))
                 datasetName = datasetName.Substring(2);
 
             return datasetName;
