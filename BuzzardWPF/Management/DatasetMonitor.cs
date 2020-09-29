@@ -13,7 +13,7 @@ using ReactiveUI;
 
 namespace BuzzardWPF.Management
 {
-    public class DatasetMonitor : ReactiveObject, IStoredSettingsMonitor, IDisposable
+    public sealed class DatasetMonitor : ReactiveObject, IStoredSettingsMonitor, IDisposable
     {
         // Ignore Spelling: uncheck
 
@@ -31,7 +31,7 @@ namespace BuzzardWPF.Management
 
         public static DatasetMonitor Monitor { get; }
 
-        protected const int DefaultTriggerCreationWaitTimeMinutes = 15;
+        private const int DefaultTriggerCreationWaitTimeMinutes = 15;
 
         private Timer mScannedDatasetTimer;
         private Timer mTriggerCountdownTimer;

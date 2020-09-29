@@ -4,7 +4,7 @@ using BuzzardWPF.ViewModels;
 
 namespace BuzzardWPF.Management
 {
-    public class ViewModelCache : IDisposable
+    public sealed class ViewModelCache : IDisposable
     {
         static ViewModelCache()
         {

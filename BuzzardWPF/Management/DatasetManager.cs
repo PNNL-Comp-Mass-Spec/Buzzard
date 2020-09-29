@@ -23,7 +23,7 @@ namespace BuzzardWPF.Management
     /// <summary>
     /// Manages a list of datasets
     /// </summary>
-    public class DatasetManager : ReactiveObject, IStoredSettingsMonitor, IDisposable
+    public sealed class DatasetManager : ReactiveObject, IStoredSettingsMonitor, IDisposable
     {
         // Ignore Spelling: Altis, AgtVoyAcgEng, AgtVoyAcqEng, msinsctl, trie, xxx
 

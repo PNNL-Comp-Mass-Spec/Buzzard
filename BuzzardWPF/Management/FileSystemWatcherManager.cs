@@ -14,7 +14,7 @@ using ReactiveUI;
 
 namespace BuzzardWPF.Management
 {
-    public class FileSystemWatcherManager : ReactiveObject
+    public sealed class FileSystemWatcherManager : ReactiveObject
     {
         public static FileSystemWatcherManager Instance { get; }
 

@@ -10,7 +10,7 @@ using ReactiveUI;
 
 namespace BuzzardWPF.Management
 {
-    public class InstrumentCriticalFiles : ReactiveObject
+    public sealed class InstrumentCriticalFiles : ReactiveObject
     {
         // Ignore Spelling: Bionet, msx, Altis, Calib, Xcalibur, atunes, Autotune, yyyyMMdd, Chemstation, msdchem, currset, Agt, tunerpt
 

@@ -12,7 +12,7 @@ using ReactiveUI;
 
 namespace BuzzardWPF.Management
 {
-    public class TriggerFileCreationManager : ReactiveObject
+    public sealed class TriggerFileCreationManager : ReactiveObject
     {
         public static TriggerFileCreationManager Instance { get; }
 

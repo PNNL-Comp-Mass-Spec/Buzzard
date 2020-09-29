@@ -6,7 +6,7 @@ using LcmsNetData;
 
 namespace BuzzardWPF.Management
 {
-    public class TriggerFileMonitor
+    public sealed class TriggerFileMonitor
     {
         static TriggerFileMonitor()
         {
