@@ -10,7 +10,7 @@ namespace BuzzardWPF.Data
         #region Attributes
         private bool useOperator;
         private bool useDatasetType;
-        private bool useSeperationType;
+        private bool useSeparationType;
         private bool useInstrumentType;
 
         private bool useCart;
@@ -92,8 +92,8 @@ namespace BuzzardWPF.Data
 
         public bool UseSeparationType
         {
-            get => useSeperationType;
-            set => this.RaiseAndSetIfChanged(ref useSeperationType, value);
+            get => useSeparationType;
+            set => this.RaiseAndSetIfChanged(ref useSeparationType, value);
         }
 
         public bool UseInstrumentType

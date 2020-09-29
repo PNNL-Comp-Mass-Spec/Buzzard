@@ -256,7 +256,7 @@ namespace BuzzardWPF.Properties
         [Obsolete("Use " + nameof(WatcherSeparationType), true)]
         [SettingUpgradeName(nameof(WatcherSeparationType))]
         // ReSharper disable once UnusedMember.Global
-        public string WatcherConfig_SelectedSeperationType { get; set; }
+        public string WatcherConfig_SelectedSeparationType { get; set; }
 
         [UserScopedSetting]
         [DebuggerNonUserCode]
