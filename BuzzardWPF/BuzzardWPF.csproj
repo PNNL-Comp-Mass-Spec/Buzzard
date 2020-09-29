@@ -88,7 +88,6 @@
     <Compile Include="Converters\ByteFileSizeConverter.cs" />
     <Compile Include="Converters\EmptyRequestNameConverter.cs" />
     <Compile Include="Converters\EnumDescriptionConverter.cs" />
-    <Compile Include="Converters\SearchOptionValueConverter.cs" />
     <Compile Include="Data\BuzzardDataset.cs" />
     <Compile Include="Data\DatasetSource.cs" />
     <Compile Include="Data\DatasetStatus.cs" />
@@ -103,14 +102,12 @@
       <DependentUpon>DynamicSplashScreenWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="IO\BuzzardTriggerFileTools.cs" />
-    <Compile Include="IO\ManifestWriter.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainWindowViewModel.cs" />
     <Compile Include="Management\DatasetManager.cs" />
     <Compile Include="Management\DatasetMonitor.cs" />
-    <Compile Include="Management\DMSConfig.cs" />
     <Compile Include="Management\DMS_DataAccessor.cs" />
     <Compile Include="Management\FileSystemWatcherManager.cs" />
     <Compile Include="Management\InstrumentCriticalFiles.cs" />
@@ -129,8 +126,6 @@
     <Compile Include="Searching\IBuzzadier.cs" />
     <Compile Include="Searching\InstrumentFolderValidator.cs" />
     <Compile Include="Searching\SearchConfig.cs" />
-    <Compile Include="Searching\SearchEventArgs.cs" />
-    <Compile Include="Searching\StartStopEventArgs.cs" />
     <Compile Include="Utility\IgnoreCaseStringComparison.cs" />
     <Compile Include="ViewModels\DatasetOverwriteDialogViewModel.cs" />
     <Compile Include="ViewModels\DatasetsViewModel.cs" />
