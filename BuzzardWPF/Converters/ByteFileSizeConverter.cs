@@ -35,7 +35,7 @@ namespace BuzzardWPF.Converters
             long original;
             try
             {
-                original = (long) System.Convert.ChangeType(value, TypeCode.Int64);
+                original = (long)System.Convert.ChangeType(value, TypeCode.Int64);
             }
             catch
             {
@@ -44,13 +44,13 @@ namespace BuzzardWPF.Converters
             double result = original;
             var divideCount = 0;
 
-            while (result > 1024d)
+            while (result > 1024d && divideCount < 4)
             {
                 divideCount++;
                 result /= 1024d;
             }
 
-            var unit = ((FileSizeUnits) divideCount).ToString();
+            var unit = ((FileSizeUnits)divideCount).ToString();
             var decimals = 0;
             if (divideCount > 0)
             {
