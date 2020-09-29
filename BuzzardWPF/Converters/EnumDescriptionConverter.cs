@@ -19,17 +19,10 @@ namespace BuzzardWPF.Converters
                 return string.Empty;
             }
 
-            var attrib = value.GetType().GetField(value.ToString()).GetCustomAttributes(false);
-            var desc = attrib.OfType<DescriptionAttribute>().FirstOrDefault();
+            var attribute = value.GetType().GetField(value.ToString()).GetCustomAttributes(false);
+            var matchedAttribute = attribute.OfType<DescriptionAttribute>().FirstOrDefault();
 
-            if (desc == null)
-            {
-                return value.ToString();
-            }
-            else
-            {
-                return desc.Description;
-            }
+            return matchedAttribute == null ? value.ToString() : matchedAttribute.Description;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

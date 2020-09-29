@@ -26,8 +26,9 @@ namespace BuzzardWPF.Management
     /// </summary>
     public class DatasetManager : ReactiveObject, IStoredSettingsMonitor, IDisposable
     {
-        public const string PREVIEW_TRIGGERFILE_FLAG = "Nonexistent_Fake_TriggerFile.xmL";
         // Ignore Spelling: Altis, AgtVoyAcgEng, AgtVoyAcqEng, msinsctl, trie, xxx
+
+        public const string PREVIEW_TRIGGER_FILE_FLAG = "Nonexistent_Fake_TriggerFile.xmL";
 
         // Thermo General: 'HomePage', 'ThermoFisher.Foundation.AcquisitionService'
         // Thermo Lumos: Thermo General + 'Thermo.TNG.InstrumentServer'
@@ -257,7 +258,7 @@ namespace BuzzardWPF.Management
                     if (dataset.DatasetStatus == DatasetStatus.MissingRequiredInfo)
                         return null;
 
-                    return PREVIEW_TRIGGERFILE_FLAG;
+                    return PREVIEW_TRIGGER_FILE_FLAG;
                 }
 
                 if (!string.Equals(LCMSSettings.GetParameter(LCMSSettings.PARAM_TRIGGERFILEFOLDER), Manager.TriggerFileLocation))

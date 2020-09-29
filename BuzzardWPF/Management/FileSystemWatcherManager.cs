@@ -142,7 +142,7 @@ namespace BuzzardWPF.Management
 
             ControlFileMonitor(false);
 
-            var deduplication = new Dictionary<string, bool>();
+            var deDuplication = new Dictionary<string, bool>();
             const bool allowFolderMatch = true;
             var diBaseFolder = new DirectoryInfo(Config.DirectoryPath);
             while (filePathsToProcess.TryDequeue(out var fseArgs))
@@ -194,14 +194,15 @@ namespace BuzzardWPF.Management
                     }
                 }
 
-                if (deduplication.ContainsKey(fullFilePath))
+                if (deDuplication.ContainsKey(fullFilePath))
                 {
                     continue;
                 }
 
                 if (fseArgs is RenamedEventArgs renamed)
                 {
-                    deduplication.Add(fullFilePath, true);
+                    deDuplication.Add(fullFilePath, true);
+
                     // File was renamed, either update an existing dataset, or add a new one
                     DatasetManager.CreatePendingDataset(
                         fullFilePath,
@@ -233,7 +234,7 @@ namespace BuzzardWPF.Management
                         }
                     }
 
-                    deduplication.Add(fullFilePath, true);
+                    deDuplication.Add(fullFilePath, true);
                     DatasetManager.CreatePendingDataset(fullFilePath, parentFolderPath, allowFolderMatch, DatasetSource.Watcher);
                 }
             }

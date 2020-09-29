@@ -341,12 +341,18 @@ namespace BuzzardWPF.Searching
         /// <summary>
         /// Validate if the base directory being searched/watched is accessible via the network and DMS
         /// </summary>
-        /// <param name="diBaseDirectory"></param>
+        /// <param name="baseDirectoryInfo"></param>
         /// <param name="expectedBaseDirectoryPath"></param>
-        /// <param name="netShareName">The name of the shared directory used to access the directory <paramref name="diBaseDirectory"/>, if it is not the default share name listed in DMS</param>
-        /// <param name="additionalSubdirectories">Any additional path information needed after <paramref name="expectedBaseDirectoryPath"/> or <paramref name="netShareName"/> to access the <paramref name="diBaseDirectory"/></param>
+        /// <param name="netShareName">
+        /// The name of the shared directory used to access the directory <paramref name="baseDirectoryInfo"/>,
+        /// if it is not the default share name listed in DMS
+        /// </param>
+        /// <param name="additionalSubdirectories">
+        /// Any additional path information needed after <paramref name="expectedBaseDirectoryPath"/> or
+        /// <paramref name="netShareName"/> to access the <paramref name="baseDirectoryInfo"/>
+        /// </param>
         /// <returns></returns>
-        public bool ValidateBaseFolder(DirectoryInfo diBaseDirectory, out string expectedBaseDirectoryPath, out string netShareName, out string additionalSubdirectories)
+        public bool ValidateBaseFolder(DirectoryInfo baseDirectoryInfo, out string expectedBaseDirectoryPath, out string netShareName, out string additionalSubdirectories)
         {
             const string GENERIC_REMOTE_COMPUTER = "RemoteComputer";
             const string REMOTE_COMPUTER_PREFIX = @"\\" + GENERIC_REMOTE_COMPUTER + @"\";
@@ -363,11 +369,11 @@ namespace BuzzardWPF.Searching
 
                 // This dictionary tracks share names where key is the share name and path is the local path to that share.
                 // For example, "ProteomicsData" and "C:\ProteomicsData"
-                // However, if diBaseFolder points to another computer (e.g. \\VOrbiETD01.bionet\ProteomicsData) then the dictionary
+                // However, if baseDirectoryInfo points to another computer (e.g. \\VOrbiETD01.bionet\ProteomicsData) then the dictionary
                 // will have a single entry with key "ProteomicsData" and value "ProteomicsData"
                 Dictionary<string, string> localShares;
 
-                var baseFolderPath = StandardizePath(diBaseDirectory.FullName);
+                var baseFolderPath = StandardizePath(baseDirectoryInfo.FullName);
 
                 if (baseFolderPath.StartsWith(@"\\"))
                 {

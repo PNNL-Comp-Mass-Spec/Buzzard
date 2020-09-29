@@ -51,26 +51,26 @@ namespace BuzzardWPF.ViewModels
             DatasetManager.Datasets.Connect().ObserveOn(RxApp.TaskpoolScheduler).WhereReasonsAre(new []{ ListChangeReason.Add, ListChangeReason.AddRange, ListChangeReason.Remove, ListChangeReason.RemoveRange }).Subscribe(
                 x =>
                 {
-                    foreach (var changeset in x)
+                    foreach (var changeSet in x)
                     {
-                        if (changeset.Reason == ListChangeReason.Add)
+                        if (changeSet.Reason == ListChangeReason.Add)
                         {
-                            DatasetAdded(changeset.Item.Current);
+                            DatasetAdded(changeSet.Item.Current);
                         }
-                        else if (changeset.Reason == ListChangeReason.AddRange)
+                        else if (changeSet.Reason == ListChangeReason.AddRange)
                         {
-                            foreach (var item in changeset.Range)
+                            foreach (var item in changeSet.Range)
                             {
                                 DatasetAdded(item);
                             }
                         }
-                        else if (changeset.Reason == ListChangeReason.Remove)
+                        else if (changeSet.Reason == ListChangeReason.Remove)
                         {
-                            DatasetRemoved(changeset.Item.Current);
+                            DatasetRemoved(changeSet.Item.Current);
                         }
-                        else if (changeset.Reason == ListChangeReason.RemoveRange)
+                        else if (changeSet.Reason == ListChangeReason.RemoveRange)
                         {
-                            foreach (var item in changeset.Range)
+                            foreach (var item in changeSet.Range)
                             {
                                 DatasetRemoved(item);
                             }

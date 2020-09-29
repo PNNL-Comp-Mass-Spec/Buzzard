@@ -89,9 +89,9 @@ namespace BuzzardWPF.Management
             // a call to this in the correct thread and exit.
             if (!MainWindow.Dispatcher.CheckAccess())
             {
-                Action action = CreateTriggerFiles;
+                Action createAction = CreateTriggerFiles;
 
-                MainWindow.Dispatcher.BeginInvoke(action, DispatcherPriority.Normal);
+                MainWindow.Dispatcher.BeginInvoke(createAction, DispatcherPriority.Normal);
                 return;
             }
              */

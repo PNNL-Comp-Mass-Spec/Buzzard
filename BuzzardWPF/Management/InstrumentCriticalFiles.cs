@@ -140,11 +140,16 @@ namespace BuzzardWPF.Management
             if (Directory.Exists(qePath))
             {
                 var qeCalFileRegex = new Regex(@"^(master_cal\.mscal|inst_config\.cfg)$", RegexOptions.IgnoreCase);
-                var dir = new DirectoryInfo(qePath);
-                criticalFiles.AddRange(dir.EnumerateFiles().Where(x => qeCalFileRegex.IsMatch(x.Name)).Select(x => new InstrumentCriticalFileInfo(x)));
+                var qeDirectory = new DirectoryInfo(qePath);
+                criticalFiles.AddRange(qeDirectory.EnumerateFiles()
+                    .Where(x => qeCalFileRegex.IsMatch(x.Name))
+                    .Select(x => new InstrumentCriticalFileInfo(x)));
 
                 // Backup the "ExactiveLicenses" file
-                criticalFiles.AddRange(dir.Parent.EnumerateFiles("ExactiveLicenses.txt").Select(x => new InstrumentCriticalFileInfo(x)));
+                if (qeDirectory.Parent != null)
+                {
+                    criticalFiles.AddRange(qeDirectory.Parent.EnumerateFiles("ExactiveLicenses.txt").Select(x => new InstrumentCriticalFileInfo(x)));
+                }
             }
 
             const string thermoCommonPath = @"C:\Thermo\Instruments";
@@ -157,15 +162,19 @@ namespace BuzzardWPF.Management
                 if (Directory.Exists(ltqPath))
                 {
                     var ltqCalFileRegex = new Regex(@"^(Master\.LTQCal|Master\.LTQReagent)$", RegexOptions.IgnoreCase);
-                    var dir = new DirectoryInfo(ltqPath);
-                    criticalFiles.AddRange(dir.EnumerateFiles().Where(x => ltqCalFileRegex.IsMatch(x.Name)).Select(x => new InstrumentCriticalFileInfo(x)));
+                    var ltqDirectory = new DirectoryInfo(ltqPath);
+                    criticalFiles.AddRange(ltqDirectory.EnumerateFiles()
+                        .Where(x => ltqCalFileRegex.IsMatch(x.Name))
+                        .Select(x => new InstrumentCriticalFileInfo(x)));
                 }
 
                 if (Directory.Exists(tsqS1Path))
                 {
                     var tsqS1CalFileRegex = new Regex(@"^(Default_Current\.TSQCalib)$", RegexOptions.IgnoreCase);
-                    var dir = new DirectoryInfo(tsqS1Path);
-                    criticalFiles.AddRange(dir.EnumerateFiles().Where(x => tsqS1CalFileRegex.IsMatch(x.Name)).Select(x => new InstrumentCriticalFileInfo(x)));
+                    var tsqDirectory = new DirectoryInfo(tsqS1Path);
+                    criticalFiles.AddRange(tsqDirectory.EnumerateFiles()
+                        .Where(x => tsqS1CalFileRegex.IsMatch(x.Name))
+                        .Select(x => new InstrumentCriticalFileInfo(x)));
                 }
 
                 if (Directory.Exists(tngPath))
@@ -181,8 +190,10 @@ namespace BuzzardWPF.Management
                             var dirPath = Path.Combine(version.FullName, tngSubPath);
                             if (Directory.Exists(dirPath))
                             {
-                                var dir = new DirectoryInfo(dirPath);
-                                criticalFiles.AddRange(dir.EnumerateFiles().Where(x => tngCalFileRegex.IsMatch(x.Name)).Select(x => new InstrumentCriticalFileInfo(x, inst.Name, version.Name)));
+                                var tngDirectory = new DirectoryInfo(dirPath);
+                                criticalFiles.AddRange(tngDirectory.EnumerateFiles()
+                                    .Where(x => tngCalFileRegex.IsMatch(x.Name))
+                                    .Select(x => new InstrumentCriticalFileInfo(x, inst.Name, version.Name)));
                             }
                         }
                     }
@@ -197,50 +208,63 @@ namespace BuzzardWPF.Management
             {
                 var baseDir = new DirectoryInfo(agilentMassHunterPath);
                 var agilentMHCalFileRegex = new Regex(@"^(TunePreferences\.xml|atunes\.TUNE\.XML|AgtQQQAutotuneParams\.xml|.*\.cal|.*\.tun)$", RegexOptions.IgnoreCase);
-                foreach (var dir in baseDir.EnumerateDirectories())
+                foreach (var subdirectory in baseDir.EnumerateDirectories())
                 {
-                    if (dir.Name.Equals("QQQ", StringComparison.OrdinalIgnoreCase))
+                    if (subdirectory.Name.Equals("QQQ", StringComparison.OrdinalIgnoreCase))
                     {
-                        foreach (var inst in dir.EnumerateDirectories())
+                        foreach (var inst in subdirectory.EnumerateDirectories())
                         {
                             // Skip files that are older than the 2 years - probably default installed files
-                            criticalFiles.AddRange(inst.EnumerateFiles().Where(x => x.LastWriteTime >= oldestFileDate && agilentMHCalFileRegex.IsMatch(x.Name)).Select(x => new InstrumentCriticalFileInfo(x, dir.Name, inst.Name)));
+                            criticalFiles.AddRange(inst.EnumerateFiles()
+                                .Where(x => x.LastWriteTime >= oldestFileDate && agilentMHCalFileRegex.IsMatch(x.Name))
+                                .Select(x => new InstrumentCriticalFileInfo(x, subdirectory.Name, inst.Name)));
                         }
                     }
                     else
                     {
                         // Skip files that are older than the 2 years - probably default installed files
-                        criticalFiles.AddRange(dir.EnumerateFiles().Where(x => x.LastWriteTime >= oldestFileDate && agilentMHCalFileRegex.IsMatch(x.Name)).Select(x => new InstrumentCriticalFileInfo(x, dir.Name)));
+                        criticalFiles.AddRange(subdirectory.EnumerateFiles()
+                            .Where(x => x.LastWriteTime >= oldestFileDate && agilentMHCalFileRegex.IsMatch(x.Name))
+                            .Select(x => new InstrumentCriticalFileInfo(x, subdirectory.Name)));
                     }
                 }
             }
+
+            // ReSharper disable CommentTypo
+            // ReSharper disable StringLiteralTypo
 
             const string agilentLegacyChemstationPath = @"C:\msdchem";
             if (Directory.Exists(agilentLegacyChemstationPath))
             {
                 var baseDir = new DirectoryInfo(agilentLegacyChemstationPath);
                 var agilentLegacyChemstation = new Regex(@"^(control\.csv|.*\.u|currset\.ini|tunerpt\.txt)$", RegexOptions.IgnoreCase);
-                foreach (var dir in baseDir.EnumerateDirectories())
+                foreach (var subdirectory in baseDir.EnumerateDirectories())
                 {
-                    if (dir.Name.Length == 1)
+                    if (subdirectory.Name.Length == 1)
                     {
                         // Check all single-character directories - usually we only need the directory '1'
-                        foreach (var inst in dir.EnumerateDirectories())
+                        foreach (var inst in subdirectory.EnumerateDirectories())
                         {
                             // Skip files that are older than the 2 years - probably default installed files
-                            criticalFiles.AddRange(inst.EnumerateFiles().Where(x => x.LastWriteTime >= oldestFileDate && agilentLegacyChemstation.IsMatch(x.Name)).Select(x => new InstrumentCriticalFileInfo(x, dir.Name, inst.Name)));
+                            criticalFiles.AddRange(inst.EnumerateFiles()
+                                .Where(x => x.LastWriteTime >= oldestFileDate && agilentLegacyChemstation.IsMatch(x.Name))
+                                .Select(x => new InstrumentCriticalFileInfo(x, subdirectory.Name, inst.Name)));
                         }
 
                         // Grab the 'show_ipinfo.txt' file - it contains the IP address configuration for the instrument
-                        criticalFiles.AddRange(dir.EnumerateFiles("show_ipinfo.txt").Select(x => new InstrumentCriticalFileInfo(x, dir.Name)));
+                        criticalFiles.AddRange(subdirectory.EnumerateFiles("show_ipinfo.txt")
+                            .Select(x => new InstrumentCriticalFileInfo(x, subdirectory.Name)));
                     }
-                    else if (dir.Name.Equals("MSexe", StringComparison.OrdinalIgnoreCase))
+                    else if (subdirectory.Name.Equals("MSExe", StringComparison.OrdinalIgnoreCase))
                     {
-                        // Grab the 'INSTALLD.TXT' file and back it up - it contains the chemstation license key(s).
-                        criticalFiles.AddRange(dir.EnumerateFiles("INSTALLD.TXT").Select(x => new InstrumentCriticalFileInfo(x)));
+                        // Grab the 'INSTALLD.TXT' file and back it up - it contains the Chemstation license key(s).
+                        criticalFiles.AddRange(subdirectory.EnumerateFiles("INSTALLD.TXT")
+                            .Select(x => new InstrumentCriticalFileInfo(x)));
                     }
                 }
             }
+            // ReSharper restore StringLiteralTypo
+            // ReSharper restore CommentTypo
         }
 
         public void LoadSettings()

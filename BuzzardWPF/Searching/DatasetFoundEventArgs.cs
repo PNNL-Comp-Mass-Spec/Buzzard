@@ -13,12 +13,12 @@ namespace BuzzardWPF.Searching
         /// Constructor.
         /// </summary>
         /// <param name="datasetPath">Full path to the dataset file or folder</param>
-        /// <param name="subfolderPathRelative">Subfolder path, relative to the base folder we searched from</param>
+        /// <param name="subdirectoryPathRelative">Subdirectory path, relative to the base folder we searched from</param>
         /// <param name="config">Search config options</param>
-        public DatasetFoundEventArgs(string datasetPath, string subfolderPathRelative, SearchConfig config)
+        public DatasetFoundEventArgs(string datasetPath, string subdirectoryPathRelative, SearchConfig config)
         {
             Path = datasetPath;
-            CaptureSubfolderPath = subfolderPathRelative;
+            CaptureSubfolderPath = subdirectoryPathRelative;
             CurrentSearchConfig = config;
         }
 

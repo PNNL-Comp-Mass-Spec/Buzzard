@@ -65,9 +65,9 @@ namespace BuzzardWPF
 
             var propColl = Properties.Settings.Default.Properties;
 
-            foreach (SettingsProperty currProperty in propColl)
+            foreach (SettingsProperty currentProperty in propColl)
             {
-                var propertyName = currProperty.Name;
+                var propertyName = currentProperty.Name;
                 var propertyValue = string.Empty;
 
                 if (Properties.Settings.Default[propertyName] != null)
