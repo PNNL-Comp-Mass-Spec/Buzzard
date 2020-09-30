@@ -7,14 +7,14 @@
     xmlns:viewModels="clr-namespace:BuzzardWPF.ViewModels"
     Title="Error Messages"
     Width="800"
-    Height="450"
-    mc:Ignorable="d"
-    d:DataContext="{d:DesignInstance {x:Type viewModels:ErrorMessagesViewModel}, IsDesignTimeCreatable=True}"
->
+    Height="240"
+    d:DataContext="{d:DesignInstance {x:Type viewModels:ErrorMessagesViewModel},
+                                     IsDesignTimeCreatable=True}"
+    mc:Ignorable="d">
     <Grid Margin="0,0,0,0.2">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="35" />
+            <RowDefinition Height="145" />
+            <RowDefinition Height="55" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -24,34 +24,43 @@
             Name="ErrorMessageList"
             Grid.Row="0"
             Grid.Column="0"
+            Width="772"
             MinHeight="100"
-            Margin="0,0,0,0"
-            HorizontalAlignment="Left"
+            Margin="6,0,2,0"
+            HorizontalAlignment="Center"
             VerticalAlignment="Top"
-            HorizontalContentAlignment="Stretch">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Grid Margin="0,2">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="100" />
-                        </Grid.ColumnDefinitions>
-                        <!-- <TextBlock Grid.Column="0" Text="{Binding Source}" /> -->
-                        <!-- <TextBlock Grid.Column="1" Text="{Binding Message}" /> -->
-                        <TextBlock Grid.Column="0" Text="{Binding ErrorMessages}" />
-                    </Grid>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
+            HorizontalContentAlignment="Stretch"
+            ItemsSource="{Binding Path=ErrorMessageList}">
+
+            <ListBox.CommandBindings>
+                <CommandBinding
+                    CanExecute="CtrlCCopyCmdCanExecute"
+                    Command="ApplicationCommands.Copy"
+                    Executed="CtrlCCopyCmdExecuted" />
+            </ListBox.CommandBindings>
+
+            <ListBox.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Command="Copy" Header="Copy All">
+                        <MenuItem.CommandBindings>
+                            <CommandBinding
+                                CanExecute="RightClickCopyCmdCanExecute"
+                                Command="ApplicationCommands.Copy"
+                                Executed="RightClickCopyCmdExecuted" />
+                        </MenuItem.CommandBindings>
+                    </MenuItem>
+                </ContextMenu>
+            </ListBox.ContextMenu>
         </ListBox>
 
         <Button
             Grid.Row="1"
             Grid.Column="0"
-            Width="109"
-            Height="45"
-            Margin="0,0,0,0"
-            HorizontalAlignment="center"
-            VerticalAlignment="Top"
+            Width="100"
+            Height="35"
+            Margin="0,2,0,2"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
             Click="Close_OnClick"
             Content="Close" />
     </Grid>

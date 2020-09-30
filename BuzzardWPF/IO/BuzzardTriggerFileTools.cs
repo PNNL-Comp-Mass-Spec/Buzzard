@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
-using System.Windows;
 using BuzzardWPF.Data;
 using BuzzardWPF.ViewModels;
 using BuzzardWPF.Views;
@@ -56,7 +55,7 @@ namespace BuzzardWPF.IO
 
         public static void ShowErrorMessages(List<string> errorMessages)
         {
-            var errorMessagesViewModel = new ErrorMessagesViewModel();
+            var errorMessagesViewModel = new ErrorMessagesViewModel(errorMessages);
 
             var errorMessagesView = new ErrorMessagesView {
                 DataContext = errorMessagesViewModel,
@@ -64,7 +63,6 @@ namespace BuzzardWPF.IO
                 Topmost = true};
 
             errorMessagesView.Show();
-            errorMessagesViewModel.ErrorMessages.AddRange(errorMessages);
         }
 
         /// <summary>
