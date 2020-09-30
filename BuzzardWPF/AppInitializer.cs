@@ -339,21 +339,17 @@ namespace BuzzardWPF
 
             try
             {
-                //
                 // Check to see if any trigger files need to be copied to the transfer server, and copy if necessary
-                //
                 var copyTriggerFiles = LCMSSettings.GetParameter("CopyTriggerFiles", false);
-                if (copyTriggerFiles)
-                {
-                    if (LcmsNetData.Data.TriggerFileTools.CheckLocalTriggerFiles())
-                    {
-                        ApplicationLogger.LogMessage(-1, "Copying trigger files to DMS");
-                        LcmsNetData.Data.TriggerFileTools.MoveLocalTriggerFiles();
 
-                        if (LcmsNetData.Data.TriggerFileTools.ErrorMessages.Count > 0)
-                        {
-                            BuzzardWPF.IO.BuzzardTriggerFileTools.ShowErrorMessages(LcmsNetData.Data.TriggerFileTools.ErrorMessages);
-                        }
+                if (copyTriggerFiles && LcmsNetData.Data.TriggerFileTools.CheckLocalTriggerFiles())
+                {
+                    ApplicationLogger.LogMessage(-1, "Copying trigger files to DMS");
+                    LcmsNetData.Data.TriggerFileTools.MoveLocalTriggerFiles();
+
+                    if (LcmsNetData.Data.TriggerFileTools.ErrorMessages.Count > 0)
+                    {
+                        BuzzardWPF.IO.BuzzardTriggerFileTools.ShowErrorMessages(LcmsNetData.Data.TriggerFileTools.ErrorMessages);
                     }
                 }
             }
