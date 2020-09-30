@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
@@ -342,6 +343,11 @@ namespace BuzzardWPF
                     {
                         ApplicationLogger.LogMessage(-1, "Copying trigger files to DMS");
                         LcmsNetData.Data.TriggerFileTools.MoveLocalTriggerFiles();
+
+                        if (LcmsNetData.Data.TriggerFileTools.ErrorMessages.Count > 0)
+                        {
+                            BuzzardWPF.IO.BuzzardTriggerFileTools.ShowErrorMessages(LcmsNetData.Data.TriggerFileTools.ErrorMessages);
+                        }
                     }
                 }
             }

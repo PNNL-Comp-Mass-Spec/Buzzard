@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Windows;
 using BuzzardWPF.Data;
+using BuzzardWPF.ViewModels;
+using BuzzardWPF.Views;
 using LcmsNetData.Data;
 
 namespace BuzzardWPF.IO
@@ -49,6 +52,19 @@ namespace BuzzardWPF.IO
             return data.ToString();
         }
 
+        public static void ShowErrorMessages(List<string> errorMessages)
+        {
+            var errorMessagesViewModel = new ErrorMessagesViewModel();
+
+            var errorMessagesView = new ErrorMessagesView {
+                DataContext = errorMessagesViewModel,
+                ShowActivated = true,
+                Topmost = true};
+
+            errorMessagesView.Show();
+            errorMessagesViewModel.ErrorMessages.AddRange(errorMessages);
+        }
+
         /// <summary>
         /// Generates a trigger file for a sample
         /// </summary>
@@ -67,7 +83,20 @@ namespace BuzzardWPF.IO
                 return null;
             }
 
-            return GenerateTriggerFile(dataset);
+            var triggerFilePath = GenerateTriggerFile(dataset);
+            if (!string.IsNullOrWhiteSpace(triggerFilePath))
+                return triggerFilePath;
+
+            if (ErrorMessages.Count == 0)
+            {
+                ShowErrorMessages(new List<string> { "Unknown error creating the trigger file for " + dataset });
+            }
+            else
+            {
+                ShowErrorMessages(ErrorMessages);
+            }
+
+            return null;
         }
 
         /// <summary>
