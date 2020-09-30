@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Windows;
 using BuzzardWPF.Data;
 using BuzzardWPF.ViewModels;
 using BuzzardWPF.Views;
@@ -53,14 +54,30 @@ namespace BuzzardWPF.IO
             return data.ToString();
         }
 
+        /// <summary>
+        /// Show error messages in a top-most window
+        /// </summary>
+        /// <param name="errorMessages"></param>
         public static void ShowErrorMessages(List<string> errorMessages)
+        {
+            // Use the Dispatcher to avoid apartment threading error
+            // "The calling thread must be STA, because many UI components require this"
+            Application.Current.Dispatcher.Invoke(delegate
+            {
+                ShowErrorMessagesWork(errorMessages);
+            });
+        }
+
+        private static void ShowErrorMessagesWork(List<string> errorMessages)
         {
             var errorMessagesViewModel = new ErrorMessagesViewModel(errorMessages);
 
-            var errorMessagesView = new ErrorMessagesView {
+            var errorMessagesView = new ErrorMessagesView
+            {
                 DataContext = errorMessagesViewModel,
                 ShowActivated = true,
-                Topmost = true};
+                Topmost = true
+            };
 
             errorMessagesView.Show();
         }
@@ -85,7 +102,14 @@ namespace BuzzardWPF.IO
 
             var triggerFilePath = GenerateTriggerFile(dataset);
             if (!string.IsNullOrWhiteSpace(triggerFilePath))
+            {
+                if (ErrorMessages.Count > 0)
+                {
+                    ShowErrorMessages(ErrorMessages);
+                }
+
                 return triggerFilePath;
+            }
 
             if (ErrorMessages.Count == 0)
             {
