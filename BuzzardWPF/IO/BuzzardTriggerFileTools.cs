@@ -12,10 +12,12 @@ namespace BuzzardWPF.IO
 {
     /// <summary>
     /// This class is a variation of LCMSNetSDK.Data.TriggerFileTools, that has been
-    /// modified to work with datasets that
+    /// modified to work with datasets handled by Buzzard
     /// </summary>
     public class BuzzardTriggerFileTools : TriggerFileTools
     {
+        // Ignore Spelling: lcmsoperator
+
         /// <summary>
         /// Minimum dataset name length
         /// </summary>

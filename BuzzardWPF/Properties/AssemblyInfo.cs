@@ -50,5 +50,5 @@ using BuzzardWPF;
 //
 // Innosetup reads this version from file BuzzardWPF.exe when building the installer (see Buzzard_x86-WPF.iss)
 [assembly: AssemblyVersion("2.2.0.2")]
-[assembly: AssemblyDate("August 25, 2020")]
+[assembly: AssemblyDate("September 29, 2020")]
 
