@@ -258,10 +258,16 @@ namespace BuzzardWPF
         /// </summary>
         public static async Task<bool> InitializeApplication(Window displayWindow, Action<string> instrumentNameAction = null)
         {
-            //Thread.Sleep(10000);
             var openMainWindow = false;
 
             CreatePath("Log");
+
+            const bool SHOW_ERROR_MESSAGES_FORM = false;
+            if (SHOW_ERROR_MESSAGES_FORM)
+            {
+                DisplayErrorMessagesForm();
+                return true;
+            }
 
             const string name = "Buzzard";
             FileLogger.AppFolder = name;
@@ -390,6 +396,21 @@ namespace BuzzardWPF
         private static void DbTools_ProgressEvent(object sender, ProgressEventArgs e)
         {
             ApplicationLogger.LogMessage(-1, "Loading DMS data: " + e.CurrentTask);
+        }
+
+        private static void DisplayErrorMessagesForm()
+        {
+            var testErrorMessages = new List<string> {
+                "Test error message 1 - Lots of detail on the error message as populated by BuzzardWPF.AppInitializer.InitializeApplication(Window displayWindow, Action<string> instrumentNameAction = null)",
+                "Test error message 2 - Buzzard is a utility for manually and automatically adding datasets to DMS. Buzzard is licensed under the Apache License, Version 2.0; you may not use this file except in compliance with the License. You may obtain a copy of the License at https://opensource.org/licenses/Apache-2.0",
+                "Test error message 3 - Red",
+                "Test error message 4 - Blue",
+                "Test error message 5 - Green",
+                "Test error message 6 - Yellow",
+                "Test error message 7 - Brown",
+                "Test error message 8 - Orange"
+            };
+            BuzzardWPF.IO.BuzzardTriggerFileTools.ShowErrorMessages(testErrorMessages);
         }
 
         private static void LaunchTheInstaller(FileInfo fiInstaller)
