@@ -63,9 +63,7 @@ namespace BuzzardWPF
                 Properties.Settings.Default.SettingsUpgradeRequired = false;
             }
 
-            var propColl = Properties.Settings.Default.Properties;
-
-            foreach (SettingsProperty currentProperty in propColl)
+            foreach (SettingsProperty currentProperty in Properties.Settings.Default.Properties)
             {
                 var propertyName = currentProperty.Name;
                 var propertyValue = string.Empty;
@@ -82,6 +80,13 @@ namespace BuzzardWPF
                 }
 
                 LCMSSettings.SetParameter(propertyName, propertyValue);
+            }
+
+            // Assure that parameter ApplicationDataPath is defined
+            if (string.IsNullOrWhiteSpace(LCMSSettings.GetParameter(LCMSSettings.PARAM_APPLICATIONDATAPATH)))
+            {
+                var appDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "Buzzard");
+                LCMSSettings.SetParameter(LCMSSettings.PARAM_APPLICATIONDATAPATH, appDataDirectory);
             }
 
             // Add path to executable as a saved setting
