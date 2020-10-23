@@ -55,6 +55,21 @@
             Describes the available data table names
             </summary>
         </member>
+        <member name="F:LcmsNetSQLiteTools.DatabaseTableTypes.ColumnList">
+            <summary>
+            Active LC Columns
+            </summary>
+        </member>
+        <member name="F:LcmsNetSQLiteTools.DatabaseTableTypes.PUserList">
+            <summary>
+            A User that's associated with a Proposal
+            </summary>
+        </member>
+        <member name="F:LcmsNetSQLiteTools.DatabaseTableTypes.PReferenceList">
+            <summary>
+            A cross reference of the PUser and a Proposal
+            </summary>
+        </member>
         <member name="P:LcmsNetSQLiteTools.PropertyToColumnMapping.PropertyColumnMapping.ColumnName">
             <summary>
             SQLite table column name
@@ -169,7 +184,7 @@
             <param name="createCommand">Table creation text, to compare to the create command of the existing table</param>
             <returns>TRUE if table found and create command matches (ignore case); FALSE if not found or error</returns>
         </member>
-        <member name="M:LcmsNetSQLiteTools.SQLiteCacheIO.TableColumnNamesMatched(System.String,System.String,System.Collections.Generic.List{System.String})">
+        <member name="M:LcmsNetSQLiteTools.SQLiteCacheIO.TableColumnNamesMatched(System.String,System.String,System.Collections.Generic.IReadOnlyCollection{System.String})">
             <summary>
             Check if the table has the correct column count and names
             </summary>
@@ -208,10 +223,10 @@
             </summary>
             <param name="cmdStr">SQL command to execute</param>
             <param name="connStr">Connection string for SQLite database file</param>
-            <returns>A DataTable containing data specified by CmdStr</returns>
+            <returns>A DataTable containing data specified by the SQL command</returns>
             <remarks>Works well, but it also uses more memory and processing time vs. reading directly to the output object</remarks>
         </member>
-        <member name="M:LcmsNetSQLiteTools.SQLiteCacheIO.BuildCreatePropTableCmd(System.Collections.Generic.List{System.String},System.String)">
+        <member name="M:LcmsNetSQLiteTools.SQLiteCacheIO.BuildCreatePropTableCmd(System.Collections.Generic.IEnumerable{System.String},System.String)">
             <summary>
             Builds a CREATE TABLE command from the input string dictionary
             </summary>
@@ -255,7 +270,7 @@
             <param name="clearExisting">If true and the table exists, the existing data will be truncated</param>
             <returns>True if table exists and is readable</returns>
         </member>
-        <member name="M:LcmsNetSQLiteTools.SQLiteCacheIO.PrepareMultiColumnTable(System.String,System.String,System.Collections.Generic.List{LcmsNetSQLiteTools.PropertyToColumnMapping.PropertyColumnMapping},System.Boolean,System.Boolean)">
+        <member name="M:LcmsNetSQLiteTools.SQLiteCacheIO.PrepareMultiColumnTable(System.String,System.String,System.Collections.Generic.IEnumerable{LcmsNetSQLiteTools.PropertyToColumnMapping.PropertyColumnMapping},System.Boolean,System.Boolean)">
             <summary>
             Checks for existing multi-column table, creates it if it doesn't exist, and optionally drops existing data
             </summary>
@@ -309,9 +324,9 @@
             Read the data for a list from the cache, handling the in-memory cache appropriately
             </summary>
             <typeparam name="T"></typeparam>
-            <param name="memoryCache"></param>
             <param name="tableType"></param>
             <param name="newObjectCreator"></param>
+            <param name="memoryCache"></param>
             <param name="force"></param>
             <returns></returns>
         </member>
@@ -356,17 +371,17 @@
             Store the contents of a list in the specified table
             </summary>
             <typeparam name="T"></typeparam>
-            <param name="dataList">list of data to be stored</param>
             <param name="tableType">table the data is to be stored in</param>
+            <param name="dataList">list of data to be stored</param>
             <param name="connStr">Connection string; used for export/save as</param>
         </member>
         <member name="M:LcmsNetSQLiteTools.SQLiteCacheIO.SaveSingleColumnListToCache(LcmsNetSQLiteTools.DatabaseTableTypes,System.Collections.Generic.IEnumerable{System.String},System.Collections.Generic.List{System.String})">
             <summary>
             Generic method for saving a single column list to the cache db
             </summary>
+            <param name="tableType">enumTableNames specifying table name suffix</param>
             <param name="listData">List of data for storing in table</param>
             <param name="memoryCache">List used for in-memory cache of contents</param>
-            <param name="tableType">enumTableNames specifying table name suffix</param>
         </member>
         <member name="M:LcmsNetSQLiteTools.SQLiteCacheIO.SaveSingleColumnListToCache(LcmsNetSQLiteTools.DatabaseTableTypes,System.Collections.Generic.IEnumerable{System.String})">
             <summary>
@@ -387,8 +402,8 @@
             <summary>
             Read a single-column list from the cache, handling management of an in-memory list
             </summary>
+            <param name="tableType">DatabaseTableTypes specifying type of table to retrieve</param>
             <param name="memoryCache"></param>
-            <param name="tabletype">DatabaseTableTypes specifying type of table to retrieve</param>
             <param name="force"></param>
             <returns>List containing cached data</returns>
         </member>
@@ -459,13 +474,6 @@
             <param name="tableType">tableType enum specifying type of queue to retrieve</param>
             <param name="connectionString">Cache connection string</param>
             <returns>List containing queue data</returns>
-        </member>
-        <member name="M:LcmsNetSQLiteTools.SQLiteTools.GetCartNameList(System.Boolean)">
-            <summary>
-            Wrapper around generic retrieval method specifically for cart lists
-            </summary>
-            <param name="force">Force reload of data from cache, rather than using the in-memory copy of it</param>
-            <returns>List containing cart names</returns>
         </member>
         <member name="M:LcmsNetSQLiteTools.SQLiteTools.GetCartNameList">
             <summary>

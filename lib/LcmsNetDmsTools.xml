@@ -199,9 +199,9 @@
             Gets a list of dataset types from DMS ans stores it in cache
             </summary>
         </member>
-        <member name="M:LcmsNetDmsTools.DMSDBTools.GetUserListFromDMS">
+        <member name="M:LcmsNetDmsTools.DMSDBTools.GetInstrumentOperatorsFromDMS">
             <summary>
-            Gets a list of active users from DMS and stores it in cache
+            Obtain the list of instrument operators from DMS and store this list in the cache
             </summary>
         </member>
         <member name="M:LcmsNetDmsTools.DMSDBTools.GetProposalUsers">
@@ -243,7 +243,7 @@
             Adds data for block of MRM files to file data list
             </summary>
             <param name="fileIndexList">Comma-separated list of file indices needing data</param>
-            <param name="fileData">ist of file names and contents; new data will be appended to this list</param>
+            <param name="fileData">List of file names and contents; new data will be appended to this list</param>
         </member>
         <member name="M:LcmsNetDmsTools.DMSDBTools.GetMRMFileListFromDMS(System.Int32,System.Int32)">
             <summary>
