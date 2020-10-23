@@ -137,7 +137,7 @@ namespace BuzzardWPF.Management
                 }
             }
 
-            // Load Operator Data
+            // Load Operator Data (from V_Active_Instrument_Operators)
             var tempUserList = SQLiteTools.GetUserList(forceReloadFromCache);
             if (tempUserList == null)
             {
@@ -803,7 +803,7 @@ namespace BuzzardWPF.Management
         public Dictionary<string, InstrumentInfo> InstrumentDetails { get; } = new Dictionary<string, InstrumentInfo>();
 
         /// <summary>
-        /// This is an Observable list of the names of the cart Operators.
+        /// This is an Observable list of the names of the instrument operators.
         /// </summary>
         public ReadOnlyObservableCollection<string> OperatorData { get; }
 
