@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Management;
 using System.Security.AccessControl;
+using BuzzardWPF.Properties;
 using LcmsNetData.Data;
 using LcmsNetData.Logging;
 
@@ -334,6 +335,12 @@ namespace BuzzardWPF.Searching
                 string baseFolderHostName;
                 string baseFolderPathToUse;
 
+                var alternateBaseFolderHostName = Settings.Default.InstName;
+                if (alternateBaseFolderHostName.Equals("PegasaurusRex", StringComparison.OrdinalIgnoreCase))
+                {
+                    alternateBaseFolderHostName = string.Empty;
+                }
+
                 // This dictionary tracks share names where key is the share name and path is the local path to that share.
                 // For example, "ProteomicsData" and "C:\ProteomicsData"
                 // However, if baseDirectoryInfo points to another computer (e.g. \\VOrbiETD01.bionet\ProteomicsData) then the dictionary
@@ -396,6 +403,20 @@ namespace BuzzardWPF.Searching
                 // The host name tracked by DMS might have periods in it; use Split() to account for that
                 var instrument = mInstrumentInfo
                     .FirstOrDefault(x => string.Equals(baseFolderHostName, x.Value.HostName.Split('.').FirstOrDefault(), StringComparison.OrdinalIgnoreCase)).Value;
+
+                if (instrument == null && !string.IsNullOrWhiteSpace(alternateBaseFolderHostName))
+                {
+                    ApplicationLogger.LogMessage(LogLevel.Debug, $"{nameof(InstrumentFolderValidator)}: No local shares that match a share in DMS for host {baseFolderHostName}; trying the alternate name {alternateBaseFolderHostName}");
+                    // Hostname not found in DMS, try the alternate host name that was read from the settings.
+                    instrument = mInstrumentInfo
+                        .FirstOrDefault(x => string.Equals(alternateBaseFolderHostName, x.Value.HostName.Split('.').FirstOrDefault(), StringComparison.OrdinalIgnoreCase)).Value;
+
+                    if (instrument != null)
+                    {
+                        baseFolderHostName = alternateBaseFolderHostName;
+                    }
+                }
+
                 if (instrument != null)
                 {
                     // Host names match

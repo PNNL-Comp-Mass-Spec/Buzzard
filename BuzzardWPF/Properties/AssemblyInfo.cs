@@ -49,6 +49,6 @@ using BuzzardWPF;
 // the build version of the running program to that at \\proto-5\BionetSoftware\Buzzard
 //
 // Innosetup reads this version from file BuzzardWPF.exe when building the installer (see Buzzard_x86-WPF.iss)
-[assembly: AssemblyVersion("2.2.0.4")]
-[assembly: AssemblyDate("September 30, 2020")]
+[assembly: AssemblyVersion("2.2.1.0")]
+[assembly: AssemblyDate("November 13, 2020")]
 
