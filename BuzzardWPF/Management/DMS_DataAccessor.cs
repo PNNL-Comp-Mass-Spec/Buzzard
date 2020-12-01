@@ -7,9 +7,10 @@ using System.Runtime;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using BuzzardWPF.Data;
 using DynamicData;
-using LcmsNetDmsTools;
 using LcmsNetData;
+using LcmsNetDmsTools;
 using LcmsNetData.Data;
 using LcmsNetData.Logging;
 using LcmsNetSQLiteTools;
@@ -419,7 +420,7 @@ namespace BuzzardWPF.Management
         /// <param name="progressEventHandler">Handler to report progress information from dmsDbTools</param>
         /// <param name="errorAction">Handler to report exception information</param>
         /// <returns></returns>
-        public bool UpdateSQLiteCacheFromDms(ProgressEventHandler progressEventHandler = null, Action<string, Exception> errorAction = null)
+        public bool UpdateSQLiteCacheFromDms(EventHandler<ProgressEventArgs> progressEventHandler = null, Action<string, Exception> errorAction = null)
         {
             var retries = 3;
             var dmsAvailable = dmsDbTools.CheckDMSConnection();

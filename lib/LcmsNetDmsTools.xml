@@ -238,7 +238,7 @@
             </summary>
             <remarks>Retrieves data from view V_Scheduled_Run_Export</remarks>
         </member>
-        <member name="M:LcmsNetDmsTools.DMSDBTools.GetMRMFilesFromDMS(System.String,System.Collections.Generic.List{LcmsNetData.Data.MRMFileData})">
+        <member name="M:LcmsNetDmsTools.DMSDBTools.GetMRMFilesFromDMS(System.String,System.Collections.Generic.List{System.ValueTuple{System.String,System.String}})">
             <summary>
             Adds data for block of MRM files to file data list
             </summary>

@@ -1,4 +1,5 @@
-﻿using LcmsNetData.Data;
+﻿using BuzzardWPF.Data;
+using LcmsNetData.Data;
 
 namespace BuzzardWPF.Management
 {
@@ -13,6 +14,11 @@ namespace BuzzardWPF.Management
         }
 
         /// <inheritdoc cref="IRequestedRunData"/>>
+        public IDmsData DmsBasicData => DmsData;
+
+        /// <summary>
+        /// DMSData instance
+        /// </summary>
         public DMSData DmsData { get; set; }
     }
 }

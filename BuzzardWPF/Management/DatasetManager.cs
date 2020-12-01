@@ -13,7 +13,6 @@ using BuzzardWPF.Properties;
 using BuzzardWPF.Searching;
 using DynamicData;
 using LcmsNetData;
-using LcmsNetData.Data;
 using LcmsNetData.Logging;
 using PRISMWin;
 using ReactiveUI;

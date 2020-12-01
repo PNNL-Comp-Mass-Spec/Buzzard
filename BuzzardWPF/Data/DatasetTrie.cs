@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using BuzzardWPF.Data.Trie;
-using LcmsNetData.Data;
 
 namespace BuzzardWPF.Data
 {

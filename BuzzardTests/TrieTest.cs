@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using LcmsNetData.Data;
+using BuzzardWPF.Data;
 using NUnit.Framework;
 
 namespace BuzzardTests

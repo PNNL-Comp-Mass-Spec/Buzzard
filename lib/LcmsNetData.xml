@@ -73,6 +73,99 @@
             Also validates the round trip conversion from vial number to vial position then back to vial number
             </summary>
         </member>
+        <member name="P:LcmsNetData.Data.IDmsData.RequestName">
+            <summary>
+            Name of request in DMS. Becomes sample name in LCMS and forms part
+            of dataset name sample after run
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.IDmsData.DatasetName">
+            <summary>
+            Gets or sets the name of the dataset after editing the request name.
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.IDmsData.RequestID">
+            <summary>
+            Numeric ID of request in DMS
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.IDmsData.Experiment">
+            <summary>
+            Experiment name
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.IDmsData.DatasetType">
+            <summary>
+            Dataset type (ie, HMS-MSn, HMS, etc)
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.IDmsData.WorkPackage">
+            <summary>
+            Work Package/charge code
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.IDmsData.EMSLUsageType">
+            <summary>
+            EMSL usage type
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.IDmsData.EMSLProposalID">
+            <summary>
+            EUS user proposal ID
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.IDmsData.EMSLProposalUser">
+            <summary>
+            EUS user list
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.IDmsData.CartName">
+            <summary>
+            Name of cart used for sample run
+            </summary>
+            <remarks>This is an editable field even if the DMS Request has been resolved.</remarks>
+        </member>
+        <member name="P:LcmsNetData.Data.IDmsData.CartConfigName">
+            <summary>
+            Name of cart configuration for the current cart
+            </summary>
+            <remarks>This is an editable field even if the DMS Request has been resolved.</remarks>
+        </member>
+        <member name="P:LcmsNetData.Data.IDmsData.Comment">
+            <summary>
+            Comment field
+            </summary>
+        </member>
+        <member name="T:LcmsNetData.Data.IDmsDataForSampleRun">
+            <summary>
+            IDmsData interface with additional data about the sample source and run instructions
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.IDmsDataForSampleRun.SelectedToRun">
+            <summary>
+            Flag for determining if request from DMS has been selected for running
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.IDmsDataForSampleRun.MRMFileID">
+            <summary>
+            File ID for locating MRM file to download
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.IDmsDataForSampleRun.Block">
+            <summary>
+            Block ID for blocking/randomizing
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.IDmsDataForSampleRun.RunOrder">
+            <summary>
+            Run order for blocking/randomizing
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.IDmsDataForSampleRun.Batch">
+            <summary>
+            Batch number for blocking/randomizing
+            </summary>
+        </member>
         <member name="T:LcmsNetData.Data.InstrumentInfo">
              <summary>
              Class to hold data about the instrument connected to the LC cart
@@ -119,14 +212,39 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="T:LcmsNetData.Data.IPalData">
+            <summary>
+            Interface for storing PAL data. Only needed (available in LcmsNetData) for populating this data when reading samples from DMS, for LCMSNet.
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.IPalData.Well">
+            <summary>
+            Gets or sets the vial number to pull sample from.
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.IPalData.PALTray">
+            <summary>
+            Name of the PAL tray to use.
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.IPalData.Method">
+            <summary>
+            Name of the PAL method to run.
+            </summary>
+        </member>
+        <member name="P:LcmsNetData.Data.IPalData.WellPlate">
+            <summary>
+            The Wellplate name that is stored in DMS.
+            </summary>
+        </member>
         <member name="T:LcmsNetData.Data.IRequestedRunData">
             <summary>
             The necessary set of data objects needed to store DMS requested run information
             </summary>
         </member>
-        <member name="P:LcmsNetData.Data.IRequestedRunData.DmsData">
+        <member name="P:LcmsNetData.Data.IRequestedRunData.DmsBasicData">
             <summary>
-            Gets or sets the list of data downloaded from DMS for this sample
+            Gets the list of data downloaded from DMS for this sample
             </summary>
         </member>
         <member name="T:LcmsNetData.Data.IRequestedRunDataWithPalData">
@@ -171,7 +289,7 @@
             Provides data for creating trigger files
             </summary>
         </member>
-        <member name="P:LcmsNetData.Data.ITriggerFileData.DmsData">
+        <member name="P:LcmsNetData.Data.ITriggerFileData.DmsBasicData">
             <summary>
             DMS Data: Request ID, Dataset Name, etc.
             </summary>
@@ -229,77 +347,6 @@
         <member name="P:LcmsNetData.Data.ITriggerFilePalData.PAL">
             <summary>
             Autosampler information, specifically Well Plate Number and Well Number
-            </summary>
-        </member>
-        <member name="T:LcmsNetData.Data.MRMFileData">
-            <summary>
-            Holds MRM file data downloaded from DMS
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Data.MRMFileData.FileName">
-            <summary>
-            Name of MRM file
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Data.MRMFileData.FileContents">
-            <summary>
-            Contents of MRM file
-            </summary>
-        </member>
-        <member name="M:LcmsNetData.Data.PalData.#ctor">
-            <summary>
-            Default constructor.
-            </summary>
-        </member>
-        <member name="M:LcmsNetData.Data.PalData.Clone">
-            <summary>
-            Returns a new object reference to a cloned copy of this PAL data.
-            </summary>
-            <returns>A new object reference as a copy of this.</returns>
-        </member>
-        <member name="F:LcmsNetData.Data.PalData.CONST_DEFAULT_VIAL_NUMBER">
-            <summary>
-            Default sample vial number.  This should be invalid and force the user to update the sample information before running.
-            </summary>
-        </member>
-        <member name="F:LcmsNetData.Data.PalData.CONST_MIN_WELLPLATE">
-            <summary>
-            Minimum wellplate number.
-            </summary>
-        </member>
-        <member name="F:LcmsNetData.Data.PalData.CONST_MAX_WELLPLATE">
-            <summary>
-            Maximum wellplate number.
-            </summary>
-        </member>
-        <member name="F:LcmsNetData.Data.PalData.palTray">
-            <summary>
-            Name of the PAL tray to use.
-            </summary>
-        </member>
-        <member name="F:LcmsNetData.Data.PalData.well">
-            <summary>
-            Vial index to use.
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Data.PalData.Well">
-            <summary>
-            Gets or sets the vial number to pull sample from.
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Data.PalData.PALTray">
-            <summary>
-            Name of the PAL tray to use.
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Data.PalData.Method">
-            <summary>
-            Name of the PAL method to run.
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Data.PalData.WellPlate">
-            <summary>
-            The Wellplate name that is stored in DMS.
             </summary>
         </member>
         <member name="T:LcmsNetData.Data.PersistenceSettingAttribute">
@@ -409,154 +456,6 @@
             Build the query string for retrieving data from V_Scheduled_Run_Export
             </summary>
             <returns></returns>
-        </member>
-        <member name="T:LcmsNetData.Data.DMSData">
-            <summary>
-            Dataset information supplied by or required by DMS; includes run request information
-            </summary>
-        </member>
-        <member name="F:LcmsNetData.Data.DMSData.ValidDatasetNameRegexString">
-            <summary>
-            The matching string to ensure only valid characters exist in a dataset name
-            </summary>
-        </member>
-        <member name="F:LcmsNetData.Data.DMSData.ValidDatasetNameCharacters">
-            <summary>
-            The list of characters allowed in a dataset name
-            </summary>
-        </member>
-        <member name="F:LcmsNetData.Data.DMSData.NameValidationRegex">
-            <summary>
-            Regex to use to test if a dataset name only contains valid characters
-            </summary>
-        </member>
-        <member name="M:LcmsNetData.Data.DMSData.Reset">
-            <summary>
-            Unlock the object and reset all properties to default values.
-            </summary>
-        </member>
-        <member name="M:LcmsNetData.Data.DMSData.Clone">
-            <summary>
-            Clone - get a deep copy
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:LcmsNetData.Data.DMSData.CopyValuesAndLockWithNewPath(LcmsNetData.Data.DMSData,System.String)">
-            <summary>
-            Copies the data and locks this object, and sets the dataset name to the filename in <paramref name="filePath"/>
-            Used in Buzzard
-            </summary>
-            <param name="other"></param>
-            <param name="filePath"></param>
-        </member>
-        <member name="P:LcmsNetData.Data.DMSData.LockData">
-            <summary>
-            When the data comes from DMS, it will be locked. This is meant to stop the user
-            from altering it. (this is not used in LCMSNet; it is used in Buzzard)
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Data.DMSData.SelectedToRun">
-            <summary>
-            Flag for determining if request from DMS has been selected for running
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Data.DMSData.RequestName">
-            <summary>
-            Name of request in DMS. Becomes sample name in LCMS and forms part
-            of dataset name sample after run
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Data.DMSData.DatasetName">
-            <summary>
-            Gets or sets the name of the dataset after editing the request name.
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Data.DMSData.RequestID">
-            <summary>
-            Numeric ID of request in DMS
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Data.DMSData.Experiment">
-            <summary>
-            Experiment name
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Data.DMSData.DatasetType">
-            <summary>
-            Dataset type (ie, HMS-MSn, HMS, etc)
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Data.DMSData.WorkPackage">
-            <summary>
-            Work Package/charge code
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Data.DMSData.EMSLUsageType">
-            <summary>
-            EMSL usage type
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Data.DMSData.EMSLProposalID">
-            <summary>
-            EUS user proposal ID
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Data.DMSData.EMSLProposalUser">
-            <summary>
-            EUS user list
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Data.DMSData.CartName">
-            <summary>
-            Name of cart used for sample run
-            </summary>
-            <remarks>This is an editable field even if the DMS Request has been resolved.</remarks>
-        </member>
-        <member name="P:LcmsNetData.Data.DMSData.CartConfigName">
-            <summary>
-            Name of cart configuration for the current cart
-            </summary>
-            <remarks>This is an editable field even if the DMS Request has been resolved.</remarks>
-        </member>
-        <member name="P:LcmsNetData.Data.DMSData.Comment">
-            <summary>
-            Comment field
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Data.DMSData.CommentComplete">
-            <summary>
-            The full comment, including the addition and addition prefix
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Data.DMSData.CommentAddition">
-            <summary>
-            Additional comment. Used by Buzzard to add comment information to datasets matched to run requests.
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Data.DMSData.CommentAdditionPrefix">
-            <summary>
-            Additional comment prefix. Used by Buzzard, output before CommentAddition.
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Data.DMSData.MRMFileID">
-            <summary>
-            File ID for locating MRM file to download
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Data.DMSData.Block">
-            <summary>
-            Block ID for blocking/randomizing
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Data.DMSData.RunOrder">
-            <summary>
-            Run order for blocking/randomizing
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Data.DMSData.Batch">
-            <summary>
-            Batch number for blocking/randomizing
-            </summary>
         </member>
         <member name="T:LcmsNetData.Data.TriggerFileTools">
             <summary>
