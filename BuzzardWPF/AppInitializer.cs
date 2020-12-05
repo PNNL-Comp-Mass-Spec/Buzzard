@@ -10,6 +10,7 @@ using System.Windows;
 using BuzzardWPF.Management;
 using LcmsNetData;
 using LcmsNetData.Logging;
+using LcmsNetData.System;
 using LcmsNetSQLiteTools;
 
 namespace BuzzardWPF
@@ -276,6 +277,7 @@ namespace BuzzardWPF
 
             const string name = "Buzzard";
             FileLogger.AppFolder = name;
+            PersistDataPaths.SetAppName(name);
 
             SQLiteTools.Initialize(name, "BuzzardCache.que");
             //SQLiteTools.SetCacheLocation("BuzzardCache.que");
