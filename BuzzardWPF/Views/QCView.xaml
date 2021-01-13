@@ -131,7 +131,7 @@
                   d:DataContext="{d:DesignInstance {x:Type management:QcMonitorData}, IsDesignTimeCreatable=True}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Experiment" Binding="{Binding ExperimentName}" IsReadOnly="True" />
-                <DataGridTextColumn Header="Dataset Name Match" Binding="{Binding DatasetNameMatch}" IsReadOnly="True" />
+                <DataGridTextColumn Header="Dataset Name Match" Binding="{Binding DatasetNameMatch, Mode=OneWay, StringFormat='&quot;{0}*&quot;'}" IsReadOnly="True" />
             </DataGrid.Columns>
         </DataGrid>
 

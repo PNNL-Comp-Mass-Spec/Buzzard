@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
 using BuzzardWPF.Views;
+using LcmsNetData.Logging;
 using ReactiveUI;
 
 namespace BuzzardWPF.ViewModels
@@ -32,9 +33,15 @@ namespace BuzzardWPF.ViewModels
                     return false;
                 }
 
-                if (!validNameMatchRegex.IsMatch(x.Item1))
+                if (!validQcNameMatchRegex.IsMatch(x.Item1))
                 {
                     DatasetNameMatchError = "ERROR: Dataset name match must start with \"QC\" or \"BLANK\", followed by a '_' or '-'!";
+                    return true;
+                }
+
+                if (!validNameMatchRegex.IsMatch(x.Item1))
+                {
+                    DatasetNameMatchError = "ERROR: Dataset name match has invalid characters (only a-z, 0-9, '-' or '_' allowed)!";
                     return true;
                 }
 
@@ -66,7 +73,10 @@ namespace BuzzardWPF.ViewModels
         private QcMonitorData selectedQcMonitor;
         private readonly ObservableAsPropertyHelper<bool> datasetNameMatchHasError;
 
-        private const string ValidNameMatchRegexString = "(BLANK|QC)(_|-).*";
+        private const string ValidQcNameMatchRegexString = "^(BLANK|QC)(_|-).*$";
+        private readonly Regex validQcNameMatchRegex = new Regex(ValidQcNameMatchRegexString, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+        private const string ValidNameMatchRegexString = "^[A-Za-z0-9_\\-]*$";
         private readonly Regex validNameMatchRegex = new Regex(ValidNameMatchRegexString, RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         public ReactiveCommand<Unit, Unit> SelectExperimentCommand { get; }
@@ -132,9 +142,10 @@ namespace BuzzardWPF.ViewModels
             var qcMonitor = new QcMonitorData
             {
                 ExperimentName = ExperimentName,
-                DatasetNameMatch = DatasetNameMatch
+                DatasetNameMatch = DatasetNameMatch.Trim()
             };
 
+            ApplicationLogger.LogMessage(0, $"Added QC Monitor: '{qcMonitor.DatasetNameMatch}'* for experiment '{qcMonitor.ExperimentName}'");
             Monitor.QcMonitors.Add(qcMonitor);
         }
 
@@ -145,6 +156,7 @@ namespace BuzzardWPF.ViewModels
                 return;
             }
 
+            ApplicationLogger.LogMessage(0, $"Removed QC Monitor: '{SelectedQcMonitor.DatasetNameMatch}'* for experiment '{SelectedQcMonitor.ExperimentName}'");
             Monitor.QcMonitors.Remove(SelectedQcMonitor);
         }
 
@@ -178,6 +190,7 @@ namespace BuzzardWPF.ViewModels
                     DatasetNameMatch = "*"
                 };
 
+                ApplicationLogger.LogMessage(0, $"Loaded QC Monitor: '{monitor.DatasetNameMatch}'* for experiment '{monitor.ExperimentName}'");
                 Monitor.QcMonitors.Add(monitor);
             }
 
