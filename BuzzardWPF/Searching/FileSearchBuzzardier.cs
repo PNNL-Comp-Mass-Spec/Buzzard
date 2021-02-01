@@ -17,8 +17,6 @@ namespace BuzzardWPF.Searching
     {
         // Ignore Spelling: Buzzardier
 
-        #region Events
-
         /// <summary>
         /// Fired when a dataset is found.
         /// </summary>
@@ -44,19 +42,11 @@ namespace BuzzardWPF.Searching
         /// </summary>
         public event EventHandler<ErrorEventArgs> ErrorEvent;
 
-        #endregion
-
-        #region "Enums"
-
         private enum DatasetType
         {
             File = 0,
             Folder = 1
         }
-
-        #endregion
-
-        #region Members
 
         /// <summary>
         /// Flag indicating whether to search
@@ -64,10 +54,6 @@ namespace BuzzardWPF.Searching
         private volatile bool m_keepSearching;
 
         private readonly Dictionary<string, InstrumentInfo> mInstrumentInfo;
-
-        #endregion
-
-        #region Searching and Threading Methods
 
         /// <summary>
         /// Constructor
@@ -333,7 +319,5 @@ namespace BuzzardWPF.Searching
 
             ErrorEvent?.Invoke(this, new ErrorEventArgs(errorMessage));
         }
-
-        #endregion
     }
 }

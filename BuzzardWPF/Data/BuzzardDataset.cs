@@ -14,7 +14,6 @@ namespace BuzzardWPF.Data
     {
         // Ignore Spelling: Unreviewed
 
-        #region Attributes
         private string filePath;
 
         private string instrumentName;
@@ -59,10 +58,6 @@ namespace BuzzardWPF.Data
         private readonly ObservableAsPropertyHelper<bool> showProgress;
         private readonly ObservableAsPropertyHelper<double> progressValue;
         private readonly ObservableAsPropertyHelper<string> formattedStatus;
-
-        #endregion
-
-        #region Initialization
 
         public BuzzardDataset()
         {
@@ -166,10 +161,6 @@ namespace BuzzardWPF.Data
             DmsData.Reset();
         }
 
-        #endregion
-
-        #region UI data place holders
-
         public int SecondsTillTriggerCreation
         {
             get => secondsUntilTriggerCreation;
@@ -181,9 +172,6 @@ namespace BuzzardWPF.Data
             get => waitTimePercentage;
             set => this.RaiseAndSetIfChanged(ref waitTimePercentage, value);
         }
-        #endregion
-
-        #region DataGrid Properties
 
         public ProposalUser EMSLProposalUser
         {
@@ -318,8 +306,6 @@ namespace BuzzardWPF.Data
             set => this.RaiseAndSetIfChanged(ref triggerCreationWarning, value);
         }
 
-        #endregion
-
         public bool CartConfigError
         {
             get => cartConfigError;
@@ -340,7 +326,6 @@ namespace BuzzardWPF.Data
             }
         }
 
-        #region File Properties
         public string FilePath
         {
             get => filePath;
@@ -397,8 +382,6 @@ namespace BuzzardWPF.Data
         /// True if the dataset is a single file, otherwise false
         /// </summary>
         public bool IsFile { get; set; }
-
-        #endregion
 
         private static string FormatStatus(int waitSeconds, DatasetStatus status, DatasetSource source)
         {

@@ -19,15 +19,9 @@ namespace BuzzardWPF
     {
         // Ignore Spelling: Bionet, userprofile, appdata
 
-        #region "Constants and members"
-
         public static string AssemblyDate { get; }
 
         private const string DefaultInstallerFolder = @"\\proto-5\BionetSoftware\Buzzard";
-
-        #endregion
-
-        #region Constructor
 
         static AppInitializer()
         {
@@ -42,9 +36,6 @@ namespace BuzzardWPF
             }
         }
 
-        #endregion
-
-        #region Configuration Loading
         /// <summary>
         /// Loads the application settings.
         /// </summary>
@@ -107,10 +98,6 @@ namespace BuzzardWPF
                 LCMSSettings.SetParameter(args.PropertyName, Properties.Settings.Default[args.PropertyName]?.ToString());
         }
 
-        #endregion
-
-        #region Logging
-
         /// <summary>
         /// Logs the software version number
         /// </summary>
@@ -159,7 +146,6 @@ namespace BuzzardWPF
                 Application.Current.Shutdown(-1);
             }
         }
-        #endregion
 
         /// <summary>
         /// Check for a new version

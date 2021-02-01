@@ -22,17 +22,11 @@ namespace BuzzardWPF.Management
     {
         // Ignore Spelling: Unreviewed, uniqueifier
 
-        #region Constants
-
         public const int RecentExperimentMonths = 18;
         public const int RecentDatasetMonths = 12;
         public const int RecentEMSLProposalMonths = 12;
 
         private readonly string[] interestRatingOptions = { "Unreviewed", "Not Released", "Released", "Rerun (Good Data)", "Rerun (Superseded)" };
-
-        #endregion
-
-        #region Initialize
 
         /// <summary>
         /// Constructor
@@ -339,15 +333,11 @@ namespace BuzzardWPF.Management
             return dmsDbTools.GetRequestedRunsFromDMS<RequestedRun>(queryData).Select(x => x.DmsData);
         }
 
-        #endregion
-
         public static DMS_DataAccessor Instance { get; }
 
         public DateTime LastSqliteCacheUpdate => lastSqliteCacheUpdate.Value;
 
         public DateTime LastLoadFromSqliteCache => lastLoadFromSqliteCache.Value;
-
-        #region Member Variables
 
         private readonly Timer autoUpdateTimer;
 
@@ -379,10 +369,6 @@ namespace BuzzardWPF.Management
         private readonly SourceList<string> datasetTypesSource = new SourceList<string>();
         private readonly SourceList<string> separationTypesSource = new SourceList<string>();
         private readonly SourceList<string> cartNamesSource = new SourceList<string>();
-
-        #endregion
-
-        #region Private Methods
 
         private DateTime LastSqliteCacheUpdateUtc
         {
@@ -481,10 +467,6 @@ namespace BuzzardWPF.Management
 
             return result;
         }
-
-        #endregion
-
-        #region EMSL Proposal User Items
 
         /// <summary>
         /// Adds the given username and User ID PID CrossReference entry to the dictionary
@@ -756,10 +738,6 @@ namespace BuzzardWPF.Management
             return SQLiteTools.CheckDatasetExists(datasetName);
         }
 
-        #endregion
-
-        #region Properties
-
         public IReadOnlyList<string> InterestRatingCollection { get; }
 
         public IReadOnlyList<string> EMSLUsageTypesSource { get; }
@@ -867,7 +845,5 @@ namespace BuzzardWPF.Management
         /// Read-only, non-observable retrieval of the ColumnData collection contents
         /// </summary>
         public IEnumerable<string> ColumnDataItems => columnDataSource.Items;
-
-        #endregion
     }
 }

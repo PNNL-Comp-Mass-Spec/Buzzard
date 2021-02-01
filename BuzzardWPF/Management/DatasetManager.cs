@@ -41,8 +41,6 @@ namespace BuzzardWPF.Management
         public const string QcDatasetNameRegExString = "^QC(_|-).*";
         public const string BlankDatasetNameRegExString = "^BLANK(_|-).*";
 
-        #region Members
-
         /// <summary>
         /// Trie that holds requested run names from DMS.
         /// </summary>
@@ -51,8 +49,6 @@ namespace BuzzardWPF.Management
         private readonly Regex BlockingProcessNamesRegEx = new Regex(BlockingProcessNamesRegExString, RegexOptions.Compiled | RegexOptions.IgnoreCase);
         private readonly Regex qcDatasetNameRegEx = new Regex(QcDatasetNameRegExString, RegexOptions.Compiled | RegexOptions.IgnoreCase);
         private readonly Regex blankDatasetNameRegEx = new Regex(BlankDatasetNameRegExString, RegexOptions.Compiled | RegexOptions.IgnoreCase);
-
-        #endregion
 
         /// <summary>
         /// Constructor.
@@ -66,8 +62,6 @@ namespace BuzzardWPF.Management
         {
             Manager = new DatasetManager();
         }
-
-        #region Properties
 
         /// <summary>
         /// Instrument data files / folders that are candidate datasets
@@ -89,10 +83,6 @@ namespace BuzzardWPF.Management
             get => requestedRunsLastUpdated;
             private set => this.RaiseAndSetIfChanged(ref requestedRunsLastUpdated, value);
         }
-
-        #endregion
-
-        #region Searcher Config
 
         /// <summary>
         /// This value tells the DatasetManager whether or not
@@ -131,10 +121,6 @@ namespace BuzzardWPF.Management
         }
 
         public WatcherMetadata WatcherMetadata { get; } = new WatcherMetadata();
-
-        #endregion
-
-        #region Loading Data
 
         public async Task LoadRequestedRunsCache()
         {
@@ -197,10 +183,6 @@ namespace BuzzardWPF.Management
             GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
             GC.Collect(int.MaxValue, GCCollectionMode.Forced, true, true);
         }
-
-        #endregion
-
-        #region Trigger Files
 
         /// <summary>
         /// Creates trigger files based on the dataset data sent
@@ -303,9 +285,6 @@ namespace BuzzardWPF.Management
             return null;
         }
 
-        #endregion
-
-        #region DMS Resolving
         /// <summary>
         /// Resolves the entries in DMS for a list of given datasets.
         /// </summary>
@@ -466,7 +445,6 @@ namespace BuzzardWPF.Management
                 }
             }
         }
-        #endregion
 
         public void ClearDatasets()
         {

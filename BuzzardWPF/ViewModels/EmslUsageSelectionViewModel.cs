@@ -11,8 +11,6 @@ namespace BuzzardWPF.ViewModels
 {
     public class EmslUsageSelectionViewModel : ReactiveObject
     {
-        #region Members
-
         /// <summary>
         /// EMSL Usage Types
         /// </summary>
@@ -28,17 +26,11 @@ namespace BuzzardWPF.ViewModels
         private IEmslUsageData boundContainer;
         private IReadOnlyList<ProposalUser> proposalUsers;
 
-        #endregion
-
-        #region Constructors
         public EmslUsageSelectionViewModel()
         {
             UsageTypesSource = EMSL_USAGE_TYPES;
         }
 
-        #endregion
-
-        #region Properties
         public IEmslUsageData BoundContainer
         {
             get => boundContainer;
@@ -77,9 +69,6 @@ namespace BuzzardWPF.ViewModels
             set => this.RaiseAndSetIfChanged(ref proposalUsers, value);
         }
 
-        #endregion
-
-        #region Event Handlers
         private void BoundContainer_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "EMSLProposalID")
@@ -92,8 +81,6 @@ namespace BuzzardWPF.ViewModels
                 }
             }
         }
-
-        #endregion
     }
 
     public class EnableProposalIDConverter

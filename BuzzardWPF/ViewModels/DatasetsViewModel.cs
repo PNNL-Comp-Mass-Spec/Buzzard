@@ -21,8 +21,6 @@ namespace BuzzardWPF.ViewModels
     {
         // Ignore Spelling: ds, Filldown
 
-        #region Attributes
-
         private readonly FilldownBuzzardDataset fillDownDataset = new FilldownBuzzardDataset();
 
         private readonly ObservableAsPropertyHelper<bool> canSelectDatasets;
@@ -36,9 +34,6 @@ namespace BuzzardWPF.ViewModels
         private bool showRelativeParentPathColumn;
         private bool showExtensionColumn;
 
-        #endregion
-
-        #region Initialize
         public DatasetsViewModel()
         {
             DatasetManager.Datasets.Connect().ObserveOn(RxApp.MainThreadScheduler).Bind(out var datasets).Subscribe();
@@ -126,10 +121,6 @@ namespace BuzzardWPF.ViewModels
             }
         }
 
-        #endregion
-
-        #region Properties
-
         public bool CanSelectDatasets => canSelectDatasets.Value;
         public bool DatasetSelected => datasetSelected.Value;
 
@@ -187,10 +178,6 @@ namespace BuzzardWPF.ViewModels
             get => showExtensionColumn;
             set => this.RaiseAndSetIfChanged(ref showExtensionColumn, value);
         }
-
-        #endregion
-
-        #region Event Handlers
 
         /// <summary>
         /// Clears out all the datasets from the DataGrid.
@@ -561,9 +548,6 @@ namespace BuzzardWPF.ViewModels
                 }
             }
         }
-        #endregion
-
-        #region Trigger
 
         /// <summary>
         /// Abort for the Trigger Creation Thread.
@@ -593,7 +577,5 @@ namespace BuzzardWPF.ViewModels
 
             InstrumentCriticalFiles.Instance.CopyCriticalFilesToServer();
         }
-
-        #endregion
     }
 }

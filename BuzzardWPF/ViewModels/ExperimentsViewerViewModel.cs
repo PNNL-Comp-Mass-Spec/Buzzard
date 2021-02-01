@@ -14,7 +14,6 @@ namespace BuzzardWPF.ViewModels
 {
     public class ExperimentsViewerViewModel : ReactiveObject, IDisposable
     {
-        #region Attributes
         private string filterText;
         private ExperimentData selectedExperiment;
 
@@ -23,10 +22,6 @@ namespace BuzzardWPF.ViewModels
         private readonly ObservableAsPropertyHelper<bool> experimentSelected;
         private Func<ExperimentData, string> fieldSelector = x => x.Experiment;
         private readonly IDisposable connectionDisposable;
-
-        #endregion
-
-        #region Initialization
 
         public ExperimentsViewerViewModel()
         {
@@ -62,10 +57,6 @@ namespace BuzzardWPF.ViewModels
             experimentSelected?.Dispose();
             connectionDisposable?.Dispose();
         }
-
-        #endregion
-
-        #region Properties
 
         public bool ExperimentSelected => experimentSelected.Value;
 
@@ -105,9 +96,6 @@ namespace BuzzardWPF.ViewModels
             private set => this.RaiseAndSetIfChanged(ref autoCompleteBoxItems, value);
         }
 
-        #endregion
-
-        #region Methods
         /// <summary>
         /// Gives the AutoFill box a list of times to use as its source based on the selected filter to use.
         /// </summary>
@@ -151,8 +139,6 @@ namespace BuzzardWPF.ViewModels
                 AutoCompleteBoxItems = fieldItemList;
             }
         }
-
-        #endregion
 
         public enum FilterOption
         {

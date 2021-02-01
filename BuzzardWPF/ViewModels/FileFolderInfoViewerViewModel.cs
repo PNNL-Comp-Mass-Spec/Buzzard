@@ -7,8 +7,6 @@ namespace BuzzardWPF.ViewModels
 {
     public class FileFolderInfoViewerViewModel : ReactiveObject
     {
-        #region Attributes
-
         private string m_pathName;
         private bool m_itemFound;
         private DateTime m_creationDate;
@@ -19,9 +17,6 @@ namespace BuzzardWPF.ViewModels
         private int m_folderCount;
         private int selectedTabIndex;
 
-        #endregion
-
-        #region Properties
         public int FileCount
         {
             get => m_fileCount;
@@ -76,9 +71,6 @@ namespace BuzzardWPF.ViewModels
             set => this.RaiseAndSetIfChanged(ref selectedTabIndex, value);
         }
 
-        #endregion
-
-        #region Methods
         private void UpdateViewsPage()
         {
             if (!ItemFound)
@@ -179,6 +171,5 @@ namespace BuzzardWPF.ViewModels
                 // Ignore errors here
             }
         }
-        #endregion
     }
 }

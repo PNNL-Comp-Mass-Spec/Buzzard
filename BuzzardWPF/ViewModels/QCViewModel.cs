@@ -13,7 +13,6 @@ namespace BuzzardWPF.ViewModels
 {
     public class QCViewModel : ReactiveObject, IStoredSettingsMonitor
     {
-        #region Initialize
         public QCViewModel()
         {
             isNotMonitoring = FileSystemWatcherManager.Instance.WhenAnyValue(x => x.IsMonitoring).Select(x => !x).ObserveOn(RxApp.MainThreadScheduler).ToProperty(this, x => x.IsNotMonitoring);
@@ -62,9 +61,6 @@ namespace BuzzardWPF.ViewModels
 
             this.WhenAnyValue(x => x.ExperimentName).Subscribe(x => DatasetNameMatch = x);
         }
-        #endregion
-
-        #region Properties
 
         private string experimentName;
         private readonly ObservableAsPropertyHelper<bool> isNotMonitoring;
@@ -115,10 +111,6 @@ namespace BuzzardWPF.ViewModels
 
         public bool DatasetNameMatchHasError => datasetNameMatchHasError.Value;
 
-        #endregion
-
-        #region Event Handlers
-
         /// <summary>
         /// The brings up a dialog window that lets the user choose
         /// an experiment name they wish to apply to the new datasets.
@@ -160,9 +152,6 @@ namespace BuzzardWPF.ViewModels
             Monitor.QcMonitors.Remove(SelectedQcMonitor);
         }
 
-        #endregion
-
-        #region Methods
         public bool SaveSettings(bool force = false)
         {
             if (!SettingsChanged && !force)
@@ -196,6 +185,5 @@ namespace BuzzardWPF.ViewModels
 
             SettingsChanged = false;
         }
-        #endregion
     }
 }

@@ -9,7 +9,6 @@ namespace BuzzardWPF.ViewModels
 {
     public class WatcherConfigViewModel : ReactiveObject
     {
-        #region Initialization
         public WatcherConfigViewModel()
         {
             isNotMonitoring = FileSystemWatcherManager.Instance.WhenAnyValue(x => x.IsMonitoring).Select(x => !x).ObserveOn(RxApp.MainThreadScheduler).ToProperty(this, x => x.IsNotMonitoring);
@@ -20,10 +19,6 @@ namespace BuzzardWPF.ViewModels
             SelectWorkPackageCommand = ReactiveCommand.Create(SelectWorkPackage);
             this.WhenAnyValue(x => x.WatcherMetadata.WorkPackage).Subscribe(_ => UpdateWorkPackageToolTip());
         }
-
-        #endregion
-
-        #region Properties
 
         private string workPackageToolTipText;
         private bool workPackageWarning;
@@ -61,10 +56,6 @@ namespace BuzzardWPF.ViewModels
             get => workPackageError;
             private set => this.RaiseAndSetIfChanged(ref workPackageError, value);
         }
-
-        #endregion
-
-        #region Event Handlers
 
         /// <summary>
         /// The brings up a dialog window that lets the user choose
@@ -154,7 +145,5 @@ namespace BuzzardWPF.ViewModels
 
             WorkPackageToolTipText = textData;
         }
-
-        #endregion
     }
 }

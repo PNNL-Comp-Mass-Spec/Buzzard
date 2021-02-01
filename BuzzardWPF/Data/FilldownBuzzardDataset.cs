@@ -7,7 +7,6 @@ namespace BuzzardWPF.Data
 {
     public class FilldownBuzzardDataset : BuzzardDataset, IStoredSettingsMonitor
     {
-        #region Attributes
         private bool useOperator;
         private bool useDatasetType;
         private bool useSeparationType;
@@ -23,9 +22,7 @@ namespace BuzzardWPF.Data
         private bool useInterestRating;
         private bool useEMSLProposalUser;
         private bool useWorkPackage;
-        #endregion
 
-        #region Initialize
         public FilldownBuzzardDataset()
         {
             useDatasetType = true;
@@ -57,9 +54,7 @@ namespace BuzzardWPF.Data
 
             LoadSettings();
         }
-        #endregion
 
-        #region Properties
         public bool UseLcColumn
         {
             get => useLcColumn;
@@ -139,8 +134,6 @@ namespace BuzzardWPF.Data
         }
 
         public bool SettingsChanged { get; set; }
-
-        #endregion
 
         public bool SaveSettings(bool force = false)
         {

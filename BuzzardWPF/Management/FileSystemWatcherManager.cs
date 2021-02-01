@@ -38,8 +38,6 @@ namespace BuzzardWPF.Management
             mFileSystemWatcher.Changed += SystemWatcher_Changed;
         }
 
-        #region Attributes
-
         // Thread-safe queue for queuing file system changes to check.
         private readonly ConcurrentQueue<FileSystemEventArgs> filePathsToProcess;
         // Dictionary to limit the number of "change" entries that are added to filePathsToProcess
@@ -48,10 +46,6 @@ namespace BuzzardWPF.Management
         private bool fileUpdateHandlerEnabled;
         private bool isMonitoring;
         private readonly FileSystemWatcher mFileSystemWatcher;
-
-        #endregion
-
-        #region Properties
 
         private DatasetManager DatasetManager => DatasetManager.Manager;
         private DatasetMonitor Monitor => DatasetMonitor.Monitor;
@@ -62,10 +56,6 @@ namespace BuzzardWPF.Management
             get => isMonitoring;
             private set => this.RaiseAndSetIfChanged(ref isMonitoring, value);
         }
-
-        #endregion
-
-        #region Event Handlers
 
         private void SystemWatcher_Changed(object sender, FileSystemEventArgs e)
         {
@@ -120,8 +110,6 @@ namespace BuzzardWPF.Management
                 fileUpdateHandlerEnabled = enabled;
             }
         }
-
-        #endregion
 
         private void ProcessFilePathQueue()
         {

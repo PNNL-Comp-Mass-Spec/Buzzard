@@ -5,10 +5,6 @@ namespace BuzzardWPF.ViewModels
 {
     public class ErrorMessagesViewModel : ReactiveObject
     {
-        // Ignore Spelling: Creatable
-
-        #region Initialization
-
         /// <summary>
         /// This constructor is used by ErrorMessagesView.xaml when the DataContext is defined by
         /// d:DataContext="{d:DesignInstance {x:Type viewModels:ErrorMessagesViewModel}, IsDesignTimeCreatable=True}"
@@ -25,17 +21,6 @@ namespace BuzzardWPF.ViewModels
             ErrorMessageList = errorMessages;
         }
 
-        #endregion
-
-        #region Properties
-
-        public List<string> ErrorMessageList
-        {
-            get;
-            set;
-        }
-
-        #endregion
-
+        public List<string> ErrorMessageList { get; set; }
     }
 }

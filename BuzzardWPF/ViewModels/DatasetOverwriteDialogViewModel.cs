@@ -6,12 +6,8 @@ namespace BuzzardWPF.ViewModels
 {
     public class DatasetOverwriteDialogViewModel : ReactiveObject
     {
-        #region Attributes
         private bool m_doSameToOtherConflicts;
         private bool m_skipRename;
-        #endregion
-
-        #region Initialize
 
         /// <summary>
         /// Constructor for valid design-time data context
@@ -32,9 +28,6 @@ namespace BuzzardWPF.ViewModels
             ReplaceDatasetCommand = ReactiveCommand.Create(ReplaceDataset);
             SkipDatasetCommand = ReactiveCommand.Create(SkipDataset);
         }
-        #endregion
-
-        #region Properties
 
         public ReactiveCommand<Unit, Unit> ReplaceDatasetCommand { get; }
         public ReactiveCommand<Unit, Unit> SkipDatasetCommand { get; }
@@ -56,9 +49,6 @@ namespace BuzzardWPF.ViewModels
 
         public bool Success { get; private set; }
 
-        #endregion
-
-        #region Event Handlers
         private void ReplaceDataset()
         {
             SkipDatasetRename = false;
@@ -70,6 +60,5 @@ namespace BuzzardWPF.ViewModels
             SkipDatasetRename = true;
             Success = true;
         }
-        #endregion
     }
 }

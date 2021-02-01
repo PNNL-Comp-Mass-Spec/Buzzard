@@ -17,8 +17,6 @@ namespace BuzzardWPF.ViewModels
 {
     public class SearchConfigViewModel : ReactiveObject
     {
-        #region Attributes
-
         private readonly Ookii.Dialogs.Wpf.VistaFolderBrowserDialog m_folderDialog;
         private string[] directoryPathOptions;
 
@@ -28,8 +26,6 @@ namespace BuzzardWPF.ViewModels
         private readonly ObservableAsPropertyHelper<bool> isNotMonitoring;
         private readonly ObservableAsPropertyHelper<bool> isCreatingTriggerFiles;
         private readonly ObservableAsPropertyHelper<string> searchButtonText;
-
-        #endregion
 
         /// <summary>
         /// Constructor for valid design-time data context
@@ -70,8 +66,6 @@ namespace BuzzardWPF.ViewModels
             this.WhenAnyValue(x => x.Config.DirectoryPath).ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ => SetDirectoryPathOptions());
         }
 
-        #region Properties
-
         private bool Searching
         {
             get => searching;
@@ -106,9 +100,6 @@ namespace BuzzardWPF.ViewModels
             private set => this.RaiseAndSetIfChanged(ref directoryPathOptions, value);
         }
 
-        #endregion
-
-        #region Event Handlers
         /// <summary>
         /// Handles opening a Windows Explorer window for browsing the folder.
         /// </summary>
@@ -237,7 +228,5 @@ namespace BuzzardWPF.ViewModels
         {
             Config?.ResetDateRange();
         }
-
-        #endregion
     }
 }

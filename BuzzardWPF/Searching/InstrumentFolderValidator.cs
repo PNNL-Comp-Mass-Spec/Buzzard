@@ -15,17 +15,9 @@ namespace BuzzardWPF.Searching
     {
         // Ignore Spelling: fso, secfso, ftms
 
-        #region "Member Variables"
-
         private readonly Dictionary<string, InstrumentInfo> mInstrumentInfo;
 
-        #endregion
-
-        #region "Properties"
-
         public string ErrorMessage { get; private set; }
-
-        #endregion
 
         /// <summary>
         /// Constructor

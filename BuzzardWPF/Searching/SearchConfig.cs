@@ -11,16 +11,10 @@ namespace BuzzardWPF.Searching
     /// </summary>
     public class SearchConfig : ReactiveObject, IStoredSettingsMonitor
     {
-        #region "Constants"
-
         public const int DEFAULT_MINIMUM_FILE_SIZE_KB = 100;
         public const string DEFAULT_FILE_EXTENSION = ".raw";
         public const SearchOption DEFAULT_SEARCH_DEPTH = SearchOption.TopDirectoryOnly;
         public const bool DEFAULT_MATCH_FOLDERS = true;
-
-        #endregion
-
-        #region Attributes
 
         /// <summary>
         /// Path to the directory where the files are to be searched.
@@ -39,8 +33,6 @@ namespace BuzzardWPF.Searching
         // Do not save this option to the registry / settings; always keep it off when the program starts
         private bool mDisableBaseFolderValidation;
 
-        #endregion
-
         /// <summary>
         /// Default constructor.
         /// </summary>
@@ -48,8 +40,6 @@ namespace BuzzardWPF.Searching
         {
             ResetToDefaults(true);
         }
-
-        #region "Properties"
 
         public bool SettingsChanged { get; set; }
 
@@ -174,9 +164,6 @@ namespace BuzzardWPF.Searching
             get => mMinimumSizeKB;
             set => this.RaiseAndSetIfChangedMonitored(ref mMinimumSizeKB, value);
         }
-        #endregion
-
-        #region "Public Methods"
 
         public void ResetDateRange()
         {
@@ -197,8 +184,6 @@ namespace BuzzardWPF.Searching
             MinimumSizeKB = DEFAULT_MINIMUM_FILE_SIZE_KB;
             ResetDateRange();
         }
-
-        #endregion
 
         public bool SaveSettings(bool force = false)
         {

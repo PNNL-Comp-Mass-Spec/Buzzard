@@ -16,14 +16,11 @@ namespace BuzzardWPF.ViewModels
     {
         // Ignore Spelling: Filldown
 
-        #region Attributes
         private IReadOnlyList<ProposalUser> emslProposalUsersSource;
         private string workPackageToolTipText;
         private bool workPackageWarning;
         private bool workPackageError;
         private IReadOnlyList<string> cartConfigNameListSource = new List<string>();
-
-        #endregion
 
         [Obsolete("For WPF Design-time use only", true)]
         // ReSharper disable once UnusedMember.Global
@@ -55,8 +52,6 @@ namespace BuzzardWPF.ViewModels
             UseAllCommand?.Dispose();
             UseNoneCommand?.Dispose();
         }
-
-        #region Properties
 
         public ReactiveCommand<Unit, Unit> PickExperimentCommand { get; }
         public ReactiveCommand<Unit, Unit> PickWorkPackageCommand { get; }
@@ -99,10 +94,6 @@ namespace BuzzardWPF.ViewModels
             get => workPackageError;
             private set => this.RaiseAndSetIfChanged(ref workPackageError, value);
         }
-
-        #endregion
-
-        #region Event Handlers
 
         private void UpdateWorkPackageToolTip()
         {
@@ -188,10 +179,6 @@ namespace BuzzardWPF.ViewModels
             Dataset.DmsData.WorkPackage = selectedWorkPackage.ChargeCode;
         }
 
-        #endregion
-
-        #region Methods
-
         private void UpdateProposalUsersSource()
         {
             if (Dataset.DmsData != null)
@@ -261,6 +248,5 @@ namespace BuzzardWPF.ViewModels
             // Update the allowable CartConfig names
             CartConfigNameListSource = DMS_DataAccessor.Instance.GetCartConfigNamesForCart(cartName);
         }
-        #endregion
     }
 }

@@ -91,8 +91,6 @@ namespace BuzzardWPF.Data
             }
         }
 
-        #region Property Backing Variables
-
         private int requestId;
         private string requestName;
         private string datasetName;
@@ -107,10 +105,6 @@ namespace BuzzardWPF.Data
         private string cartName;
         private string comment;
         private string commentAddition;
-
-        #endregion
-
-        #region "Properties"
 
         /// <summary>
         /// When the data comes from DMS, it will be locked. This is meant to stop the user
@@ -256,10 +250,6 @@ namespace BuzzardWPF.Data
         /// </summary>
         public string CommentAdditionPrefix { get; set; }
 
-        #endregion
-
-        #region Methods
-
         public override string ToString()
         {
             if (!string.IsNullOrWhiteSpace(DatasetName))
@@ -280,8 +270,6 @@ namespace BuzzardWPF.Data
 
             return "RequestID " + RequestID;
         }
-
-        #endregion
 
         public event PropertyChangedEventHandler PropertyChanged;
 

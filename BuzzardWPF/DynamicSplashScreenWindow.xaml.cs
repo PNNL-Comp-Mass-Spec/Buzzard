@@ -51,7 +51,6 @@ namespace BuzzardWPF
         private string version;
         private string instrumentName;
 
-        #region Properties
         public string LastLoggedItem
         {
             get => lastLoggedItem;
@@ -77,9 +76,7 @@ namespace BuzzardWPF
         }
 
         public bool IsComplete { get; private set; }
-        #endregion
 
-        #region Event Handlers
         private void ApplicationLogger_ItemLogged(int messageLevel, MessageLoggerArgs args)
         {
             try
@@ -108,7 +105,6 @@ namespace BuzzardWPF
                 ApplicationLogger.LogMessage(0, "Could not update splash screen log file path.");
             }
         }
-        #endregion
 
         public async void LoadComplete()
         {

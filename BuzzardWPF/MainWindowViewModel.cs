@@ -22,8 +22,6 @@ namespace BuzzardWPF
     {
         // Ignore Spelling: Bionet
 
-        #region Constants
-
         /// <summary>
         /// Default error level
         /// </summary>
@@ -39,10 +37,6 @@ namespace BuzzardWPF
         public const int DMS_UPDATE_INTERVAL_MINUTES = 10;
 
         public const string DEFAULT_TRIGGER_FOLDER_PATH = @"\\proto-5\BionetXfer\Run_Complete_Trigger";
-
-        #endregion
-
-        #region "Member Variables"
 
         /// <summary>
         /// This helps alert the user the system is in monitoring mode.
@@ -69,10 +63,6 @@ namespace BuzzardWPF
         private bool remoteFolderLocationIsEnabled;
         private readonly Timer settingsSaveTimer;
         private readonly ObservableAsPropertyHelper<bool> isNotMonitoring;
-
-        #endregion
-
-        #region Initialize
 
         public MainWindowViewModel()
         {
@@ -142,10 +132,6 @@ namespace BuzzardWPF
             m_animationImages = m_images;
             CurrentImage = m_animationImages[0];
         }
-
-        #endregion
-
-        #region Properties
 
         public ReactiveCommand<Unit, Unit> UseDefaultTriggerFileLocationCommand { get; }
         public ReactiveCommand<Unit, Unit> SelectTriggerFileLocationCommand { get; }
@@ -234,8 +220,6 @@ namespace BuzzardWPF
             set => this.RaiseAndSetIfChanged(ref m_lastStatusMessage, value);
         }
 
-        #endregion
-
         private void ApplicationLogger_Error(int errorLevel, ErrorLoggerArgs args)
         {
             if (errorLevel > ErrorLevel)
@@ -281,8 +265,6 @@ namespace BuzzardWPF
         {
             ApplicationLogger_Message(msgLevel, args);
         }
-
-        #region Searching
 
         /// <summary>
         /// Registers the searcher for new files.
@@ -387,10 +369,6 @@ namespace BuzzardWPF
         {
             LastStatusMessage = "";
         }
-
-        #endregion
-
-        #region Event Handlers
 
         /// <summary>
         /// Will set the CurrentImage value with the next image in the buzzard
@@ -498,8 +476,6 @@ namespace BuzzardWPF
                 CurrentImage = m_animationImages[0];
             }
         }
-
-        #endregion
 
         private void SelectTriggerFileLocation()
         {
