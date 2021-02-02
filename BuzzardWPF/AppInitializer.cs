@@ -39,7 +39,7 @@ namespace BuzzardWPF
         /// Loads the application settings.
         /// </summary>
         /// <returns>An object that holds the application settings.</returns>
-        private static void LoadSettings()
+        private static List<Tuple<string, Exception>> LoadSettings()
         {
             // Note that settings are persisted in file user.config in a randomly named folder below %userprofile%\appdata\local
             // For example:
@@ -54,47 +54,17 @@ namespace BuzzardWPF
                 Properties.Settings.Default.SettingsUpgradeRequired = false;
             }
 
-            foreach (SettingsProperty currentProperty in Properties.Settings.Default.Properties)
+            if (string.IsNullOrWhiteSpace(Properties.Settings.Default.TriggerFileFolder))
             {
-                var propertyName = currentProperty.Name;
-                var propertyValue = string.Empty;
-
-                if (Properties.Settings.Default[propertyName] != null)
-                {
-                    propertyValue = Properties.Settings.Default[propertyName].ToString();
-                }
-
-                if (propertyName == LCMSSettings.PARAM_TRIGGERFILEFOLDER && string.IsNullOrWhiteSpace(propertyValue))
-                {
-                    propertyValue = BuzzardSettingsViewModel.DEFAULT_TRIGGER_FOLDER_PATH;
-                    Properties.Settings.Default[propertyName] = propertyValue;
-                }
-
-                LCMSSettings.SetParameter(propertyName, propertyValue);
+                Properties.Settings.Default.TriggerFileFolder = BuzzardSettingsViewModel.DEFAULT_TRIGGER_FOLDER_PATH;
             }
 
-            // Assure that parameter ApplicationDataPath is defined
-            if (string.IsNullOrWhiteSpace(LCMSSettings.GetParameter(LCMSSettings.PARAM_APPLICATIONDATAPATH)))
-            {
-                var appDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "Buzzard");
-                LCMSSettings.SetParameter(LCMSSettings.PARAM_APPLICATIONDATAPATH, appDataDirectory);
-            }
-
-            // Add path to executable as a saved setting
-            var entryAssembly = Assembly.GetEntryAssembly();
-
-            if (entryAssembly == null)
-            {
-                ApplicationLogger.LogMessage(0, "Could not determine the entry assembly; cannot load saved settings");
-            }
-            else
-            {
-                var exeInfo = new FileInfo(entryAssembly.Location);
-                LCMSSettings.SetParameter("ApplicationPath", exeInfo.DirectoryName);
-            }
+            var loadErrors = LCMSSettings.LoadSettings(Properties.Settings.Default);
 
             Properties.Settings.Default.PropertyChanged += (sender, args) =>
                 LCMSSettings.SetParameter(args.PropertyName, Properties.Settings.Default[args.PropertyName]?.ToString());
+
+            return loadErrors;
         }
 
         /// <summary>
@@ -151,6 +121,14 @@ namespace BuzzardWPF
         /// </summary>
         public static async Task<bool> InitializeApplication(Window displayWindow, Action<string> instrumentNameAction = null)
         {
+            PersistDataPaths.SetAppName("Buzzard");
+
+            // Load settings first - may include custom paths for log files and cache information
+            var settingsErrors = LoadSettings();
+
+            // Start up the threaded logging
+            ApplicationLogger.StartUpLogging();
+
             var openMainWindow = false;
 
             CreatePath("Log");
@@ -162,11 +140,7 @@ namespace BuzzardWPF
                 return true;
             }
 
-            const string name = "Buzzard";
-            FileLogger.AppFolder = name;
-            PersistDataPaths.SetAppName(name);
-
-            SQLiteTools.Initialize(name, "BuzzardCache.que");
+            SQLiteTools.Initialize("BuzzardCache.que");
             //SQLiteTools.SetCacheLocation("BuzzardCache.que");
             SQLiteTools.BuildConnectionString(false);
             SQLiteTools.DisableInMemoryCaching = true;
@@ -182,10 +156,19 @@ namespace BuzzardWPF
             LogMachineInformation();
             ApplicationLogger.LogMessage(0, "[Log]");
 
-            // Load settings
-            ApplicationLogger.LogMessage(-1, "Loading settings");
-
-            LoadSettings();
+            // Report any settings loading errors that were encountered
+            if (settingsErrors.Count > 0)
+            {
+                ApplicationLogger.LogMessage(-1, "Settings load errors:");
+                foreach (var error in settingsErrors)
+                {
+                    ApplicationLogger.LogError(0, error.Item1, error.Item2);
+                }
+            }
+            else
+            {
+                ApplicationLogger.LogMessage(-1, "Loaded user settings");
+            }
 
             var instName = LCMSSettings.GetParameter("InstName");
             if (instName != null)

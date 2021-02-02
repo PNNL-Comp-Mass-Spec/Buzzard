@@ -89,6 +89,11 @@
             Numeric ID of request in DMS
             </summary>
         </member>
+        <member name="P:LcmsNetData.Data.IDmsData.InstrumentGroup">
+            <summary>
+            Instrument group specified in DMS for the request (only used when <see cref="P:LcmsNetData.Data.IDmsData.RequestID"/> &gt; 0)
+            </summary>
+        </member>
         <member name="P:LcmsNetData.Data.IDmsData.Experiment">
             <summary>
             Experiment name
@@ -182,6 +187,11 @@
             User-friendly name used for pick lists
             </summary>
             <remarks>Instrument name, then a space, then the instrument description</remarks>
+        </member>
+        <member name="P:LcmsNetData.Data.InstrumentInfo.InstrumentGroup">
+            <summary>
+            Instrument grouping in DMS (a rough 'instrument class/type' specification)
+            </summary>
         </member>
         <member name="P:LcmsNetData.Data.InstrumentInfo.CaptureMethod">
             <summary>
@@ -727,6 +737,49 @@
             is not defined or if it cannot be converted to a double
             </returns>
         </member>
+        <member name="M:LcmsNetData.LCMSSettings.LoadSettings(System.Configuration.ApplicationSettingsBase,System.Collections.Specialized.NameValueCollection,System.Boolean)">
+             <summary>
+             Loads settings into <see cref="T:LcmsNetData.LCMSSettings"/>, with some settings allowed to override others. All logging is to the returned list.
+             </summary>
+             <param name="settings">Collection of settings for the application, usually the Application default-style 'Settings' class</param>
+             <param name="overridingSettings">Collection of settings that override the settings in <paramref name="settings"/>, usually from something like 'ConfigurationManager.AppSettings' (this can come from a file specified in 'app.config')</param>
+             <param name="allowOverridingUserSettings">If false, <paramref name="overridingSettings"/> entries that override user-scope settings will be ignored and reported via the returned list. If true, they will override user-scope settings.</param>
+             <returns>Errors/log entries that occurred while loading settings</returns>
+             <remarks>
+             Some examples of sources for <paramref name="overridingSettings"/>:<br />
+             in app.config/configuration/configSections:<br />
+             <code>
+             &lt;section name="developerAppSettings" type="System.Configuration.NameValueFileSectionHandler, System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"/&gt;<br />
+             </code>
+             <br />
+             in app.config/configuration:<br />
+             <code>
+             &lt;appSettings file="LcmsNet_PersistentSettings.config"/&gt;<br />
+             &lt;developerAppSettings file="LcmsNet_DeveloperSettings.config"/&gt;<br />
+             </code>
+            <br />
+             LcmsNet_PersistentSettings.config:<br />
+             <code>
+             &lt;appSettings&gt;<br />
+               &lt;add key="CartName" value="No_Cart" /&gt;<br />
+             &lt;/appSettings&gt;<br />
+             </code>
+            <br />
+             LcmsNet_DeveloperSettings.config:<br />
+             <code>
+             &lt;developerAppSettings&gt;<br />
+               &lt;add key="CartName" value="(none)" /&gt;<br />
+             &lt;/developerAppSettings&gt;<br />
+             </code>
+            <br />
+             To load them into the program:<br />
+             <code>
+             var persistentSettings = ConfigurationManager.AppSettings;<br />
+             var devSettings = (NameValueCollection)(ConfigurationManager.GetSection("developerAppSettings"));<br />
+             // ... (Choosing logic for using persistentSettings or devSettings)<br />
+             </code>
+             </remarks>
+        </member>
         <member name="T:LcmsNetData.Logging.ApplicationLogger">
             <summary>
             Class that marshals messages from different components to different logging and streaming capabilities.
@@ -897,11 +950,6 @@
             </summary>
         </member>
         <member name="P:LcmsNetData.Logging.FileLogger.LogPath">
-            <summary>
-            Gets the file log path.
-            </summary>
-        </member>
-        <member name="P:LcmsNetData.Logging.FileLogger.AppFolder">
             <summary>
             Gets the file log path.
             </summary>
@@ -1150,9 +1198,14 @@
             The directory where the exe file is located, and where data may have been persisted before
             </summary>
         </member>
+        <member name="P:LcmsNetData.System.PersistDataPaths.LocalDataPath">
+            <summary>
+            Gets the local data storage path; if the settings file does not contain a value for "LocalDataPath", defaults to %AppData%\[AppName]
+            </summary>
+        </member>
         <member name="P:LcmsNetData.System.PersistDataPaths.ProgramDataPath">
             <summary>
-            Path to the ProgramData directory for this program
+            Program data path; here for compatibility
             </summary>
         </member>
         <member name="M:LcmsNetData.System.PersistDataPaths.GetFileSavePath(System.String)">

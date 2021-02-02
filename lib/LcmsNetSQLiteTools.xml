@@ -116,11 +116,10 @@
             </summary>
             <remarks>Starts off as a filename, but is changed to a path by BuildConnectionString</remarks>
         </member>
-        <member name="M:LcmsNetSQLiteTools.SQLiteCacheIO.Initialize(System.String,System.String)">
+        <member name="M:LcmsNetSQLiteTools.SQLiteCacheIO.Initialize(System.String)">
             <summary>
-            Initialize the cache, with the provided app name and cache filename
+            Initialize the cache, with the provided cache filename
             </summary>
-            <param name="appDataFolderName"></param>
             <param name="cacheName"></param>
         </member>
         <member name="M:LcmsNetSQLiteTools.SQLiteCacheIO.GetConnection(System.String)">
@@ -432,11 +431,10 @@
             Constructor
             </summary>
         </member>
-        <member name="M:LcmsNetSQLiteTools.SQLiteTools.Initialize(System.String,System.String)">
+        <member name="M:LcmsNetSQLiteTools.SQLiteTools.Initialize(System.String)">
             <summary>
-            Initialize the cache, with the provided app name and cache filename
+            Initialize the cache, with the provided cache filename
             </summary>
-            <param name="appDataFolderName"></param>
             <param name="cacheName"></param>
         </member>
         <member name="M:LcmsNetSQLiteTools.SQLiteTools.CloseConnection">

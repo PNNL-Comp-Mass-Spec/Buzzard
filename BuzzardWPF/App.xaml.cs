@@ -156,9 +156,6 @@ namespace BuzzardWPF
             // Block until the splash screen is displayed
             resetSplashCreated.WaitOne();
 
-            // Start up the threaded logging
-            ApplicationLogger.StartUpLogging();
-
             var openMainWindow = AppInitializer.InitializeApplication(splashScreen, splashScreen.SetInstrumentName).Result;
             if (openMainWindow)
             {

@@ -22,6 +22,7 @@ namespace BuzzardWPF.Data
             Experiment = "";
             EMSLProposalID = "";
             RequestID = 0;
+            InstrumentGroup = "";
             RequestName = "";
             EMSLUsageType = "";
             EMSLProposalUser = "";
@@ -43,6 +44,7 @@ namespace BuzzardWPF.Data
             Experiment = "";
             EMSLProposalID = "";
             RequestID = 0;
+            InstrumentGroup = "";
             RequestName = "";
             EMSLUsageType = "";
             EMSLProposalUser = "";
@@ -60,6 +62,7 @@ namespace BuzzardWPF.Data
             Experiment = other.Experiment;
             EMSLProposalID = other.EMSLProposalID;
             RequestID = other.RequestID;
+            InstrumentGroup = other.InstrumentGroup;
             RequestName = other.RequestName;
             EMSLUsageType = other.EMSLUsageType;
             EMSLProposalUser = other.EMSLProposalUser;
@@ -92,6 +95,7 @@ namespace BuzzardWPF.Data
         }
 
         private int requestId;
+        private string instrumentGroup;
         private string requestName;
         private string datasetName;
         private string datasetType;
@@ -151,6 +155,15 @@ namespace BuzzardWPF.Data
         {
             get => requestId;
             set => this.RaiseAndSetIfChangedLockCheck(ref requestId, value, LockData, nameof(RequestID));
+        }
+
+        /// <summary>
+        /// Instrument group specified in DMS for the request (only used when <see cref="RequestID"/> &gt; 0)
+        /// </summary>
+        public string InstrumentGroup
+        {
+            get => instrumentGroup;
+            set => this.RaiseAndSetIfChangedLockCheck(ref instrumentGroup, value, LockData, nameof(InstrumentGroup));
         }
 
         /// <summary>
