@@ -8,6 +8,8 @@ namespace BuzzardWPF.Management
 {
     public sealed class TriggerFileMonitor
     {
+        private const int MaxSuccessfulTriggerFileAgeDays = 5;
+
         static TriggerFileMonitor()
         {
             Instance = new TriggerFileMonitor();
@@ -20,10 +22,16 @@ namespace BuzzardWPF.Management
 
         public static TriggerFileMonitor Instance { get; }
 
+        private DateTime lastLoadTime;
+
         /// <summary>
         /// Dictionary where keys are FileInfo objects and values are false if the file is still waiting to be processed, or True if it has been processed (is found in the Success folder)
         /// </summary>
-        private readonly ConcurrentDictionary<string, bool> triggerDirectoryContents;
+        private ConcurrentDictionary<string, bool> triggerDirectoryContents;
+
+        /// <summary>
+        /// Regex for matching/truncating the variable beginning of the trigger file name, so that we are only left with "[dataset name].xml"
+        /// </summary>
         private readonly Regex triggerFileNameDatasetNameMatch = new Regex(@"^.*?_\d{2}\.\d{2}\.\d{4}_\d{2}\.\d{2}\.\d{2}_", RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
         public void ReloadTriggerFileStates(ref string currentTask)
@@ -31,7 +39,21 @@ namespace BuzzardWPF.Management
             // We can use this to get an idea if any datasets already have trigger files that were sent.
             var triggerFileDestination = LCMSSettings.GetParameter(LCMSSettings.PARAM_TRIGGERFILEFOLDER);
 
-            triggerDirectoryContents.Clear();
+            var time = DateTime.Now;
+            if (lastLoadTime.Day != time.Day)
+            {
+                // Use 'Day' to trigger this only when the 'Day' component of the date changes.
+                // Should only trigger once per day, soon after midnight, when existing trigger files will age-out of the history we track
+                // Create a new instance - allow downsizing
+                triggerDirectoryContents = new ConcurrentDictionary<string, bool>(StringComparer.CurrentCultureIgnoreCase);
+            }
+            else
+            {
+                triggerDirectoryContents.Clear();
+            }
+
+            // Update the lastLoadTime - we've already made the decision on clearing or re-creating.
+            lastLoadTime = time;
 
             if (!string.IsNullOrWhiteSpace(triggerFileDestination))
             {
@@ -62,9 +84,14 @@ namespace BuzzardWPF.Management
                 return;
             }
 
+            var oldestDate = DateTime.Now.Date.AddDays(-MaxSuccessfulTriggerFileAgeDays);
             foreach (var file in diTriggerFolder.GetFiles("*.xml", SearchOption.TopDirectoryOnly))
             {
-                AddUpdateTriggerFile(file.FullName, inSuccessFolder);
+                // Ignore trigger files older than x days, to limit memory usage
+                if (!inSuccessFolder || file.LastWriteTime >= oldestDate)
+                {
+                    AddUpdateTriggerFile(file.FullName, inSuccessFolder);
+                }
             }
         }
 
