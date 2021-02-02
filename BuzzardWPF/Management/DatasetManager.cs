@@ -41,11 +41,6 @@ namespace BuzzardWPF.Management
         public const string QcDatasetNameRegExString = "^QC(_|-).*";
         public const string BlankDatasetNameRegExString = "^BLANK(_|-).*";
 
-        /// <summary>
-        /// Trie that holds requested run names from DMS.
-        /// </summary>
-        private readonly DatasetTrie mRequestedRunTrie;
-
         private readonly Regex BlockingProcessNamesRegEx = new Regex(BlockingProcessNamesRegExString, RegexOptions.Compiled | RegexOptions.IgnoreCase);
         private readonly Regex qcDatasetNameRegEx = new Regex(QcDatasetNameRegExString, RegexOptions.Compiled | RegexOptions.IgnoreCase);
         private readonly Regex blankDatasetNameRegEx = new Regex(BlankDatasetNameRegExString, RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -55,7 +50,6 @@ namespace BuzzardWPF.Management
         /// </summary>
         private DatasetManager()
         {
-            mRequestedRunTrie = new DatasetTrie();
         }
 
         static DatasetManager()
@@ -68,7 +62,7 @@ namespace BuzzardWPF.Management
         /// </summary>
         public SourceList<BuzzardDataset> Datasets { get; } = new SourceList<BuzzardDataset>();
 
-        public bool IsLoading { get; private set; }
+        public RequestedRunMatcher DatasetNameMatcher { get; } = new RequestedRunMatcher();
 
         public static DatasetManager Manager { get; }
 
@@ -77,12 +71,6 @@ namespace BuzzardWPF.Management
         public static TriggerFileMonitor TriggerMonitor => TriggerFileMonitor.Instance;
 
         public DatasetMonitor Monitor => DatasetMonitor.Monitor;
-
-        public DateTime RequestedRunsLastUpdated
-        {
-            get => requestedRunsLastUpdated;
-            private set => this.RaiseAndSetIfChanged(ref requestedRunsLastUpdated, value);
-        }
 
         /// <summary>
         /// This value tells the DatasetManager whether or not
@@ -105,8 +93,6 @@ namespace BuzzardWPF.Management
 
         private string triggerFileLocation;
         private bool includeArchivedItems;
-        private DateTime requestedRunsLastUpdated;
-        private readonly object lockObject = new object();
 
         public string TriggerFileLocation
         {
@@ -121,68 +107,6 @@ namespace BuzzardWPF.Management
         }
 
         public WatcherMetadata WatcherMetadata { get; } = new WatcherMetadata();
-
-        public async Task LoadRequestedRunsCache()
-        {
-            lock (lockObject)
-            {
-                if (IsLoading)
-                {
-                    return;
-                }
-
-                IsLoading = true;
-            }
-
-            await Task.Run(LoadRequestedRuns).ConfigureAwait(false);
-
-            lock (lockObject)
-            {
-                IsLoading = false;
-            }
-        }
-
-        /// <summary>
-        /// Loads active requested runs from DMS
-        /// </summary>
-        public void LoadRequestedRuns()
-        {
-            var currentTask = "Initializing";
-
-            try
-            {
-                // Load the samples (essentially requested runs) from DMS
-                currentTask = "Retrieving samples (requested runs) from DMS";
-                var samples = DMS_DataAccessor.Instance.LoadDMSRequestedRuns();
-
-                currentTask = "Populating mRequestedRunTrie";
-
-                bool requestedRunsUpdated;
-                lock (mRequestedRunTrie)
-                {
-                    requestedRunsUpdated = mRequestedRunTrie.LoadData(samples);
-                }
-
-                // We can use this to get an idea if any datasets already have trigger files that were sent.
-                currentTask = "Examine the trigger file folder";
-                TriggerMonitor.ReloadTriggerFileStates(ref currentTask);
-
-                if (requestedRunsUpdated)
-                {
-                    currentTask = "Raise event DatasetsLoaded";
-                    var lastUpdatedTime = DateTime.Now;
-                    RxApp.MainThreadScheduler.Schedule(() => RequestedRunsLastUpdated = lastUpdatedTime);
-                }
-            }
-            catch (Exception ex)
-            {
-                ApplicationLogger.LogError(LogLevel.Error, "Error loading data, task " + currentTask + ": " + ex.Message, ex);
-            }
-
-            // Force a garbage collection to try to clean up the freed memory from the trie
-            GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
-            GC.Collect(int.MaxValue, GCCollectionMode.Forced, true, true);
-        }
 
         /// <summary>
         /// Creates trigger files based on the dataset data sent
@@ -342,51 +266,7 @@ namespace BuzzardWPF.Management
 
             try
             {
-                var fileName = Path.GetFileNameWithoutExtension(fiDataset.Name);
-                datasetName = fileName;
-
-                DMSData data = null;
-
-                lock (mRequestedRunTrie)
-                {
-                    try
-                    {
-                        data = mRequestedRunTrie.FindData(fileName);
-                    }
-                    catch (DatasetTrieException ex)
-                    {
-                        // Not found
-                        // Get the path name of the directory, then use that as the "search string for dms"
-                        if (fiDataset.Directory != null)
-                        {
-                            fileName = Path.GetFileName(fiDataset.Directory.Name);
-
-                            try
-                            {
-                                data = mRequestedRunTrie.FindData(fileName);
-                            }
-                            catch (DatasetTrieException)
-                            {
-                                // No match to the folder name
-                                if (ex.SearchDepth >= SEARCH_DEPTH_AMBIGUOUS_MATCH)
-                                {
-                                    throw new DatasetTrieException(ex.Message, ex.SearchDepth, ex.DatasetName, ex);
-                                }
-
-                                throw;
-                            }
-
-                            // Match found to the directory name; update the dataset name
-                            datasetName = fileName;
-                        }
-                    }
-                }
-
-                if (data == null)
-                {
-                    // The Trie didn't find the dataset but for some reason didn't throw an exception. Throw one here to avoid a NullReferenceException.
-                    throw new DatasetTrieException("Dataset not found in Trie.", 0, fileName);
-                }
+                var data = DatasetNameMatcher.MatchDatasetName(fiDataset, out datasetName);
 
                 // Cache the cart name and cart config name
                 var cartName = dataset.DmsData.CartName;
@@ -879,6 +759,7 @@ namespace BuzzardWPF.Management
         public void Dispose()
         {
             Monitor.Dispose();
+            DatasetNameMatcher.Dispose();
         }
     }
 }

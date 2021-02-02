@@ -356,7 +356,7 @@ namespace BuzzardWPF
             try
             {
                 // Load active requested runs from DMS
-                await DatasetManager.Manager.LoadRequestedRunsCache().ConfigureAwait(false);
+                await DatasetManager.Manager.DatasetNameMatcher.LoadRequestedRunsCache().ConfigureAwait(false);
 
                 // Set a flag to indicate that the main window can now be shown
                 openMainWindow = true;

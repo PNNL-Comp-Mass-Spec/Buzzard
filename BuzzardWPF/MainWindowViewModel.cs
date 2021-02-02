@@ -34,8 +34,6 @@ namespace BuzzardWPF
         /// <remarks>Log levels are 0 to 5, where 0 is most important and 5 is least important</remarks>
         public const int CONST_DEFAULT_MESSAGE_LOG_LEVEL = 5;
 
-        public const int DMS_UPDATE_INTERVAL_MINUTES = 10;
-
         public const string DEFAULT_TRIGGER_FOLDER_PATH = @"\\proto-5\BionetXfer\Run_Complete_Trigger";
 
         /// <summary>
@@ -52,11 +50,6 @@ namespace BuzzardWPF
         private string m_lastStatusMessage;
 
         private bool m_firstTimeLoading;
-
-        /// <summary>
-        /// This timer will call DatasetManager.LoadRequestedRuns every 10 minutes
-        /// </summary>
-        private readonly Timer m_dmsCheckTimer;
 
         private BitmapImage m_CurrentImage;
 
@@ -83,8 +76,6 @@ namespace BuzzardWPF
 
             m_animationTimer = new Timer(Animation_Tick, this, Timeout.Infinite, Timeout.Infinite);
             animationEnabled = false;
-
-            m_dmsCheckTimer = new Timer(DMSCheckTimer_Tick, this, TimeSpan.FromMinutes(DMS_UPDATE_INTERVAL_MINUTES), TimeSpan.FromMinutes(DMS_UPDATE_INTERVAL_MINUTES));
 
             RegisterSearcher(new FileSearchBuzzardier(DMS_DataAccessor.Instance.InstrumentDetails));
             SearchConfigVm = new SearchConfigViewModel(m_buzzadier);
@@ -515,30 +506,11 @@ namespace BuzzardWPF
             RemoteFolderLocationIsEnabled = false;
         }
 
-        private async void DMSCheckTimer_Tick(object state)
-        {
-            if (DatasetManager.IsLoading)
-            {
-                return;
-            }
-
-            // Load active requested runs from DMS
-            await DatasetManager.LoadRequestedRunsCache().ConfigureAwait(false);
-
-            // Do not call DMS_DataAccessor.Instance.UpdateCacheNow()
-            // That class has its own timer for updating the data
-        }
-
         private async Task ForceDmsReload()
         {
-            if (DatasetManager.IsLoading)
-            {
-                return;
-            }
-
             // Load active requested runs from DMS
             // Run this first, so that the SQLite cache update can garbage collect from this method.
-            await DatasetManager.LoadRequestedRunsCache().ConfigureAwait(false);
+            await DatasetManager.DatasetNameMatcher.LoadRequestedRunsCache().ConfigureAwait(false);
 
             // Also force an update on DMS_DataAccessor.Instance
             await DMS_DataAccessor.Instance.UpdateCacheNow().ConfigureAwait(false);
@@ -589,7 +561,6 @@ namespace BuzzardWPF
         public void Dispose()
         {
             m_animationTimer?.Dispose();
-            m_dmsCheckTimer?.Dispose();
             settingsSaveTimer?.Dispose();
             isNotMonitoring?.Dispose();
             UseDefaultTriggerFileLocationCommand?.Dispose();

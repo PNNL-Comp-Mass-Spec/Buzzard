@@ -117,6 +117,7 @@
     <Compile Include="Management\QcMonitorData.cs" />
     <Compile Include="Management\RenameDataRequest.cs" />
     <Compile Include="Management\RequestedRun.cs" />
+    <Compile Include="Management\RequestedRunMatcher.cs" />
     <Compile Include="Management\TriggerFileCreationManager.cs" />
     <Compile Include="Management\TriggerFileMonitor.cs" />
     <Compile Include="Management\ViewModelCache.cs" />

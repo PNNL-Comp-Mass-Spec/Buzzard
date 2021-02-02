@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:buzzardWpf="clr-namespace:BuzzardWPF"
     xmlns:views="clr-namespace:BuzzardWPF.Views"
+    xmlns:management="clr-namespace:BuzzardWPF.Management"
     Title="{Binding Title}"
     Width="1200"
     Height="800"
@@ -266,10 +267,10 @@
                             <TextBlock Grid.Row="1" Grid.Column="1" Margin="3" HorizontalAlignment="Left" Foreground="Gray" Text="{Binding DMSData.LastLoadFromSqliteCache, Mode=OneWay}" />
 
                             <TextBlock Grid.Row="2" Grid.Column="0" Margin="3" HorizontalAlignment="Left" Foreground="Gray" Text="Requested Runs loaded from DMS: " />
-                            <TextBlock Grid.Row="2" Grid.Column="1" Margin="3" HorizontalAlignment="Left" Foreground="Gray" Text="{Binding DatasetManager.RequestedRunsLastUpdated, Mode=OneWay}" />
+                            <TextBlock Grid.Row="2" Grid.Column="1" Margin="3" HorizontalAlignment="Left" Foreground="Gray" Text="{Binding DatasetManager.DatasetNameMatcher.RequestedRunsLastUpdated, Mode=OneWay}" />
                             <TextBlock Grid.Row="2" Grid.Column="2" Margin="3" HorizontalAlignment="Left" Foreground="Gray">
                                 <Run Text="(every" />
-                                <Run Text="{Binding Mode=OneWay, Source={x:Static buzzardWpf:MainWindowViewModel.DMS_UPDATE_INTERVAL_MINUTES}}" />
+                                <Run Text="{Binding Mode=OneWay, Source={x:Static management:RequestedRunMatcher.RequestedRunsUpdateIntervalMinutes}}" />
                                 <Run Text="minutes)" />
                             </TextBlock>
                         </Grid>
