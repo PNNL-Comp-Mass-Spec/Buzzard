@@ -129,6 +129,7 @@
     <Compile Include="Searching\IBuzzadier.cs" />
     <Compile Include="Searching\InstrumentFolderValidator.cs" />
     <Compile Include="Searching\SearchConfig.cs" />
+    <Compile Include="UpdateChecker.cs" />
     <Compile Include="Utility\IgnoreCaseStringComparison.cs" />
     <Compile Include="ViewModels\BuzzardSettingsViewModel.cs" />
     <Compile Include="ViewModels\DatasetOverwriteDialogViewModel.cs" />

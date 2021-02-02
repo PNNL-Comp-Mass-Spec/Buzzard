@@ -36,6 +36,8 @@
             <Setter Property="MinWidth" Value="75" />
             <Setter Property="MinHeight" Value="25" />
         </Style>
+
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
     </Window.Resources>
 
     <!--  UI Elements  -->
@@ -95,6 +97,20 @@
                     </TransformGroup>
                 </Label.RenderTransform>
             </Label>
+            <Button VerticalAlignment="Top" HorizontalAlignment="Right" Background="Yellow" ToolTip="Click here to install!" Visibility="{Binding SettingsVm.NewVersionAvailable, Converter={StaticResource BoolToVis}}" Command="{Binding RunUpdatePromptCommand}">
+                <!--<StackPanel Margin="5,2" Orientation="Vertical">
+                    <TextBlock HorizontalAlignment="Center" Margin="0" Text="Update Available!" />
+                    <TextBlock HorizontalAlignment="Center" Margin="0" >
+                        <Run Text="Version" />
+                        <Run Text="{Binding SettingsVm.NewVersionText, Mode=OneWay}" />
+                    </TextBlock>
+                </StackPanel>-->
+                <TextBlock Margin="5,2" HorizontalAlignment="Center">
+                    <Run Text="Update Available!" />
+                    <Run Text="Version" />
+                    <Run Text="{Binding SettingsVm.NewVersionText, Mode=OneWay}" />
+                </TextBlock>
+            </Button>
         </Grid>
 
         <Grid Grid.Row="1" VerticalAlignment="Stretch">

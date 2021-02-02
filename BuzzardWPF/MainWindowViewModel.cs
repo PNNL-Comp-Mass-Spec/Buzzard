@@ -83,6 +83,8 @@ namespace BuzzardWPF
 
             // Auto-save settings every 5 minutes, on a background thread
             settingsSaveTimer = new Timer(SaveSettings_Tick, this, TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(5));
+
+            RunUpdatePromptCommand = ReactiveCommand.Create(PromptForUpdate);
         }
 
         /// <summary>
@@ -116,6 +118,8 @@ namespace BuzzardWPF
         public QCViewModel QCVm { get; } = new QCViewModel();
         public BuzzardSettingsViewModel SettingsVm { get; }
         public DatasetManager DatasetManager => DatasetManager.Manager;
+
+        public ReactiveCommand<Unit, Unit> RunUpdatePromptCommand { get; }
 
         /// <summary>
         /// Error message importance level (0 is most important, 5 is least important)
@@ -427,11 +431,22 @@ namespace BuzzardWPF
             }
         }
 
+        private void PromptForUpdate()
+        {
+            var upgrading = UpdateChecker.PromptToInstallNewVersionIfExists(Application.Current.MainWindow);
+            if (upgrading)
+            {
+                FileSystemWatcherManager.Instance.StopWatching();
+                Application.Current.MainWindow?.Close();
+            }
+        }
+
         public void Dispose()
         {
             m_animationTimer?.Dispose();
             settingsSaveTimer?.Dispose();
             isNotMonitoring?.Dispose();
+            RunUpdatePromptCommand?.Dispose();
         }
     }
 }

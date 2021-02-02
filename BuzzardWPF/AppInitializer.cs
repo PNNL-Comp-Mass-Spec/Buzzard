@@ -22,8 +22,6 @@ namespace BuzzardWPF
 
         public static string AssemblyDate { get; }
 
-        private const string DefaultInstallerFolder = @"\\proto-5\BionetSoftware\Buzzard";
-
         static AppInitializer()
         {
             AssemblyDate = "";
@@ -149,104 +147,6 @@ namespace BuzzardWPF
         }
 
         /// <summary>
-        /// Check for a new version
-        /// </summary>
-        /// <param name="installerFolderPath"></param>
-        /// <param name="isTestDir"></param>
-        /// <param name="currentWindow"></param>
-        /// <returns>
-        /// True if a new version exists and the user launched the installer
-        /// In that case, this program will exit, thus allowing the installer to complete successfully
-        /// </returns>
-        private static bool CheckForNewVersion(string installerFolderPath = DefaultInstallerFolder, bool isTestDir = false, Window currentWindow = null)
-        {
-            if (isTestDir && DefaultInstallerFolder.Equals(installerFolderPath))
-            {
-                installerFolderPath = Path.Combine(DefaultInstallerFolder, "Testing");
-            }
-
-            try
-            {
-                var diInstallerFolder = new DirectoryInfo(installerFolderPath);
-
-                if (!diInstallerFolder.Exists)
-                {
-                    return false;
-                }
-
-                // Look for one or more installers; keep the newest one
-                var installers = diInstallerFolder.GetFiles("Buzzard*PNNL*.exe").OrderByDescending(info => info.LastWriteTimeUtc).ToList();
-                if (installers.Count == 0)
-                {
-                    return false;
-                }
-
-                var fiInstaller = installers.FirstOrDefault();
-
-                if (fiInstaller == null)
-                {
-                    return false;
-                }
-
-                var fileVersionInfo = FileVersionInfo.GetVersionInfo(fiInstaller.FullName);
-
-                var fileVersion = fileVersionInfo.FileVersion.Trim();
-
-                if (string.IsNullOrWhiteSpace(fileVersion))
-                {
-                    return false;
-                }
-
-                var installerVersion = new Version(fileVersionInfo.FileMajorPart, fileVersionInfo.FileMinorPart, fileVersionInfo.FileBuildPart, fileVersionInfo.FilePrivatePart);
-
-                var assembly = Assembly.GetExecutingAssembly();
-                var versionRunning = assembly.GetName().Version.ToString();
-
-                if (string.IsNullOrWhiteSpace(versionRunning))
-                {
-                    return false;
-                }
-
-                var runningVersion = assembly.GetName().Version;
-
-                if (installerVersion > runningVersion)
-                {
-                    var updateMsg = "A new version of Buzzard is available at " + installerFolderPath + "; Install the new version now?";
-                    updateMsg += $"\n\nCurrent Version:\t{runningVersion}\nNew Version:\t{installerVersion}" + (isTestDir ? " (TESTING)" : "");
-
-                    MessageBoxResult eResponse;
-                    if (currentWindow != null)
-                    {
-                        eResponse = currentWindow.ShowMessage(updateMsg, "Upgrade Advised", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
-                    }
-                    else
-                    {
-                        eResponse = MessageBox.Show(updateMsg, "Upgrade Advised", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
-                    }
-
-                    if (eResponse == MessageBoxResult.Yes)
-                    {
-                        // Launch the installer
-                        // First need to copy it locally (since running over the network fails on some of the computers)
-
-                        LaunchTheInstaller(fiInstaller);
-
-                        return true;
-                    }
-                }
-
-                // This version is user; stop comparing to the installer
-                return false;
-            }
-            catch (Exception ex)
-            {
-                ApplicationLogger.LogMessage(0, "Error checking for a new version: " + ex.Message);
-                System.Threading.Thread.Sleep(750);
-                return false;
-            }
-        }
-
-        /// <summary>
         /// The main entry point for the application.
         /// </summary>
         public static async Task<bool> InitializeApplication(Window displayWindow, Action<string> instrumentNameAction = null)
@@ -295,29 +195,7 @@ namespace BuzzardWPF
 
             ApplicationLogger.LogMessage(-1, "Checking for a new version");
 
-            var newVersionInstalling = false;
-            if (Properties.Settings.Default.UpgradeWithTestVersion)
-            {
-                newVersionInstalling = CheckForNewVersion(isTestDir: true, currentWindow: displayWindow);
-                if (newVersionInstalling)
-                {
-                    Properties.Settings.Default.IsTestVersion = true;
-                    Properties.Settings.Default.Save();
-                }
-            }
-
-            // If we don't get test versions, or there is not a test version available, check the default directory
-            if (!newVersionInstalling)
-            {
-                newVersionInstalling = CheckForNewVersion(currentWindow: displayWindow);
-                if (newVersionInstalling)
-                {
-                    Properties.Settings.Default.IsTestVersion = false;
-                    Properties.Settings.Default.Save();
-                }
-            }
-
-            if (newVersionInstalling)
+            if (UpdateChecker.PromptToInstallNewVersionIfExists(displayWindow))
             {
                 ApplicationLogger.LogMessage(-1, "Closing since new version is installing");
                 // Return false, meaning do not show the main window
@@ -401,33 +279,6 @@ namespace BuzzardWPF
                 "Test error message 8 - Orange"
             };
             BuzzardWPF.IO.BuzzardTriggerFileTools.ShowErrorMessages(testErrorMessages);
-        }
-
-        private static void LaunchTheInstaller(FileInfo fiInstaller)
-        {
-            var localInstallerPath = "??";
-
-            try
-            {
-                var tempFolder = Path.GetTempPath();
-                localInstallerPath = Path.Combine(tempFolder, fiInstaller.Name);
-
-                var fiLocalInstaller = new FileInfo(localInstallerPath);
-
-                fiInstaller.CopyTo(fiLocalInstaller.FullName, true);
-
-                var startInfo = new ProcessStartInfo(fiLocalInstaller.FullName)
-                {
-                    UseShellExecute = true
-                };
-
-                Process.Start(startInfo);
-            }
-            catch (Exception ex)
-            {
-                ApplicationLogger.LogMessage(0, "Error launching the installer for the new version (" + localInstallerPath + "): " + ex.Message);
-                System.Threading.Thread.Sleep(750);
-            }
         }
 
         private static void LogCriticalError(string errorMessage, Exception ex, bool showPopup = true)

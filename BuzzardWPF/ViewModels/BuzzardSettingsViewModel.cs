@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reactive;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -46,10 +47,14 @@ namespace BuzzardWPF.ViewModels
             BackupCalibrationFilesCommand = ReactiveCommand.CreateFromTask(BackupCalibrationFiles);
             OpenLogDirectoryCommand = ReactiveCommand.Create(OpenLogDirectory);
             OpenLogFileCommand = ReactiveCommand.Create(OpenLogFile);
+
+            DmsDbData.WhenAnyValue(x => x.LastSqliteCacheUpdate).ObserveOn(RxApp.TaskpoolScheduler).Throttle(TimeSpan.FromSeconds(5)).Subscribe(x => CheckForUpdate());
         }
 
         private bool remoteFolderLocationIsEnabled;
         private readonly ObservableAsPropertyHelper<bool> isNotMonitoring;
+        private bool newVersionAvailable = false;
+        private string newVersionText = "";
 
         public SearchConfigViewModel SearchConfigVm { get; }
         public DMS_DataAccessor DmsDbData => DMS_DataAccessor.Instance;
@@ -73,6 +78,18 @@ namespace BuzzardWPF.ViewModels
         /// Path to the log folder
         /// </summary>
         public string LogFolderPath => Path.GetDirectoryName(FileLogger.LogPath);
+
+        public bool NewVersionAvailable
+        {
+            get => newVersionAvailable;
+            private set => this.RaiseAndSetIfChanged(ref newVersionAvailable, value);
+        }
+
+        public string NewVersionText
+        {
+            get => newVersionText;
+            private set => this.RaiseAndSetIfChanged(ref newVersionText, value);
+        }
 
         public bool SettingsChanged { get; set; }
 
@@ -177,6 +194,16 @@ namespace BuzzardWPF.ViewModels
             process.Start();
         }
 
+        private void CheckForUpdate()
+        {
+            var updateAvailable = UpdateChecker.CheckForNewVersion(out var newVersion);
+
+            RxApp.MainThreadScheduler.Schedule(() =>
+            {
+                NewVersionAvailable = updateAvailable;
+                NewVersionText = newVersion ?? "";
+            });
+        }
 
         public bool SaveSettings(bool force = false)
         {
