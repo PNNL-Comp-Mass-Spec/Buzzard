@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using BuzzardWPF.Management;
+using BuzzardWPF.ViewModels;
 using LcmsNetData;
 using LcmsNetData.Logging;
 using LcmsNetData.System;
@@ -67,7 +68,7 @@ namespace BuzzardWPF
 
                 if (propertyName == LCMSSettings.PARAM_TRIGGERFILEFOLDER && string.IsNullOrWhiteSpace(propertyValue))
                 {
-                    propertyValue = MainWindowViewModel.DEFAULT_TRIGGER_FOLDER_PATH;
+                    propertyValue = BuzzardSettingsViewModel.DEFAULT_TRIGGER_FOLDER_PATH;
                     Properties.Settings.Default[propertyName] = propertyValue;
                 }
 

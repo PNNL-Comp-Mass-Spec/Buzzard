@@ -34,8 +34,6 @@ namespace BuzzardWPF
         /// <remarks>Log levels are 0 to 5, where 0 is most important and 5 is least important</remarks>
         public const int CONST_DEFAULT_MESSAGE_LOG_LEVEL = 5;
 
-        public const string DEFAULT_TRIGGER_FOLDER_PATH = @"\\proto-5\BionetXfer\Run_Complete_Trigger";
-
         /// <summary>
         /// This helps alert the user the system is in monitoring mode.
         /// </summary>
@@ -53,7 +51,6 @@ namespace BuzzardWPF
 
         private BitmapImage m_CurrentImage;
 
-        private bool remoteFolderLocationIsEnabled;
         private readonly Timer settingsSaveTimer;
         private readonly ObservableAsPropertyHelper<bool> isNotMonitoring;
 
@@ -79,27 +76,10 @@ namespace BuzzardWPF
 
             RegisterSearcher(new FileSearchBuzzardier(DMS_DataAccessor.Instance.InstrumentDetails));
             SearchConfigVm = new SearchConfigViewModel(m_buzzadier);
+            SettingsVm = new BuzzardSettingsViewModel(SearchConfigVm);
 
             LoadImages();
             ApplicationLogger.LogMessage(0, "Ready");
-
-            if (string.Equals(Environment.MachineName, "monroe5", StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(Environment.MachineName, "we27655", StringComparison.OrdinalIgnoreCase))
-            {
-                IsTestFolderVisible = true;
-            }
-            else
-            {
-                IsTestFolderVisible = false;
-            }
-
-            UseDefaultTriggerFileLocationCommand = ReactiveCommand.Create(UseDefaultTriggerFileLocation);
-            SelectTriggerFileLocationCommand = ReactiveCommand.Create(SelectTriggerFileLocation);
-            UseTestFolderCommand = ReactiveCommand.Create(UseTestFolder);
-            ForceDmsReloadCommand = ReactiveCommand.CreateFromTask(ForceDmsReload);
-            BackupCalibrationFilesCommand = ReactiveCommand.CreateFromTask(BackupCalibrationFiles);
-            OpenLogDirectoryCommand = ReactiveCommand.Create(OpenLogDirectory);
-            OpenLogFileCommand = ReactiveCommand.Create(OpenLogFile);
 
             // Auto-save settings every 5 minutes, on a background thread
             settingsSaveTimer = new Timer(SaveSettings_Tick, this, TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(5));
@@ -124,14 +104,6 @@ namespace BuzzardWPF
             CurrentImage = m_animationImages[0];
         }
 
-        public ReactiveCommand<Unit, Unit> UseDefaultTriggerFileLocationCommand { get; }
-        public ReactiveCommand<Unit, Unit> SelectTriggerFileLocationCommand { get; }
-        public ReactiveCommand<Unit, Unit> UseTestFolderCommand { get; }
-        public ReactiveCommand<Unit, Unit> ForceDmsReloadCommand { get; }
-        public ReactiveCommand<Unit, Unit> BackupCalibrationFilesCommand { get; }
-        public ReactiveCommand<Unit, Unit> OpenLogDirectoryCommand { get; }
-        public ReactiveCommand<Unit, Unit> OpenLogFileCommand { get; }
-
         /// <summary>
         /// Title to display in the window title bar
         /// </summary>
@@ -142,9 +114,8 @@ namespace BuzzardWPF
         public WatcherControlViewModel WatcherControlVm { get; } = new WatcherControlViewModel();
         public WatcherConfigViewModel WatcherConfigVm { get; } = new WatcherConfigViewModel();
         public QCViewModel QCVm { get; } = new QCViewModel();
+        public BuzzardSettingsViewModel SettingsVm { get; }
         public DatasetManager DatasetManager => DatasetManager.Manager;
-        public DMS_DataAccessor DMSData => DMS_DataAccessor.Instance;
-        public InstrumentCriticalFiles CriticalsBackups => InstrumentCriticalFiles.Instance;
 
         /// <summary>
         /// Error message importance level (0 is most important, 5 is least important)
@@ -178,14 +149,6 @@ namespace BuzzardWPF
             set => MessageLevel = (int)value;
         }
 
-        public bool RemoteFolderLocationIsEnabled
-        {
-            get => remoteFolderLocationIsEnabled;
-            set => this.RaiseAndSetIfChanged(ref remoteFolderLocationIsEnabled, value);
-        }
-
-        public bool IsTestFolderVisible { get; }
-
         /// <summary>
         /// Gets or sets the image source containing the current image (not Image)
         /// of the buzzard animation.
@@ -200,11 +163,6 @@ namespace BuzzardWPF
         /// Gets or sets whether the system is monitoring or not.
         /// </summary>
         public bool IsNotMonitoring => isNotMonitoring.Value;
-
-        /// <summary>
-        /// Path to the log folder
-        /// </summary>
-        public string LogFolderPath => Path.GetDirectoryName(FileLogger.LogPath);
 
         /// <summary>
         /// Gets and sets a string containing the last message or error
@@ -345,12 +303,6 @@ namespace BuzzardWPF
             DatasetManager.CreatePendingDataset(datasetFileOrFolderPath, captureSubfolderPath, config.MatchFolders);
         }
 
-        private void SetTriggerFolderToTestPath()
-        {
-            DatasetManager.TriggerFileLocation = @"E:\Run_Complete_Trigger";
-            RemoteFolderLocationIsEnabled = true;
-        }
-
         private void m_buzzadier_SearchComplete(object sender, EventArgs e)
         {
             LastStatusMessage = "Search complete";
@@ -414,6 +366,7 @@ namespace BuzzardWPF
             var settingsChanged = false;
             settingsChanged |= DatasetsVm.SaveSettings();
             settingsChanged |= QCVm.SaveSettings(force);
+            settingsChanged |= SettingsVm.SaveSettings(force);
             settingsChanged |= DatasetManager.SaveSettings(force);
             if (settingsChanged || force)
             {
@@ -441,6 +394,7 @@ namespace BuzzardWPF
                 DatasetsVm.LoadSettings();
                 DatasetManager.LoadSettings();
                 QCVm.LoadSettings();
+                SettingsVm.LoadSettings();
                 ApplicationLogger.LogMessage(0, "Finished loading settings from config.");
 
                 m_firstTimeLoading = false;
@@ -473,103 +427,11 @@ namespace BuzzardWPF
             }
         }
 
-        private void SelectTriggerFileLocation()
-        {
-            var eResult =
-                MessageBox.Show(
-                    "This path should nearly always be " + DEFAULT_TRIGGER_FOLDER_PATH + "; only change this if you are debugging the software.  Continue?",
-                    "Warning", MessageBoxButton.YesNoCancel, MessageBoxImage.Exclamation, MessageBoxResult.Cancel);
-
-            if (eResult != MessageBoxResult.Yes)
-            {
-                return;
-            }
-
-            var folderDialog = new Ookii.Dialogs.Wpf.VistaFolderBrowserDialog();
-            if (!string.IsNullOrWhiteSpace(DatasetManager.TriggerFileLocation))
-            {
-                folderDialog.SelectedPath = DatasetManager.TriggerFileLocation;
-            }
-
-            var result = folderDialog.ShowDialog();
-
-            if (result == true)
-            {
-                DatasetManager.TriggerFileLocation = folderDialog.SelectedPath;
-                RemoteFolderLocationIsEnabled = true;
-            }
-        }
-
-        private void UseDefaultTriggerFileLocation()
-        {
-            DatasetManager.TriggerFileLocation = DEFAULT_TRIGGER_FOLDER_PATH;
-            RemoteFolderLocationIsEnabled = false;
-        }
-
-        private async Task ForceDmsReload()
-        {
-            // Load active requested runs from DMS
-            // Run this first, so that the SQLite cache update can garbage collect from this method.
-            await DatasetManager.DatasetNameMatcher.LoadRequestedRunsCache().ConfigureAwait(false);
-
-            // Also force an update on DMS_DataAccessor.Instance
-            await DMS_DataAccessor.Instance.UpdateCacheNow().ConfigureAwait(false);
-        }
-
-        private async Task BackupCalibrationFiles()
-        {
-            await Task.Run(CriticalsBackups.CopyCriticalFilesToServer).ConfigureAwait(false);
-        }
-
-        private void UseTestFolder()
-        {
-            SetTriggerFolderToTestPath();
-        }
-
-        private void OpenLogDirectory()
-        {
-            var logPath = FileLogger.LogPath;
-            var logDirectory = Path.GetDirectoryName(logPath);
-            if (string.IsNullOrWhiteSpace(logDirectory))
-            {
-                logDirectory = Path.GetTempPath();
-            }
-
-            var process = new System.Diagnostics.Process
-            {
-                StartInfo = new System.Diagnostics.ProcessStartInfo {
-                    UseShellExecute = true,
-                    FileName = logDirectory
-                }
-            };
-            process.Start();
-        }
-
-        private void OpenLogFile()
-        {
-            var logPath = FileLogger.LogPath;
-            var process = new System.Diagnostics.Process
-            {
-                StartInfo = new System.Diagnostics.ProcessStartInfo {
-                    UseShellExecute = true,
-                    FileName = logPath
-                }
-            };
-            process.Start();
-        }
-
         public void Dispose()
         {
             m_animationTimer?.Dispose();
             settingsSaveTimer?.Dispose();
             isNotMonitoring?.Dispose();
-            UseDefaultTriggerFileLocationCommand?.Dispose();
-            SelectTriggerFileLocationCommand?.Dispose();
-            UseTestFolderCommand?.Dispose();
-            ForceDmsReloadCommand?.Dispose();
-            BackupCalibrationFilesCommand?.Dispose();
-            OpenLogDirectoryCommand?.Dispose();
-            OpenLogFileCommand?.Dispose();
         }
     }
 }
