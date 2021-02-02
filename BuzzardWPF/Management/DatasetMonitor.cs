@@ -392,7 +392,11 @@ namespace BuzzardWPF.Management
 
             if (!string.IsNullOrWhiteSpace(Settings.Default.WatcherQCMonitors))
             {
-                QcMonitors.AddRange(QcMonitorData.LoadSettings());
+                QcMonitors.AddRange(QcMonitorData.LoadSettings().Select(x =>
+                {
+                    ApplicationLogger.LogMessage(0, $"Loaded QC Monitor: '{x.DatasetNameMatch}'* for experiment '{x.ExperimentName}'");
+                    return x;
+                }));
             }
 
             CreateTriggerOnDMSFail = Settings.Default.WatcherCreateTriggerOnDMSFail;

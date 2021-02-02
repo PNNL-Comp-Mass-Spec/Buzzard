@@ -179,7 +179,7 @@ namespace BuzzardWPF.ViewModels
                     DatasetNameMatch = "*"
                 };
 
-                ApplicationLogger.LogMessage(0, $"Loaded QC Monitor: '{monitor.DatasetNameMatch}'* for experiment '{monitor.ExperimentName}'");
+                ApplicationLogger.LogMessage(0, $"Loaded QC Monitor: '{monitor.DatasetNameMatch}' for experiment '{monitor.ExperimentName}'");
                 Monitor.QcMonitors.Add(monitor);
             }
 
