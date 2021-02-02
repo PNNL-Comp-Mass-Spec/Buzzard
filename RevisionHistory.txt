@@ -1,5 +1,86 @@
 Buzzard Change Log
 
+Version 2.3.0.0; February 2, 2021
+	- Make the use of the date range for searching an option that is disabled by default.
+	- Update message: Add a warning if the current user is not an administrator (about clicking 'yes')
+	- Add update checks while Buzzard is running (don't just check when starting Buzzard)
+	- Make it harder to make invisible mistakes when creating QC monitors
+	- Fix setting the 'use' button for work package when clicking "use all/none" in the filldown window
+	- Code cleanup and refactor
+
+Version 2.2.1.0; November 13, 2020
+	- DMS and local share checks: try using a user-setting instrument name to match shares when the system host name does not match an instrument
+
+Version 2.2.0.4; September 30, 2020
+	- Auto-set the "ApplicationDataPath" to "C:\ProgramData\Buzzard"
+
+Version 2.2.0.3; September 30, 2020
+	- Show certain error messages in a pop-up window
+	- Code cleanup/refactor
+
+Version 2.2.0.2; August 25, 2020
+	- Fix capture subdirectory when user searches in a subdirectory of a shared directory
+
+Version 2.2.0.1; August 11, 2020
+	- Fix permissions check for 'Everyone' group, logging improvements, and some code cleanup
+
+Version 2.2.0.0; August 11, 2020
+	- Add support for the use of non-default file shares on the instrument (with share-exists and permissions checks)
+	- Update some filtered lists of data whenever new data is retrieved from DMS.
+
+Version 2.1.1.0; June 6, 2020
+	- Instrument critical files: Keep copying other files if one fails
+
+Version 2.1.0.0; June 6, 2020
+	- Automatically back up certain instrument-critical files to a share whenever trigger files are created/uploaded
+	- Update the installer
+
+Version 2.0.5.3; March 24, 2020
+	- Bugfix for matching to requested runs
+
+Version 2.0.5.2; February 29, 2020
+	- Bugfix for matching to requested runs
+
+Version 2.0.5.1; February 29, 2020
+	- Bugfix for matching to requested runs
+
+Version 2.0.5.0; February 4, 2020
+	- Only allow setting a single EMSL user for a dataset
+
+Version 2.0.4.0; January 28, 2020
+	- Code update
+
+Version 2.0.3.0; January 24, 2020
+	- Properly deal with some 'nullable' columns in DMS
+
+Version 2.0.2.0; January 22, 2020
+	- Added buttons to directly open up the current log file or log folder
+	- Log an error when loading some data from DMS fails, rather than creating a popup that MUST be acknowledged before anything else will work.
+
+Version 2.0.1.0; January 21, 2020
+	- Pull the "EMSL Usage Type" and related data (for QCs) from the 'Instrument Metadata' page instead of setting it separately
+	- Code updates
+
+Version 2.0.0.0; January 16, 2020
+	- Significant code refactor - updates, cleanup, usability improvements
+
+Version 1.9.2.5; July 11, 2019
+	- Limit the EMSL User Proposals to ones that are active or recent (much shorter list of EMSL User Proposals, and faster UI)
+	- Code cleanup and organization
+
+Version 1.9.2.4; November 8, 2019
+	- Bugfix: properly re-add EMSL Proposal Users in the filldown window
+
+Version 1.9.2.3; October 18, 2019
+	- Bugfix: Do not automatically upload QC datasets that did not match a monitor
+
+Version 1.9.2.2; September 16, 2019
+	- Fix some startup errors, and improve robustness (allow some automatic recovery/replacement of corrupted SQLite caches)
+
+Version 1.9.2.1; August 22, 2019
+	- Allow QC Monitors to match 'blank_*' datasets
+	- Only automatically mark QC datasets that matched a monitor as 'Released'
+
 Version 1.9.2.0; July 11, 2019
 	- Allow "none" as a valid work package
 
