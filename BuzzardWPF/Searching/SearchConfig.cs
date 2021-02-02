@@ -27,8 +27,9 @@ namespace BuzzardWPF.Searching
         private bool mMatchFolders;
         private int mMinimumSizeKB;
 
-        private DateTime? mStartDate;
-        private DateTime? mEndDate;
+        private bool useDateRange = false;
+        private DateTime mStartDate;
+        private DateTime mEndDate;
 
         // Do not save this option to the registry / settings; always keep it off when the program starts
         private bool mDisableBaseFolderValidation;
@@ -129,21 +130,30 @@ namespace BuzzardWPF.Searching
         }
 
         /// <summary>
-        /// Gets or sets the start of the search range
+        /// If the search will use the date range to limit results. This is not stored to the saved settings.
         /// </summary>
-        public DateTime? StartDate
+        public bool UseDateRange
         {
-            get => mStartDate;
-            set => this.RaiseAndSetIfChangedMonitored(ref mStartDate, value);
+            get => useDateRange;
+            set => this.RaiseAndSetIfChanged(ref useDateRange, value);
         }
 
         /// <summary>
-        /// Gets or sets the end of the search range
+        /// The start of the search range. This is not stored to the saved settings.
         /// </summary>
-        public DateTime? EndDate
+        public DateTime StartDate
+        {
+            get => mStartDate;
+            set => this.RaiseAndSetIfChanged(ref mStartDate, value);
+        }
+
+        /// <summary>
+        /// The end of the search range. This is not stored to the saved settings.
+        /// </summary>
+        public DateTime EndDate
         {
             get => mEndDate;
-            set => this.RaiseAndSetIfChangedMonitored(ref mEndDate, value);
+            set => this.RaiseAndSetIfChanged(ref mEndDate, value);
         }
 
         /// <summary>
@@ -194,16 +204,6 @@ namespace BuzzardWPF.Searching
 
             Settings.Default.Search_MatchFolders = MatchFolders;
 
-            if (StartDate.HasValue)
-            {
-                Settings.Default.SearchDateFrom = StartDate.Value;
-            }
-
-            if (EndDate.HasValue)
-            {
-                Settings.Default.SearchDateTo = EndDate.Value;
-            }
-
             Settings.Default.SearchExtension = FileExtension;
             Settings.Default.SearchPath = DirectoryPath;
             Settings.Default.SearchDirectoryOptions = SearchDepth;
@@ -217,8 +217,6 @@ namespace BuzzardWPF.Searching
         public void LoadSettings()
         {
             MatchFolders = Settings.Default.Search_MatchFolders;
-            StartDate = Settings.Default.SearchDateFrom;
-            EndDate = Settings.Default.SearchDateTo;
             FileExtension = Settings.Default.SearchExtension;
             DirectoryPath = Settings.Default.SearchPath;
             SearchDepth = Settings.Default.SearchDirectoryOptions;

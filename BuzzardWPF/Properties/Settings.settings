@@ -143,12 +143,6 @@
     <Setting Name="Search_MatchFolders" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="SearchDateFrom" Type="System.DateTime" Scope="User">
-      <Value Profile="(Default)">2014-01-01</Value>
-    </Setting>
-    <Setting Name="SearchDateTo" Type="System.DateTime" Scope="User">
-      <Value Profile="(Default)">2030-01-01</Value>
-    </Setting>
     <Setting Name="Searcher_IncludeArchivedItems" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>

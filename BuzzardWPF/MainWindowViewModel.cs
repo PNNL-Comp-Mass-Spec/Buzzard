@@ -211,6 +211,11 @@ namespace BuzzardWPF
         public bool IsNotMonitoring => isNotMonitoring.Value;
 
         /// <summary>
+        /// Path to the log folder
+        /// </summary>
+        public string LogFolderPath => Path.GetDirectoryName(FileLogger.LogPath);
+
+        /// <summary>
         /// Gets and sets a string containing the last message or error
         /// to get logged in the application.
         /// </summary>

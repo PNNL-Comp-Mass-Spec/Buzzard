@@ -235,14 +235,16 @@
             </DockPanel>
         </Button>
 
-        <Label
+        <CheckBox
             Grid.Row="4"
             Grid.Column="0"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
+            VerticalContentAlignment="Center"
             Content="...from date"
             FontSize="16"
-            IsEnabled="True" />
+            IsEnabled="True"
+            IsChecked="{Binding Config.UseDateRange}" />
 
         <xctk:DateTimePicker
             Grid.Row="4"
@@ -253,16 +255,16 @@
             VerticalAlignment="Center"
             HorizontalContentAlignment="Left"
             Format="ShortDate"
-            IsEnabled="True"
+            IsEnabled="{Binding Config.UseDateRange}"
             TimePickerVisibility="Hidden"
             Value="{Binding Path=Config.StartDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-        <Label
+        <TextBlock
             Grid.Row="4"
             Grid.Column="2"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            Content=".. to .."
+            Text=".. to .."
             FontSize="16"
             IsEnabled="True" />
 
@@ -275,7 +277,7 @@
             VerticalAlignment="Center"
             HorizontalContentAlignment="Left"
             Format="ShortDate"
-            IsEnabled="True"
+            IsEnabled="{Binding Config.UseDateRange}"
             TimePickerVisibility="Hidden"
             Value="{Binding Path=Config.EndDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
@@ -286,6 +288,7 @@
             Margin="5,5,0,5"
             VerticalAlignment="Center"
             HorizontalContentAlignment="Center"
+            IsEnabled="{Binding Config.UseDateRange}"
             Command="{Binding ResetDateRangeCommand}"
             Content="Reset"
             Style="{StaticResource SimpleButtonStyle}" />

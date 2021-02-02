@@ -123,14 +123,6 @@ namespace BuzzardWPF.Searching
                     return;
                 }
 
-                // If we have an ending date, then we can use the less than operator on the next day
-                // to make sure the file's DateTime is on or before the date specified.
-                var endDate = DateTime.MaxValue;
-                if (config.EndDate != null)
-                {
-                    endDate = config.EndDate.Value.Date.AddDays(1).Date;
-                }
-
                 var shouldSearchBelow = (config.SearchDepth == SearchOption.AllDirectories);
                 var extensionFilter = string.Format("*{0}", config.FileExtension);
 
@@ -270,16 +262,18 @@ namespace BuzzardWPF.Searching
                                 continue;
                             }
 
-                            // If the file predates the date-range we want, skip it.
-                            if (config.StartDate > creationDate && config.StartDate > lastWriteDate)
+                            if (config.UseDateRange)
                             {
-                                continue;
-                            }
+                                // If the file predates the date-range we want, skip it.
+                                if (config.StartDate > creationDate && config.StartDate > lastWriteDate)
+                                {
+                                    continue;
+                                }
 
-                            // If the file postdates the date-range we want, skip it.
-                            if (config.EndDate != null)
-                            {
-                                if (endDate < creationDate || endDate < lastWriteDate)
+                                // If the file postdates the date-range we want, skip it.
+                                // Use '.Date' on the file dates we check to compare the date component only
+                                // This allows us to still include (not skip) files that ended on the same day as End Date
+                                if (config.EndDate < creationDate.Date && config.EndDate < lastWriteDate.Date)
                                 {
                                     continue;
                                 }
