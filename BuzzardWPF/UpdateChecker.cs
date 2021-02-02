@@ -28,7 +28,7 @@ namespace BuzzardWPF
             var update = CheckForNewVersion();
             if (update.IsNewVersion)
             {
-                var updateMsg = "A new version of Buzzard is available at " + update.InstallerFolderPath + "; Install the new version now?";
+                var updateMsg = "A new version of Buzzard is available at " + update.InstallerFolderPath + "; Close Buzzard and install the new version now?";
                 updateMsg += $"\n\nCurrent Version:\t{update.RunningVersion}\nNew Version:\t{update.InstallerVersionText}";
                 var currentUserIsAnAdministrator = UserAdminHelper.IsUserAnAdministrator();
 
