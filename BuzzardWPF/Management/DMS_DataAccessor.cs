@@ -28,6 +28,13 @@ namespace BuzzardWPF.Management
 
         private readonly string[] interestRatingOptions = { "Unreviewed", "Not Released", "Released", "Rerun (Good Data)", "Rerun (Superseded)" };
 
+        static DMS_DataAccessor()
+        {
+            Instance = new DMS_DataAccessor();
+        }
+
+        public static DMS_DataAccessor Instance { get; }
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -75,22 +82,424 @@ namespace BuzzardWPF.Management
             autoUpdateTimer = new Timer(AutoUpdateTimer_Tick, this, Timeout.Infinite, Timeout.Infinite);
         }
 
-        public void Dispose()
+        private readonly Timer autoUpdateTimer;
+
+        private float dataRefreshIntervalHours;
+        private DateTime lastSqliteCacheUpdateUtc;
+        private DateTime lastLoadFromSqliteCacheUtc;
+        private readonly DMSDBTools dmsDbTools;
+
+        private readonly ObservableAsPropertyHelper<DateTime> lastSqliteCacheUpdate;
+        private readonly ObservableAsPropertyHelper<DateTime> lastLoadFromSqliteCache;
+
+        private readonly List<ProposalUser> proposalUsersList = new List<ProposalUser>();
+        private readonly Dictionary<string, List<UserIDPIDCrossReferenceEntry>> pidIndexedCrossReferenceList = new Dictionary<string, List<UserIDPIDCrossReferenceEntry>>();
+        private readonly Dictionary<string, IReadOnlyList<ProposalUser>> proposalUserCollections = new Dictionary<string, IReadOnlyList<ProposalUser>>();
+
+        private readonly object cacheLoadingLock = new object();
+        private bool isUpdatingCache;
+
+        /// <summary>
+        /// Key is cart name, value is list of valid cart config names for that cart.
+        /// </summary>
+        private Dictionary<string, List<string>> cartConfigNameMap = new Dictionary<string, List<string>>();
+
+        // Backing lists for collections that can be provided to the UI.
+        private readonly SourceList<string> proposalIDsSource = new SourceList<string>();
+        private readonly SourceList<string> columnDataSource = new SourceList<string>();
+        private readonly SourceList<string> instrumentDataSource = new SourceList<string>();
+        private readonly SourceList<string> operatorDataSource = new SourceList<string>();
+        private readonly SourceList<string> datasetTypesSource = new SourceList<string>();
+        private readonly SourceList<string> separationTypesSource = new SourceList<string>();
+        private readonly SourceList<string> cartNamesSource = new SourceList<string>();
+
+        private DateTime LastSqliteCacheUpdateUtc
         {
-            autoUpdateTimer?.Dispose();
-            dmsDbTools?.Dispose();
-            proposalIDsSource.Dispose();
-            columnDataSource.Dispose();
-            instrumentDataSource.Dispose();
-            operatorDataSource.Dispose();
-            datasetTypesSource.Dispose();
-            separationTypesSource.Dispose();
-            cartNamesSource.Dispose();
+            get => lastSqliteCacheUpdateUtc;
+            set => this.RaiseAndSetIfChanged(ref lastSqliteCacheUpdateUtc, value);
         }
 
-        static DMS_DataAccessor()
+        private DateTime LastLoadFromSqliteCacheUtc
         {
-            Instance = new DMS_DataAccessor();
+            get => lastLoadFromSqliteCacheUtc;
+            set => this.RaiseAndSetIfChanged(ref lastLoadFromSqliteCacheUtc, value);
+        }
+
+        public DateTime LastSqliteCacheUpdate => lastSqliteCacheUpdate.Value;
+
+        public DateTime LastLoadFromSqliteCache => lastLoadFromSqliteCache.Value;
+
+        public IReadOnlyList<string> InterestRatingCollection { get; }
+
+        public IReadOnlyList<string> EMSLUsageTypesSource { get; }
+
+        /// <summary>
+        /// Proposal IDs observable list
+        /// </summary>
+        public ReadOnlyObservableCollection<string> ProposalIDs { get; }
+
+        /// <summary>
+        /// DMS data refresh interval, in hours
+        /// </summary>
+        public float DataRefreshIntervalHours
+        {
+            get => dataRefreshIntervalHours;
+            set
+            {
+                if (value < 0.5)
+                {
+                    value = 0.5f;
+                }
+
+                dataRefreshIntervalHours = value;
+            }
+        }
+
+        /// <summary>
+        /// Observable List of DMS LC column names
+        /// </summary>
+        public ReadOnlyObservableCollection<string> ColumnData { get; }
+
+        /// <summary>
+        /// Observable List of the DMS instrument names
+        /// </summary>
+        public ReadOnlyObservableCollection<string> InstrumentData { get; }
+
+        /// <summary>
+        /// Instrument details (Name, status, source host name, source share name, capture method
+        /// </summary>
+        /// <remarks>Key is instrument name, value is the details</remarks>
+        /// <remarks>Data is pulled from DMS view V_Instrument_Info_LCMSNet</remarks>
+        public Dictionary<string, InstrumentInfo> InstrumentDetails { get; } = new Dictionary<string, InstrumentInfo>();
+
+        /// <summary>
+        /// This is an Observable list of the names of the instrument operators.
+        /// </summary>
+        public ReadOnlyObservableCollection<string> OperatorData { get; }
+
+        /// <summary>
+        /// Dataset types Observable list
+        /// </summary>
+        public ReadOnlyObservableCollection<string> DatasetTypes { get; }
+
+        /// <summary>
+        /// Separation types Observable list
+        /// </summary>
+        public ReadOnlyObservableCollection<string> SeparationTypes { get; }
+
+        /// <summary>
+        /// Cart names
+        /// </summary>
+        public ReadOnlyObservableCollection<string> CartNames { get; }
+
+        /// <summary>
+        /// Key is charge code, value is all the details
+        /// </summary>
+        public Dictionary<string, WorkPackageInfo> WorkPackageMap { get; private set; } = new Dictionary<string, WorkPackageInfo>();
+
+        public SourceList<WorkPackageInfo> WorkPackages { get; } = new SourceList<WorkPackageInfo>();
+
+        /// <summary>
+        /// List of DMS experiment names
+        /// </summary>
+        /// <remarks>
+        /// This isn't meant to be bound to directly, which is why it's a SourceList and not an ObservableCollection.
+        /// </remarks>
+        public SourceList<ExperimentData> Experiments { get; } = new SourceList<ExperimentData>();
+
+        /// <summary>
+        /// Read-only, non-observable retrieval of the CartNames collection contents
+        /// </summary>
+        public IEnumerable<string> CartNamesItems => cartNamesSource.Items;
+
+        /// <summary>
+        /// Read-only, non-observable retrieval of the DatasetTypes collection contents
+        /// </summary>
+        public IEnumerable<string> DatasetTypesItems => datasetTypesSource.Items;
+
+        /// <summary>
+        /// Read-only, non-observable retrieval of the InstrumentData collection contents
+        /// </summary>
+        public IEnumerable<string> InstrumentDataItems => instrumentDataSource.Items;
+
+        /// <summary>
+        /// Read-only, non-observable retrieval of the OperatorData collection contents
+        /// </summary>
+        public IEnumerable<string> OperatorDataItems => operatorDataSource.Items;
+
+        /// <summary>
+        /// Read-only, non-observable retrieval of the SeparationTypes collection contents
+        /// </summary>
+        public IEnumerable<string> SeparationTypesItems => separationTypesSource.Items;
+
+        /// <summary>
+        /// Read-only, non-observable retrieval of the ColumnData collection contents
+        /// </summary>
+        public IEnumerable<string> ColumnDataItems => columnDataSource.Items;
+
+        /// <summary>
+        /// Query the SQLite cache to determine if a dataset name exists
+        /// </summary>
+        /// <param name="datasetName"></param>
+        /// <returns></returns>
+        public bool CheckDatasetExists(string datasetName)
+        {
+            return SQLiteTools.CheckDatasetExists(datasetName);
+        }
+
+        /// <summary>
+        /// Gets the list of cart config names for a specified cart, returning an empty list if the cart name is not found.
+        /// </summary>
+        /// <param name="cartName"></param>
+        /// <returns></returns>
+        public IReadOnlyList<string> GetCartConfigNamesForCart(string cartName)
+        {
+            if (string.IsNullOrWhiteSpace(cartName))
+            {
+                return new List<string>();
+            }
+
+            if (cartConfigNameMap.TryGetValue(cartName, out var configNames))
+            {
+                return configNames;
+            }
+
+            return new List<string>();
+        }
+
+        /// <summary>
+        /// Search cached EUS proposal users for the user ID in key
+        /// </summary>
+        /// <param name="proposalID"></param>
+        /// <param name="key"></param>
+        /// <returns>Matched user</returns>
+        public ProposalUser FindSavedEMSLProposalUser(string proposalID, string key)
+        {
+            if (string.IsNullOrWhiteSpace(proposalID) || string.IsNullOrWhiteSpace(key))
+            {
+                return null;
+            }
+
+            // We won't return this collection because this collection is supposed to be
+            // immutable and the items this method was designed for will be altering their
+            // collections.
+            var allProposalUsers = GetProposalUsers(proposalID);
+
+            if (allProposalUsers == null || allProposalUsers.Count == 0)
+            {
+                return null;
+            }
+
+            return allProposalUsers.FirstOrDefault(x => key.Equals(x.UserID.ToString()));
+        }
+
+        /// <summary>
+        /// Gets a list of ProposalUsers that are involved with the given PID.
+        /// </summary>
+        public IReadOnlyList<ProposalUser> GetProposalUsers(string proposalID, bool returnAllWhenEmpty = false)
+        {
+            if (string.IsNullOrWhiteSpace(proposalID))
+            {
+                proposalID = string.Empty;
+            }
+
+            // We haven't built a quick reference collection for this PID
+            // yet, so lets do that.
+            if (proposalUserCollections.ContainsKey(proposalID))
+            {
+                return proposalUserCollections[proposalID];
+            }
+
+            List<ProposalUser> newUserCollection;
+
+            // We weren't given a PID to filter out the results, so we are returning every user
+            // (unless told otherwise).
+            if (string.IsNullOrWhiteSpace(proposalID))
+            {
+                if (returnAllWhenEmpty)
+                {
+                    var query = proposalUsersList.OrderBy(item => item.UserName);
+                    newUserCollection = new List<ProposalUser>(query);
+                }
+                else
+                {
+                    return new List<ProposalUser>();
+                }
+            }
+            else if (pidIndexedCrossReferenceList.ContainsKey(proposalID))
+            {
+                var crossReferenceList = pidIndexedCrossReferenceList[proposalID];
+
+                // This really shouldn't be possible because the PIDs are generated from the
+                // User lists, so if there are no Users list, then there's no PID generated.
+                // Log there error, and hope that the person that reads it realizes that something
+                // is going wrong in the code.
+                if (crossReferenceList.Count == 0)
+                {
+                    ApplicationLogger.LogError(
+                        0,
+                        string.Format(
+                            "Requested Proposal ID '{0}' has no users. Returning empty collection of Proposal Users.",
+                            proposalID));
+
+                    newUserCollection = new List<ProposalUser>();
+                }
+                else
+                {
+                    // The dictionary has already grouped the cross references by PID, so we just need
+                    // to get the UIDs that are in that group.
+                    var uIDs = crossReferenceList.Select(xRef => xRef.UserID);
+                    var hashedUIDs = new HashSet<int>(uIDs);
+
+                    // Get the users based on the given UIDs.
+                    var singleProposalUsers = proposalUsersList.Where(user => hashedUIDs.Contains(user.UserID))
+                                                             .OrderBy(user => user.UserName);
+
+                    // Create the user collection and set it for future use.
+                    newUserCollection = new List<ProposalUser>(singleProposalUsers);
+                }
+            }
+            // The given PID wasn't in our cross reference list, log the error
+            // and return insert an empty collection under it. And, don't insert
+            // this into the dictionary of user collections.
+            else
+            {
+                ApplicationLogger.LogMessage(
+                    0,
+                    string.Format(
+                        "Requested Proposal ID '{0}' was not found. Returning empty collection of Proposal Users.",
+                        proposalID));
+
+                // Return the collection before we can insert it into the dictionary.
+                return new List<ProposalUser>();
+            }
+
+            proposalUserCollections.Add(proposalID, newUserCollection.ToArray());
+
+            return proposalUserCollections[proposalID];
+        }
+
+        public IEnumerable<DMSData> LoadDMSRequestedRuns()
+        {
+            // Instantiate SampleQueryData using default filters (essentially no filters)
+            // Only active requested runs are retrieved
+            var queryData = new SampleQueryData();
+
+            // Load the samples (essentially requested runs) from DMS
+            // Return clones of the objects; for some reason, if we don't, the SampleDataBasic objects are all kept alive (probably some database interaction logic)
+            // Also process through a parsing method that will let us minimize the number of duplicate strings in memory.
+            return dmsDbTools.GetRequestedRunsFromDMS<RequestedRun>(queryData).Select(x => x.DmsData);
+        }
+
+        /// <summary>
+        /// Force updating the SQLite cache database with instrument, experiment, dataset, etc. info
+        /// </summary>
+        public async Task UpdateCacheNow([CallerMemberName] string callingFunction = "unknown")
+        {
+            lock (cacheLoadingLock)
+            {
+                if (isUpdatingCache)
+                {
+                    return;
+                }
+
+                isUpdatingCache = true;
+            }
+
+            try
+            {
+                await Task.Run(() =>
+                {
+                    var success = UpdateSQLiteCacheFromDms();
+                    if (!success)
+                    {
+                        return;
+                    }
+
+                    LoadDMSDataFromCache(true);
+
+                    // Reload data lists in the FillDown VM that are filtered using the current value of a property
+                    ViewModelCache.Instance.GetFillDownVm()?.ReloadPropertyDependentData();
+                    DatasetManager.Manager.WatcherMetadata.ReloadPropertyDependentData();
+                }).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                ApplicationLogger.LogError(0, string.Format("Exception updating the cached DMS data (called from {0}): {1}", callingFunction, ex.Message));
+            }
+
+            lock (cacheLoadingLock)
+            {
+                isUpdatingCache = false;
+            }
+        }
+
+        /// <summary>
+        /// Update data from DMS, with optional extra logging
+        /// </summary>
+        /// <param name="progressEventHandler">Handler to report progress information from dmsDbTools</param>
+        /// <param name="errorAction">Handler to report exception information</param>
+        /// <returns></returns>
+        public bool UpdateSQLiteCacheFromDms(EventHandler<ProgressEventArgs> progressEventHandler = null, Action<string, Exception> errorAction = null)
+        {
+            var retries = 3;
+            var dmsAvailable = dmsDbTools.CheckDMSConnection();
+            var result = false;
+
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+            while (retries > 0)
+            {
+                retries--;
+                try
+                {
+                    if (SQLiteTools.DatabaseImageBad && dmsAvailable)
+                    {
+                        SQLiteTools.DeleteBadCache();
+                    }
+
+                    if (progressEventHandler != null)
+                    {
+                        dmsDbTools.ProgressEvent += progressEventHandler;
+                    }
+
+                    dmsDbTools.LoadCacheFromDMS();
+
+                    if (SQLiteTools.DatabaseImageBad && dmsAvailable && retries > 0)
+                    {
+                        continue;
+                    }
+
+                    LastSqliteCacheUpdateUtc = DateTime.UtcNow;
+                    result = true;
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    const string message = "Error loading data from DMS and updating the SQLite cache file!";
+                    ApplicationLogger.LogError(0, message, ex);
+                    if (SQLiteTools.DatabaseImageBad && dmsAvailable && retries > 0)
+                    {
+                        continue;
+                    }
+
+                    errorAction?.Invoke(message, ex);
+                    result = false;
+                    break;
+                }
+                finally
+                {
+                    if (progressEventHandler != null)
+                    {
+                        dmsDbTools.ProgressEvent -= progressEventHandler;
+                    }
+                }
+            }
+
+            // Force a garbage collection to try to clean up the temporary memory from the SQLite cache update
+            GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
+            GC.Collect(int.MaxValue, GCCollectionMode.Forced, true, true);
+
+            return result;
         }
 
         /// <summary>
@@ -278,110 +687,6 @@ namespace BuzzardWPF.Management
             GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, true, true);
         }
 
-        /// <summary>
-        /// Force updating the SQLite cache database with instrument, experiment, dataset, etc. info
-        /// </summary>
-        public async Task UpdateCacheNow([CallerMemberName] string callingFunction = "unknown")
-        {
-            lock (cacheLoadingLock)
-            {
-                if (isUpdatingCache)
-                {
-                    return;
-                }
-
-                isUpdatingCache = true;
-            }
-
-            try
-            {
-                await Task.Run(() =>
-                {
-                    var success = UpdateSQLiteCacheFromDms();
-                    if (!success)
-                    {
-                        return;
-                    }
-
-                    LoadDMSDataFromCache(true);
-
-                    // Reload data lists in the FillDown VM that are filtered using the current value of a property
-                    ViewModelCache.Instance.GetFillDownVm()?.ReloadPropertyDependentData();
-                    DatasetManager.Manager.WatcherMetadata.ReloadPropertyDependentData();
-                }).ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                ApplicationLogger.LogError(0, string.Format("Exception updating the cached DMS data (called from {0}): {1}", callingFunction, ex.Message));
-            }
-
-            lock (cacheLoadingLock)
-            {
-                isUpdatingCache = false;
-            }
-        }
-
-        public IEnumerable<DMSData> LoadDMSRequestedRuns()
-        {
-            // Instantiate SampleQueryData using default filters (essentially no filters)
-            // Only active requested runs are retrieved
-            var queryData = new SampleQueryData();
-
-            // Load the samples (essentially requested runs) from DMS
-            // Return clones of the objects; for some reason, if we don't, the SampleDataBasic objects are all kept alive (probably some database interaction logic)
-            // Also process through a parsing method that will let us minimize the number of duplicate strings in memory.
-            return dmsDbTools.GetRequestedRunsFromDMS<RequestedRun>(queryData).Select(x => x.DmsData);
-        }
-
-        public static DMS_DataAccessor Instance { get; }
-
-        public DateTime LastSqliteCacheUpdate => lastSqliteCacheUpdate.Value;
-
-        public DateTime LastLoadFromSqliteCache => lastLoadFromSqliteCache.Value;
-
-        private readonly Timer autoUpdateTimer;
-
-        private float dataRefreshIntervalHours;
-        private DateTime lastSqliteCacheUpdateUtc;
-        private DateTime lastLoadFromSqliteCacheUtc;
-        private readonly DMSDBTools dmsDbTools;
-
-        private readonly ObservableAsPropertyHelper<DateTime> lastSqliteCacheUpdate;
-        private readonly ObservableAsPropertyHelper<DateTime> lastLoadFromSqliteCache;
-
-        private readonly List<ProposalUser> proposalUsersList = new List<ProposalUser>();
-        private readonly Dictionary<string, List<UserIDPIDCrossReferenceEntry>> pidIndexedCrossReferenceList = new Dictionary<string, List<UserIDPIDCrossReferenceEntry>>();
-        private readonly Dictionary<string, IReadOnlyList<ProposalUser>> proposalUserCollections = new Dictionary<string, IReadOnlyList<ProposalUser>>();
-
-        private readonly object cacheLoadingLock = new object();
-        private bool isUpdatingCache;
-
-        /// <summary>
-        /// Key is cart name, value is list of valid cart config names for that cart.
-        /// </summary>
-        private Dictionary<string, List<string>> cartConfigNameMap = new Dictionary<string, List<string>>();
-
-        // Backing lists for collections that can be provided to the UI.
-        private readonly SourceList<string> proposalIDsSource = new SourceList<string>();
-        private readonly SourceList<string> columnDataSource = new SourceList<string>();
-        private readonly SourceList<string> instrumentDataSource = new SourceList<string>();
-        private readonly SourceList<string> operatorDataSource = new SourceList<string>();
-        private readonly SourceList<string> datasetTypesSource = new SourceList<string>();
-        private readonly SourceList<string> separationTypesSource = new SourceList<string>();
-        private readonly SourceList<string> cartNamesSource = new SourceList<string>();
-
-        private DateTime LastSqliteCacheUpdateUtc
-        {
-            get => lastSqliteCacheUpdateUtc;
-            set => this.RaiseAndSetIfChanged(ref lastSqliteCacheUpdateUtc, value);
-        }
-
-        private DateTime LastLoadFromSqliteCacheUtc
-        {
-            get => lastLoadFromSqliteCacheUtc;
-            set => this.RaiseAndSetIfChanged(ref lastLoadFromSqliteCacheUtc, value);
-        }
-
         private async void AutoUpdateTimer_Tick(object state)
         {
             if (DataRefreshIntervalHours <= 0)
@@ -394,78 +699,8 @@ namespace BuzzardWPF.Management
                 return;
             }
 
-            // Set the Last Update time to now to prevent this function from calling UpdateCacheNow repeatedly if the DMS update takes over 30 seconds
-            LastSqliteCacheUpdateUtc = DateTime.UtcNow;
-
+            // Lock and boolean checks in UpdateCacheNow() will prevent multiple updates from running simultaneously.
             await UpdateCacheNow().ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Update data from DMS, with optional extra logging
-        /// </summary>
-        /// <param name="progressEventHandler">Handler to report progress information from dmsDbTools</param>
-        /// <param name="errorAction">Handler to report exception information</param>
-        /// <returns></returns>
-        public bool UpdateSQLiteCacheFromDms(EventHandler<ProgressEventArgs> progressEventHandler = null, Action<string, Exception> errorAction = null)
-        {
-            var retries = 3;
-            var dmsAvailable = dmsDbTools.CheckDMSConnection();
-            var result = false;
-
-            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-            while (retries > 0)
-            {
-                retries--;
-                try
-                {
-                    if (SQLiteTools.DatabaseImageBad && dmsAvailable)
-                    {
-                        SQLiteTools.DeleteBadCache();
-                    }
-
-                    if (progressEventHandler != null)
-                    {
-                        dmsDbTools.ProgressEvent += progressEventHandler;
-                    }
-
-                    dmsDbTools.LoadCacheFromDMS();
-
-                    if (SQLiteTools.DatabaseImageBad && dmsAvailable && retries > 0)
-                    {
-                        continue;
-                    }
-
-                    LastSqliteCacheUpdateUtc = DateTime.UtcNow;
-                    result = true;
-                    break;
-                }
-                catch (Exception ex)
-                {
-                    const string message = "Error loading data from DMS and updating the SQLite cache file!";
-                    ApplicationLogger.LogError(0, message, ex);
-                    if (SQLiteTools.DatabaseImageBad && dmsAvailable && retries > 0)
-                    {
-                        continue;
-                    }
-
-                    errorAction?.Invoke(message, ex);
-                    result = false;
-                    break;
-                }
-                finally
-                {
-                    if (progressEventHandler != null)
-                    {
-                        dmsDbTools.ProgressEvent -= progressEventHandler;
-                    }
-                }
-            }
-
-            // Force a garbage collection to try to clean up the temporary memory from the SQLite cache update
-            GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
-            GC.Collect(int.MaxValue, GCCollectionMode.Forced, true, true);
-
-            return result;
         }
 
         /// <summary>
@@ -596,254 +831,17 @@ namespace BuzzardWPF.Management
             }
         }
 
-        /// <summary>
-        /// Gets a list of ProposalUsers that are involved with the given PID.
-        /// </summary>
-        public IReadOnlyList<ProposalUser> GetProposalUsers(string proposalID, bool returnAllWhenEmpty = false)
+        public void Dispose()
         {
-            if (string.IsNullOrWhiteSpace(proposalID))
-            {
-                proposalID = string.Empty;
-            }
-
-            // We haven't built a quick reference collection for this PID
-            // yet, so lets do that.
-            if (proposalUserCollections.ContainsKey(proposalID))
-            {
-                return proposalUserCollections[proposalID];
-            }
-
-            List<ProposalUser> newUserCollection;
-
-            // We weren't given a PID to filter out the results, so we are returning every user
-            // (unless told otherwise).
-            if (string.IsNullOrWhiteSpace(proposalID))
-            {
-                if (returnAllWhenEmpty)
-                {
-                    var query = proposalUsersList.OrderBy(item => item.UserName);
-                    newUserCollection = new List<ProposalUser>(query);
-                }
-                else
-                {
-                    return new List<ProposalUser>();
-                }
-            }
-            else if (pidIndexedCrossReferenceList.ContainsKey(proposalID))
-            {
-                var crossReferenceList = pidIndexedCrossReferenceList[proposalID];
-
-                // This really shouldn't be possible because the PIDs are generated from the
-                // User lists, so if there are no Users list, then there's no PID generated.
-                // Log there error, and hope that the person that reads it realizes that something
-                // is going wrong in the code.
-                if (crossReferenceList.Count == 0)
-                {
-                    ApplicationLogger.LogError(
-                        0,
-                        string.Format(
-                            "Requested Proposal ID '{0}' has no users. Returning empty collection of Proposal Users.",
-                            proposalID));
-
-                    newUserCollection = new List<ProposalUser>();
-                }
-                else
-                {
-                    // The dictionary has already grouped the cross references by PID, so we just need
-                    // to get the UIDs that are in that group.
-                    var uIDs = crossReferenceList.Select(xRef => xRef.UserID);
-                    var hashedUIDs = new HashSet<int>(uIDs);
-
-                    // Get the users based on the given UIDs.
-                    var singleProposalUsers = proposalUsersList.Where(user => hashedUIDs.Contains(user.UserID))
-                                                             .OrderBy(user => user.UserName);
-
-                    // Create the user collection and set it for future use.
-                    newUserCollection = new List<ProposalUser>(singleProposalUsers);
-                }
-            }
-            // The given PID wasn't in our cross reference list, log the error
-            // and return insert an empty collection under it. And, don't insert
-            // this into the dictionary of user collections.
-            else
-            {
-                ApplicationLogger.LogMessage(
-                    0,
-                    string.Format(
-                        "Requested Proposal ID '{0}' was not found. Returning empty collection of Proposal Users.",
-                        proposalID));
-
-                // Return the collection before we can insert it into the dictionary.
-                return new List<ProposalUser>();
-            }
-
-            proposalUserCollections.Add(proposalID, newUserCollection.ToArray());
-
-            return proposalUserCollections[proposalID];
+            autoUpdateTimer?.Dispose();
+            dmsDbTools?.Dispose();
+            proposalIDsSource.Dispose();
+            columnDataSource.Dispose();
+            instrumentDataSource.Dispose();
+            operatorDataSource.Dispose();
+            datasetTypesSource.Dispose();
+            separationTypesSource.Dispose();
+            cartNamesSource.Dispose();
         }
-
-        /// <summary>
-        /// Search cached EUS proposal users for the user ID in key
-        /// </summary>
-        /// <param name="proposalID"></param>
-        /// <param name="key"></param>
-        /// <returns>Matched user</returns>
-        public ProposalUser FindSavedEMSLProposalUser(string proposalID, string key)
-        {
-            if (string.IsNullOrWhiteSpace(proposalID) || string.IsNullOrWhiteSpace(key))
-            {
-                return null;
-            }
-
-            // We won't return this collection because this collection is supposed to be
-            // immutable and the items this method was designed for will be altering their
-            // collections.
-            var allProposalUsers = GetProposalUsers(proposalID);
-
-            if (allProposalUsers == null || allProposalUsers.Count == 0)
-            {
-                return null;
-            }
-
-            return allProposalUsers.FirstOrDefault(x => key.Equals(x.UserID.ToString()));
-        }
-
-        /// <summary>
-        /// Gets the list of cart config names for a specified cart, returning an empty list if the cart name is not found.
-        /// </summary>
-        /// <param name="cartName"></param>
-        /// <returns></returns>
-        public IReadOnlyList<string> GetCartConfigNamesForCart(string cartName)
-        {
-            if (string.IsNullOrWhiteSpace(cartName))
-            {
-                return new List<string>();
-            }
-
-            if (cartConfigNameMap.TryGetValue(cartName, out var configNames))
-            {
-                return configNames;
-            }
-
-            return new List<string>();
-        }
-
-        /// <summary>
-        /// Query the SQLite cache to determine if a dataset name exists
-        /// </summary>
-        /// <param name="datasetName"></param>
-        /// <returns></returns>
-        public bool CheckDatasetExists(string datasetName)
-        {
-            return SQLiteTools.CheckDatasetExists(datasetName);
-        }
-
-        public IReadOnlyList<string> InterestRatingCollection { get; }
-
-        public IReadOnlyList<string> EMSLUsageTypesSource { get; }
-
-        /// <summary>
-        /// Proposal IDs observable list
-        /// </summary>
-        public ReadOnlyObservableCollection<string> ProposalIDs { get; }
-
-        /// <summary>
-        /// DMS data refresh interval, in hours
-        /// </summary>
-        public float DataRefreshIntervalHours
-        {
-            get => dataRefreshIntervalHours;
-            set
-            {
-                if (value < 0.5)
-                {
-                    value = 0.5f;
-                }
-
-                dataRefreshIntervalHours = value;
-            }
-        }
-
-        /// <summary>
-        /// Observable List of DMS LC column names
-        /// </summary>
-        public ReadOnlyObservableCollection<string> ColumnData { get; }
-
-        /// <summary>
-        /// Observable List of the DMS instrument names
-        /// </summary>
-        public ReadOnlyObservableCollection<string> InstrumentData { get; }
-
-        /// <summary>
-        /// Instrument details (Name, status, source host name, source share name, capture method
-        /// </summary>
-        /// <remarks>Key is instrument name, value is the details</remarks>
-        /// <remarks>Data is pulled from DMS view V_Instrument_Info_LCMSNet</remarks>
-        public Dictionary<string, InstrumentInfo> InstrumentDetails { get; } = new Dictionary<string, InstrumentInfo>();
-
-        /// <summary>
-        /// This is an Observable list of the names of the instrument operators.
-        /// </summary>
-        public ReadOnlyObservableCollection<string> OperatorData { get; }
-
-        /// <summary>
-        /// Dataset types Observable list
-        /// </summary>
-        public ReadOnlyObservableCollection<string> DatasetTypes { get; }
-
-        /// <summary>
-        /// Separation types Observable list
-        /// </summary>
-        public ReadOnlyObservableCollection<string> SeparationTypes { get; }
-
-        /// <summary>
-        /// Cart names
-        /// </summary>
-        public ReadOnlyObservableCollection<string> CartNames { get; }
-
-        /// <summary>
-        /// Key is charge code, value is all the details
-        /// </summary>
-        public Dictionary<string, WorkPackageInfo> WorkPackageMap { get; private set; } = new Dictionary<string, WorkPackageInfo>();
-
-        public SourceList<WorkPackageInfo> WorkPackages { get; } = new SourceList<WorkPackageInfo>();
-
-        /// <summary>
-        /// List of DMS experiment names
-        /// </summary>
-        /// <remarks>
-        /// This isn't meant to be bound to directly, which is why it's a SourceList and not an ObservableCollection.
-        /// </remarks>
-        public SourceList<ExperimentData> Experiments { get; } = new SourceList<ExperimentData>();
-
-        /// <summary>
-        /// Read-only, non-observable retrieval of the CartNames collection contents
-        /// </summary>
-        public IEnumerable<string> CartNamesItems => cartNamesSource.Items;
-
-        /// <summary>
-        /// Read-only, non-observable retrieval of the DatasetTypes collection contents
-        /// </summary>
-        public IEnumerable<string> DatasetTypesItems => datasetTypesSource.Items;
-
-        /// <summary>
-        /// Read-only, non-observable retrieval of the InstrumentData collection contents
-        /// </summary>
-        public IEnumerable<string> InstrumentDataItems => instrumentDataSource.Items;
-
-        /// <summary>
-        /// Read-only, non-observable retrieval of the OperatorData collection contents
-        /// </summary>
-        public IEnumerable<string> OperatorDataItems => operatorDataSource.Items;
-
-        /// <summary>
-        /// Read-only, non-observable retrieval of the SeparationTypes collection contents
-        /// </summary>
-        public IEnumerable<string> SeparationTypesItems => separationTypesSource.Items;
-
-        /// <summary>
-        /// Read-only, non-observable retrieval of the ColumnData collection contents
-        /// </summary>
-        public IEnumerable<string> ColumnDataItems => columnDataSource.Items;
     }
 }
