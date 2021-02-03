@@ -74,12 +74,12 @@ namespace BuzzardWPF.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("PegasaurusRex")]
-        public string InstName {
+        public string DMSInstrumentHostName {
             get {
-                return ((string)(this["InstName"]));
+                return ((string)(this["DMSInstrumentHostName"]));
             }
             set {
-                this["InstName"] = value;
+                this["DMSInstrumentHostName"] = value;
             }
         }
         

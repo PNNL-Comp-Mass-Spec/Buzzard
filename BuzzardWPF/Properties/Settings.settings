@@ -14,7 +14,7 @@
     <Setting Name="FirstTime" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="InstName" Type="System.String" Scope="User">
+    <Setting Name="DMSInstrumentHostName" Type="System.String" Scope="User">
       <Value Profile="(Default)">PegasaurusRex</Value>
     </Setting>
     <Setting Name="TriggerFileFolder" Type="System.String" Scope="User">

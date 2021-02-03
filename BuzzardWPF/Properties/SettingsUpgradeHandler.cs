@@ -141,6 +141,15 @@ namespace BuzzardWPF.Properties
         // ReSharper disable once UnusedMember.Global
         public global::System.Collections.Specialized.StringCollection WatcherEMSLUsers { get; set; }
 
+        [UserScopedSetting]
+        [DebuggerNonUserCode]
+        [DefaultSettingValue("")]
+        [NoSettingsVersionUpgrade]
+        [Obsolete("Use  " + nameof(DMSInstrumentHostName), true)]
+        [SettingUpgradeName(nameof(DMSInstrumentHostName))]
+        // ReSharper disable once UnusedMember.Global
+        public string InstName { get; set; }
+
         #endregion
     }
 }

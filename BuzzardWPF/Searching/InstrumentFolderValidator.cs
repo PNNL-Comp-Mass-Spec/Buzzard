@@ -327,7 +327,7 @@ namespace BuzzardWPF.Searching
                 string baseFolderHostName;
                 string baseFolderPathToUse;
 
-                var alternateBaseFolderHostName = Settings.Default.InstName;
+                var alternateBaseFolderHostName = Settings.Default.DMSInstrumentHostName;
                 if (alternateBaseFolderHostName.Equals("PegasaurusRex", StringComparison.OrdinalIgnoreCase))
                 {
                     alternateBaseFolderHostName = string.Empty;
