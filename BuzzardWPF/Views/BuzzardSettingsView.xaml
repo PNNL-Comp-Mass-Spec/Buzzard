@@ -173,7 +173,8 @@
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
             IsReadOnly="true"
-            Text="%appdata%\Buzzard\Log" />
+            Style="{StaticResource TextBoxStyle}"
+            Text="{Binding LogFolderPath, Mode=OneWay}" />
         <Button Grid.Row="4" Grid.Column="2"
             Width="160"
             HorizontalAlignment="Center"
@@ -196,15 +197,6 @@
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             Content="Calibration Backup Directory" />
-        <TextBox
-            Grid.Row="4"
-            Grid.Column="1"
-            Width="480"
-            Margin="9.8,9,0,9"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Center"
-            IsReadOnly="true"
-            Text="{Binding LogFolderPath, Mode=OneWay}" />
         <TextBox
             Grid.Row="5"
             Grid.Column="1"
