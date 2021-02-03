@@ -35,7 +35,7 @@ namespace BuzzardWPF.ViewModels
 
         public WatcherMetadata WatcherMetadata => DatasetManager.WatcherMetadata;
 
-        public DMS_DataAccessor DmsData => DMS_DataAccessor.Instance;
+        public DMSDataAccessor DmsData => DMSDataAccessor.Instance;
 
         public bool IsNotMonitoring => isNotMonitoring.Value;
 
@@ -104,7 +104,7 @@ namespace BuzzardWPF.ViewModels
                 return;
             }
 
-            if (!DMS_DataAccessor.Instance.WorkPackageMap.TryGetValue(WatcherMetadata.WorkPackage, out var workPackage))
+            if (!DMSDataAccessor.Instance.WorkPackageMap.TryGetValue(WatcherMetadata.WorkPackage, out var workPackage))
             {
                 WorkPackageToolTipText = "Work Package not found";
                 WorkPackageWarning = false;

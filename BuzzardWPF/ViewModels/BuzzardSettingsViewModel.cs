@@ -57,7 +57,7 @@ namespace BuzzardWPF.ViewModels
         private string newVersionText = "";
 
         public SearchConfigViewModel SearchConfigVm { get; }
-        public DMS_DataAccessor DmsDbData => DMS_DataAccessor.Instance;
+        public DMSDataAccessor DmsDbData => DMSDataAccessor.Instance;
         public InstrumentCriticalFiles CriticalsBackups => InstrumentCriticalFiles.Instance;
         public DatasetManager DatasetManager => DatasetManager.Manager;
 
@@ -146,8 +146,8 @@ namespace BuzzardWPF.ViewModels
             // Run this first, so that the SQLite cache update can garbage collect from this method.
             await DatasetManager.DatasetNameMatcher.LoadRequestedRunsCache().ConfigureAwait(false);
 
-            // Also force an update on DMS_DataAccessor.Instance
-            await DMS_DataAccessor.Instance.UpdateCacheNow().ConfigureAwait(false);
+            // Also force an update on DMSDataAccessor.Instance
+            await DMSDataAccessor.Instance.UpdateCacheNow().ConfigureAwait(false);
         }
 
         private async Task BackupCalibrationFiles()

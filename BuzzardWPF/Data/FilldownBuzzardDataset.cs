@@ -174,7 +174,7 @@ namespace BuzzardWPF.Data
 
             DmsData.EMSLUsageType = Settings.Default.FilldownEMSLUsageType;
             DmsData.EMSLProposalID = Settings.Default.FilldownEMSLProposal;
-            EMSLProposalUser = DMS_DataAccessor.Instance.FindSavedEMSLProposalUser(DmsData.EMSLProposalID, Settings.Default.FilldownEMSLUser);
+            EMSLProposalUser = DMSDataAccessor.Instance.FindSavedEMSLProposalUser(DmsData.EMSLProposalID, Settings.Default.FilldownEMSLUser);
             DmsData.DatasetType = Settings.Default.FilldownDatasetType;
             DmsData.WorkPackage = Settings.Default.FillDownWorkPackage;
 

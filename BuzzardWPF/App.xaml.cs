@@ -133,7 +133,7 @@ namespace BuzzardWPF
         private ManualResetEvent resetSplashCreated;
 
         private static readonly IDisposable sqliteDisposable = SQLiteTools.GetDisposable();
-        private static DMS_DataAccessor dmsDataAccessorInstance;
+        private static DMSDataAccessor dmsDataAccessorInstance;
 
         private static MainWindowViewModel mainWindowViewModel;
 
@@ -159,7 +159,7 @@ namespace BuzzardWPF
             var openMainWindow = AppInitializer.InitializeApplication(splashScreen, splashScreen.SetInstrumentName).Result;
             if (openMainWindow)
             {
-                dmsDataAccessorInstance = DMS_DataAccessor.Instance;
+                dmsDataAccessorInstance = DMSDataAccessor.Instance;
                 mainWindowViewModel = new MainWindowViewModel();
 
                 // Load the saved configuration settings on application startup.

@@ -40,7 +40,7 @@ namespace BuzzardWPF.ViewModels
                             return value?.StartsWith(x, StringComparison.OrdinalIgnoreCase) == true;
                         }));
 
-            connectionDisposable = DMS_DataAccessor.Instance.Experiments.Connect().Filter(filter).ObserveOn(RxApp.MainThreadScheduler).Bind(out var filteredExperiments).Subscribe();
+            connectionDisposable = DMSDataAccessor.Instance.Experiments.Connect().Filter(filter).ObserveOn(RxApp.MainThreadScheduler).Bind(out var filteredExperiments).Subscribe();
             Experiments = filteredExperiments;
 
             FilterOptions = Enum.GetValues(typeof(FilterOption)).Cast<FilterOption>().Where(x => x != FilterOption.None).ToArray();
@@ -134,7 +134,7 @@ namespace BuzzardWPF.ViewModels
             }
             else
             {
-                var fieldItemList = DMS_DataAccessor.Instance.Experiments.Items.Select(fieldSelector).Distinct(new IgnoreCaseStringComparison()).ToList();
+                var fieldItemList = DMSDataAccessor.Instance.Experiments.Items.Select(fieldSelector).Distinct(new IgnoreCaseStringComparison()).ToList();
                 fieldItemList.Sort();
                 AutoCompleteBoxItems = fieldItemList;
             }

@@ -188,7 +188,7 @@ namespace BuzzardWPF
             ApplicationLogger.LogMessage(-1, "Loading DMS data");
 
             // Load the needed data from DMS into the SQLite cache file, with progress updates and special error reporting
-            DMS_DataAccessor.Instance.UpdateSQLiteCacheFromDms(DbTools_ProgressEvent, (msq, ex) => LogCriticalError(msq, ex));
+            DMSDataAccessor.Instance.UpdateSQLiteCacheFromDms(DbTools_ProgressEvent, (msq, ex) => LogCriticalError(msq, ex));
 
             ApplicationLogger.LogMessage(-1, "Checking For Local Trigger Files");
 
@@ -224,7 +224,7 @@ namespace BuzzardWPF
                 openMainWindow = true;
 
                 // Load the experiments, datasets, instruments, etc. from the SQLite cache file
-                DMS_DataAccessor.Instance.LoadDMSDataFromCache(true);
+                DMSDataAccessor.Instance.LoadDMSDataFromCache(true);
             }
             catch (Exception ex)
             {

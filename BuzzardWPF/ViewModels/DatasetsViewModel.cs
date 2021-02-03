@@ -112,7 +112,7 @@ namespace BuzzardWPF.ViewModels
             }
 
             // Update the allowable CartConfig names
-            CartConfigNameListSource = DMS_DataAccessor.Instance.GetCartConfigNamesForCart(cartName);
+            CartConfigNameListSource = DMSDataAccessor.Instance.GetCartConfigNamesForCart(cartName);
 
             // Update the Cart name for datasets already in the grid
             foreach (var dataset in Datasets)
@@ -455,7 +455,7 @@ namespace BuzzardWPF.ViewModels
             var filldownData = filldownWindowVm.Dataset;
 
             if (filldownData.UseLcColumn &&
-                !DMS_DataAccessor.Instance.ColumnData.Contains(filldownData.ColumnName))
+                !DMSDataAccessor.Instance.ColumnData.Contains(filldownData.ColumnName))
             {
                 MessageBox.Show("Unknown LC column: " + filldownData.ColumnName +
                                 "; please use the drop down to select a valid column name");

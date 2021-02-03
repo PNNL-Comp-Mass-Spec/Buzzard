@@ -50,7 +50,7 @@ namespace BuzzardWPF.ViewModels
                     {
                         if (!string.IsNullOrWhiteSpace(boundContainer.EMSLProposalID))
                         {
-                            ProposalUsers = DMS_DataAccessor.Instance.GetProposalUsers(BoundContainer.EMSLProposalID);
+                            ProposalUsers = DMSDataAccessor.Instance.GetProposalUsers(BoundContainer.EMSLProposalID);
                         }
 
                         boundContainer.PropertyChanged += BoundContainer_PropertyChanged;
@@ -61,7 +61,7 @@ namespace BuzzardWPF.ViewModels
 
         public IReadOnlyList<string> UsageTypesSource { get; }
 
-        public ReadOnlyObservableCollection<string> AvailableProposalIDs => DMS_DataAccessor.Instance.ProposalIDs;
+        public ReadOnlyObservableCollection<string> AvailableProposalIDs => DMSDataAccessor.Instance.ProposalIDs;
 
         public IReadOnlyList<ProposalUser> ProposalUsers
         {
@@ -73,7 +73,7 @@ namespace BuzzardWPF.ViewModels
         {
             if (e.PropertyName == "EMSLProposalID")
             {
-                ProposalUsers = DMS_DataAccessor.Instance.GetProposalUsers(BoundContainer.EMSLProposalID);
+                ProposalUsers = DMSDataAccessor.Instance.GetProposalUsers(BoundContainer.EMSLProposalID);
 
                 if (BoundContainer != null)
                 {

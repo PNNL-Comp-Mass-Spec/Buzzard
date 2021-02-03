@@ -18,7 +18,7 @@ using ReactiveUI;
 
 namespace BuzzardWPF.Management
 {
-    public sealed class DMS_DataAccessor : ReactiveObject, IDisposable
+    public sealed class DMSDataAccessor : ReactiveObject, IDisposable
     {
         // Ignore Spelling: Unreviewed, uniqueifier
 
@@ -28,17 +28,17 @@ namespace BuzzardWPF.Management
 
         private readonly string[] interestRatingOptions = { "Unreviewed", "Not Released", "Released", "Rerun (Good Data)", "Rerun (Superseded)" };
 
-        static DMS_DataAccessor()
+        static DMSDataAccessor()
         {
-            Instance = new DMS_DataAccessor();
+            Instance = new DMSDataAccessor();
         }
 
-        public static DMS_DataAccessor Instance { get; }
+        public static DMSDataAccessor Instance { get; }
 
         /// <summary>
         /// Constructor
         /// </summary>
-        private DMS_DataAccessor()
+        private DMSDataAccessor()
         {
             InterestRatingCollection = interestRatingOptions;
             // These values come from table T_EUS_UsageType

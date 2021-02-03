@@ -73,7 +73,7 @@ namespace BuzzardWPF.Management
             {
                 // Load the samples (essentially requested runs) from DMS
                 currentTask = "Retrieving samples (requested runs) from DMS";
-                var samples = DMS_DataAccessor.Instance.LoadDMSRequestedRuns();
+                var samples = DMSDataAccessor.Instance.LoadDMSRequestedRuns();
 
                 currentTask = "Populating mRequestedRunTrie";
 

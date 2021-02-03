@@ -110,7 +110,7 @@
     <Compile Include="MainWindowViewModel.cs" />
     <Compile Include="Management\DatasetManager.cs" />
     <Compile Include="Management\DatasetMonitor.cs" />
-    <Compile Include="Management\DMS_DataAccessor.cs" />
+    <Compile Include="Management\DMSDataAccessor.cs" />
     <Compile Include="Management\FileSystemWatcherManager.cs" />
     <Compile Include="Management\InstrumentCriticalFiles.cs" />
     <Compile Include="Management\IStoredSettingsMonitor.cs" />

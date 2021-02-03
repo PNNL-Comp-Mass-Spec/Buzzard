@@ -138,7 +138,7 @@ namespace BuzzardWPF.Management
                     {
                         var datasetName = dataset.DmsData.DatasetName;
 
-                        if (DMS_DataAccessor.Instance.CheckDatasetExists(datasetName))
+                        if (DMSDataAccessor.Instance.CheckDatasetExists(datasetName))
                         {
                             dataset.DatasetStatus = DatasetStatus.DatasetAlreadyInDMS;
                             continue;
@@ -341,7 +341,7 @@ namespace BuzzardWPF.Management
             {
                 missingFields.Add("LC Column");
             }
-            else if (!DMS_DataAccessor.Instance.ColumnData.Contains(WatcherMetadata.LCColumn))
+            else if (!DMSDataAccessor.Instance.ColumnData.Contains(WatcherMetadata.LCColumn))
             {
                 missingFields.Add("Invalid LC Column name");
             }

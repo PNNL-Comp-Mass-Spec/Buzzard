@@ -59,7 +59,7 @@ namespace BuzzardWPF.ViewModels
         public ReactiveCommand<Unit, Unit> UseNoneCommand { get; }
 
         public FilldownBuzzardDataset Dataset { get; }
-        public DMS_DataAccessor DmsDbLists => DMS_DataAccessor.Instance;
+        public DMSDataAccessor DmsDbLists => DMSDataAccessor.Instance;
 
         /// <summary>
         /// List of cart config names associated with the current cart
@@ -105,7 +105,7 @@ namespace BuzzardWPF.ViewModels
                 return;
             }
 
-            if (!DMS_DataAccessor.Instance.WorkPackageMap.TryGetValue(Dataset.DmsData.WorkPackage, out var workPackage))
+            if (!DMSDataAccessor.Instance.WorkPackageMap.TryGetValue(Dataset.DmsData.WorkPackage, out var workPackage))
             {
                 WorkPackageToolTipText = "Work Package not found";
                 WorkPackageWarning = false;
@@ -183,7 +183,7 @@ namespace BuzzardWPF.ViewModels
         {
             if (Dataset.DmsData != null)
             {
-                EMSLProposalUsersSource = DMS_DataAccessor.Instance.GetProposalUsers(Dataset.DmsData.EMSLProposalID);
+                EMSLProposalUsersSource = DMSDataAccessor.Instance.GetProposalUsers(Dataset.DmsData.EMSLProposalID);
             }
 
             // Keep the EMSL proposal user only if they are also listed under the new proposal
@@ -246,7 +246,7 @@ namespace BuzzardWPF.ViewModels
             }
 
             // Update the allowable CartConfig names
-            CartConfigNameListSource = DMS_DataAccessor.Instance.GetCartConfigNamesForCart(cartName);
+            CartConfigNameListSource = DMSDataAccessor.Instance.GetCartConfigNamesForCart(cartName);
         }
     }
 }

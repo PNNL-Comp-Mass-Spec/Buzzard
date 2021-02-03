@@ -218,7 +218,7 @@ namespace BuzzardWPF.Management
                 return;
             }
 
-            CartConfigNameListForCart = DMS_DataAccessor.Instance.GetCartConfigNamesForCart(CartName);
+            CartConfigNameListForCart = DMSDataAccessor.Instance.GetCartConfigNamesForCart(CartName);
         }
 
         public bool SettingsChanged { get; set; }
@@ -255,7 +255,7 @@ namespace BuzzardWPF.Management
             ExperimentName = Settings.Default.WatcherExperimentName;
             EMSLUsageType = Settings.Default.WatcherEMSLUsageType;
             EMSLProposalID = Settings.Default.WatcherEMSLProposalID;
-            EMSLProposalUser = DMS_DataAccessor.Instance.FindSavedEMSLProposalUser(EMSLProposalID, Settings.Default.WatcherEMSLUser);
+            EMSLProposalUser = DMSDataAccessor.Instance.FindSavedEMSLProposalUser(EMSLProposalID, Settings.Default.WatcherEMSLUser);
 
             UserComments = Settings.Default.WatcherComment;
             InterestRating = Settings.Default.WatcherInterestRating;
@@ -267,42 +267,42 @@ namespace BuzzardWPF.Management
              */
             CartName = CheckSetting(
                 Settings.Default.WatcherCartName,
-                DMS_DataAccessor.Instance.CartNamesItems,
+                DMSDataAccessor.Instance.CartNamesItems,
                 "Cart");
 
             CartConfigName = CheckSetting(
                 Settings.Default.WatcherCartConfigName,
-                DMS_DataAccessor.Instance.GetCartConfigNamesForCart(CartName),
+                DMSDataAccessor.Instance.GetCartConfigNamesForCart(CartName),
                 "CartConfig");
 
             DatasetType = CheckSetting(
                 Settings.Default.WatcherDatasetType,
-                DMS_DataAccessor.Instance.DatasetTypesItems,
+                DMSDataAccessor.Instance.DatasetTypesItems,
                 "Column Type");
 
             Instrument = CheckSetting(
                 Settings.Default.WatcherInstrument,
-                DMS_DataAccessor.Instance.InstrumentDataItems,
+                DMSDataAccessor.Instance.InstrumentDataItems,
                 "Instrument");
 
             InstrumentOperator = CheckSetting(
                 Settings.Default.WatcherOperator,
-                DMS_DataAccessor.Instance.OperatorDataItems,
+                DMSDataAccessor.Instance.OperatorDataItems,
                 "Operator");
 
             SeparationType = CheckSetting(
                 Settings.Default.WatcherSeparationType,
-                DMS_DataAccessor.Instance.SeparationTypesItems,
+                DMSDataAccessor.Instance.SeparationTypesItems,
                 "Separation Type");
 
             LCColumn = CheckSetting(
                 Settings.Default.WatcherColumn,
-                DMS_DataAccessor.Instance.ColumnDataItems,
+                DMSDataAccessor.Instance.ColumnDataItems,
                 "LC Column");
 
             WorkPackage = CheckSetting(
                 Settings.Default.WatcherWorkPackage,
-                DMS_DataAccessor.Instance.WorkPackages.Items.Select(x => x.ChargeCode),
+                DMSDataAccessor.Instance.WorkPackages.Items.Select(x => x.ChargeCode),
                 "Work Package");
 
             if (string.IsNullOrWhiteSpace(WorkPackage))

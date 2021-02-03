@@ -74,7 +74,7 @@ namespace BuzzardWPF
             m_animationTimer = new Timer(Animation_Tick, this, Timeout.Infinite, Timeout.Infinite);
             animationEnabled = false;
 
-            RegisterSearcher(new FileSearchBuzzardier(DMS_DataAccessor.Instance.InstrumentDetails));
+            RegisterSearcher(new FileSearchBuzzardier(DMSDataAccessor.Instance.InstrumentDetails));
             SearchConfigVm = new SearchConfigViewModel(m_buzzadier);
             SettingsVm = new BuzzardSettingsViewModel(SearchConfigVm);
 
