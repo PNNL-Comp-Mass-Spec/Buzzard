@@ -26,7 +26,6 @@ namespace BuzzardWPF.ViewModels
         private readonly ObservableAsPropertyHelper<bool> canSelectDatasets;
         private readonly ObservableAsPropertyHelper<bool> datasetSelected;
         private readonly ObservableAsPropertyHelper<bool> isCreatingTriggerFiles;
-        private IReadOnlyList<string> cartConfigNameListSource = new List<string>();
 
         private bool showDatasetTypeColumn = true;
         private bool showSeparationTypeColumn = true;
@@ -73,8 +72,6 @@ namespace BuzzardWPF.ViewModels
                     }
                 });
 
-            DatasetManager.WatcherMetadata.WhenAnyValue(x => x.CartName).Subscribe(UpdateCartConfigNames);
-
             ClearAllDatasetsCommand = ReactiveCommand.Create(ClearAllDatasets, Datasets.WhenAnyValue(x => x.Count).Select(x => x > 0).ObserveOn(RxApp.MainThreadScheduler));
             ClearSelectedDatasetsCommand = ReactiveCommand.Create(ClearSelectedDatasets, SelectedDatasets.WhenAnyValue(x => x.Count).Select(x => x > 0).ObserveOn(RxApp.MainThreadScheduler));
             FixDatasetNamesCommand = ReactiveCommand.Create(FixDatasetNames, SelectedDatasets.WhenAnyValue(x => x.Count).Select(x => x > 0).ObserveOn(RxApp.MainThreadScheduler));
@@ -103,24 +100,6 @@ namespace BuzzardWPF.ViewModels
             settingsChanged = false;
         }
 
-        private void UpdateCartConfigNames(string cartName)
-        {
-            if (string.IsNullOrEmpty(cartName))
-            {
-                CartConfigNameListSource = new List<string>();
-                return;
-            }
-
-            // Update the allowable CartConfig names
-            CartConfigNameListSource = DMSDataAccessor.Instance.GetCartConfigNamesForCart(cartName);
-
-            // Update the Cart name for datasets already in the grid
-            foreach (var dataset in Datasets)
-            {
-                dataset.DmsData.CartName = cartName;
-            }
-        }
-
         public bool CanSelectDatasets => canSelectDatasets.Value;
         public bool DatasetSelected => datasetSelected.Value;
 
@@ -134,16 +113,6 @@ namespace BuzzardWPF.ViewModels
         public ReactiveCommand<Unit, Unit> CreateTriggersCommand { get; }
 
         public ObservableCollectionExtended<BuzzardDataset> SelectedDatasets { get; } = new ObservableCollectionExtended<BuzzardDataset>();
-
-        /// <summary>
-        /// List of cart config names associated with the current cart
-        /// </summary>
-        /// <remarks>Updated via Manager_PropertyChanged</remarks>
-        public IReadOnlyList<string> CartConfigNameListSource
-        {
-            get => cartConfigNameListSource;
-            private set => this.RaiseAndSetIfChanged(ref cartConfigNameListSource, value);
-        }
 
         public ReadOnlyObservableCollection<BuzzardDataset> Datasets { get; }
 
