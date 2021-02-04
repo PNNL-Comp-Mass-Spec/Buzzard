@@ -43,6 +43,8 @@ namespace BuzzardWPF.Management
             WorkPackage = "none";
 
             this.WhenAnyValue(x => x.CartName).ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ => LoadCartConfigsForCartName());
+
+            DMSDataAccessor.Instance.WhenAnyValue(x => x.LastLoadFromSqliteCache).ObserveOn(RxApp.TaskpoolScheduler).Subscribe(_ => ReloadPropertyDependentData());
         }
 
         /// <summary>
@@ -314,7 +316,7 @@ namespace BuzzardWPF.Management
         }
 
         /// <summary>
-        /// This method makes sure that the loading setting is still valid. If it's
+        /// This method makes sure that the loaded setting is still valid. If it's
         /// valid, it will be returned. If not, an error message will be logged and
         /// a null value will be returned in place of the setting.
         /// </summary>

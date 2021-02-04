@@ -417,10 +417,6 @@ namespace BuzzardWPF.Management
                     }
 
                     LoadDMSDataFromCache(true);
-
-                    // Reload data lists in the FillDown VM that are filtered using the current value of a property
-                    ViewModelCache.Instance.GetFillDownVm()?.ReloadPropertyDependentData();
-                    DatasetManager.Manager.WatcherMetadata.ReloadPropertyDependentData();
                 }).ConfigureAwait(false);
             }
             catch (Exception ex)
