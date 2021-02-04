@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reactive;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using BuzzardWPF.Management;
 using BuzzardWPF.Views;
@@ -18,12 +20,17 @@ namespace BuzzardWPF.ViewModels
             SelectExperimentCommand = ReactiveCommand.Create(SelectExperiment);
             SelectWorkPackageCommand = ReactiveCommand.Create(SelectWorkPackage);
             this.WhenAnyValue(x => x.WatcherMetadata.WorkPackage).Subscribe(_ => UpdateWorkPackageToolTip());
+
+            WatcherMetadata.WhenAnyValue(x => x.CartName).ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ => LoadCartConfigsForCartName());
+
+            DmsData.WhenAnyValue(x => x.LastLoadFromSqliteCache).ObserveOn(RxApp.TaskpoolScheduler).Subscribe(_ => ReloadPropertyDependentData());
         }
 
         private string workPackageToolTipText;
         private bool workPackageWarning;
         private bool workPackageError;
         private readonly ObservableAsPropertyHelper<bool> isNotMonitoring;
+        private IReadOnlyList<string> cartConfigNameListForCart = new List<string>();
 
         public EmslUsageSelectionViewModel EmslUsageSelectionVm { get; } = new EmslUsageSelectionViewModel();
 
@@ -38,6 +45,16 @@ namespace BuzzardWPF.ViewModels
         public DMSDataAccessor DmsData => DMSDataAccessor.Instance;
 
         public bool IsNotMonitoring => isNotMonitoring.Value;
+
+        /// <summary>
+        /// List of cart config names associated with the current cart
+        /// </summary>
+        /// <remarks>Updated via the WatcherConfigSelectedCartName setter</remarks>
+        public IReadOnlyList<string> CartConfigNameListForCart
+        {
+            get => cartConfigNameListForCart;
+            private set => this.RaiseAndSetIfChanged(ref cartConfigNameListForCart, value);
+        }
 
         public string WorkPackageToolTipText
         {
@@ -144,6 +161,28 @@ namespace BuzzardWPF.ViewModels
             }
 
             WorkPackageToolTipText = textData;
+        }
+
+        /// <summary>
+        /// Reloads data lists for lists that are filtered based on the current value of a property.
+        /// </summary>
+        public void ReloadPropertyDependentData()
+        {
+            RxApp.MainThreadScheduler.Schedule(() =>
+            {
+                LoadCartConfigsForCartName();
+            });
+        }
+
+        private void LoadCartConfigsForCartName()
+        {
+            if (string.IsNullOrWhiteSpace(WatcherMetadata.CartName))
+            {
+                CartConfigNameListForCart = new List<string>();
+                return;
+            }
+
+            CartConfigNameListForCart = DMSDataAccessor.Instance.GetCartConfigNamesForCart(WatcherMetadata.CartName);
         }
     }
 }

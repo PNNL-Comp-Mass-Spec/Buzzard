@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using BuzzardWPF.Properties;
 using BuzzardWPF.ViewModels;
@@ -27,7 +26,6 @@ namespace BuzzardWPF.Management
         private ProposalUser emslProposalUser;
         private string userComments;
         private string interestRating;
-        private IReadOnlyList<string> cartConfigNameListForCart = new List<string>();
 
         public WatcherMetadata()
         {
@@ -42,9 +40,6 @@ namespace BuzzardWPF.Management
             EMSLProposalUser = null;
             WorkPackage = "none";
 
-            this.WhenAnyValue(x => x.CartName).ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ => LoadCartConfigsForCartName());
-
-            DMSDataAccessor.Instance.WhenAnyValue(x => x.LastLoadFromSqliteCache).ObserveOn(RxApp.TaskpoolScheduler).Subscribe(_ => ReloadPropertyDependentData());
         }
 
         /// <summary>
@@ -97,16 +92,6 @@ namespace BuzzardWPF.Management
         {
             get => instrument;
             set => this.RaiseAndSetIfChangedMonitored(ref instrument, value);
-        }
-
-        /// <summary>
-        /// List of cart config names associated with the current cart
-        /// </summary>
-        /// <remarks>Updated via the WatcherConfigSelectedCartName setter</remarks>
-        public IReadOnlyList<string> CartConfigNameListForCart
-        {
-            get => cartConfigNameListForCart;
-            private set => this.RaiseAndSetIfChanged(ref cartConfigNameListForCart, value);
         }
 
         /// <summary>
@@ -202,25 +187,6 @@ namespace BuzzardWPF.Management
         {
             get => interestRating;
             set => this.RaiseAndSetIfChangedMonitored(ref interestRating, value);
-        }
-
-        /// <summary>
-        /// Reloads data lists for lists that are filtered based on the current value of a property.
-        /// </summary>
-        public void ReloadPropertyDependentData()
-        {
-            RxApp.MainThreadScheduler.Schedule(LoadCartConfigsForCartName);
-        }
-
-        private void LoadCartConfigsForCartName()
-        {
-            if (string.IsNullOrWhiteSpace(CartName))
-            {
-                CartConfigNameListForCart = new List<string>();
-                return;
-            }
-
-            CartConfigNameListForCart = DMSDataAccessor.Instance.GetCartConfigNamesForCart(CartName);
         }
 
         public bool SettingsChanged { get; set; }

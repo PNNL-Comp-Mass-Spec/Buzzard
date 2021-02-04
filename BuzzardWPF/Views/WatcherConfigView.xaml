@@ -171,7 +171,7 @@
                             FontWeight="Regular"
                             MinWidth="200"
                             IsEnabled="{Binding Path=IsNotMonitoring}"
-                            ItemsSource="{Binding Path=WatcherMetadata.CartConfigNameListForCart, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                            ItemsSource="{Binding Path=CartConfigNameListForCart, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                             SelectedItem="{Binding Path=WatcherMetadata.CartConfigName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             Style="{StaticResource ComboBoxStyle}">
                                 <cueBannerOverlay:CueBannerService.CueBanner>

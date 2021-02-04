@@ -44,7 +44,7 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
-            <ColumnDefinition />
+            <ColumnDefinition Width="*" />
             <ColumnDefinition Width="180" />
             <ColumnDefinition Width="180" />
         </Grid.ColumnDefinitions>
@@ -57,13 +57,13 @@
             <RowDefinition Height="40" />
             <RowDefinition Height="40" />
         </Grid.RowDefinitions>
+
         <TextBlock
             Grid.Row="0"
             Grid.Column="0"
             Margin="20,11,20.2,11"
             Style="{StaticResource TextBlockStyle}"
             Text="Remote Folder Location" />
-
         <TextBox
             Grid.Row="0"
             Grid.Column="1"
@@ -72,7 +72,6 @@
             IsEnabled="{Binding RemoteFolderLocationIsEnabled}"
             Style="{StaticResource TextBoxStyle}"
             Text="{Binding Path=DatasetManager.TriggerFileLocation, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
-
         <Button
             Grid.Row="0"
             Grid.Column="2"
@@ -82,7 +81,6 @@
             Command="{Binding UseDefaultTriggerFileLocationCommand}"
             Content="Use default"
             Style="{StaticResource SimpleButtonStyle}" />
-
         <Button
             Grid.Row="0"
             Grid.Column="3"
@@ -136,7 +134,6 @@
             Content="Use test folder"
             Visibility="{Binding IsTestFolderVisible, Converter={StaticResource BoolToVis}}"
             Style="{StaticResource SimpleButtonStyle}" />
-
         <Button
             Grid.Row="1"
             Grid.Column="3"
@@ -157,7 +154,6 @@
             FontSize="15"
             IsChecked="{Binding Path=SearchConfigVm.Config.DisableBaseFolderValidation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
             IsEnabled="{Binding Path=IsNotMonitoring}" />
-
         <Label
             Grid.Row="4"
             Grid.Column="0"
@@ -168,11 +164,9 @@
         <TextBox
             Grid.Row="4"
             Grid.Column="1"
-            Width="480"
-            Margin="9.8,9,0,9"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Center"
-            IsReadOnly="true"
+            Height="32"
+            Margin="9.8,4,5.2,4"
+            IsReadOnly="True"
             Style="{StaticResource TextBoxStyle}"
             Text="{Binding LogFolderPath, Mode=OneWay}" />
         <Button Grid.Row="4" Grid.Column="2"
