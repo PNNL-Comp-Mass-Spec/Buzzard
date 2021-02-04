@@ -307,7 +307,7 @@ namespace BuzzardWPF.Management
                 return;
             }
 
-            var baseFolderValidator = new InstrumentFolderValidator(DMSDataAccessor.Instance.InstrumentDetails);
+            var baseFolderValidator = new InstrumentFolderValidator();
 
             if (!baseFolderValidator.ValidateBaseFolder(diBaseFolder, out var expectedBaseFolderPath, out var shareName, out var baseCaptureSubdirectory))
             {

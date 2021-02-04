@@ -53,14 +53,11 @@ namespace BuzzardWPF.Searching
         /// </summary>
         private volatile bool m_keepSearching;
 
-        private readonly Dictionary<string, InstrumentInfo> mInstrumentInfo;
-
         /// <summary>
         /// Constructor
         /// </summary>
-        public FileSearchBuzzardier(Dictionary<string, InstrumentInfo> instrumentInfo)
+        public FileSearchBuzzardier()
         {
-            mInstrumentInfo = instrumentInfo;
         }
 
         /// <summary>
@@ -141,7 +138,7 @@ namespace BuzzardWPF.Searching
 
                 if (!config.DisableBaseFolderValidation)
                 {
-                    var baseFolderValidator = new InstrumentFolderValidator(mInstrumentInfo);
+                    var baseFolderValidator = new InstrumentFolderValidator();
 
                     if (!baseFolderValidator.ValidateBaseFolder(diBaseFolder, out var expectedBaseFolderPath, out var shareName, out var baseCaptureSubdirectory))
                     {

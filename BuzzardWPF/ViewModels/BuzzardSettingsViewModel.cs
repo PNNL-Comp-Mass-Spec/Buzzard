@@ -16,6 +16,8 @@ namespace BuzzardWPF.ViewModels
     {
         public const string DEFAULT_TRIGGER_FOLDER_PATH = @"\\proto-5\BionetXfer\Run_Complete_Trigger";
 
+        public const string DefaultUnsetInstrumentName = @"PegasaurusRex";
+
         /// <summary>
         /// Constructor for valid design-time data context
         /// </summary>

@@ -5,7 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Management;
 using System.Security.AccessControl;
+using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
+using BuzzardWPF.ViewModels;
 using LcmsNetData.Data;
 using LcmsNetData.Logging;
 
@@ -15,16 +17,13 @@ namespace BuzzardWPF.Searching
     {
         // Ignore Spelling: fso, secfso, ftms
 
-        private readonly Dictionary<string, InstrumentInfo> mInstrumentInfo;
-
         public string ErrorMessage { get; private set; }
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public InstrumentFolderValidator(Dictionary<string, InstrumentInfo> instrumentInfo)
+        public InstrumentFolderValidator()
         {
-            mInstrumentInfo = instrumentInfo;
             ErrorMessage = string.Empty;
         }
 
@@ -328,7 +327,7 @@ namespace BuzzardWPF.Searching
                 string baseFolderPathToUse;
 
                 var alternateBaseFolderHostName = Settings.Default.DMSInstrumentHostName;
-                if (alternateBaseFolderHostName.Equals("PegasaurusRex", StringComparison.OrdinalIgnoreCase))
+                if (alternateBaseFolderHostName.Equals(BuzzardSettingsViewModel.DefaultUnsetInstrumentName, StringComparison.OrdinalIgnoreCase) || alternateBaseFolderHostName.Equals(System.Net.Dns.GetHostName(), StringComparison.OrdinalIgnoreCase))
                 {
                     alternateBaseFolderHostName = string.Empty;
                 }
@@ -390,17 +389,17 @@ namespace BuzzardWPF.Searching
                 var sharePathsInDMS = new Dictionary<string, string>();
                 var captureWithFtmsUser = false;
 
-                // Look shares associated with baseFolderHostName in mInstrumentInfo
+                // Look for shares associated with baseFolderHostName in mInstrumentInfo
                 // There will normally only be one share tracked for a given host
                 // The host name tracked by DMS might have periods in it; use Split() to account for that
-                var instrument = mInstrumentInfo
+                var instrument = DMSDataAccessor.Instance.InstrumentDetails
                     .FirstOrDefault(x => string.Equals(baseFolderHostName, x.Value.HostName.Split('.').FirstOrDefault(), StringComparison.OrdinalIgnoreCase)).Value;
 
                 if (instrument == null && !string.IsNullOrWhiteSpace(alternateBaseFolderHostName))
                 {
                     ApplicationLogger.LogMessage(LogLevel.Debug, $"{nameof(InstrumentFolderValidator)}: No local shares that match a share in DMS for host {baseFolderHostName}; trying the alternate name {alternateBaseFolderHostName}");
                     // Hostname not found in DMS, try the alternate host name that was read from the settings.
-                    instrument = mInstrumentInfo
+                    instrument = DMSDataAccessor.Instance.InstrumentDetails
                         .FirstOrDefault(x => string.Equals(alternateBaseFolderHostName, x.Value.HostName.Split('.').FirstOrDefault(), StringComparison.OrdinalIgnoreCase)).Value;
 
                     if (instrument != null)
