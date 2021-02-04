@@ -217,7 +217,7 @@ namespace BuzzardWPF.ViewModels
             Dataset.UseEMSLProposalID = shouldWe;
             Dataset.UseEMSLUsageType = shouldWe;
 
-            Dataset.UseInstrumentType = shouldWe;
+            Dataset.UseInstrumentName = shouldWe;
             Dataset.UseOperator = shouldWe;
             Dataset.UseSeparationType = shouldWe;
             Dataset.UseExperimentName = shouldWe;

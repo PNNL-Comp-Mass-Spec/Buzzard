@@ -489,7 +489,7 @@ namespace BuzzardWPF.ViewModels
                     dataset.DmsData.DatasetType = filldownData.DmsData.DatasetType;
                 }
 
-                if (filldownData.UseInstrumentType)
+                if (filldownData.UseInstrumentName)
                 {
                     dataset.InstrumentName = filldownData.InstrumentName;
                 }

@@ -213,7 +213,7 @@
             <ToggleButton
                 Grid.Row="4"
                 Grid.Column="0"
-                IsChecked="{Binding Path=Dataset.UseInstrumentType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                IsChecked="{Binding Path=Dataset.UseInstrumentName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock
                 Grid.Row="4"
                 Grid.Column="1"

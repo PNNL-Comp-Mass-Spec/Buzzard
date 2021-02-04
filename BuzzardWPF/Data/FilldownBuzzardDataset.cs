@@ -10,7 +10,7 @@ namespace BuzzardWPF.Data
         private bool useOperator;
         private bool useDatasetType;
         private bool useSeparationType;
-        private bool useInstrumentType;
+        private bool useInstrumentName;
 
         private bool useCart;
         private bool useEmslProposalID;
@@ -31,7 +31,7 @@ namespace BuzzardWPF.Data
             UseEMSLProposalID = true;
             UseEMSLUsageType = true;
 
-            UseInstrumentType = true;
+            UseInstrumentName = true;
             UseOperator = true;
             UseSeparationType = true;
             UseExperimentName = true;
@@ -91,10 +91,10 @@ namespace BuzzardWPF.Data
             set => this.RaiseAndSetIfChanged(ref useSeparationType, value);
         }
 
-        public bool UseInstrumentType
+        public bool UseInstrumentName
         {
-            get => useInstrumentType;
-            set => this.RaiseAndSetIfChanged(ref useInstrumentType, value);
+            get => useInstrumentName;
+            set => this.RaiseAndSetIfChanged(ref useInstrumentName, value);
         }
 
         public bool UseCart
