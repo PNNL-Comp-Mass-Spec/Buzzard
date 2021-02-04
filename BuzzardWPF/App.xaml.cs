@@ -156,7 +156,7 @@ namespace BuzzardWPF
             // Block until the splash screen is displayed
             resetSplashCreated.WaitOne();
 
-            var openMainWindow = AppInitializer.InitializeApplication(splashScreen, splashScreen.SetInstrumentName).Result;
+            var openMainWindow = AppInitializer.InitializeApplication(splashScreen, splashScreen.SetInstrumentHostName).Result;
             if (openMainWindow)
             {
                 dmsDataAccessorInstance = DMSDataAccessor.Instance;

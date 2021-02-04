@@ -119,7 +119,7 @@ namespace BuzzardWPF
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
-        public static async Task<bool> InitializeApplication(Window displayWindow, Action<string> instrumentNameAction = null)
+        public static async Task<bool> InitializeApplication(Window displayWindow, Action<string> instrumentHostNameAction = null)
         {
             PersistDataPaths.SetAppName("Buzzard");
 
@@ -170,10 +170,10 @@ namespace BuzzardWPF
                 ApplicationLogger.LogMessage(-1, "Loaded user settings");
             }
 
-            var instName = LCMSSettings.GetParameter("InstName");
-            if (instName != null)
+            var instHostName = LCMSSettings.GetParameter("DMSInstrumentHostName");
+            if (instHostName != null)
             {
-                instrumentNameAction?.Invoke(instName);
+                instrumentHostNameAction?.Invoke(instHostName);
             }
 
             ApplicationLogger.LogMessage(-1, "Checking for a new version");

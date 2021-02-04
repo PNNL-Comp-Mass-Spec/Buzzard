@@ -49,7 +49,7 @@ namespace BuzzardWPF
         private string lastLoggedItem;
         private string logFilePath;
         private string version;
-        private string instrumentName;
+        private string instrumentHostName;
 
         public string LastLoggedItem
         {
@@ -69,10 +69,10 @@ namespace BuzzardWPF
             private set => this.RaiseAndSetIfChanged(ref version, value);
         }
 
-        public string InstrumentName
+        public string InstrumentHostName
         {
-            get => instrumentName;
-            private set => this.RaiseAndSetIfChanged(ref instrumentName, value);
+            get => instrumentHostName;
+            private set => this.RaiseAndSetIfChanged(ref instrumentHostName, value);
         }
 
         public bool IsComplete { get; private set; }
@@ -89,9 +89,9 @@ namespace BuzzardWPF
             }
         }
 
-        public void SetInstrumentName(string name)
+        public void SetInstrumentHostName(string name)
         {
-            Dispatcher.Invoke(() => InstrumentName = name, DispatcherPriority.Send);
+            Dispatcher.Invoke(() => InstrumentHostName = name, DispatcherPriority.Send);
         }
 
         private void ApplicationLogger_LogFilePathDefined(MessageLoggerArgs args)
