@@ -149,7 +149,7 @@
                 Grid.Row="1"
                 Grid.Column="2"
                 Margin="2"
-                ItemsSource="{Binding Path=DmsDbLists.DatasetTypes, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                ItemsSource="{Binding Path=DatasetTypesForInstrument, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                 SelectedValue="{Binding Path=Dataset.DmsData.DatasetType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                 <cueBannerOverlay:CueBannerService.CueBanner>
                     <TextBlock Text="Select" Margin="0" FontWeight="Regular" />

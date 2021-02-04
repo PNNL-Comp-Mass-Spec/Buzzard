@@ -93,7 +93,7 @@
                         Grid.Column="1"
                         FontWeight="Regular"
                         IsEnabled="{Binding Path=IsNotMonitoring}"
-                        ItemsSource="{Binding Path=DmsData.DatasetTypes, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        ItemsSource="{Binding Path=DatasetTypesForInstrument, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                         SelectedItem="{Binding Path=WatcherMetadata.DatasetType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         Style="{StaticResource ComboBoxStyle}">
                         <cueBannerOverlay:CueBannerService.CueBanner>

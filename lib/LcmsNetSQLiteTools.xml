@@ -556,6 +556,13 @@
             <param name="force">Force reload of data from cache, rather than using the in-memory copy of it</param>
             <returns>List of instruments</returns>
         </member>
+        <member name="M:LcmsNetSQLiteTools.SQLiteTools.GetInstrumentGroupList(System.Boolean)">
+            <summary>
+            Gets a list of instrument groups from the cache
+            </summary>
+            <param name="force">Force reload of data from cache, rather than using the in-memory copy of it</param>
+            <returns>List of instrument groups</returns>
+        </member>
         <member name="M:LcmsNetSQLiteTools.SQLiteTools.GetDefaultCartConfigName">
             <summary>
             Retrieves the cached cart configuration name
@@ -613,6 +620,12 @@
             Saves a list of instruments to cache
             </summary>
             <param name="instList">List of InstrumentInfo containing instrument data</param>
+        </member>
+        <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveInstGroupListToCache(System.Collections.Generic.IEnumerable{LcmsNetData.Data.InstrumentGroupInfo})">
+            <summary>
+            Saves a list of instrument groups to cache
+            </summary>
+            <param name="instGroupList">List of InstrumentGroupInfo containing instrument group data</param>
         </member>
         <member name="M:LcmsNetSQLiteTools.SQLiteTools.SaveCartConfigListToCache(System.Collections.Generic.IEnumerable{LcmsNetData.Data.CartConfigInfo})">
             <summary>

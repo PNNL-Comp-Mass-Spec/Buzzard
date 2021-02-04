@@ -392,15 +392,15 @@ namespace BuzzardWPF.Searching
                 // Look for shares associated with baseFolderHostName in mInstrumentInfo
                 // There will normally only be one share tracked for a given host
                 // The host name tracked by DMS might have periods in it; use Split() to account for that
-                var instrument = DMSDataAccessor.Instance.InstrumentDetails
-                    .FirstOrDefault(x => string.Equals(baseFolderHostName, x.Value.HostName.Split('.').FirstOrDefault(), StringComparison.OrdinalIgnoreCase)).Value;
+                var instrument = DMSDataAccessor.Instance.InstrumentDetailsData
+                    .FirstOrDefault(x => string.Equals(baseFolderHostName, x.HostName.Split('.').FirstOrDefault(), StringComparison.OrdinalIgnoreCase));
 
                 if (instrument == null && !string.IsNullOrWhiteSpace(alternateBaseFolderHostName))
                 {
                     ApplicationLogger.LogMessage(LogLevel.Debug, $"{nameof(InstrumentFolderValidator)}: No local shares that match a share in DMS for host {baseFolderHostName}; trying the alternate name {alternateBaseFolderHostName}");
                     // Hostname not found in DMS, try the alternate host name that was read from the settings.
-                    instrument = DMSDataAccessor.Instance.InstrumentDetails
-                        .FirstOrDefault(x => string.Equals(alternateBaseFolderHostName, x.Value.HostName.Split('.').FirstOrDefault(), StringComparison.OrdinalIgnoreCase)).Value;
+                    instrument = DMSDataAccessor.Instance.InstrumentDetailsData
+                        .FirstOrDefault(x => string.Equals(alternateBaseFolderHostName, x.HostName.Split('.').FirstOrDefault(), StringComparison.OrdinalIgnoreCase));
 
                     if (instrument != null)
                     {

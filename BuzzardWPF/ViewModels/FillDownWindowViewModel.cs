@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
@@ -21,6 +22,7 @@ namespace BuzzardWPF.ViewModels
         private bool workPackageWarning;
         private bool workPackageError;
         private IReadOnlyList<string> cartConfigNameListSource = new List<string>();
+        private IReadOnlyList<string> datasetTypesForInstrument = new List<string>();
 
         [Obsolete("For WPF Design-time use only", true)]
         // ReSharper disable once UnusedMember.Global
@@ -43,6 +45,7 @@ namespace BuzzardWPF.ViewModels
             this.WhenAnyValue(x => x.Dataset.DmsData, x => x.Dataset.DmsData.EMSLProposalID).Subscribe(_ => UpdateProposalUsersSource());
             this.WhenAnyValue(x => x.Dataset.DmsData, x => x.Dataset.DmsData.WorkPackage).Subscribe(_ => UpdateWorkPackageToolTip());
             this.WhenAnyValue(x => x.Dataset.DmsData.CartName).ObserveOn(RxApp.MainThreadScheduler).Subscribe(LoadCartConfigsForCart);
+            this.WhenAnyValue(x => x.Dataset.InstrumentName).ObserveOn(RxApp.MainThreadScheduler).Subscribe(LoadDatasetTypesForInstrument);
 
             DmsDbLists.WhenAnyValue(x => x.LastLoadFromSqliteCache).ObserveOn(RxApp.TaskpoolScheduler).Subscribe(_ => ReloadPropertyDependentData());
         }
@@ -71,6 +74,16 @@ namespace BuzzardWPF.ViewModels
         {
             get => cartConfigNameListSource;
             private set => this.RaiseAndSetIfChanged(ref cartConfigNameListSource, value);
+        }
+
+        /// <summary>
+        /// List of dataset types allowed with the current instrument
+        /// </summary>
+        /// <remarks>Updated via Instrument_OnSelectionChanged</remarks>
+        public IReadOnlyList<string> DatasetTypesForInstrument
+        {
+            get => datasetTypesForInstrument;
+            private set => this.RaiseAndSetIfChanged(ref datasetTypesForInstrument, value);
         }
 
         public IReadOnlyList<ProposalUser> EMSLProposalUsersSource
@@ -236,7 +249,17 @@ namespace BuzzardWPF.ViewModels
         /// </summary>
         public void ReloadPropertyDependentData()
         {
-            RxApp.MainThreadScheduler.Schedule(() => LoadCartConfigsForCart(Dataset.DmsData.CartName));
+            RxApp.MainThreadScheduler.Schedule(() =>
+            {
+                LoadCartConfigsForCart(Dataset.DmsData.CartName);
+                var oldDatasetTypeList = DatasetTypesForInstrument;
+                LoadDatasetTypesForInstrument(Dataset.InstrumentName);
+                if (ReferenceEquals(oldDatasetTypeList, DatasetTypesForInstrument))
+                {
+                    // Only here to handle the case where we are displaying all items
+                    this.RaisePropertyChanged(nameof(DatasetTypesForInstrument));
+                }
+            });
         }
 
         private void LoadCartConfigsForCart(string cartName)
@@ -249,6 +272,22 @@ namespace BuzzardWPF.ViewModels
 
             // Update the allowable CartConfig names
             CartConfigNameListSource = DMSDataAccessor.Instance.GetCartConfigNamesForCart(cartName);
+        }
+
+        private void LoadDatasetTypesForInstrument(string instrument)
+        {
+            if (string.IsNullOrWhiteSpace(instrument))
+            {
+                DatasetTypesForInstrument = DMSDataAccessor.Instance.DatasetTypes;
+                return;
+            }
+
+            DatasetTypesForInstrument = DMSDataAccessor.Instance.GetAllowedDatasetTypesForInstrument(instrument, out var defaultDatasetType);
+
+            if (string.IsNullOrWhiteSpace(Dataset.DmsData.DatasetType) || !DatasetTypesForInstrument.Any(x => x.Equals(Dataset.DmsData.DatasetType, StringComparison.OrdinalIgnoreCase)))
+            {
+                Dataset.DmsData.DatasetType = defaultDatasetType;
+            }
         }
     }
 }

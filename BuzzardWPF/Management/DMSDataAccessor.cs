@@ -72,6 +72,8 @@ namespace BuzzardWPF.Management
             ColumnData = columnData;
             instrumentDataSource.Connect().ObserveOn(RxApp.MainThreadScheduler).Bind(out var instrumentData).Subscribe();
             InstrumentData = instrumentData;
+            instrumentDetailsDataSource.Connect().ObserveOn(RxApp.MainThreadScheduler).Bind(out var instrumentDetailsData).Subscribe();
+            InstrumentDetailsData = instrumentDetailsData;
             operatorDataSource.Connect().ObserveOn(RxApp.MainThreadScheduler).Bind(out var operatorData).Subscribe();
             OperatorData = operatorData;
             datasetTypesSource.Connect().ObserveOn(RxApp.MainThreadScheduler).Bind(out var datasetTypes).Subscribe();
@@ -103,11 +105,13 @@ namespace BuzzardWPF.Management
         /// Key is cart name, value is list of valid cart config names for that cart.
         /// </summary>
         private Dictionary<string, List<string>> cartConfigNameMap = new Dictionary<string, List<string>>();
+        private readonly List<InstrumentGroupInfo> instrumentGroupInfoList = new List<InstrumentGroupInfo>();
 
         // Backing lists for collections that can be provided to the UI.
         private readonly SourceList<string> proposalIDsSource = new SourceList<string>();
         private readonly SourceList<string> columnDataSource = new SourceList<string>();
         private readonly SourceList<string> instrumentDataSource = new SourceList<string>();
+        private readonly SourceList<InstrumentInfo> instrumentDetailsDataSource = new SourceList<InstrumentInfo>();
         private readonly SourceList<string> operatorDataSource = new SourceList<string>();
         private readonly SourceList<string> datasetTypesSource = new SourceList<string>();
         private readonly SourceList<string> separationTypesSource = new SourceList<string>();
@@ -166,11 +170,9 @@ namespace BuzzardWPF.Management
         public ReadOnlyObservableCollection<string> InstrumentData { get; }
 
         /// <summary>
-        /// Instrument details (Name, status, source host name, source share name, capture method
+        /// Observable List of the DMS instrument details
         /// </summary>
-        /// <remarks>Key is instrument name, value is the details</remarks>
-        /// <remarks>Data is pulled from DMS view V_Instrument_Info_LCMSNet</remarks>
-        public Dictionary<string, InstrumentInfo> InstrumentDetails { get; } = new Dictionary<string, InstrumentInfo>();
+        public ReadOnlyObservableCollection<InstrumentInfo> InstrumentDetailsData { get; }
 
         /// <summary>
         /// This is an Observable list of the names of the instrument operators.
@@ -265,6 +267,36 @@ namespace BuzzardWPF.Management
             }
 
             return new List<string>();
+        }
+
+        /// <summary>
+        /// Gets the list of dataset type names allowed for a specified instrument, returning all dataset types if the instrument name or group is not found.
+        /// </summary>
+        /// <param name="instrumentName"></param>
+        /// <param name="defaultDatasetType"></param>
+        /// <returns></returns>
+        public IReadOnlyList<string> GetAllowedDatasetTypesForInstrument(string instrumentName, out string defaultDatasetType)
+        {
+            defaultDatasetType = "";
+            if (string.IsNullOrWhiteSpace(instrumentName))
+            {
+                return DatasetTypes;
+            }
+
+            // Get instrument details
+            var instrument = InstrumentDetailsData.FirstOrDefault(x => x.DMSName.Equals(instrumentName, StringComparison.OrdinalIgnoreCase));
+            if (instrument != null)
+            {
+                // Get instrument group details
+                var group = instrumentGroupInfoList.FirstOrDefault(x => x.InstrumentGroup.Equals(instrument.InstrumentGroup, StringComparison.OrdinalIgnoreCase));
+                if (group != null)
+                {
+                    defaultDatasetType = group.DefaultDatasetType;
+                    return group.AllowedDatasetTypesList;
+                }
+            }
+
+            return DatasetTypes;
         }
 
         /// <summary>
@@ -512,13 +544,12 @@ namespace BuzzardWPF.Management
             const bool forceReloadFromCache = true;
 
             // Load Instrument Data
-            var tempInstrumentData = SQLiteTools.GetInstrumentList(forceReloadFromCache).ToList();
+            var tempInstrumentData = SQLiteTools.GetInstrumentList(forceReloadFromCache).Select(instrument => (InstrumentInfo)instrument.Clone()).ToList();
             if (tempInstrumentData.Count == 0)
             {
                 ApplicationLogger.LogError(0, "No instruments found.");
             }
-
-            if (tempInstrumentData.Count != 0)
+            else
             {
                 instrumentDataSource.Edit(sourceList =>
                 {
@@ -526,15 +557,24 @@ namespace BuzzardWPF.Management
                     sourceList.AddRange(tempInstrumentData.Select(instDatum => instDatum.DMSName));
                 });
 
-                InstrumentDetails.Clear();
-
-                foreach (var instrument in tempInstrumentData)
+                instrumentDetailsDataSource.Edit(sourceList =>
                 {
-                    if (!InstrumentDetails.ContainsKey(instrument.DMSName))
-                    {
-                        InstrumentDetails.Add(instrument.DMSName, (InstrumentInfo)instrument.Clone());
-                    }
-                }
+                    sourceList.Clear();
+                    sourceList.AddRange(tempInstrumentData);
+                });
+            }
+
+            // Load Instrument Group Data
+            var tempInstrumentGroupData = SQLiteTools.GetInstrumentGroupList(forceReloadFromCache).Select(group => (InstrumentGroupInfo)group.Clone()).ToList();
+            if (tempInstrumentGroupData.Count == 0)
+            {
+                ApplicationLogger.LogError(0, "No instrument groups found.");
+            }
+            else
+            {
+                instrumentGroupInfoList.Clear();
+                instrumentGroupInfoList.AddRange(tempInstrumentGroupData);
+                instrumentGroupInfoList.Capacity = instrumentGroupInfoList.Count;
             }
 
             // Load Operator Data (from V_Active_Instrument_Operators)
