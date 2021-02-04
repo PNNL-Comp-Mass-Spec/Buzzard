@@ -213,6 +213,7 @@
             <ToggleButton
                 Grid.Row="4"
                 Grid.Column="0"
+                IsEnabled="{Binding AllowChangingInstrumentName}"
                 IsChecked="{Binding Path=Dataset.UseInstrumentName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock
                 Grid.Row="4"
@@ -222,7 +223,8 @@
                 Grid.Row="4"
                 Grid.Column="2"
                 Margin="2"
-                ItemsSource="{Binding Path=DmsDbLists.InstrumentData, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                IsEnabled="{Binding AllowChangingInstrumentName}"
+                ItemsSource="{Binding Path=DmsDbLists.InstrumentsMatchingHost, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                 SelectedValue="{Binding Path=Dataset.InstrumentName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                 <cueBannerOverlay:CueBannerService.CueBanner>
                     <TextBlock Text="Select" Margin="0" FontWeight="Regular" />

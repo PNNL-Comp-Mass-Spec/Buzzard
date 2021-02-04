@@ -23,6 +23,7 @@ namespace BuzzardWPF.ViewModels
         private bool workPackageError;
         private IReadOnlyList<string> cartConfigNameListSource = new List<string>();
         private IReadOnlyList<string> datasetTypesForInstrument = new List<string>();
+        private readonly ObservableAsPropertyHelper<bool> allowChangingInstrumentName;
 
         [Obsolete("For WPF Design-time use only", true)]
         // ReSharper disable once UnusedMember.Global
@@ -47,11 +48,15 @@ namespace BuzzardWPF.ViewModels
             this.WhenAnyValue(x => x.Dataset.DmsData.CartName).ObserveOn(RxApp.MainThreadScheduler).Subscribe(LoadCartConfigsForCart);
             this.WhenAnyValue(x => x.Dataset.InstrumentName).ObserveOn(RxApp.MainThreadScheduler).Subscribe(LoadDatasetTypesForInstrument);
 
+            allowChangingInstrumentName = DmsDbLists.WhenAnyValue(x => x.InstrumentsMatchingHost.Count)
+                .Select(x => x != 1).ToProperty(this, x => x.AllowChangingInstrumentName, DmsDbLists.InstrumentsMatchingHost.Count != 1);
+
             DmsDbLists.WhenAnyValue(x => x.LastLoadFromSqliteCache).ObserveOn(RxApp.TaskpoolScheduler).Subscribe(_ => ReloadPropertyDependentData());
         }
 
         public void Dispose()
         {
+            allowChangingInstrumentName?.Dispose();
             PickExperimentCommand?.Dispose();
             PickWorkPackageCommand?.Dispose();
             UseAllCommand?.Dispose();
@@ -65,6 +70,8 @@ namespace BuzzardWPF.ViewModels
 
         public FilldownBuzzardDataset Dataset { get; }
         public DMSDataAccessor DmsDbLists => DMSDataAccessor.Instance;
+
+        public bool AllowChangingInstrumentName => allowChangingInstrumentName.Value;
 
         /// <summary>
         /// List of cart config names associated with the current cart
@@ -232,7 +239,7 @@ namespace BuzzardWPF.ViewModels
             Dataset.UseEMSLProposalID = shouldWe;
             Dataset.UseEMSLUsageType = shouldWe;
 
-            Dataset.UseInstrumentName = shouldWe;
+            Dataset.UseInstrumentName = shouldWe || DmsDbLists.InstrumentsMatchingHost.Count == 1;
             Dataset.UseOperator = shouldWe;
             Dataset.UseSeparationType = shouldWe;
             Dataset.UseExperimentName = shouldWe;

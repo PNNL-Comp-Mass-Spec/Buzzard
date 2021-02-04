@@ -85,6 +85,18 @@ namespace BuzzardWPF.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool NeverLockInstrumentName {
+            get {
+                return ((bool)(this["NeverLockInstrumentName"]));
+            }
+            set {
+                this["NeverLockInstrumentName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("\\\\proto-5\\BionetXfer\\Run_Complete_Trigger")]
         public string TriggerFileFolder {
             get {

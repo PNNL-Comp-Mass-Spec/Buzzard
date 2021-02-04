@@ -8,7 +8,9 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using BuzzardWPF.Data;
+using BuzzardWPF.ViewModels;
 using DynamicData;
+using DynamicData.Binding;
 using LcmsNetData;
 using LcmsNetDmsTools;
 using LcmsNetData.Data;
@@ -70,8 +72,6 @@ namespace BuzzardWPF.Management
             ProposalIDs = proposalIDs;
             columnDataSource.Connect().ObserveOn(RxApp.MainThreadScheduler).Bind(out var columnData).Subscribe();
             ColumnData = columnData;
-            instrumentDataSource.Connect().ObserveOn(RxApp.MainThreadScheduler).Bind(out var instrumentData).Subscribe();
-            InstrumentData = instrumentData;
             instrumentDetailsDataSource.Connect().ObserveOn(RxApp.MainThreadScheduler).Bind(out var instrumentDetailsData).Subscribe();
             InstrumentDetailsData = instrumentDetailsData;
             operatorDataSource.Connect().ObserveOn(RxApp.MainThreadScheduler).Bind(out var operatorData).Subscribe();
@@ -80,6 +80,16 @@ namespace BuzzardWPF.Management
             DatasetTypes = datasetTypes;
             separationTypesSource.Connect().ObserveOn(RxApp.MainThreadScheduler).Bind(out var separationTypes).Subscribe();
             SeparationTypes = separationTypes;
+
+            instrumentDetailsDataSource.Connect()
+                //.Transform(x => x.HostName)
+                .DistinctValues(x => x.HostName).Sort(Comparer<string>.Default).ObserveOn(RxApp.MainThreadScheduler).Bind(out var dmsInstrumentHostNames).Subscribe();
+            DmsInstrumentHostNames = dmsInstrumentHostNames;
+
+            var filter = this.WhenValueChanged(x => x.DeviceHostName)
+                .Select(x => new Func<InstrumentInfo, bool>(inst => string.IsNullOrWhiteSpace(x) || x.Equals(BuzzardSettingsViewModel.DefaultUnsetInstrumentName, StringComparison.OrdinalIgnoreCase) || x.Equals(inst.HostName, StringComparison.OrdinalIgnoreCase)));
+            instrumentDetailsDataSource.Connect().Filter(filter).ObserveOn(RxApp.MainThreadScheduler).Transform(x => x.DMSName).Bind(out var instrumentsMatchingHost).Subscribe();
+            InstrumentsMatchingHost = instrumentsMatchingHost;
 
             autoUpdateTimer = new Timer(AutoUpdateTimer_Tick, this, Timeout.Infinite, Timeout.Infinite);
         }
@@ -100,6 +110,7 @@ namespace BuzzardWPF.Management
 
         private readonly object cacheLoadingLock = new object();
         private bool isUpdatingCache;
+        private string deviceHostName;
 
         /// <summary>
         /// Key is cart name, value is list of valid cart config names for that cart.
@@ -110,7 +121,6 @@ namespace BuzzardWPF.Management
         // Backing lists for collections that can be provided to the UI.
         private readonly SourceList<string> proposalIDsSource = new SourceList<string>();
         private readonly SourceList<string> columnDataSource = new SourceList<string>();
-        private readonly SourceList<string> instrumentDataSource = new SourceList<string>();
         private readonly SourceList<InstrumentInfo> instrumentDetailsDataSource = new SourceList<InstrumentInfo>();
         private readonly SourceList<string> operatorDataSource = new SourceList<string>();
         private readonly SourceList<string> datasetTypesSource = new SourceList<string>();
@@ -132,6 +142,12 @@ namespace BuzzardWPF.Management
         public DateTime LastSqliteCacheUpdate => lastSqliteCacheUpdate.Value;
 
         public DateTime LastLoadFromSqliteCache => lastLoadFromSqliteCache.Value;
+
+        public string DeviceHostName
+        {
+            get => deviceHostName;
+            set => this.RaiseAndSetIfChanged(ref deviceHostName, value);
+        }
 
         public IReadOnlyList<string> InterestRatingCollection { get; }
 
@@ -165,9 +181,14 @@ namespace BuzzardWPF.Management
         public ReadOnlyObservableCollection<string> ColumnData { get; }
 
         /// <summary>
-        /// Observable List of the DMS instrument names
+        /// Observable List of the DMS instrument host names
         /// </summary>
-        public ReadOnlyObservableCollection<string> InstrumentData { get; }
+        public ReadOnlyObservableCollection<string> DmsInstrumentHostNames { get; }
+
+        /// <summary>
+        /// Observable List of the DMS instrument names that match the current host
+        /// </summary>
+        public ReadOnlyObservableCollection<string> InstrumentsMatchingHost { get; }
 
         /// <summary>
         /// Observable List of the DMS instrument details
@@ -222,7 +243,7 @@ namespace BuzzardWPF.Management
         /// <summary>
         /// Read-only, non-observable retrieval of the InstrumentData collection contents
         /// </summary>
-        public IEnumerable<string> InstrumentDataItems => instrumentDataSource.Items;
+        public IEnumerable<string> InstrumentNameItems => instrumentDetailsDataSource.Items.Select(x => x.DMSName);
 
         /// <summary>
         /// Read-only, non-observable retrieval of the OperatorData collection contents
@@ -551,12 +572,6 @@ namespace BuzzardWPF.Management
             }
             else
             {
-                instrumentDataSource.Edit(sourceList =>
-                {
-                    sourceList.Clear();
-                    sourceList.AddRange(tempInstrumentData.Select(instDatum => instDatum.DMSName));
-                });
-
                 instrumentDetailsDataSource.Edit(sourceList =>
                 {
                     sourceList.Clear();
@@ -873,7 +888,7 @@ namespace BuzzardWPF.Management
             dmsDbTools?.Dispose();
             proposalIDsSource.Dispose();
             columnDataSource.Dispose();
-            instrumentDataSource.Dispose();
+            instrumentDetailsDataSource.Dispose();
             operatorDataSource.Dispose();
             datasetTypesSource.Dispose();
             separationTypesSource.Dispose();

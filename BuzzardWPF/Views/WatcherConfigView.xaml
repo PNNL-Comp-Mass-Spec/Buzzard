@@ -74,8 +74,8 @@
                         Grid.Row="0"
                         Grid.Column="1"
                         FontWeight="Regular"
-                        IsEnabled="{Binding Path=IsNotMonitoring}"
-                        ItemsSource="{Binding Path=DmsData.InstrumentData, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        IsEnabled="{Binding Path=AllowChangingInstrumentName}"
+                        ItemsSource="{Binding Path=DmsData.InstrumentsMatchingHost, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                         SelectedItem="{Binding Path=WatcherMetadata.Instrument, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         Style="{StaticResource ComboBoxStyle}">
                         <cueBannerOverlay:CueBannerService.CueBanner>

@@ -25,6 +25,9 @@ namespace BuzzardWPF.ViewModels
             WatcherMetadata.WhenAnyValue(x => x.CartName).ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ => LoadCartConfigsForCartName());
             WatcherMetadata.WhenAnyValue(x => x.Instrument).ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ => LoadDatasetTypesForInstrument());
 
+            allowChangingInstrumentName = this.WhenAnyValue(x => x.IsNotMonitoring, x => x.DmsData.InstrumentsMatchingHost.Count)
+                .Select(x => x.Item1 && x.Item2 != 1).ToProperty(this, x => x.AllowChangingInstrumentName, false);
+
             DmsData.WhenAnyValue(x => x.LastLoadFromSqliteCache).ObserveOn(RxApp.TaskpoolScheduler).Subscribe(_ => ReloadPropertyDependentData());
         }
 
@@ -32,6 +35,7 @@ namespace BuzzardWPF.ViewModels
         private bool workPackageWarning;
         private bool workPackageError;
         private readonly ObservableAsPropertyHelper<bool> isNotMonitoring;
+        private readonly ObservableAsPropertyHelper<bool> allowChangingInstrumentName;
         private IReadOnlyList<string> cartConfigNameListForCart = new List<string>();
         private IReadOnlyList<string> datasetTypesForInstrument = new List<string>();
 
@@ -48,6 +52,7 @@ namespace BuzzardWPF.ViewModels
         public DMSDataAccessor DmsData => DMSDataAccessor.Instance;
 
         public bool IsNotMonitoring => isNotMonitoring.Value;
+        public bool AllowChangingInstrumentName => allowChangingInstrumentName.Value;
 
         /// <summary>
         /// List of dataset types allowed with the current instrument

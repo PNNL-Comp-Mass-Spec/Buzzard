@@ -17,6 +17,9 @@
     <Setting Name="DMSInstrumentHostName" Type="System.String" Scope="User">
       <Value Profile="(Default)">PegasaurusRex</Value>
     </Setting>
+    <Setting Name="NeverLockInstrumentName" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
     <Setting Name="TriggerFileFolder" Type="System.String" Scope="User">
       <Value Profile="(Default)">\\proto-5\BionetXfer\Run_Complete_Trigger</Value>
     </Setting>

@@ -40,6 +40,9 @@ namespace BuzzardWPF.Management
             EMSLProposalUser = null;
             WorkPackage = "none";
 
+            // Set the instrument name to a value valid for the instrument host.
+            DMSDataAccessor.Instance.WhenAnyValue(x => x.InstrumentsMatchingHost, x => x.InstrumentsMatchingHost.Count)
+                .Where(x => x.Item2 > 0).Subscribe(x => Instrument = x.Item1.First());
         }
 
         /// <summary>
@@ -250,7 +253,7 @@ namespace BuzzardWPF.Management
 
             Instrument = CheckSetting(
                 Settings.Default.WatcherInstrument,
-                DMSDataAccessor.Instance.InstrumentDataItems,
+                DMSDataAccessor.Instance.InstrumentNameItems,
                 "Instrument");
 
             InstrumentOperator = CheckSetting(

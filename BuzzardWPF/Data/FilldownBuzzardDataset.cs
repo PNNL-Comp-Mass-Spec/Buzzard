@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Reactive.Linq;
 using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
 using ReactiveUI;
@@ -51,6 +53,17 @@ namespace BuzzardWPF.Data
                 .Subscribe(_ => SettingsChanged = true);
             this.WhenAnyValue(x => x.DmsData.CartName, x => x.DmsData.CartConfigName, x => x.InterestRating, x => x.DmsData.Experiment, x => x.DmsData.WorkPackage)
                 .Subscribe(_ => SettingsChanged = true);
+
+            // If there is only one name supported for an instrument host, then set it and always use it.
+            DMSDataAccessor.Instance.WhenAnyValue(x => x.InstrumentsMatchingHost, x => x.InstrumentsMatchingHost.Count)
+                .Where(x => x.Item2 > 0).Subscribe(x =>
+                {
+                    InstrumentName = x.Item1.First();
+                    if (!UseInstrumentName && x.Item2 == 1)
+                    {
+                        UseInstrumentName = true;
+                    }
+                });
 
             LoadSettings();
         }

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using BuzzardWPF.Management;
+using BuzzardWPF.Properties;
 using LcmsNetData.Logging;
 using Ookii.Dialogs.Wpf;
 using ReactiveUI;
@@ -42,6 +44,10 @@ namespace BuzzardWPF.ViewModels
                 IsTestFolderVisible = false;
             }
 
+            // Use System.Net.Dns.GetHostName() to get the hostname with correct casing, and possibly support names longer than 15 characters
+            ComputerName = System.Net.Dns.GetHostName();
+
+            UseInstrumentHostNameCommand = ReactiveCommand.Create(UseInstrumentHostName);
             UseDefaultTriggerFileLocationCommand = ReactiveCommand.Create(UseDefaultTriggerFileLocation);
             SelectTriggerFileLocationCommand = ReactiveCommand.Create(SelectTriggerFileLocation);
             UseTestFolderCommand = ReactiveCommand.Create(UseTestFolder);
@@ -51,17 +57,63 @@ namespace BuzzardWPF.ViewModels
             OpenLogFileCommand = ReactiveCommand.Create(OpenLogFile);
 
             DmsDbData.WhenAnyValue(x => x.LastSqliteCacheUpdate).ObserveOn(RxApp.TaskpoolScheduler).Throttle(TimeSpan.FromSeconds(5)).Subscribe(x => CheckForUpdate());
+            DmsDbData.WhenAnyValue(x => x.InstrumentDetailsData, x => x.InstrumentDetailsData.Count).Throttle(TimeSpan.FromMilliseconds(200)).Subscribe(x => CheckInstrumentHostName());
+
+            displayedComputerInstrumentHostName = this.WhenAnyValue(x => x.ComputerName, x => x.StoredHostName).Select(x =>
+            {
+                if (x.Item1.Equals(x.Item2, StringComparison.OrdinalIgnoreCase))
+                {
+                    return x.Item2;
+                }
+
+                return $"{x.Item1} / {x.Item2}";
+            }).ToProperty(this, x => x.DisplayedComputerInstrumentHostName, "");
+
+            hostLinkedInstruments = DmsDbData.WhenAnyValue(x => x.InstrumentsMatchingHost, x => x.InstrumentsMatchingHost.Count)
+                .Select(x => string.Join(", ", x.Item1)).ToProperty(this, x => x.HostLinkedInstruments, "");
         }
 
         private bool remoteFolderLocationIsEnabled;
         private readonly ObservableAsPropertyHelper<bool> isNotMonitoring;
         private bool newVersionAvailable = false;
         private string newVersionText = "";
+        private readonly ObservableAsPropertyHelper<string> displayedComputerInstrumentHostName;
+        private bool computerNameNotDmsInstrumentHost = false;
+        private string selectedHostName = "";
+        private string storedHostName = "";
+        private readonly ObservableAsPropertyHelper<string> hostLinkedInstruments;
 
         public SearchConfigViewModel SearchConfigVm { get; }
         public DMSDataAccessor DmsDbData => DMSDataAccessor.Instance;
         public InstrumentCriticalFiles CriticalsBackups => InstrumentCriticalFiles.Instance;
         public DatasetManager DatasetManager => DatasetManager.Manager;
+
+        public string ComputerName { get; }
+
+        public string DisplayedComputerInstrumentHostName => displayedComputerInstrumentHostName.Value;
+
+        public bool ComputerNameNotDmsInstrumentHost
+        {
+            get => computerNameNotDmsInstrumentHost;
+            private set => this.RaiseAndSetIfChanged(ref computerNameNotDmsInstrumentHost, value);
+        }
+
+        public string SelectedHostName
+        {
+            get => selectedHostName;
+            set => this.RaiseAndSetIfChanged(ref selectedHostName, value);
+        }
+
+        /// <summary>
+        /// A single instrument computer might be associated with more than one DMS instrument, usually only if the instrument can produce multiple data formats (Agilent IM-QTOF with IMS and QTOF datasets, Bruker Solarix with normal FTICR and Imaging dataset)
+        /// </summary>
+        public string StoredHostName
+        {
+            get => storedHostName;
+            private set => this.RaiseAndSetIfChangedMonitored(ref storedHostName, value);
+        }
+
+        public string HostLinkedInstruments => hostLinkedInstruments.Value;
 
         /// <summary>
         /// Gets or sets whether the system is monitoring or not.
@@ -95,6 +147,7 @@ namespace BuzzardWPF.ViewModels
 
         public bool SettingsChanged { get; set; }
 
+        public ReactiveCommand<Unit, Unit> UseInstrumentHostNameCommand { get; }
         public ReactiveCommand<Unit, Unit> UseDefaultTriggerFileLocationCommand { get; }
         public ReactiveCommand<Unit, Unit> SelectTriggerFileLocationCommand { get; }
         public ReactiveCommand<Unit, Unit> UseTestFolderCommand { get; }
@@ -196,6 +249,41 @@ namespace BuzzardWPF.ViewModels
             process.Start();
         }
 
+        private void CheckInstrumentHostName()
+        {
+            var knownInstrumentHosts = DmsDbData.InstrumentDetailsData.Select(x => x.HostName).Distinct().ToList();
+            if (knownInstrumentHosts.Count == 0)
+            {
+                return;
+            }
+
+            var match = knownInstrumentHosts.Find(x => x.Equals(ComputerName, StringComparison.OrdinalIgnoreCase));
+            if (!string.IsNullOrWhiteSpace(match))
+            {
+                // Depend on a hidden user setting to determine if we lock the instrument host name when it matches
+                ComputerNameNotDmsInstrumentHost = Settings.Default.NeverLockInstrumentName;
+                if (!StoredHostName.Equals(ComputerName, StringComparison.OrdinalIgnoreCase))
+                {
+                    StoredHostName = match;
+                    SelectedHostName = match;
+                }
+            }
+            else
+            {
+                ComputerNameNotDmsInstrumentHost = true;
+            }
+        }
+
+        private void UseInstrumentHostName()
+        {
+            if (!string.IsNullOrWhiteSpace(SelectedHostName))
+            {
+                StoredHostName = SelectedHostName;
+                // If the user setting is true, always show all instruments
+                DmsDbData.DeviceHostName = Settings.Default.NeverLockInstrumentName ? "" : StoredHostName;
+            }
+        }
+
         private void CheckForUpdate()
         {
             var updateAvailable = UpdateChecker.CheckForNewVersion(out var newVersion);
@@ -214,12 +302,7 @@ namespace BuzzardWPF.ViewModels
                 return false;
             }
 
-            //Settings.Default.Search_MatchFolders = MatchFolders;
-            //
-            //Settings.Default.SearchExtension = FileExtension;
-            //Settings.Default.SearchPath = DirectoryPath;
-            //Settings.Default.SearchDirectoryOptions = SearchDepth;
-            //Settings.Default.SearchMinimumSizeKB = MinimumSizeKB;
+            Settings.Default.DMSInstrumentHostName = StoredHostName;
 
             SettingsChanged = false;
 
@@ -228,17 +311,16 @@ namespace BuzzardWPF.ViewModels
 
         public void LoadSettings()
         {
-            //MatchFolders = Settings.Default.Search_MatchFolders;
-            //FileExtension = Settings.Default.SearchExtension;
-            //DirectoryPath = Settings.Default.SearchPath;
-            //SearchDepth = Settings.Default.SearchDirectoryOptions;
-            //MinimumSizeKB = Settings.Default.SearchMinimumSizeKB;
+            StoredHostName = Settings.Default.DMSInstrumentHostName;
+            SelectedHostName = Settings.Default.DMSInstrumentHostName;
+            DmsDbData.DeviceHostName = StoredHostName;
 
             SettingsChanged = false;
         }
 
         public void Dispose()
         {
+            displayedComputerInstrumentHostName?.Dispose();
             UseDefaultTriggerFileLocationCommand?.Dispose();
             SelectTriggerFileLocationCommand?.Dispose();
             UseTestFolderCommand?.Dispose();
