@@ -1,5 +1,12 @@
 Buzzard Change Log
 
+Version 2.3.1.0; February 4, 2021
+	- Only show requested runs that match the instrument group(s) for the instrument(s) that match the selected host.
+	- Add a program-wide "instrument host name" setting that restricts the displayed instruments to those that use that host (according to DMS)
+		- This setting may be determined by the computer's host name, in which case the user does not get an option to select the host
+	- Only show dataset types that are allowed in DMS for the selected instrument
+	- Directly say that Buzzard will be closed when the user clicks "Yes" in the update prompt.
+
 Version 2.3.0.0; February 2, 2021
 	- Make the use of the date range for searching an option that is disabled by default.
 	- Update message: Add a warning if the current user is not an administrator (about clicking 'yes')
