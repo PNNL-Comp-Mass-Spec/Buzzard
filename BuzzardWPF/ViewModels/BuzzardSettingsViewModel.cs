@@ -266,6 +266,9 @@ namespace BuzzardWPF.ViewModels
                 {
                     StoredHostName = match;
                     SelectedHostName = match;
+
+                    // If the user setting is true, always show all instruments
+                    DmsDbData.DeviceHostName = Settings.Default.NeverLockInstrumentName ? "" : StoredHostName;
                 }
             }
             else

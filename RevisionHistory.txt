@@ -1,5 +1,8 @@
 Buzzard Change Log
 
+Version 2.3.1.1; February 4, 2021
+	- Fix a "First start after upgrade" bug.
+
 Version 2.3.1.0; February 4, 2021
 	- Only show requested runs that match the instrument group(s) for the instrument(s) that match the selected host.
 	- Add a program-wide "instrument host name" setting that restricts the displayed instruments to those that use that host (according to DMS)
