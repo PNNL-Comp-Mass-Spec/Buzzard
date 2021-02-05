@@ -79,6 +79,8 @@ namespace BuzzardWPF.ViewModels
             OpenFilldownCommand = ReactiveCommand.Create(OpenFilldown, SelectedDatasets.WhenAnyValue(x => x.Count).Select(x => x > 0).ObserveOn(RxApp.MainThreadScheduler));
             AbortCommand = ReactiveCommand.Create(AbortTriggerThread);
             CreateTriggersCommand = ReactiveCommand.Create(CreateTriggers, SelectedDatasets.WhenAnyValue(x => x.Count).Select(x => x > 0).ObserveOn(RxApp.MainThreadScheduler));
+
+            ViewModelCache.Instance.SetFillDownDataset(fillDownDataset);
         }
 
         private bool settingsChanged;

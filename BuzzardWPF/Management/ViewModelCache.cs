@@ -30,15 +30,27 @@ namespace BuzzardWPF.Management
         private FillDownWindowViewModel fillDownVm;
         private ExperimentsViewerViewModel experimentsVm;
         private WorkPackageSelectionViewModel workPackageVm;
+        public FilldownBuzzardDataset FilldownDataset { get; private set; }
 
-        public FillDownWindowViewModel GetFillDownVm(FilldownBuzzardDataset fillDownDataset)
+        public FillDownWindowViewModel GetFillDownVm(FilldownBuzzardDataset filldownDataset)
         {
-            if (fillDownVm == null || !ReferenceEquals(fillDownDataset, fillDownVm.Dataset))
+            if (FilldownDataset == null || (!ReferenceEquals(FilldownDataset, filldownDataset) &&
+                                            filldownDataset != null))
             {
-                fillDownVm = new FillDownWindowViewModel(fillDownDataset);
+                FilldownDataset = filldownDataset;
+            }
+
+            if (fillDownVm == null || !ReferenceEquals(FilldownDataset, fillDownVm.Dataset))
+            {
+                fillDownVm = new FillDownWindowViewModel(FilldownDataset);
             }
 
             return fillDownVm;
+        }
+
+        public void SetFillDownDataset(FilldownBuzzardDataset filldownDataset)
+        {
+            FilldownDataset = filldownDataset;
         }
 
         /// <summary>

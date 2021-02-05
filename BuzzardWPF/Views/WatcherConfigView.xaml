@@ -355,6 +355,17 @@
                 Grid.Row="1"
                 DataContext="{Binding EmslUsageSelectionVm}"
                 IsEnabled="{Binding Path=DataContext.IsNotMonitoring, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type views:WatcherConfigView}}}" />
+
+            <Button
+                Grid.Row="2"
+                Width="186"
+                Margin="10,10,10,10"
+                HorizontalAlignment="Right"
+                Command="{Binding CopyValuesFromFillDownCommand}"
+                Content="Copy from 'Filldown'"
+                FontFamily="Arial"
+                IsEnabled="{Binding Path=IsNotMonitoring}"
+                Style="{StaticResource SimpleButtonStyle}" />
         </Grid>
 
         <DockPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">

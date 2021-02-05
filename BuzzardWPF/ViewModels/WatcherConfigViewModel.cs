@@ -20,6 +20,7 @@ namespace BuzzardWPF.ViewModels
 
             SelectExperimentCommand = ReactiveCommand.Create(SelectExperiment);
             SelectWorkPackageCommand = ReactiveCommand.Create(SelectWorkPackage);
+            CopyValuesFromFillDownCommand = ReactiveCommand.Create(CopyValuesFromFillDown);
             this.WhenAnyValue(x => x.WatcherMetadata.WorkPackage).Subscribe(_ => UpdateWorkPackageToolTip());
 
             WatcherMetadata.WhenAnyValue(x => x.CartName).ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ => LoadCartConfigsForCartName());
@@ -44,6 +45,8 @@ namespace BuzzardWPF.ViewModels
         public ReactiveCommand<Unit, Unit> SelectExperimentCommand { get; }
 
         public ReactiveCommand<Unit, Unit> SelectWorkPackageCommand { get; }
+
+        public ReactiveCommand<Unit, Unit> CopyValuesFromFillDownCommand { get; }
 
         public DatasetManager DatasetManager => DatasetManager.Manager;
 
@@ -179,6 +182,26 @@ namespace BuzzardWPF.ViewModels
             }
 
             WorkPackageToolTipText = textData;
+        }
+
+        private void CopyValuesFromFillDown()
+        {
+            var fd = ViewModelCache.Instance.FilldownDataset;
+            var wd = WatcherMetadata;
+            wd.Instrument = fd.InstrumentName;
+            wd.DatasetType = fd.DmsData.DatasetType;
+            wd.InstrumentOperator = fd.Operator;
+            wd.CartName = fd.DmsData.CartName;
+            wd.CartConfigName = fd.DmsData.CartConfigName;
+            wd.SeparationType = fd.SeparationType;
+            wd.LCColumn = fd.ColumnName;
+            wd.InterestRating = fd.InterestRating;
+            wd.ExperimentName = fd.DmsData.Experiment;
+            wd.WorkPackage = fd.DmsData.WorkPackage;
+            wd.EMSLUsageType = fd.DmsData.EMSLUsageType;
+            wd.EMSLProposalID = fd.DmsData.EMSLProposalID;
+            wd.EMSLProposalUser = fd.EMSLProposalUser;
+            wd.UserComments = fd.DmsData.CommentAddition;
         }
 
         /// <summary>

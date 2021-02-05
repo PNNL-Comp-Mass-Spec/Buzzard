@@ -42,6 +42,7 @@ namespace BuzzardWPF.ViewModels
             PickWorkPackageCommand = ReactiveCommand.Create(PickWorkPackage);
             UseAllCommand = ReactiveCommand.Create(() => UseAllSettings(true));
             UseNoneCommand = ReactiveCommand.Create(() => UseAllSettings(false));
+            CopyValuesFromWatcherCommand = ReactiveCommand.Create(CopyValuesFromWatcher);
 
             this.WhenAnyValue(x => x.Dataset.DmsData, x => x.Dataset.DmsData.EMSLProposalID).Subscribe(_ => UpdateProposalUsersSource());
             this.WhenAnyValue(x => x.Dataset.DmsData, x => x.Dataset.DmsData.WorkPackage).Subscribe(_ => UpdateWorkPackageToolTip());
@@ -67,6 +68,8 @@ namespace BuzzardWPF.ViewModels
         public ReactiveCommand<Unit, Unit> PickWorkPackageCommand { get; }
         public ReactiveCommand<Unit, Unit> UseAllCommand { get; }
         public ReactiveCommand<Unit, Unit> UseNoneCommand { get; }
+
+        public ReactiveCommand<Unit, Unit> CopyValuesFromWatcherCommand { get; }
 
         public FilldownBuzzardDataset Dataset { get; }
         public DMSDataAccessor DmsDbLists => DMSDataAccessor.Instance;
@@ -249,6 +252,28 @@ namespace BuzzardWPF.ViewModels
             Dataset.UseEMSLProposalUser = shouldWe;
             Dataset.UseWorkPackage = shouldWe;
             Dataset.UseComment = shouldWe;
+        }
+
+        private void CopyValuesFromWatcher()
+        {
+            var wd = DatasetManager.Manager.WatcherMetadata;
+            Dataset.InstrumentName = wd.Instrument;
+            Dataset.DmsData.DatasetType = wd.DatasetType;
+            Dataset.Operator = wd.InstrumentOperator;
+
+            // Calling this here fixes a UI update issue.
+            LoadCartConfigsForCart(wd.CartName);
+            Dataset.DmsData.CartName = wd.CartName;
+            Dataset.DmsData.CartConfigName = wd.CartConfigName;
+            Dataset.SeparationType = wd.SeparationType;
+            Dataset.ColumnName = wd.LCColumn;
+            Dataset.InterestRating = wd.InterestRating;
+            Dataset.DmsData.Experiment = wd.ExperimentName;
+            Dataset.DmsData.WorkPackage = wd.WorkPackage;
+            Dataset.DmsData.EMSLUsageType = wd.EMSLUsageType;
+            Dataset.DmsData.EMSLProposalID = wd.EMSLProposalID;
+            Dataset.EMSLProposalUser = wd.EMSLProposalUser;
+            Dataset.DmsData.CommentAddition = wd.UserComments;
         }
 
         /// <summary>

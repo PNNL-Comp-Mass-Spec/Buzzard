@@ -49,6 +49,7 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="128" />
                 <ColumnDefinition Width="128" />
@@ -56,7 +57,7 @@
 
             <Button
                 Grid.Row="0"
-                Grid.Column="1"
+                Grid.Column="2"
                 Width="100"
                 MinHeight="32"
                 Click="OkButton_Click"
@@ -66,7 +67,7 @@
                 Style="{StaticResource SimpleButtonStyle}" />
             <Button
                 Grid.Row="0"
-                Grid.Column="2"
+                Grid.Column="3"
                 Width="100"
                 MinHeight="32"
                 Content="Cancel"
@@ -75,20 +76,32 @@
                 Style="{StaticResource SimpleButtonStyle}" />
         </Grid>
 
-        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
+        <DockPanel DockPanel.Dock="Bottom">
             <Button
+                DockPanel.Dock="Left"
                 MinHeight="32"
                 Command="{Binding UseAllCommand}"
                 Content="Use All"
                 FontFamily="Arial"
                 Style="{StaticResource SimpleButtonStyle}" />
             <Button
+                DockPanel.Dock="Left"
                 MinHeight="32"
                 Command="{Binding UseNoneCommand}"
                 Content="Use None"
                 FontFamily="Arial"
                 Style="{StaticResource SimpleButtonStyle}" />
-        </StackPanel>
+
+            <Button
+                DockPanel.Dock="Right"
+                HorizontalAlignment="Right"
+                Width="160"
+                MinHeight="32"
+                Command="{Binding CopyValuesFromWatcherCommand}"
+                Content="Copy from 'Monitor'"
+                FontFamily="Arial"
+                Style="{StaticResource SimpleButtonStyle}" />
+        </DockPanel>
 
         <Grid>
             <Grid.RowDefinitions>
@@ -116,21 +129,23 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <!--  Operator  -->
+            <!--  Instrument Type  -->
             <ToggleButton
                 Grid.Row="0"
                 Grid.Column="0"
-                IsChecked="{Binding Path=Dataset.UseOperator, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                IsEnabled="{Binding AllowChangingInstrumentName}"
+                IsChecked="{Binding Path=Dataset.UseInstrumentName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock
                 Grid.Row="0"
                 Grid.Column="1"
-                Text="Operator" />
+                Text="Instrument Name" />
             <ComboBox
                 Grid.Row="0"
                 Grid.Column="2"
                 Margin="2"
-                ItemsSource="{Binding Path=DmsDbLists.OperatorData, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                SelectedValue="{Binding Path=Dataset.Operator, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                IsEnabled="{Binding AllowChangingInstrumentName}"
+                ItemsSource="{Binding Path=DmsDbLists.InstrumentsMatchingHost, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                SelectedValue="{Binding Path=Dataset.InstrumentName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                 <cueBannerOverlay:CueBannerService.CueBanner>
                     <TextBlock Text="Select" Margin="0" FontWeight="Regular" />
                 </cueBannerOverlay:CueBannerService.CueBanner>
@@ -156,17 +171,73 @@
                 </cueBannerOverlay:CueBannerService.CueBanner>
             </ComboBox>
 
-            <!--  Separation Type  -->
+            <!--  Operator  -->
             <ToggleButton
                 Grid.Row="2"
                 Grid.Column="0"
-                IsChecked="{Binding Path=Dataset.UseSeparationType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                IsChecked="{Binding Path=Dataset.UseOperator, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock
                 Grid.Row="2"
                 Grid.Column="1"
-                Text="Separation Type" />
+                Text="Operator" />
             <ComboBox
                 Grid.Row="2"
+                Grid.Column="2"
+                Margin="2"
+                ItemsSource="{Binding Path=DmsDbLists.OperatorData, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                SelectedValue="{Binding Path=Dataset.Operator, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                <cueBannerOverlay:CueBannerService.CueBanner>
+                    <TextBlock Text="Select" Margin="0" FontWeight="Regular" />
+                </cueBannerOverlay:CueBannerService.CueBanner>
+            </ComboBox>
+
+            <!--  Cart  -->
+            <ToggleButton
+                Grid.Row="3"
+                Grid.Column="0"
+                IsChecked="{Binding Path=Dataset.UseCart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBlock
+                Grid.Row="3"
+                Grid.Column="1"
+                Text="LC Cart" />
+            <ComboBox
+                Grid.Row="3"
+                Grid.Column="2"
+                Margin="2"
+                ItemsSource="{Binding Path=DmsDbLists.CartNames, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                SelectedItem="{Binding Path=Dataset.DmsData.CartName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                <cueBannerOverlay:CueBannerService.CueBanner>
+                    <TextBlock Text="Select" Margin="0" FontWeight="Regular" />
+                </cueBannerOverlay:CueBannerService.CueBanner>
+            </ComboBox>
+
+            <!--  Cart Config  -->
+            <TextBlock
+                Grid.Row="4"
+                Grid.Column="1"
+                Text="LC Cart Config" />
+            <ComboBox
+                Grid.Row="4"
+                Grid.Column="2"
+                Margin="2"
+                ItemsSource="{Binding Path=CartConfigNameListSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                SelectedValue="{Binding Path=Dataset.DmsData.CartConfigName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                <cueBannerOverlay:CueBannerService.CueBanner>
+                    <TextBlock Text="Select" Margin="0" FontWeight="Regular" />
+                </cueBannerOverlay:CueBannerService.CueBanner>
+            </ComboBox>
+
+            <!--  Separation Type  -->
+            <ToggleButton
+                Grid.Row="5"
+                Grid.Column="0"
+                IsChecked="{Binding Path=Dataset.UseSeparationType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBlock
+                Grid.Row="5"
+                Grid.Column="1"
+                Text="Separation Type" />
+            <ComboBox
+                Grid.Row="5"
                 Grid.Column="2"
                 Margin="2"
                 ItemsSource="{Binding Path=DmsDbLists.SeparationTypes, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
@@ -178,15 +249,15 @@
 
             <!--  Column Type  -->
             <ToggleButton
-                Grid.Row="3"
+                Grid.Row="6"
                 Grid.Column="0"
                 IsChecked="{Binding Path=Dataset.UseLcColumn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock
-                Grid.Row="3"
+                Grid.Row="6"
                 Grid.Column="1"
                 Text="LC Column" />
 
-            <Grid Grid.Row="3" Grid.Column="2">
+            <Grid Grid.Row="6" Grid.Column="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="2*" />
                     <ColumnDefinition Width="1*" />
@@ -209,65 +280,7 @@
 
             </Grid>
 
-            <!--  Instrument Type  -->
-            <ToggleButton
-                Grid.Row="4"
-                Grid.Column="0"
-                IsEnabled="{Binding AllowChangingInstrumentName}"
-                IsChecked="{Binding Path=Dataset.UseInstrumentName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-            <TextBlock
-                Grid.Row="4"
-                Grid.Column="1"
-                Text="Instrument Name" />
-            <ComboBox
-                Grid.Row="4"
-                Grid.Column="2"
-                Margin="2"
-                IsEnabled="{Binding AllowChangingInstrumentName}"
-                ItemsSource="{Binding Path=DmsDbLists.InstrumentsMatchingHost, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                SelectedValue="{Binding Path=Dataset.InstrumentName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                <cueBannerOverlay:CueBannerService.CueBanner>
-                    <TextBlock Text="Select" Margin="0" FontWeight="Regular" />
-                </cueBannerOverlay:CueBannerService.CueBanner>
-            </ComboBox>
-
-            <!--  Cart  -->
-            <ToggleButton
-                Grid.Row="5"
-                Grid.Column="0"
-                IsChecked="{Binding Path=Dataset.UseCart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-            <TextBlock
-                Grid.Row="5"
-                Grid.Column="1"
-                Text="LC Cart" />
-            <ComboBox
-                Grid.Row="5"
-                Grid.Column="2"
-                Margin="2"
-                ItemsSource="{Binding Path=DmsDbLists.CartNames, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                SelectedItem="{Binding Path=Dataset.DmsData.CartName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                <cueBannerOverlay:CueBannerService.CueBanner>
-                    <TextBlock Text="Select" Margin="0" FontWeight="Regular" />
-                </cueBannerOverlay:CueBannerService.CueBanner>
-            </ComboBox>
-
-            <!--  Cart Config  -->
-            <TextBlock
-                Grid.Row="6"
-                Grid.Column="1"
-                Text="LC Cart Config" />
-            <ComboBox
-                Grid.Row="6"
-                Grid.Column="2"
-                Margin="2"
-                ItemsSource="{Binding Path=CartConfigNameListSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                SelectedValue="{Binding Path=Dataset.DmsData.CartConfigName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                <cueBannerOverlay:CueBannerService.CueBanner>
-                    <TextBlock Text="Select" Margin="0" FontWeight="Regular" />
-                </cueBannerOverlay:CueBannerService.CueBanner>
-            </ComboBox>
-
-            <!--  Dataset Intrest Rating  -->
+            <!--  Dataset Interest Rating  -->
             <ToggleButton
                 Grid.Row="7"
                 Grid.Column="0"
@@ -287,96 +300,23 @@
                 </cueBannerOverlay:CueBannerService.CueBanner>
             </ComboBox>
 
-            <!--  EMSL Usage Type  -->
-            <ToggleButton
-                Grid.Row="8"
-                Grid.Column="0"
-                IsChecked="{Binding Path=Dataset.UseEMSLUsageType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-            <TextBlock
-                Grid.Row="8"
-                Grid.Column="1"
-                Text="EMSL Usage Type" />
-            <ComboBox
-                Grid.Row="8"
-                Grid.Column="2"
-                Margin="2"
-                ItemsSource="{Binding Path=DmsDbLists.EMSLUsageTypesSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                SelectedValue="{Binding Path=Dataset.DmsData.EMSLUsageType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                <cueBannerOverlay:CueBannerService.CueBanner>
-                    <TextBlock Text="Select" Margin="0" FontWeight="Regular" />
-                </cueBannerOverlay:CueBannerService.CueBanner>
-            </ComboBox>
-
-            <!--  EMSL Proposal ID  -->
-            <ToggleButton
-                Grid.Row="9"
-                Grid.Column="0"
-                IsChecked="{Binding Path=Dataset.UseEMSLProposalID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-            <TextBlock
-                Grid.Row="9"
-                Grid.Column="1"
-                Text="EMSL Proposal ID" />
-            <Grid Grid.Row="9" Grid.Column="2">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2*" />
-                    <ColumnDefinition Width="1*" />
-                </Grid.ColumnDefinitions>
-
-                <TextBox
-                    Grid.Column="0"
-                    Margin="2"
-                    Text="{Binding Path=Dataset.DmsData.EMSLProposalID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
-                <ComboBox
-                    Grid.Column="1"
-                    Margin="2"
-                    ItemsSource="{Binding Path=DmsDbLists.ProposalIDs, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                    SelectedItem="{Binding Dataset.DmsData.EMSLProposalID}">
-                    <cueBannerOverlay:CueBannerService.CueBanner>
-                        <TextBlock Text="Select" Margin="0" FontWeight="Regular" />
-                    </cueBannerOverlay:CueBannerService.CueBanner>
-                </ComboBox>
-
-            </Grid>
-
-            <!--  EMSL Proposal Users  -->
-            <ToggleButton
-                Grid.Row="10"
-                Grid.Column="0"
-                IsChecked="{Binding Path=Dataset.UseEMSLProposalUser, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-            <TextBlock
-                Grid.Row="10"
-                Grid.Column="1"
-                Text="EMSL Proposal User:" />
-            <ComboBox
-                Grid.Row="10"
-                Grid.Column="2"
-                Margin="2"
-                DisplayMemberPath="UserName"
-                ItemsSource="{Binding Path=EMSLProposalUsersSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                SelectedItem="{Binding Path=Dataset.EMSLProposalUser}">
-                <cueBannerOverlay:CueBannerService.CueBanner>
-                    <TextBlock Text="Select" Margin="0" FontWeight="Regular" />
-                </cueBannerOverlay:CueBannerService.CueBanner>
-            </ComboBox>
-
                 <!--  Experiment Name  -->
             <ToggleButton
-                Grid.Row="11"
+                Grid.Row="8"
                 Grid.Column="0"
                 IsChecked="{Binding Path=Dataset.UseExperimentName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock
-                Grid.Row="11"
+                Grid.Row="8"
                 Grid.Column="1"
                 Text="Experiment Name" />
             <TextBox
-                Grid.Row="11"
+                Grid.Row="8"
                 Grid.Column="2"
                 Margin="2"
                 FontSize="15"
                 Text="{Binding Path=Dataset.DmsData.Experiment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <Button
-                Grid.Row="12"
+                Grid.Row="9"
                 Grid.Column="2"
                 Width="144"
                 MinHeight="32"
@@ -389,14 +329,14 @@
 
             <!--  Work Package  -->
             <ToggleButton
-                Grid.Row="13"
+                Grid.Row="10"
                 Grid.Column="0"
                 IsChecked="{Binding Path=Dataset.UseWorkPackage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock
-                Grid.Row="13"
+                Grid.Row="10"
                 Grid.Column="1"
                 Text="Work Package" />
-            <DockPanel Grid.Row="13" Grid.Column="2" LastChildFill="True">
+            <DockPanel Grid.Row="10" Grid.Column="2" LastChildFill="True">
                 <Button
                     DockPanel.Dock="Right"
                     Width="90"
@@ -428,6 +368,79 @@
                     </TextBox.Style>
                 </TextBox>
             </DockPanel>
+
+            <!--  EMSL Usage Type  -->
+            <ToggleButton
+                Grid.Row="11"
+                Grid.Column="0"
+                IsChecked="{Binding Path=Dataset.UseEMSLUsageType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBlock
+                Grid.Row="11"
+                Grid.Column="1"
+                Text="EMSL Usage Type" />
+            <ComboBox
+                Grid.Row="11"
+                Grid.Column="2"
+                Margin="2"
+                ItemsSource="{Binding Path=DmsDbLists.EMSLUsageTypesSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                SelectedValue="{Binding Path=Dataset.DmsData.EMSLUsageType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                <cueBannerOverlay:CueBannerService.CueBanner>
+                    <TextBlock Text="Select" Margin="0" FontWeight="Regular" />
+                </cueBannerOverlay:CueBannerService.CueBanner>
+            </ComboBox>
+
+            <!--  EMSL Proposal ID  -->
+            <ToggleButton
+                Grid.Row="12"
+                Grid.Column="0"
+                IsChecked="{Binding Path=Dataset.UseEMSLProposalID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBlock
+                Grid.Row="12"
+                Grid.Column="1"
+                Text="EMSL Proposal ID" />
+            <Grid Grid.Row="12" Grid.Column="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBox
+                    Grid.Column="0"
+                    Margin="2"
+                    Text="{Binding Path=Dataset.DmsData.EMSLProposalID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                <ComboBox
+                    Grid.Column="1"
+                    Margin="2"
+                    ItemsSource="{Binding Path=DmsDbLists.ProposalIDs, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                    SelectedItem="{Binding Dataset.DmsData.EMSLProposalID}">
+                    <cueBannerOverlay:CueBannerService.CueBanner>
+                        <TextBlock Text="Select" Margin="0" FontWeight="Regular" />
+                    </cueBannerOverlay:CueBannerService.CueBanner>
+                </ComboBox>
+
+            </Grid>
+
+            <!--  EMSL Proposal Users  -->
+            <ToggleButton
+                Grid.Row="13"
+                Grid.Column="0"
+                IsChecked="{Binding Path=Dataset.UseEMSLProposalUser, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBlock
+                Grid.Row="13"
+                Grid.Column="1"
+                Text="EMSL Proposal User:" />
+            <ComboBox
+                Grid.Row="13"
+                Grid.Column="2"
+                Margin="2"
+                DisplayMemberPath="UserName"
+                ItemsSource="{Binding Path=EMSLProposalUsersSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                SelectedItem="{Binding Path=Dataset.EMSLProposalUser}">
+                <cueBannerOverlay:CueBannerService.CueBanner>
+                    <TextBlock Text="Select" Margin="0" FontWeight="Regular" />
+                </cueBannerOverlay:CueBannerService.CueBanner>
+            </ComboBox>
 
             <!--  Comment  -->
             <ToggleButton
