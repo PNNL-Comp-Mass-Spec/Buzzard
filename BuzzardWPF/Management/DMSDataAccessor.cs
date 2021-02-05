@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using BuzzardWPF.Data;
+using BuzzardWPF.Properties;
 using BuzzardWPF.ViewModels;
 using DynamicData;
 using DynamicData.Binding;
@@ -42,6 +43,14 @@ namespace BuzzardWPF.Management
         /// </summary>
         private DMSDataAccessor()
         {
+            DeviceHostName = Settings.Default.DMSInstrumentHostName;
+            if (string.IsNullOrWhiteSpace(DeviceHostName) ||
+                DeviceHostName.Equals(BuzzardSettingsViewModel.DefaultUnsetInstrumentName, StringComparison.OrdinalIgnoreCase) ||
+                Settings.Default.NeverLockInstrumentName)
+            {
+                DeviceHostName = "";
+            }
+
             InterestRatingCollection = interestRatingOptions;
             // These values come from table T_EUS_UsageType
             // It is rarely updated, so we're not querying the database every time
@@ -438,10 +447,17 @@ namespace BuzzardWPF.Management
             // Only active requested runs are retrieved
             var queryData = new SampleQueryData();
 
+            var allowedInstrumentGroups = InstrumentDetailsData
+                .Where(x => string.IsNullOrWhiteSpace(DeviceHostName) ||
+                            x.HostName.Equals(DeviceHostName, StringComparison.OrdinalIgnoreCase))
+                .Select(x => x.InstrumentGroup).ToList();
+
             // Load the samples (essentially requested runs) from DMS
             // Return clones of the objects; for some reason, if we don't, the SampleDataBasic objects are all kept alive (probably some database interaction logic)
             // Also process through a parsing method that will let us minimize the number of duplicate strings in memory.
-            return dmsDbTools.GetRequestedRunsFromDMS<RequestedRun>(queryData).Select(x => x.DmsData);
+            return dmsDbTools.GetRequestedRunsFromDMS<RequestedRun>(queryData).Select(x => x.DmsData).Where(x =>
+                string.IsNullOrWhiteSpace(x.InstrumentGroup) || string.IsNullOrWhiteSpace(DeviceHostName) ||
+                allowedInstrumentGroups.Contains(x.InstrumentGroup));
         }
 
         /// <summary>

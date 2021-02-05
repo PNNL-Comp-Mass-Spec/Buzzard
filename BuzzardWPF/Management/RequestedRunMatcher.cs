@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Reactive.Concurrency;
 using System.Runtime;
@@ -80,6 +79,7 @@ namespace BuzzardWPF.Management
                 bool requestedRunsUpdated;
                 lock (requestedRunTrie)
                 {
+                    // TODO: Should we clear this out if there were no new samples? Only really valid for case where the instrument host changed.
                     requestedRunsUpdated = requestedRunTrie.LoadData(samples);
                 }
 
