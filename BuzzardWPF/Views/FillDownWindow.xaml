@@ -8,9 +8,9 @@
     xmlns:cueBannerOverlay="clr-namespace:WpfExtras.CueBannerOverlay;assembly=WpfExtras"
     Title="Dataset Filldown"
     Width="1050"
-    Height="450"
+    Height="480"
     MinWidth="900"
-    MinHeight="430"
+    MinHeight="470"
     ShowInTaskbar="False"
     SnapsToDevicePixels="True"
     Topmost="True"
@@ -111,9 +111,10 @@
                         Margin="2"
                         IsEnabled="{Binding AllowChangingInstrumentName}"
                         ItemsSource="{Binding Path=DmsDbLists.InstrumentsMatchingHost, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                        SelectedValue="{Binding Path=Dataset.InstrumentName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        SelectedValue="{Binding Path=Dataset.InstrumentName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        Style="{StaticResource ComboBoxStyle}">
                         <cueBannerOverlay:CueBannerService.CueBanner>
-                            <TextBlock Text="Select" Margin="0" FontWeight="Regular" />
+                            <TextBlock Text="Select" Margin="0" FontWeight="Regular" Style="{StaticResource TextBlockStyle}" />
                         </cueBannerOverlay:CueBannerService.CueBanner>
                     </ComboBox>
                     <ToggleButton
@@ -132,9 +133,10 @@
                         Grid.Column="1"
                         Margin="2"
                         ItemsSource="{Binding Path=DatasetTypesForInstrument, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                        SelectedValue="{Binding Path=Dataset.DmsData.DatasetType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        SelectedValue="{Binding Path=Dataset.DmsData.DatasetType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        Style="{StaticResource ComboBoxStyle}">
                         <cueBannerOverlay:CueBannerService.CueBanner>
-                            <TextBlock Text="Select" Margin="0" FontWeight="Regular" />
+                            <TextBlock Text="Select" Margin="0" FontWeight="Regular" Style="{StaticResource TextBlockStyle}" />
                         </cueBannerOverlay:CueBannerService.CueBanner>
                     </ComboBox>
                     <ToggleButton
@@ -152,9 +154,10 @@
                         Grid.Column="1"
                         Margin="2"
                         ItemsSource="{Binding Path=DmsDbLists.OperatorData, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                        SelectedValue="{Binding Path=Dataset.Operator, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        SelectedValue="{Binding Path=Dataset.Operator, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        Style="{StaticResource ComboBoxStyle}">
                         <cueBannerOverlay:CueBannerService.CueBanner>
-                            <TextBlock Text="Select" Margin="0" FontWeight="Regular" />
+                            <TextBlock Text="Select" Margin="0" FontWeight="Regular" Style="{StaticResource TextBlockStyle}" />
                         </cueBannerOverlay:CueBannerService.CueBanner>
                     </ComboBox>
                     <ToggleButton
@@ -186,31 +189,34 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <TextBlock
-                        Grid.Row="0"
-                        Grid.Column="0"
-                        Text="LC Cart:" />
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Text="LC Cart:" />
                         <ComboBox
-                        Grid.Column="1"
-                        Margin="2"
-                        MinWidth="100"
-                        ItemsSource="{Binding Path=DmsDbLists.CartNames, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                        SelectedItem="{Binding Path=Dataset.DmsData.CartName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            Grid.Column="1"
+                            Margin="2"
+                            MinWidth="100"
+                            ItemsSource="{Binding Path=DmsDbLists.CartNames, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                            SelectedItem="{Binding Path=Dataset.DmsData.CartName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            Style="{StaticResource ComboBoxStyle}">
                             <cueBannerOverlay:CueBannerService.CueBanner>
-                                <TextBlock Text="Select" Margin="0" FontWeight="Regular" />
+                                <TextBlock Text="Select" Margin="0" FontWeight="Regular" Style="{StaticResource TextBlockStyle}" />
                             </cueBannerOverlay:CueBannerService.CueBanner>
                         </ComboBox>
 
                         <!--  Cart Config  -->
                         <TextBlock
-                        Grid.Column="3"
-                        Text="Config:" />
+                            Grid.Column="3"
+                            Text="Config:" />
                         <ComboBox
-                        Grid.Column="4"
-                        Margin="2"
-                        ItemsSource="{Binding Path=CartConfigNameListSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                        SelectedValue="{Binding Path=Dataset.DmsData.CartConfigName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            Grid.Column="4"
+                            Margin="2"
+                            MinWidth="150"
+                            ItemsSource="{Binding Path=CartConfigNameListSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                            SelectedValue="{Binding Path=Dataset.DmsData.CartConfigName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            Style="{StaticResource ComboBoxStyle}">
                             <cueBannerOverlay:CueBannerService.CueBanner>
-                                <TextBlock Text="Select" Margin="0" FontWeight="Regular" />
+                                <TextBlock Text="Select" Margin="0" FontWeight="Regular" Style="{StaticResource TextBlockStyle}" />
                             </cueBannerOverlay:CueBannerService.CueBanner>
                         </ComboBox>
                     </Grid>
@@ -230,9 +236,10 @@
                         Grid.Column="1"
                         Margin="2"
                         ItemsSource="{Binding Path=DmsDbLists.SeparationTypes, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                        SelectedValue="{Binding Path=Dataset.SeparationType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        SelectedValue="{Binding Path=Dataset.SeparationType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        Style="{StaticResource ComboBoxStyle}">
                         <cueBannerOverlay:CueBannerService.CueBanner>
-                            <TextBlock Text="Select" Margin="0" FontWeight="Regular" />
+                            <TextBlock Text="Select" Margin="0" FontWeight="Regular" Style="{StaticResource TextBlockStyle}" />
                         </cueBannerOverlay:CueBannerService.CueBanner>
                     </ComboBox>
                     <ToggleButton
@@ -255,15 +262,19 @@
                         <TextBox
                             Grid.Column="0"
                             Margin="2"
+                            MinWidth="100"
+                            Style="{StaticResource TextBoxStyle}"
                             Text="{Binding Path=Dataset.ColumnName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                         <ComboBox
                             Grid.Column="1"
                             Margin="2"
+                            MinWidth="100"
                             ItemsSource="{Binding Path=DmsDbLists.ColumnData, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                            SelectedItem="{Binding Dataset.ColumnName}">
+                            SelectedItem="{Binding Dataset.ColumnName}"
+                            Style="{StaticResource ComboBoxStyle}">
                             <cueBannerOverlay:CueBannerService.CueBanner>
-                                <TextBlock Text="Select" Margin="0" FontWeight="Regular" />
+                                <TextBlock Text="Select" Margin="0" FontWeight="Regular" Style="{StaticResource TextBlockStyle}" />
                             </cueBannerOverlay:CueBannerService.CueBanner>
                         </ComboBox>
 
@@ -296,9 +307,10 @@
                         Grid.Column="1"
                         Margin="2"
                         ItemsSource="{Binding Path=DmsDbLists.InterestRatingCollection, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                        SelectedValue="{Binding Path=Dataset.InterestRating, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        SelectedValue="{Binding Path=Dataset.InterestRating, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        Style="{StaticResource ComboBoxStyle}">
                         <cueBannerOverlay:CueBannerService.CueBanner>
-                            <TextBlock Text="Select" Margin="0" FontWeight="Regular" />
+                            <TextBlock Text="Select" Margin="0" FontWeight="Regular" Style="{StaticResource TextBlockStyle}" />
                         </cueBannerOverlay:CueBannerService.CueBanner>
                     </ComboBox>
                     <ToggleButton
@@ -365,6 +377,8 @@
                         Grid.Column="2"
                         Margin="2"
                         FontSize="15"
+                        MinWidth="200"
+                        Style="{StaticResource TextBoxStyle}"
                         Text="{Binding Path=Dataset.DmsData.Experiment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     <Button
                         Grid.Row="1"
@@ -403,10 +417,11 @@
                             Margin="2"
                             FontSize="15"
                             VerticalContentAlignment="Center"
+                            MinWidth="80"
                             Text="{Binding Path=Dataset.DmsData.WorkPackage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             ToolTip="{Binding WorkPackageToolTipText}">
                             <TextBox.Style>
-                                <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
+                                <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource TextBoxStyle}">
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding WorkPackageWarning}" Value="True">
                                             <Setter Property="Background" Value="Yellow" />
@@ -448,10 +463,12 @@
                         Grid.Row="0"
                         Grid.Column="2"
                         Margin="2"
+                        MinWidth="200"
                         ItemsSource="{Binding Path=DmsDbLists.EMSLUsageTypesSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                        SelectedValue="{Binding Path=Dataset.DmsData.EMSLUsageType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        SelectedValue="{Binding Path=Dataset.DmsData.EMSLUsageType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        Style="{StaticResource ComboBoxStyle}">
                         <cueBannerOverlay:CueBannerService.CueBanner>
-                            <TextBlock Text="Select" Margin="0" FontWeight="Regular" />
+                            <TextBlock Text="Select" Margin="0" FontWeight="Regular" Style="{StaticResource TextBlockStyle}" />
                         </cueBannerOverlay:CueBannerService.CueBanner>
                     </ComboBox>
 
@@ -472,14 +489,17 @@
                         <TextBox
                             Grid.Column="0"
                             Margin="2"
+                            MinWidth="100"
                             Text="{Binding Path=Dataset.DmsData.EMSLProposalID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         <ComboBox
                             Grid.Column="1"
                             Margin="2"
+                            MinWidth="75"
                             ItemsSource="{Binding Path=DmsDbLists.ProposalIDs, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                            SelectedItem="{Binding Dataset.DmsData.EMSLProposalID}">
+                            SelectedItem="{Binding Dataset.DmsData.EMSLProposalID}"
+                            Style="{StaticResource ComboBoxStyle}">
                             <cueBannerOverlay:CueBannerService.CueBanner>
-                                <TextBlock Text="Select" Margin="0" FontWeight="Regular" />
+                                <TextBlock Text="Select" Margin="0" FontWeight="Regular" Style="{StaticResource TextBlockStyle}" />
                             </cueBannerOverlay:CueBannerService.CueBanner>
                         </ComboBox>
                     </Grid>
@@ -497,11 +517,13 @@
                         Grid.Row="2"
                         Grid.Column="2"
                         Margin="2"
+                        MinWidth="200"
                         DisplayMemberPath="UserName"
                         ItemsSource="{Binding Path=EMSLProposalUsersSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                        SelectedItem="{Binding Path=Dataset.EMSLProposalUser}">
+                        SelectedItem="{Binding Path=Dataset.EMSLProposalUser}"
+                        Style="{StaticResource ComboBoxStyle}">
                         <cueBannerOverlay:CueBannerService.CueBanner>
-                            <TextBlock Text="Select" Margin="0" FontWeight="Regular" />
+                            <TextBlock Text="Select" Margin="0" FontWeight="Regular" Style="{StaticResource TextBlockStyle}" />
                         </cueBannerOverlay:CueBannerService.CueBanner>
                     </ComboBox>
                 </Grid>
@@ -528,6 +550,9 @@
                         Grid.Column="1"
                         Margin="2,2,2,6"
                         FontSize="15"
+                        VerticalAlignment="Stretch"
+                        TextWrapping="Wrap"
+                        Style="{StaticResource TextBoxStyle}"
                         Text="{Binding Path=Dataset.DmsData.CommentAddition, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </Grid>
             </GroupBox>

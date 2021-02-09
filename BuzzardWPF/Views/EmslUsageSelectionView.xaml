@@ -85,6 +85,7 @@
                         Grid.Row="0"
                         Grid.Column="0"
                         Margin="2,2,5,2"
+                        MinWidth="100"
                         IsEnabled="{Binding Path=BoundContainer.EMSLUsageType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource EnableProposalIDConverter}}"
                         RenderTransformOrigin="0.5,0.5"
                         Style="{StaticResource TextBoxStyle}"
