@@ -5,7 +5,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:BuzzardWPF.ViewModels"
-    xmlns:views="clr-namespace:BuzzardWPF.Views"
     xmlns:cueBannerOverlay="clr-namespace:WpfExtras.CueBannerOverlay;assembly=WpfExtras"
     d:DesignHeight="500"
     d:DesignWidth="1050"
@@ -348,10 +347,95 @@
                 </Grid>
             </GroupBox>
 
-            <views:EmslUsageSelectionView
-                Grid.Row="1"
-                DataContext="{Binding EmslUsageSelectionVm}"
-                IsEnabled="{Binding Path=DataContext.IsNotMonitoring, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type views:WatcherConfigView}}}" />
+            <GroupBox Grid.Row="1" Header="EMSL" IsEnabled="{Binding Path=IsNotMonitoring}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Style="{StaticResource TextBlockStyle}"
+                        Text="Usage:" />
+                    <ComboBox
+                        Name="UsageTypeSelector"
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        MinWidth="125"
+                        Margin="0,3,3.4,3"
+                        IsEnabled="{Binding Path=IsNotMonitoring}"
+                        ItemsSource="{Binding Path=UsageTypesSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        SelectedItem="{Binding Path=WatcherMetadata.EMSLUsageType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        Style="{StaticResource ComboBoxStyle}" />
+
+                    <TextBlock
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Style="{StaticResource TextBlockStyle}"
+                        Text="Proposal ID:" />
+
+                    <Grid Grid.Row="1" Grid.Column="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="1*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Margin="2,2,5,2"
+                            MinWidth="100"
+                            IsEnabled="{Binding EmslUsageTypeIsUser}"
+                            RenderTransformOrigin="0.5,0.5"
+                            Style="{StaticResource TextBoxStyle}"
+                            Text="{Binding Path=WatcherMetadata.EMSLProposalID, Mode=TwoWay, UpdateSourceTrigger=LostFocus}">
+                            <TextBox.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform />
+                                    <SkewTransform />
+                                    <RotateTransform Angle="-0.243" />
+                                    <TranslateTransform />
+                                </TransformGroup>
+                            </TextBox.RenderTransform>
+                        </TextBox>
+                        <ComboBox
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Margin="0,3,3.4,3"
+                            IsEnabled="{Binding EmslUsageTypeIsUser}"
+                            ItemsSource="{Binding Path=AvailableProposalIDs, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                            SelectedItem="{Binding WatcherMetadata.EMSLProposalID}">
+                            <cueBannerOverlay:CueBannerService.CueBanner>
+                                <TextBlock Text="Select" Margin="0" FontWeight="Regular" Style="{StaticResource TextBlockStyle}" />
+                            </cueBannerOverlay:CueBannerService.CueBanner>
+                        </ComboBox>
+                    </Grid>
+                    <TextBlock
+                        Grid.Row="2"
+                        Grid.Column="0"
+                        Style="{StaticResource TextBlockStyle}"
+                        Text="Proposal User:" />
+                    <ComboBox
+                        x:Name="PUserSelector"
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        Margin="3"
+                        DisplayMemberPath="UserName"
+                        IsEnabled="{Binding EmslUsageTypeIsUser}"
+                        ItemsSource="{Binding Path=ProposalUsers, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        SelectedItem="{Binding Path=WatcherMetadata.EMSLProposalUser}">
+                        <cueBannerOverlay:CueBannerService.CueBanner>
+                            <TextBlock Text="Select" Margin="0" FontWeight="Regular" Style="{StaticResource TextBlockStyle}" />
+                        </cueBannerOverlay:CueBannerService.CueBanner>
+                    </ComboBox>
+                </Grid>
+            </GroupBox>
 
             <Button
                 Grid.Row="2"

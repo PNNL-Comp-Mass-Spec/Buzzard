@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using BuzzardWPF.Properties;
-using BuzzardWPF.ViewModels;
 using LcmsNetData.Data;
 using LcmsNetData.Logging;
 using ReactiveUI;
 
 namespace BuzzardWPF.Management
 {
-    public class WatcherMetadata : ReactiveObject, IStoredSettingsMonitor, IEmslUsageData
+    public class WatcherMetadata : ReactiveObject, IStoredSettingsMonitor
     {
         private string cartName;
         private string lcColumn;

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using BuzzardWPF.Management;
 using BuzzardWPF.Views;
+using LcmsNetData.Data;
 using ReactiveUI;
 
 namespace BuzzardWPF.ViewModels
@@ -16,11 +18,12 @@ namespace BuzzardWPF.ViewModels
         {
             isNotMonitoring = FileSystemWatcherManager.Instance.WhenAnyValue(x => x.IsMonitoring).Select(x => !x).ObserveOn(RxApp.MainThreadScheduler).ToProperty(this, x => x.IsNotMonitoring);
 
-            EmslUsageSelectionVm.BoundContainer = WatcherMetadata;
-
             SelectExperimentCommand = ReactiveCommand.Create(SelectExperiment);
             SelectWorkPackageCommand = ReactiveCommand.Create(SelectWorkPackage);
             CopyValuesFromFillDownCommand = ReactiveCommand.Create(CopyValuesFromFillDown);
+
+            UsageTypesSource = DMSDataAccessor.Instance.EMSLUsageTypesSource;
+
             this.WhenAnyValue(x => x.WatcherMetadata.WorkPackage).Subscribe(_ => UpdateWorkPackageToolTip());
 
             WatcherMetadata.WhenAnyValue(x => x.CartName).ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ => LoadCartConfigsForCartName());
@@ -28,6 +31,12 @@ namespace BuzzardWPF.ViewModels
 
             allowChangingInstrumentName = this.WhenAnyValue(x => x.IsNotMonitoring, x => x.DmsData.InstrumentsMatchingHost.Count)
                 .Select(x => x.Item1 && x.Item2 != 1).ToProperty(this, x => x.AllowChangingInstrumentName, false);
+
+            proposalUsers = WatcherMetadata.WhenAnyValue(x => x.EMSLProposalID).Select(x => DmsData.GetProposalUsers(x))
+                .ToProperty(this, x => x.ProposalUsers, new List<ProposalUser>());
+            emslUsageTypeIsUser = WatcherMetadata.WhenAnyValue(x => x.EMSLUsageType)
+                .Select(x => !string.IsNullOrWhiteSpace(x) && x.Equals("USER", StringComparison.OrdinalIgnoreCase))
+                .ToProperty(this, x => x.EmslUsageTypeIsUser, false);
 
             DmsData.WhenAnyValue(x => x.LastLoadFromSqliteCache).ObserveOn(RxApp.TaskpoolScheduler).Subscribe(_ => ReloadPropertyDependentData());
         }
@@ -39,8 +48,8 @@ namespace BuzzardWPF.ViewModels
         private readonly ObservableAsPropertyHelper<bool> allowChangingInstrumentName;
         private IReadOnlyList<string> cartConfigNameListForCart = new List<string>();
         private IReadOnlyList<string> datasetTypesForInstrument = new List<string>();
-
-        public EmslUsageSelectionViewModel EmslUsageSelectionVm { get; } = new EmslUsageSelectionViewModel();
+        private readonly ObservableAsPropertyHelper<IReadOnlyList<ProposalUser>> proposalUsers;
+        private readonly ObservableAsPropertyHelper<bool> emslUsageTypeIsUser;
 
         public ReactiveCommand<Unit, Unit> SelectExperimentCommand { get; }
 
@@ -94,6 +103,14 @@ namespace BuzzardWPF.ViewModels
             get => workPackageError;
             private set => this.RaiseAndSetIfChanged(ref workPackageError, value);
         }
+
+        public IReadOnlyList<string> UsageTypesSource { get; }
+
+        public bool EmslUsageTypeIsUser => emslUsageTypeIsUser.Value;
+
+        public ReadOnlyObservableCollection<string> AvailableProposalIDs => DMSDataAccessor.Instance.ProposalIDs;
+
+        public IReadOnlyList<ProposalUser> ProposalUsers => proposalUsers.Value;
 
         /// <summary>
         /// The brings up a dialog window that lets the user choose
