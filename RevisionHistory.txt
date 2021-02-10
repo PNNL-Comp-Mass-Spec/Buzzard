@@ -1,5 +1,10 @@
 Buzzard Change Log
 
+Version 2.3.2.0; February 9, 2021
+	- User interface improvements
+		- Filldown user interface now nearly matches the monitor metadata user interface
+	- Add some buttons to quickly copy all metadata values from the filldown or monitor settings to the other one
+
 Version 2.3.1.1; February 4, 2021
 	- Fix a "First start after upgrade" bug.
 
