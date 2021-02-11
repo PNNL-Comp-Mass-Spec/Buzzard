@@ -86,6 +86,7 @@
                         FontWeight="Regular"
                         Style="{StaticResource TextBlockStyle}"
                         Text="Dataset Type:" />
+                    <!-- This is also usually specified in a run request, and is ignored in that case. -->
                     <ComboBox
                         Grid.Row="1"
                         Grid.Column="1"
@@ -347,7 +348,7 @@
                 </Grid>
             </GroupBox>
 
-            <GroupBox Grid.Row="1" Header="EMSL" IsEnabled="{Binding Path=IsNotMonitoring}">
+            <GroupBox Grid.Row="1" Header="EMSL User System (if no request in DMS)" IsEnabled="{Binding Path=IsNotMonitoring}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="auto" />
@@ -449,16 +450,20 @@
                 Style="{StaticResource SimpleButtonStyle}" />
         </Grid>
 
-        <DockPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
-            <Label Foreground="Black">
-                <TextBlock
-                    Width="90"
-                    Margin="0"
-                    FontWeight="Regular"
-                    Style="{StaticResource TextBlockStyle}"
-                    Text="Comments" />
-            </Label>
-            <TextBox Margin="5" Text="{Binding Path=WatcherMetadata.UserComments, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-        </DockPanel>
+        <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock
+                Margin="3"
+                Foreground="Black"
+                FontWeight="Regular"
+                VerticalAlignment="Top"
+                Style="{StaticResource TextBlockStyle}"
+                ToolTip="If matched to a request, these comments are added to the comments for the request."
+                Text="Comments (additional)" />
+            <TextBox Grid.Row="0" Grid.Column="1" Margin="5" VerticalAlignment="Stretch" TextWrapping="Wrap" Text="{Binding Path=WatcherMetadata.UserComments, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        </Grid>
     </Grid>
 </UserControl>

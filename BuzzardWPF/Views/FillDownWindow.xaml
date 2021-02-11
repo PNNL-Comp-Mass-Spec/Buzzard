@@ -128,6 +128,7 @@
                         Grid.Row="1"
                         Grid.Column="0"
                         Text="Dataset Type:" />
+                    <!-- This is also usually specified in a run request, and is ignored in that case. -->
                     <ComboBox
                         Grid.Row="1"
                         Grid.Column="1"
@@ -437,7 +438,7 @@
                 </Grid>
             </GroupBox>
 
-            <GroupBox Grid.Row="1" Header="EMSL User System">
+            <GroupBox Grid.Row="1" Header="EMSL User System (if no request in DMS)">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -529,7 +530,7 @@
                 </Grid>
             </GroupBox>
 
-            <GroupBox Grid.Row="2" Header="Comment">
+            <GroupBox Grid.Row="2" Header="Comment (added to the comment in a request)" ToolTip="If matched to a request, these comments are added to the comments for the request.">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
