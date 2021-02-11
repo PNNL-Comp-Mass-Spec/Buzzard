@@ -1,5 +1,8 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
+using System.Runtime.CompilerServices;
 using LcmsNetData;
 using LcmsNetData.Data;
 
@@ -51,7 +54,13 @@ namespace BuzzardWPF.Data
             WorkPackage = "";
         }
 
-        public void CopyValuesAndLock(DMSData other)
+        /// <summary>
+        /// Copies the data and locks this object, and sets the dataset name to the filename in <paramref name="filePath"/>
+        /// Used in Buzzard
+        /// </summary>
+        /// <param name="other"></param>
+        /// <param name="filePath"></param>
+        public void CopyValuesAndLockWithNewPath(DMSData other, string filePath)
         {
             LockData = false;
             CartName = other.CartName;
@@ -67,30 +76,22 @@ namespace BuzzardWPF.Data
             EMSLUsageType = other.EMSLUsageType;
             EMSLProposalUser = other.EMSLProposalUser;
             WorkPackage = other.WorkPackage;
-            LockData = other.LockData;
-        }
-
-        /// <summary>
-        /// Copies the data and locks this object, and sets the dataset name to the filename in <paramref name="filePath"/>
-        /// Used in Buzzard
-        /// </summary>
-        /// <param name="other"></param>
-        /// <param name="filePath"></param>
-        public void CopyValuesAndLockWithNewPath(DMSData other, string filePath)
-        {
-            CopyValuesAndLock(other);
 
             if (string.IsNullOrWhiteSpace(filePath))
             {
+                LockData = other.LockData;
                 return;
             }
 
             var fileName = Path.GetFileNameWithoutExtension(filePath);
             if (!string.IsNullOrWhiteSpace(fileName))
             {
-                LockData = false;
                 DatasetName = fileName;
                 LockData = true;
+            }
+            else
+            {
+                LockData = other.LockData;
             }
         }
 
@@ -289,6 +290,77 @@ namespace BuzzardWPF.Data
         public virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    public static class DmsPropertyChangedExtensions
+    {
+        /// <summary>
+        /// If isLocked is false and the newValue is not equal to the backingField value (using default EqualityComparer), sets backingField and raises OnPropertyChanged
+        /// </summary>
+        /// <typeparam name="TRet"></typeparam>
+        /// <param name="obj"></param>
+        /// <param name="backingField"></param>
+        /// <param name="newValue"></param>
+        /// <param name="isLocked"></param>
+        /// <param name="propertyName"></param>
+        /// <returns>final value of backingField</returns>
+        public static TRet RaiseAndSetIfChangedLockCheck<TRet>(this INotifyPropertyChangedExt obj,
+            ref TRet backingField, TRet newValue, bool isLocked, [CallerMemberName] string propertyName = null)
+        {
+            if (isLocked)
+            {
+                obj.OnPropertyChanged(propertyName);
+                return backingField;
+            }
+
+            if (propertyName == null)
+            {
+                throw new ArgumentNullException(nameof(propertyName));
+            }
+
+            if (EqualityComparer<TRet>.Default.Equals(backingField, newValue))
+            {
+                return newValue;
+            }
+
+            backingField = newValue;
+            obj.OnPropertyChanged(propertyName);
+            return newValue;
+        }
+
+        /// <summary>
+        /// If isLocked is false and the newValue is not equal to the backingField value (using default EqualityComparer), sets backingField and raises OnPropertyChanged
+        /// </summary>
+        /// <typeparam name="TRet"></typeparam>
+        /// <param name="obj"></param>
+        /// <param name="backingField"></param>
+        /// <param name="newValue"></param>
+        /// <param name="isLocked"></param>
+        /// <param name="propertyName"></param>
+        /// <returns>true if changed, false if not</returns>
+        public static bool RaiseAndSetIfChangedLockCheckRetBool<TRet>(this INotifyPropertyChangedExt obj,
+            ref TRet backingField, TRet newValue, bool isLocked, [CallerMemberName] string propertyName = null)
+        {
+            if (isLocked)
+            {
+                obj.OnPropertyChanged(propertyName);
+                return false;
+            }
+
+            if (propertyName == null)
+            {
+                throw new ArgumentNullException(nameof(propertyName));
+            }
+
+            if (EqualityComparer<TRet>.Default.Equals(backingField, newValue))
+            {
+                return false;
+            }
+
+            backingField = newValue;
+            obj.OnPropertyChanged(propertyName);
+            return true;
         }
     }
 }
