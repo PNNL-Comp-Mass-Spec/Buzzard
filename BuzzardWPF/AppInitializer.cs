@@ -217,14 +217,15 @@ namespace BuzzardWPF
 
             try
             {
+                // Load the experiments, datasets, instruments, etc. from the SQLite cache file
+                // Load this first because we filter the Requested Runs with information we get here.
+                DMSDataAccessor.Instance.LoadDMSDataFromCache(true);
+
                 // Load active requested runs from DMS
                 await DatasetManager.Manager.DatasetNameMatcher.LoadRequestedRunsCache().ConfigureAwait(false);
 
                 // Set a flag to indicate that the main window can now be shown
                 openMainWindow = true;
-
-                // Load the experiments, datasets, instruments, etc. from the SQLite cache file
-                DMSDataAccessor.Instance.LoadDMSDataFromCache(true);
             }
             catch (Exception ex)
             {

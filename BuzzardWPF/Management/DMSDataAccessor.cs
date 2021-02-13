@@ -447,7 +447,7 @@ namespace BuzzardWPF.Management
             // Only active requested runs are retrieved
             var queryData = new SampleQueryData();
 
-            var allowedInstrumentGroups = InstrumentDetailsData
+            var allowedInstrumentGroups = instrumentDetailsDataSource.Items
                 .Where(x => string.IsNullOrWhiteSpace(DeviceHostName) ||
                             x.HostName.Equals(DeviceHostName, StringComparison.OrdinalIgnoreCase))
                 .Select(x => x.InstrumentGroup).ToList();
