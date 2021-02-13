@@ -1,5 +1,10 @@
 Buzzard Change Log
 
+Version 2.3.2.1; February 13, 2021
+	- Fix a bug loading requested runs when first started
+	- Add notes in the metadata settings that clarify that values in the UI do not override values specified in a requested run
+	- Show the instrument group(s) and count of matching requested runs in the configuration UI
+
 Version 2.3.2.0; February 9, 2021
 	- User interface improvements
 		- Filldown user interface now nearly matches the monitor metadata user interface
