@@ -71,6 +71,19 @@ namespace BuzzardWPF.ViewModels
 
             hostLinkedInstruments = DmsDbData.WhenAnyValue(x => x.InstrumentsMatchingHost, x => x.InstrumentsMatchingHost.Count)
                 .Select(x => string.Join(", ", x.Item1)).ToProperty(this, x => x.HostLinkedInstruments, "");
+
+            hostLinkedInstrumentGroups = DmsDbData.WhenAnyValue(x => x.InstrumentsMatchingHost, x => x.InstrumentsMatchingHost.Count, x => x.DeviceHostName)
+                .Select(x =>
+                {
+                    if (string.IsNullOrWhiteSpace(x.Item3) || x.Item3.Equals(DefaultUnsetInstrumentName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return "All active groups";
+                    }
+
+                    var instruments = DmsDbData.InstrumentDetailsData.Where(y => x.Item1.Contains(y.DMSName)).Select(y => y.InstrumentGroup);
+
+                    return string.Join(", ", instruments);
+                }).ToProperty(this, x => x.HostLinkedInstrumentGroups, "");
         }
 
         private bool remoteFolderLocationIsEnabled;
@@ -82,6 +95,7 @@ namespace BuzzardWPF.ViewModels
         private string selectedHostName = "";
         private string storedHostName = "";
         private readonly ObservableAsPropertyHelper<string> hostLinkedInstruments;
+        private readonly ObservableAsPropertyHelper<string> hostLinkedInstrumentGroups;
 
         public SearchConfigViewModel SearchConfigVm { get; }
         public DMSDataAccessor DmsDbData => DMSDataAccessor.Instance;
@@ -114,6 +128,8 @@ namespace BuzzardWPF.ViewModels
         }
 
         public string HostLinkedInstruments => hostLinkedInstruments.Value;
+
+        public string HostLinkedInstrumentGroups => hostLinkedInstrumentGroups.Value;
 
         /// <summary>
         /// Gets or sets whether the system is monitoring or not.

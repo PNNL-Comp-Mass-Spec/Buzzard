@@ -8,7 +8,7 @@
              xmlns:cueBannerOverlay="clr-namespace:WpfExtras.CueBannerOverlay;assembly=WpfExtras"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance {x:Type viewModels:BuzzardSettingsViewModel}, IsDesignTimeCreatable=True}"
-             d:DesignHeight="340" d:DesignWidth="1050">
+             d:DesignHeight="380" d:DesignWidth="1050">
     <UserControl.Resources>
         <Style x:Key="TextBoxStyle" TargetType="TextBox">
             <Setter Property="MinHeight" Value="32" />
@@ -51,6 +51,7 @@
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
+            <RowDefinition Height="40" />
             <RowDefinition Height="40" />
             <RowDefinition Height="40" />
             <RowDefinition Height="40" />
@@ -119,11 +120,30 @@
         <TextBlock
             Grid.Row="2"
             Grid.Column="0"
+            Margin="10,11,10.2,11"
+            Style="{StaticResource TextBlockStyle}"
+            Text="Instrument Groups:" />
+        <TextBlock
+            Grid.Row="2"
+            Grid.Column="1"
+            Grid.ColumnSpan="3"
+            Margin="9.8,4,5.2,4"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Left">
+            <Run Text="{Binding HostLinkedInstrumentGroups, Mode=OneWay}" />
+            <Run Text="(and" />
+            <Run Text="{Binding DatasetManager.DatasetNameMatcher.RequestedRunsLoadedCount, Mode=OneWay}" />
+            <Run Text="matching requested runs)" />
+        </TextBlock>
+
+        <TextBlock
+            Grid.Row="3"
+            Grid.Column="0"
             Margin="20,11,20.2,11"
             Style="{StaticResource TextBlockStyle}"
             Text="Remote Folder Location" />
         <TextBox
-            Grid.Row="2"
+            Grid.Row="3"
             Grid.Column="1"
             Height="32"
             Margin="9.8,4,5.2,4"
@@ -131,7 +151,7 @@
             Style="{StaticResource TextBoxStyle}"
             Text="{Binding Path=DatasetManager.TriggerFileLocation, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
         <Button
-            Grid.Row="2"
+            Grid.Row="3"
             Grid.Column="2"
             Width="160"
             HorizontalAlignment="Center"
@@ -140,7 +160,7 @@
             Content="Use default"
             Style="{StaticResource SimpleButtonStyle}" />
         <Button
-            Grid.Row="2"
+            Grid.Row="3"
             Grid.Column="3"
             Width="160"
             HorizontalAlignment="Center"
@@ -149,7 +169,7 @@
             Content="Select folder ..."
             Style="{StaticResource SimpleButtonStyle}" />
 
-        <Grid Grid.Row="3" Grid.Column="0" Grid.RowSpan="3" Grid.ColumnSpan="2" Margin="30,0" VerticalAlignment="Center">
+        <Grid Grid.Row="4" Grid.Column="0" Grid.RowSpan="3" Grid.ColumnSpan="2" Margin="30,0" VerticalAlignment="Center">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -183,7 +203,7 @@
         </Grid>
 
         <Button
-            Grid.Row="3"
+            Grid.Row="4"
             Grid.Column="2"
             Width="160"
             HorizontalAlignment="Center"
@@ -193,7 +213,7 @@
             Visibility="{Binding IsTestFolderVisible, Converter={StaticResource BoolToVis}}"
             Style="{StaticResource SimpleButtonStyle}" />
         <Button
-            Grid.Row="3"
+            Grid.Row="4"
             Grid.Column="3"
             Width="160"
             HorizontalAlignment="Center"
@@ -203,7 +223,7 @@
             Style="{StaticResource SimpleButtonStyle}" />
 
         <CheckBox
-            Grid.Row="4"
+            Grid.Row="5"
             Grid.Column="2"
             Grid.ColumnSpan="2"
             Margin="15,10,15,5"
@@ -213,28 +233,28 @@
             IsChecked="{Binding Path=SearchConfigVm.Config.DisableBaseFolderValidation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
             IsEnabled="{Binding Path=IsNotMonitoring}" />
         <Label
-            Grid.Row="6"
+            Grid.Row="7"
             Grid.Column="0"
             Margin="1,1"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             Content="Log Folder Location" />
         <TextBox
-            Grid.Row="6"
+            Grid.Row="7"
             Grid.Column="1"
             Height="32"
             Margin="9.8,4,5.2,4"
             IsReadOnly="True"
             Style="{StaticResource TextBoxStyle}"
             Text="{Binding LogFolderPath, Mode=OneWay}" />
-        <Button Grid.Row="6" Grid.Column="2"
+        <Button Grid.Row="7" Grid.Column="2"
             Width="160"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             Command="{Binding OpenLogDirectoryCommand}"
             Content="Open Log Folder"
             Style="{StaticResource SimpleButtonStyle}" />
-        <Button Grid.Row="6" Grid.Column="3"
+        <Button Grid.Row="7" Grid.Column="3"
             Width="160"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
@@ -243,14 +263,14 @@
             Style="{StaticResource SimpleButtonStyle}" />
 
         <Label
-            Grid.Row="7"
+            Grid.Row="8"
             Grid.Column="0"
             Margin="1,1"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             Content="Calibration Backup Directory" />
         <TextBox
-            Grid.Row="7"
+            Grid.Row="8"
             Grid.Column="1"
             Height="32"
             Margin="9.8,4,5.2,4"
@@ -258,7 +278,7 @@
             Style="{StaticResource TextBoxStyle}"
             Text="{Binding Path=CriticalsBackups.BackupDir, Mode=OneWay}" />
         <Button
-            Grid.Row="7"
+            Grid.Row="8"
             Grid.Column="2"
             Grid.ColumnSpan="2"
             Width="240"

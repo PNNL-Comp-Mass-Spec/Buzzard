@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Reactive.Concurrency;
 using System.Runtime;
 using System.Threading;
@@ -24,6 +25,7 @@ namespace BuzzardWPF.Management
         /// </summary>
         private readonly DatasetTrie requestedRunTrie = new DatasetTrie();
         private DateTime requestedRunsLastUpdated;
+        private int requestedRunsLoadedCount;
         private readonly object lockObject = new object();
 
         /// <summary>
@@ -39,6 +41,12 @@ namespace BuzzardWPF.Management
         {
             get => requestedRunsLastUpdated;
             private set => this.RaiseAndSetIfChanged(ref requestedRunsLastUpdated, value);
+        }
+
+        public int RequestedRunsLoadedCount
+        {
+            get => requestedRunsLoadedCount;
+            private set => this.RaiseAndSetIfChanged(ref requestedRunsLoadedCount, value);
         }
 
         public async Task LoadRequestedRunsCache()
@@ -77,10 +85,12 @@ namespace BuzzardWPF.Management
                 currentTask = "Populating mRequestedRunTrie";
 
                 bool requestedRunsUpdated;
+                int requestedRunsCount;
                 lock (requestedRunTrie)
                 {
                     // TODO: Should we clear this out if there were no new samples? Only really valid for case where the instrument host changed.
                     requestedRunsUpdated = requestedRunTrie.LoadData(samples);
+                    requestedRunsCount = requestedRunTrie.Count;
                 }
 
                 // We can use this to get an idea if any datasets already have trigger files that were sent.
@@ -91,7 +101,12 @@ namespace BuzzardWPF.Management
                 {
                     currentTask = "Raise event DatasetsLoaded";
                     var lastUpdatedTime = DateTime.Now;
-                    RxApp.MainThreadScheduler.Schedule(() => RequestedRunsLastUpdated = lastUpdatedTime);
+
+                    RxApp.MainThreadScheduler.Schedule(() =>
+                    {
+                        RequestedRunsLastUpdated = lastUpdatedTime;
+                        RequestedRunsLoadedCount = requestedRunsCount;
+                    });
                 }
             }
             catch (Exception ex)
