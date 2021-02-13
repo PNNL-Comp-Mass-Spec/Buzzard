@@ -11,13 +11,31 @@ namespace BuzzardWPF.Data
     {
         // Ignore Spelling: trie
 
-        private readonly ITrieNode rootNode = new TrieNodeString();
-        private readonly Dictionary<int, DMSData> requestIDToDMSMap = new Dictionary<int, DMSData>();
+        private ITrieNode rootNode = new TrieNodeString();
+        private Dictionary<int, DMSData> requestIDToDMSMap = new Dictionary<int, DMSData>();
+        private DateTime lastLoadTime = DateTime.MinValue;
+
+        public int Count => requestIDToDMSMap.Count;
 
         public void Clear()
         {
             rootNode.Clear();
             requestIDToDMSMap.Clear();
+        }
+
+        private void ClearForLoad()
+        {
+            if (lastLoadTime.Date < DateTime.Now.Date)
+            {
+                // Clear these out once per day.
+                rootNode = new TrieNodeString();
+                requestIDToDMSMap = new Dictionary<int, DMSData>();
+            }
+            else
+            {
+                rootNode.Clear();
+                requestIDToDMSMap.Clear();
+            }
         }
 
         public void RemoveEmptyNodes()
@@ -32,13 +50,14 @@ namespace BuzzardWPF.Data
         /// <returns>True if data was changed</returns>
         public bool LoadData(IEnumerable<DMSData> newData)
         {
+            var loadTime = DateTime.Now;
             var firstItem = true;
             foreach (var datum in newData)
             {
                 if (firstItem)
                 {
                     // Avoid clearing the Trie when no data was returned.
-                    Clear();
+                    ClearForLoad();
                     firstItem = false;
                 }
 
@@ -50,6 +69,8 @@ namespace BuzzardWPF.Data
                 // Only do this if we added data to the Trie
                 RemoveEmptyNodes();
             }
+
+            lastLoadTime = loadTime;
 
             return !firstItem;
         }
