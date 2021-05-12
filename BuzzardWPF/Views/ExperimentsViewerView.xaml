@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:tk="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Input.Toolkit"
+    xmlns:controls="clr-namespace:System.Windows.Controls;assembly=DotNetProjects.Input.Toolkit"
     xmlns:viewModels="clr-namespace:BuzzardWPF.ViewModels"
     d:DesignHeight="300"
     d:DesignWidth="800"
@@ -64,7 +64,7 @@
             FontSize="16"
             Text="Starting with..." />
 
-        <tk:AutoCompleteBox
+        <controls:AutoCompleteBox
             Grid.Row="0"
             Grid.Column="3"
             Margin="2,1,6,2"

@@ -50,7 +50,9 @@ Name: "{app}\x86"
 [Files]
 ; Exe and supporting libraries
 Source: "bin\Release\BuzzardWPF.exe";                                 DestDir: "{app}";     Flags: ignoreversion
-Source: "bin\Release\BuzzardWPF.exe.config";                          DestDir: "{app}";     Flags: ignoreversion
+Source: "bin\Release\BuzzardWPF.exe.config";                          DestDir: "{app}";     Flags: ignoreversion 
+Source: "bin\Release\DotNetProjects.Input.Toolkit.dll";               DestDir: "{app}";     Flags: ignoreversion 
+Source: "bin\Release\DotNetProjects.Wpf.Extended.Toolkit.dll";        DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\DynamicData.dll";                                DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\LcmsNetData.dll";                                DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\LcmsNetDmsTools.dll";                            DestDir: "{app}";     Flags: ignoreversion
@@ -65,11 +67,7 @@ Source: "bin\Release\System.Reactive.dll";                            DestDir: "
 Source: "bin\Release\System.Runtime.CompilerServices.Unsafe.dll";     DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\System.Threading.Tasks.Extensions.dll";          DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\System.ValueTuple.dll";                          DestDir: "{app}";     Flags: ignoreversion
-Source: "bin\Release\System.Windows.Controls.Input.Toolkit.dll";      DestDir: "{app}";     Flags: ignoreversion
-Source: "bin\Release\System.Windows.Controls.Layout.Toolkit.dll";     DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\WpfExtras.dll";                                  DestDir: "{app}";     Flags: ignoreversion
-Source: "bin\Release\WPFToolkit.dll";                                 DestDir: "{app}";     Flags: ignoreversion
-Source: "bin\Release\Xceed.Wpf.Toolkit.dll";                          DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\x86\Sqlite.Interop.DLL";                         DestDir: "{app}\x86"; Flags: ignoreversion
 Source: "bin\Release\x64\Sqlite.Interop.DLL";                         DestDir: "{app}\x64"; Flags: ignoreversion
 Source: "Resources\IconImage.ico";                                    DestDir: "{app}";     Flags: ignoreversion

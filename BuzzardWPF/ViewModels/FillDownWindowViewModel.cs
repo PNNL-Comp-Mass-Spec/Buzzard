@@ -50,7 +50,7 @@ namespace BuzzardWPF.ViewModels
             this.WhenAnyValue(x => x.Dataset.InstrumentName).ObserveOn(RxApp.MainThreadScheduler).Subscribe(LoadDatasetTypesForInstrument);
 
             allowChangingInstrumentName = DmsDbLists.WhenAnyValue(x => x.InstrumentsMatchingHost.Count)
-                .Select(x => x != 1).ToProperty(this, x => x.AllowChangingInstrumentName, DmsDbLists.InstrumentsMatchingHost.Count != 1);
+                .Select(x => x != 1).ToProperty(this, x => x.AllowChangingInstrumentName, () => DmsDbLists.InstrumentsMatchingHost.Count != 1);
 
             DmsDbLists.WhenAnyValue(x => x.LastLoadFromSqliteCache).ObserveOn(RxApp.TaskpoolScheduler).Subscribe(_ => ReloadPropertyDependentData());
         }
