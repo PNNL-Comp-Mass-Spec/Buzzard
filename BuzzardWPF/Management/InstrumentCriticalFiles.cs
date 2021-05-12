@@ -70,6 +70,11 @@ namespace BuzzardWPF.Management
          * Exactive
          *   C:\Xcalibur\system\Exactive\instrument\msx_instrument_files\master_cal.mscal
          *   C:\Xcalibur\system\Exactive\instrument\msx_instrument_files\inst_config.cfg
+         * Exploris
+         *   C:\Xcalibur\system\Exploris\instrument\msx_instrument_files\master_cal.mscal
+         *   C:\Xcalibur\system\Exploris\instrument\msx_instrument_files\inst_config.cfg
+         *   C:\Xcalibur\system\Exploris\licenses.txt
+         *
          */
 
         public static List<InstrumentCriticalFileInfo> FindCriticalFiles()
@@ -150,6 +155,25 @@ namespace BuzzardWPF.Management
                 {
                     criticalFiles.AddRange(qeDirectory.Parent.EnumerateFiles("ExactiveLicenses.txt").Select(x => new InstrumentCriticalFileInfo(x)));
                 }
+            }
+
+            // Exploris
+            const string explorisPath = @"C:\Xcalibur\system\Exploris\instrument\msx_instrument_files";
+            if (Directory.Exists(qePath))
+            {
+                var explorisCalFileRegex = new Regex(@"^(master_cal\.mscal|inst_config\.cfg)$", RegexOptions.IgnoreCase);
+                var explorisDirectory = new DirectoryInfo(explorisPath);
+                criticalFiles.AddRange(explorisDirectory.EnumerateFiles()
+                    .Where(x => explorisCalFileRegex.IsMatch(x.Name))
+                    .Select(x => new InstrumentCriticalFileInfo(x)));
+
+                // Backup the "ExactiveLicenses" file
+                if (explorisDirectory.Parent != null)
+                {
+                    criticalFiles.AddRange(explorisDirectory.Parent.EnumerateFiles("Licenses.txt").Select(x => new InstrumentCriticalFileInfo(x)));
+                }
+
+                // TODO: Supposed to back up C:\Thermo\Instrument\Exploris\[version]\System\Database too, but the one example I have only shows an empty directory (software 2.0; software 1.1 had some files)
             }
 
             const string thermoCommonPath = @"C:\Thermo\Instruments";
