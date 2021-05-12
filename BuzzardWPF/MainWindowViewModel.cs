@@ -60,7 +60,7 @@ namespace BuzzardWPF
             MessageLevel = CONST_DEFAULT_MESSAGE_LOG_LEVEL;
 
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();
-            var version = assembly.GetName().Version.ToString();
+            var version = assembly.GetName().Version.ToString(3);
             Title = "Buzzard - v." + version;
 
             isNotMonitoring = FileSystemWatcherManager.Instance.WhenAnyValue(x => x.IsMonitoring).Select(x => !x).ObserveOn(RxApp.MainThreadScheduler).ToProperty(this, x => x.IsNotMonitoring);

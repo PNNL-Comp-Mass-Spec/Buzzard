@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -24,15 +23,53 @@ namespace BuzzardWPF
 
         static AppInitializer()
         {
-            AssemblyDate = "";
+            AssemblyDate = GetCommitOrBuildDate();
+        }
 
-            var asm = Assembly.GetExecutingAssembly();
-            // Can throw an exception if there is more than one matching attribute
-            var asmDate = asm.GetCustomAttribute<AssemblyDateAttribute>();
-            if (asmDate != null)
+        /// <summary>
+        /// This method allows accessing the GitCommitDate method in the <see cref="ThisAssembly"/> class created by NerdBank.GitVersioning
+        /// </summary>
+        /// <returns></returns>
+        public static string GetCommitOrBuildDate()
+        {
+            var members = Assembly.GetExecutingAssembly().GetType("ThisAssembly")?.GetMember("GitCommitDate",
+                BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic);
+
+            if (members?.Length > 0)
             {
-                AssemblyDate = asmDate.AssemblyDate;
+                object dateObj = null;
+                switch (members[0])
+                {
+                    case FieldInfo field:
+                        dateObj = field.GetValue(null);
+                        break;
+                    case PropertyInfo prop:
+                        dateObj = prop.GetValue(null);
+                        break;
+                }
+
+                if (dateObj is DateTime dt)
+                {
+                    return dt.ToLocalTime().ToString("MMMM dd, yyyy");
+                }
             }
+
+            // Backup date, based on build date
+
+            // Get only attributes of type 'AssemblyMetadataAttribute', then get the first one that has the key "AssemblyBuildDate"
+            // If not found, assemblyDate will be null, and will be replaced in the assignment with an empty string.
+            var assemblyBuildDate = Assembly.GetExecutingAssembly()
+                .GetCustomAttributes(typeof(AssemblyMetadataAttribute), false)
+                .Cast<AssemblyMetadataAttribute>()
+                .FirstOrDefault(x => x.Key.Equals("AssemblyBuildDate", StringComparison.OrdinalIgnoreCase))?.Value;
+
+            if (DateTime.TryParseExact(assemblyBuildDate, "yyyy.MM.dd", CultureInfo.InvariantCulture,
+                DateTimeStyles.AssumeLocal, out var abd))
+            {
+                return abd.ToString("MMMM dd, yyyy");
+            }
+
+            return assemblyBuildDate;
         }
 
         /// <summary>
