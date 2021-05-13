@@ -71,9 +71,9 @@ namespace BuzzardWPF.Management
          *   C:\Xcalibur\system\Exactive\instrument\msx_instrument_files\master_cal.mscal
          *   C:\Xcalibur\system\Exactive\instrument\msx_instrument_files\inst_config.cfg
          * Exploris
-         *   C:\Xcalibur\system\Exploris\instrument\msx_instrument_files\master_cal.mscal
-         *   C:\Xcalibur\system\Exploris\instrument\msx_instrument_files\inst_config.cfg
-         *   C:\Xcalibur\system\Exploris\licenses.txt
+         *   C:\ProgramData\Thermo\Exploris\Instrument\msx_instrument_files\master_cal.mscal
+         *   C:\ProgramData\Thermo\Exploris\Instrument\msx_instrument_files\inst_config.cfg
+         *   C:\ProgramData\Thermo\Exploris\licenses.txt
          *
          */
 
@@ -158,8 +158,8 @@ namespace BuzzardWPF.Management
             }
 
             // Exploris
-            const string explorisPath = @"C:\Xcalibur\system\Exploris\instrument\msx_instrument_files";
-            if (Directory.Exists(qePath))
+            const string explorisPath = @"C:\ProgramData\Thermo\Exploris\Instrument\msx_instrument_files";
+            if (Directory.Exists(explorisPath))
             {
                 var explorisCalFileRegex = new Regex(@"^(master_cal\.mscal|inst_config\.cfg)$", RegexOptions.IgnoreCase);
                 var explorisDirectory = new DirectoryInfo(explorisPath);
@@ -168,9 +168,9 @@ namespace BuzzardWPF.Management
                     .Select(x => new InstrumentCriticalFileInfo(x)));
 
                 // Backup the "ExactiveLicenses" file
-                if (explorisDirectory.Parent != null)
+                if (explorisDirectory.Parent?.Parent != null)
                 {
-                    criticalFiles.AddRange(explorisDirectory.Parent.EnumerateFiles("Licenses.txt").Select(x => new InstrumentCriticalFileInfo(x)));
+                    criticalFiles.AddRange(explorisDirectory.Parent.Parent.EnumerateFiles("Licenses.txt").Select(x => new InstrumentCriticalFileInfo(x)));
                 }
 
                 // TODO: Supposed to back up C:\Thermo\Instrument\Exploris\[version]\System\Database too, but the one example I have only shows an empty directory (software 2.0; software 1.1 had some files)
