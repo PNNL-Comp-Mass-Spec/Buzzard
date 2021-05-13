@@ -29,7 +29,7 @@ namespace BuzzardWPF
             if (update.IsNewVersion)
             {
                 var updateMsg = "A new version of Buzzard is available at " + update.InstallerFolderPath + "; Close Buzzard and install the new version now?";
-                updateMsg += $"\n\nCurrent Version:\t{update.RunningVersion}\nNew Version:\t{update.InstallerVersionText}";
+                updateMsg += $"\n\nCurrent Version:\t{update.RunningVersion.ToString(3)}\nNew Version:\t{update.InstallerVersionText}";
                 var currentUserIsAnAdministrator = UserAdminHelper.IsUserAnAdministrator();
 
                 if (!currentUserIsAnAdministrator)
@@ -132,11 +132,11 @@ namespace BuzzardWPF
                     return noUpdate;
                 }
 
-                var installerVersion = new Version(fileVersionInfo.FileMajorPart, fileVersionInfo.FileMinorPart, fileVersionInfo.FileBuildPart, fileVersionInfo.FilePrivatePart);
+                var installerVersion = new Version(fileVersionInfo.FileMajorPart, fileVersionInfo.FileMinorPart, fileVersionInfo.FileBuildPart);
 
                 var assembly = Assembly.GetExecutingAssembly();
                 var runningVersion = assembly.GetName().Version;
-                var runningVersionText = runningVersion.ToString();
+                var runningVersionText = runningVersion.ToString(3);
 
                 if (string.IsNullOrWhiteSpace(runningVersionText))
                 {
@@ -152,7 +152,7 @@ namespace BuzzardWPF
                         RunningVersionText = runningVersionText,
                         InstallerFile = fiInstaller,
                         InstallerVersion = installerVersion,
-                        InstallerVersionText = installerVersion + (isTestDir ? " (TESTING)" : ""),
+                        InstallerVersionText = installerVersion.ToString(3) + (isTestDir ? " (TESTING)" : ""),
                         IsTestVersion = isTestDir,
                     };
                 }
