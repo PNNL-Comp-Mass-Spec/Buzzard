@@ -2,7 +2,13 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 ; MyAppVerName will appear in the Uninstall Programs list
-#define ReleaseVersion GetFileVersion('..\BuzzardWPF\bin\Release\BuzzardWPF.exe')
+;#define ReleaseVersion GetFileVersion('..\BuzzardWPF\bin\Release\BuzzardWPF.exe')  
+#define Major 1  
+#define Minor 1 
+#define Revision 1 
+#define Build 1
+#define FullVersion ParseVersion('..\BuzzardWPF\bin\Release\BuzzardWPF.exe', Major, Minor, Revision, Build)
+#define ReleaseVersion "" + Str(Major) + "." + Str(Minor) + "." + Str(Revision)
 #define MyAppVerName "Buzzard_" + ReleaseVersion
 #define MySource "..\BuzzardWPF"
 #define MyAppName "Buzzard"
