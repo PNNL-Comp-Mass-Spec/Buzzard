@@ -35,7 +35,7 @@ namespace BuzzardWPF.ViewModels
             proposalUsers = WatcherMetadata.WhenAnyValue(x => x.EMSLProposalID).Select(x => DmsData.GetProposalUsers(x))
                 .ToProperty(this, x => x.ProposalUsers, new List<ProposalUser>());
             emslUsageTypeIsUser = WatcherMetadata.WhenAnyValue(x => x.EMSLUsageType)
-                .Select(x => !string.IsNullOrWhiteSpace(x) && x.Equals("USER", StringComparison.OrdinalIgnoreCase))
+                .Select(x => !string.IsNullOrWhiteSpace(x) && x.IndexOf("USER", StringComparison.OrdinalIgnoreCase) == 0)
                 .ToProperty(this, x => x.EmslUsageTypeIsUser, () => false);
 
             DmsData.WhenAnyValue(x => x.LastLoadFromSqliteCache).ObserveOn(RxApp.TaskpoolScheduler).Subscribe(_ => ReloadPropertyDependentData());

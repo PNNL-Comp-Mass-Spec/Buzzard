@@ -84,9 +84,29 @@ namespace BuzzardWPF.Properties
                 Properties.Remove(oldSetting.Property.Name);
             }
 
+            // Upgrade obsolete values for some settings
+            UpgradeSettingValue(nameof(FilldownEMSLUsageType), "USER", "USER_ONSITE");
+            UpgradeSettingValue(nameof(WatcherEMSLUsageType), "USER", "USER_ONSITE");
+
             // Persist the upgraded settings.
             Save();
             Reload();
+        }
+
+        private void UpgradeSettingValue(string settingName, string oldValue, string replacementValue)
+        {
+            var settingValue = this[settingName];
+            if (!(settingValue is string) || string.IsNullOrWhiteSpace((string)settingValue))
+            {
+                // This should only be encountered when Upgrade is called twice.
+                return;
+            }
+
+            var value = (string) settingValue;
+            if (value.Equals(oldValue))
+            {
+                this[settingName] = replacementValue;
+            }
         }
 
         #region Obsolete Settings Properties

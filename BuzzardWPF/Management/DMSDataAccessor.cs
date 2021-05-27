@@ -55,7 +55,8 @@ namespace BuzzardWPF.Management
             // These values come from table T_EUS_UsageType
             // It is rarely updated, so we're not querying the database every time
             // Previously used, but deprecated in April 2017 is USER_UNKNOWN
-            EMSLUsageTypesSource = new [] { "BROKEN", "CAP_DEV", "MAINTENANCE", "USER" };
+            // Previously used, but deprecated in April 2021 is USER (Replaced with USER_ONSITE and USER_REMOTE)
+            EMSLUsageTypesSource = new [] { "BROKEN", "CAP_DEV", "MAINTENANCE", "USER_ONSITE", "USER_REMOTE" };
 
             LastSqliteCacheUpdateUtc = DateTime.UtcNow;
             LastLoadFromSqliteCacheUtc = DateTime.UtcNow.AddMinutes(-60);

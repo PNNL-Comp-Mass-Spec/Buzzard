@@ -350,7 +350,7 @@ namespace BuzzardWPF.Management
             {
                 missingFields.Add(EmslUsageTypeDescription);
             }
-            else if (WatcherMetadata.EMSLUsageType.Equals("USER", StringComparison.OrdinalIgnoreCase) && string.IsNullOrWhiteSpace(WatcherMetadata.EMSLProposalID))
+            else if (WatcherMetadata.EMSLUsageType.IndexOf("USER", StringComparison.OrdinalIgnoreCase) == 0 && string.IsNullOrWhiteSpace(WatcherMetadata.EMSLProposalID))
             {
                 missingFields.Add(EmslProposalIdDescription);
             }

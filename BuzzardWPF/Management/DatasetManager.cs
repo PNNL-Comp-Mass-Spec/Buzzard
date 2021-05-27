@@ -580,7 +580,7 @@ namespace BuzzardWPF.Management
 
                 dataset.DmsData.EMSLUsageType = WatcherMetadata.EMSLUsageType;
                 if (!string.IsNullOrWhiteSpace(dataset.DmsData.EMSLUsageType) &&
-                    dataset.DmsData.EMSLUsageType.Equals("USER", StringComparison.OrdinalIgnoreCase))
+                    dataset.DmsData.EMSLUsageType.IndexOf("USER", StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     dataset.DmsData.EMSLProposalID = WatcherMetadata.EMSLProposalID;
                     dataset.EMSLProposalUser = WatcherMetadata.EMSLProposalUser;

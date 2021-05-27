@@ -467,7 +467,8 @@
                         MinWidth="200"
                         ItemsSource="{Binding Path=DmsDbLists.EMSLUsageTypesSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                         SelectedValue="{Binding Path=Dataset.DmsData.EMSLUsageType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        Style="{StaticResource ComboBoxStyle}">
+                        Style="{StaticResource ComboBoxStyle}"
+                        ToolTip="USER_ONSITE/USER_REMOTE: Refers to whether the EUS proposal P.I. is currently on-site, or remote. PNNL staff P.I. is always onsite.">
                         <cueBannerOverlay:CueBannerService.CueBanner>
                             <TextBlock Text="Select" Margin="0" FontWeight="Regular" Style="{StaticResource TextBlockStyle}" />
                         </cueBannerOverlay:CueBannerService.CueBanner>

@@ -8,7 +8,7 @@
 #define Revision 1 
 #define Build 1
 #define FullVersion ParseVersion('..\BuzzardWPF\bin\Release\BuzzardWPF.exe', Major, Minor, Revision, Build)
-#define ReleaseVersion "" + Str(Major) + "." + Str(Minor) + "." + Str(Revision)
+#define ReleaseVersion Str(Major) + "." + Str(Minor) + "." + Str(Revision)
 #define MyAppVerName "Buzzard_" + ReleaseVersion
 #define MySource "..\BuzzardWPF"
 #define MyAppName "Buzzard"
