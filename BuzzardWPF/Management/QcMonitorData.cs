@@ -48,9 +48,12 @@ namespace BuzzardWPF.Management
                 return;
             }
 
+            var startMatch = new Regex("^(?<start>QC|Blank)(?<bar>[-_])", RegexOptions.IgnoreCase);
+            var allowNumberString = startMatch.Replace(datasetNameMatch, "${start}\\d*${bar}");
+
             // Allow replacement of dashes with underscores and vice-versa, and keep a case insensitive match
             var horBarMatch = new Regex("[-_]+");
-            var modMatchString = "^" + horBarMatch.Replace(datasetNameMatch, "[-_]+");
+            var modMatchString = "^" + horBarMatch.Replace(allowNumberString, "[-_]+");
             DatasetNameMatchRegex = new Regex(modMatchString, RegexOptions.Compiled | RegexOptions.IgnoreCase);
         }
 
