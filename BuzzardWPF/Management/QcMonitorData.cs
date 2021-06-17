@@ -49,7 +49,7 @@ namespace BuzzardWPF.Management
             }
 
             var startMatch = new Regex("^(?<start>QC|Blank)(?<bar>[-_])", RegexOptions.IgnoreCase);
-            var allowNumberString = startMatch.Replace(datasetNameMatch, "${start}\\d*${bar}");
+            var allowNumberString = startMatch.Replace(datasetNameMatch, "${start}(\\d+\\w?)?${bar}");
 
             // Allow replacement of dashes with underscores and vice-versa, and keep a case insensitive match
             var horBarMatch = new Regex("[-_]+");

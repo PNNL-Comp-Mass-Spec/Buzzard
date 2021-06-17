@@ -38,8 +38,8 @@ namespace BuzzardWPF.Management
         // Agilent GC-MS: msinsctl
         public const string BlockingProcessNamesRegExString = @"HomePage|ThermoFisher\.Foundation\.AcquisitionService|Thermo\.TNG\.InstrumentServer|LTQManager|AgtVoyAcgEng|msinsctl";
 
-        public const string QcDatasetNameRegExString = "^QC\\d*(_|-).*";
-        public const string BlankDatasetNameRegExString = "^BLANK\\d*(_|-).*";
+        public const string QcDatasetNameRegExString = "^QC(\\d+\\w?)?(_|-).*";
+        public const string BlankDatasetNameRegExString = "^BLANK(\\d+\\w?)?(_|-).*";
 
         private readonly Regex BlockingProcessNamesRegEx = new Regex(BlockingProcessNamesRegExString, RegexOptions.Compiled | RegexOptions.IgnoreCase);
         private readonly Regex qcDatasetNameRegEx = new Regex(QcDatasetNameRegExString, RegexOptions.Compiled | RegexOptions.IgnoreCase);

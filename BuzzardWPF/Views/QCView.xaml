@@ -57,8 +57,8 @@
             Grid.Row="0"
             Grid.Column="0"
             Margin="1,1,4,1">
-            <TextBlock Style="{StaticResource TextBlockStyle}" Margin="6,0,4,0" FontWeight="Bold" Text="These settings only apply to datasets that start with 'QC_', 'QC-'," ToolTip="May include a number, like 'QC01_' or 'QC2-'" />
-            <TextBlock Style="{StaticResource TextBlockStyle}" Margin="6,0,4,0" FontWeight="Bold" HorizontalAlignment="Center" Text="'Blank_', or 'Blank-'." ToolTip="May include a number, like 'Blank01_' or 'Blank2-'" />
+            <TextBlock Style="{StaticResource TextBlockStyle}" Margin="6,0,4,0" FontWeight="Bold" Text="These settings only apply to datasets that start with 'QC_', 'QC-'," ToolTip="May include a number, like 'QC01_' or 'QC2-', also may have a single letter after the number" />
+            <TextBlock Style="{StaticResource TextBlockStyle}" Margin="6,0,4,0" FontWeight="Bold" HorizontalAlignment="Center" Text="'Blank_', or 'Blank-'." ToolTip="May include a number, like 'Blank01_' or 'Blank2-', also may have a single letter after the number" />
             <TextBlock Style="{StaticResource TextBlockStyle}" Margin="6,0,4,0" Text="Other metadata will be taken from 'Instrument Metadata'" />
 
             <GroupBox Header="Experiments">
