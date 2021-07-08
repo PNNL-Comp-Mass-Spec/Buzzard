@@ -53,13 +53,6 @@ namespace BuzzardWPF.Searching
         private volatile bool m_keepSearching;
 
         /// <summary>
-        /// Constructor
-        /// </summary>
-        public FileSearchBuzzardier()
-        {
-        }
-
-        /// <summary>
         /// Stops searching
         /// </summary>
         public void Stop()
