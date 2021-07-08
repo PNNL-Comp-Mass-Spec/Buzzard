@@ -22,16 +22,22 @@ namespace BuzzardWPF
             ApplicationLogger.Error += ApplicationLogger_ItemLogged;
             FileLogger.LogFilePathDefined += ApplicationLogger_LogFilePathDefined;
 
-            var assem = Assembly.GetEntryAssembly();
-            var assemName = assem.GetName();
-            var ver = assemName.Version.ToString(3) + "; " + AppInitializer.AssemblyDate;
+            var assembly = Assembly.GetEntryAssembly();
+
+            if (assembly == null)
+            {
+                Version = "NullEntryAssembly";
+            }
+            else
+            {
+                var assemblyName = assembly.GetName();
+                Version = assemblyName.Version.ToString(3) + "; " + AppInitializer.AssemblyDate;
+            }
 
             if (Properties.Settings.Default.IsTestVersion)
             {
-                ver += "    TEST VERSION";
+                Version += "    TEST VERSION";
             }
-
-            Version = ver;
         }
 
         private string lastLoggedItem;

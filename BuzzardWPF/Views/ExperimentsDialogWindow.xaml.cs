@@ -16,7 +16,7 @@ namespace BuzzardWPF.Views
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (DataContext is ExperimentsViewerViewModel evvm && evvm.SelectedExperiment == null)
+            if (DataContext is ExperimentsViewerViewModel viewer && viewer.SelectedExperiment == null)
             {
                 ApplicationLogger.LogMessage(
                     0,

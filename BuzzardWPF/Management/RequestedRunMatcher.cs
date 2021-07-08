@@ -120,11 +120,11 @@ namespace BuzzardWPF.Management
             GC.Collect(int.MaxValue, GCCollectionMode.Forced, true, true);
         }
 
-        public DMSData MatchDatasetName(FileInfo fiDataset, out string datasetName)
+        public DMSData MatchDatasetName(FileInfo datasetFile, out string datasetName)
         {
             const int SEARCH_DEPTH_AMBIGUOUS_MATCH = 5;
 
-            var fileName = Path.GetFileNameWithoutExtension(fiDataset.Name);
+            var fileName = Path.GetFileNameWithoutExtension(datasetFile.Name);
             datasetName = fileName;
             DMSData data = null;
 
@@ -137,10 +137,10 @@ namespace BuzzardWPF.Management
                 catch (DatasetTrieException ex)
                 {
                     // Not found
-                    // Get the path name of the directory, then use that as the "search string for dms"
-                    if (fiDataset.Directory != null)
+                    // Get the path name of the directory, then use that as the "search string for DMS"
+                    if (datasetFile.Directory != null)
                     {
-                        fileName = Path.GetFileName(fiDataset.Directory.Name);
+                        fileName = Path.GetFileName(datasetFile.Directory.Name);
 
                         try
                         {
