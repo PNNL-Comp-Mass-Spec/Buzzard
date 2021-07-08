@@ -361,15 +361,18 @@ namespace BuzzardWPF
         /// </summary>
         private void SaveSettings(bool force = true)
         {
-            // Logging each auto-save is spamming the logs, and it is a bit excessive
+            // Logging each auto-save can clutter up the logs, so adjust the message level
             var msgLevel = force ? 0 : 6;
+
             // Save settings
             ApplicationLogger.LogMessage(msgLevel, "Starting to save settings to config.");
             var settingsChanged = false;
+
             settingsChanged |= DatasetsVm.SaveSettings();
             settingsChanged |= QCVm.SaveSettings(force);
             settingsChanged |= SettingsVm.SaveSettings(force);
             settingsChanged |= DatasetManager.SaveSettings(force);
+
             if (settingsChanged || force)
             {
                 Settings.Default.Save();

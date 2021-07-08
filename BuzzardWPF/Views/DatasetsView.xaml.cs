@@ -16,7 +16,7 @@ namespace BuzzardWPF.Views
         }
 
         /// <summary>
-        /// Deselects any dataset and all datasets that are held in the datagrid.
+        /// Deselects any dataset and all datasets that are held in the data grid.
         /// </summary>
         private void SelectNoDatasets_Click(object sender, RoutedEventArgs e)
         {
@@ -24,7 +24,7 @@ namespace BuzzardWPF.Views
         }
 
         /// <summary>
-        /// Selects all the datasets that are held in the datagrid.
+        /// Selects all the datasets that are held in the data grid.
         /// </summary>
         private void SelectAllDatasets_Click(object sender, RoutedEventArgs e)
         {

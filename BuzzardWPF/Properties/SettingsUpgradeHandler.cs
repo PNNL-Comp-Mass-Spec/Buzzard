@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+
 // ReSharper disable InconsistentNaming
 
 namespace BuzzardWPF.Properties

@@ -29,7 +29,7 @@ namespace BuzzardWPF
         /// <summary>
         /// This method allows accessing the GitCommitDate method in the <see cref="ThisAssembly"/> class created by NerdBank.GitVersioning
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Commit or build date</returns>
         public static string GetCommitOrBuildDate()
         {
             var members = Assembly.GetExecutingAssembly().GetType("ThisAssembly")?.GetMember("GitCommitDate",
@@ -78,9 +78,13 @@ namespace BuzzardWPF
         /// <returns>An object that holds the application settings.</returns>
         private static List<Tuple<string, Exception>> LoadSettings()
         {
+            // ReSharper disable CommentTypo
+
             // Note that settings are persisted in file user.config in a randomly named folder below %userprofile%\appdata\local
             // For example:
             // C:\Users\username\appdata\local\PNNL\BuzzardWPF.exe_Url_yufs4k44bouk50s0nygwhsc1xpnayiku\1.7.13.4\user.config
+
+            // ReSharper restore CommentTypo
 
             // Possibly upgrade the settings from a previous version
             if (Properties.Settings.Default.SettingsUpgradeRequired)

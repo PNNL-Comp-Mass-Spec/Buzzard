@@ -30,7 +30,7 @@ namespace BuzzardWPF.Management
         private ConcurrentDictionary<string, bool> triggerDirectoryContents;
 
         /// <summary>
-        /// Regex for matching/truncating the variable beginning of the trigger file name, so that we are only left with "[dataset name].xml"
+        /// RegEx for matching/truncating the variable beginning of the trigger file name, so that we are only left with "[dataset name].xml"
         /// </summary>
         private readonly Regex triggerFileNameDatasetNameMatch = new Regex(@"^.*?_\d{2}\.\d{2}\.\d{4}_\d{2}\.\d{2}\.\d{2}_", RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.CultureInvariant);
 

@@ -397,7 +397,7 @@ namespace BuzzardWPF.Searching
                 if (instrument == null && !string.IsNullOrWhiteSpace(alternateBaseFolderHostName))
                 {
                     ApplicationLogger.LogMessage(LogLevel.Debug, $"{nameof(InstrumentFolderValidator)}: No local shares that match a share in DMS for host {baseFolderHostName}; trying the alternate name {alternateBaseFolderHostName}");
-                    // Hostname not found in DMS, try the alternate host name that was read from the settings.
+                    // Host name not found in DMS, try the alternate host name that was read from the settings.
                     instrument = DMSDataAccessor.Instance.InstrumentDetailsData
                         .FirstOrDefault(x => string.Equals(alternateBaseFolderHostName, x.HostName.Split('.').FirstOrDefault(), StringComparison.OrdinalIgnoreCase));
 
