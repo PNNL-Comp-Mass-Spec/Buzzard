@@ -8,7 +8,6 @@ using System.Security.AccessControl;
 using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
 using BuzzardWPF.ViewModels;
-using LcmsNetData.Data;
 using LcmsNetData.Logging;
 
 namespace BuzzardWPF.Searching
