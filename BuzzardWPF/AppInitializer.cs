@@ -251,7 +251,7 @@ namespace BuzzardWPF
 
                     if (LcmsNetData.Data.TriggerFileTools.ErrorMessages.Count > 0)
                     {
-                        BuzzardWPF.IO.BuzzardTriggerFileTools.ShowErrorMessages(LcmsNetData.Data.TriggerFileTools.ErrorMessages);
+                        IO.BuzzardTriggerFileTools.ShowErrorMessages(LcmsNetData.Data.TriggerFileTools.ErrorMessages);
                     }
                 }
             }
@@ -309,7 +309,7 @@ namespace BuzzardWPF
                 "Test error message 7 - Brown",
                 "Test error message 8 - Orange"
             };
-            BuzzardWPF.IO.BuzzardTriggerFileTools.ShowErrorMessages(testErrorMessages);
+            IO.BuzzardTriggerFileTools.ShowErrorMessages(testErrorMessages);
         }
 
         private static void LogCriticalError(string errorMessage, Exception ex, bool showPopup = true)

@@ -20,7 +20,7 @@ namespace BuzzardWPF.ViewModels
 
         public const string DEFAULT_TRIGGER_FOLDER_PATH = @"\\proto-5\BionetXfer\Run_Complete_Trigger";
 
-        public const string DefaultUnsetInstrumentName = @"PegasaurusRex";
+        public const string DefaultUnsetInstrumentName = "PegasaurusRex";
 
         /// <summary>
         /// Constructor for valid design-time data context
@@ -90,10 +90,10 @@ namespace BuzzardWPF.ViewModels
 
         private bool remoteFolderLocationIsEnabled;
         private readonly ObservableAsPropertyHelper<bool> isNotMonitoring;
-        private bool newVersionAvailable = false;
+        private bool newVersionAvailable;
         private string newVersionText = "";
         private readonly ObservableAsPropertyHelper<string> displayedComputerInstrumentHostName;
-        private bool computerNameNotDmsInstrumentHost = false;
+        private bool computerNameNotDmsInstrumentHost;
         private string selectedHostName = "";
         private string storedHostName = "";
         private readonly ObservableAsPropertyHelper<string> hostLinkedInstruments;
