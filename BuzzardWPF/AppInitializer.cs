@@ -174,12 +174,18 @@ namespace BuzzardWPF
 
             CreatePath("Log");
 
+#pragma warning disable CS0162 // Unreachable code detected
+
             const bool SHOW_ERROR_MESSAGES_FORM = false;
+
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             if (SHOW_ERROR_MESSAGES_FORM)
             {
                 DisplayErrorMessagesForm();
                 return true;
             }
+
+#pragma warning restore CS0162 // Unreachable code detected
 
             SQLiteTools.Initialize("BuzzardCache.que");
             //SQLiteTools.SetCacheLocation("BuzzardCache.que");
