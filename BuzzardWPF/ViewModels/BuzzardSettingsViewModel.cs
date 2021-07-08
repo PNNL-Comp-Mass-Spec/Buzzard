@@ -36,15 +36,8 @@ namespace BuzzardWPF.ViewModels
             SearchConfigVm = configVm;
             isNotMonitoring = FileSystemWatcherManager.Instance.WhenAnyValue(x => x.IsMonitoring).Select(x => !x).ObserveOn(RxApp.MainThreadScheduler).ToProperty(this, x => x.IsNotMonitoring);
 
-            if (string.Equals(Environment.MachineName, "monroe5", StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(Environment.MachineName, "we36309", StringComparison.OrdinalIgnoreCase))
-            {
-                IsTestFolderVisible = true;
-            }
-            else
-            {
-                IsTestFolderVisible = false;
-            }
+            IsTestFolderVisible = string.Equals(Environment.MachineName, "WE31383", StringComparison.OrdinalIgnoreCase) ||
+                                  string.Equals(Environment.MachineName, "we36309", StringComparison.OrdinalIgnoreCase);
 
             // Use System.Net.Dns.GetHostName() to get the hostname with correct casing, and possibly support names longer than 15 characters
             ComputerName = System.Net.Dns.GetHostName();
