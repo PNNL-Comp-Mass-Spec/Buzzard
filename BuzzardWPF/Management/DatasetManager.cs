@@ -160,7 +160,7 @@ namespace BuzzardWPF.Management
                         dataset.DatasetStatus = DatasetStatus.Pending;
                     }
 
-                    var triggerXML = BuzzardTriggerFileTools.CreateTriggerString(dataset);
+                    BuzzardTriggerFileTools.CreateTriggerString(dataset);
 
                     if (dataset.DatasetStatus == DatasetStatus.MissingRequiredInfo)
                     {

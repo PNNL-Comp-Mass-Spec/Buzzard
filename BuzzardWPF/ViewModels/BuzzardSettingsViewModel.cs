@@ -58,8 +58,8 @@ namespace BuzzardWPF.ViewModels
             OpenLogDirectoryCommand = ReactiveCommand.Create(OpenLogDirectory);
             OpenLogFileCommand = ReactiveCommand.Create(OpenLogFile);
 
-            DmsDbData.WhenAnyValue(x => x.LastSqliteCacheUpdate).ObserveOn(RxApp.TaskpoolScheduler).Throttle(TimeSpan.FromSeconds(5)).Subscribe(x => CheckForUpdate());
-            DmsDbData.WhenAnyValue(x => x.InstrumentDetailsData, x => x.InstrumentDetailsData.Count).Throttle(TimeSpan.FromMilliseconds(200)).Subscribe(x => CheckInstrumentHostName());
+            DmsDbData.WhenAnyValue(x => x.LastSqliteCacheUpdate).ObserveOn(RxApp.TaskpoolScheduler).Throttle(TimeSpan.FromSeconds(5)).Subscribe(_ => CheckForUpdate());
+            DmsDbData.WhenAnyValue(x => x.InstrumentDetailsData, x => x.InstrumentDetailsData.Count).Throttle(TimeSpan.FromMilliseconds(200)).Subscribe(_ => CheckInstrumentHostName());
 
             displayedComputerInstrumentHostName = this.WhenAnyValue(x => x.ComputerName, x => x.StoredHostName).Select(x =>
             {
