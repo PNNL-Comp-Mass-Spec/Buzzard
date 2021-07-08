@@ -120,7 +120,7 @@ namespace BuzzardWPF.Searching
             // owner and rules always appear to have a domain/workspace/scope context, in the form of '[Domain]\[User or group]'.
             // The methods to get a user and group only has a scope specified for a domain, not for local accounts.
             // Change the user/groups to require matching a backslash (\).
-            var userAndGroups = GetLocalUserAndGroups(userName).Select(x =>
+            var userAndGroups = GetLocalUserAndGroups(userName).ConvertAll(x =>
             {
                 // 'Everyone' never has a 'scope' for permissions (but funnily enough, all other built-in/automatic groups do, even 'NT AUTHORITY\ANONYMOUS LOGON')
                 if (x.Equals("everyone", StringComparison.OrdinalIgnoreCase))
@@ -128,7 +128,7 @@ namespace BuzzardWPF.Searching
                     return x;
                 }
                 return x.Contains("\\") ? x : $"\\{x}";
-            }).ToList();
+            });
 
             var security = Directory.GetAccessControl(path);
             var owner = security.GetOwner(typeof(System.Security.Principal.NTAccount)).Value;
@@ -326,7 +326,8 @@ namespace BuzzardWPF.Searching
                 string baseFolderPathToUse;
 
                 var alternateBaseFolderHostName = Settings.Default.DMSInstrumentHostName;
-                if (alternateBaseFolderHostName.Equals(BuzzardSettingsViewModel.DefaultUnsetInstrumentName, StringComparison.OrdinalIgnoreCase) || alternateBaseFolderHostName.Equals(System.Net.Dns.GetHostName(), StringComparison.OrdinalIgnoreCase))
+                if (alternateBaseFolderHostName.Equals(BuzzardSettingsViewModel.DefaultUnsetInstrumentName, StringComparison.OrdinalIgnoreCase) ||
+                    alternateBaseFolderHostName.Equals(System.Net.Dns.GetHostName(), StringComparison.OrdinalIgnoreCase))
                 {
                     alternateBaseFolderHostName = string.Empty;
                 }
