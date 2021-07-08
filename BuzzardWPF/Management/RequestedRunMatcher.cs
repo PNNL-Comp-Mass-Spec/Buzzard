@@ -12,6 +12,8 @@ namespace BuzzardWPF.Management
 {
     public class RequestedRunMatcher : ReactiveObject, IDisposable
     {
+        // Ignore Spelling: trie
+
         public const int RequestedRunsUpdateIntervalMinutes = 10;
 
         public RequestedRunMatcher()

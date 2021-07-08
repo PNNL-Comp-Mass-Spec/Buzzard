@@ -23,7 +23,7 @@ namespace BuzzardWPF.Management
 {
     public sealed class DMSDataAccessor : ReactiveObject, IDisposable
     {
-        // Ignore Spelling: Unreviewed, uniqueifier
+        // Ignore Spelling: uniqueifier, Unreviewed, username
 
         public const int RecentExperimentMonths = 18;
         public const int RecentDatasetMonths = 12;

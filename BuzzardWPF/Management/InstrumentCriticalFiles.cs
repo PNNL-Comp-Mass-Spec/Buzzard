@@ -12,7 +12,12 @@ namespace BuzzardWPF.Management
 {
     public sealed class InstrumentCriticalFiles : ReactiveObject
     {
-        // Ignore Spelling: Bionet, msx, Altis, Calib, Xcalibur, atunes, Autotune, yyyyMMdd, Chemstation, msdchem, currset, Agt, tunerpt
+        // ReSharper disable CommentTypo
+
+        // Ignore Spelling: Agt, atunes, Autotune, Bionet, Calib, Chemstation, currset, msdchem, msx, tunerpt, Xcalibur, yyyyMMdd
+        // Ignore Spelling: Altis, Exactive, Exploris, Lumos, Orbitrap, Velos
+
+        // ReSharper restore CommentTypo
 
         public static InstrumentCriticalFiles Instance { get; }
 

@@ -8,6 +8,8 @@ namespace BuzzardWPF.Views
     /// </summary>
     public partial class DatasetsView : UserControl
     {
+        // Ignore Spelling: Deselects
+
         public DatasetsView()
         {
             InitializeComponent();

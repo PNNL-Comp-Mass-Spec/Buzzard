@@ -17,7 +17,7 @@ namespace BuzzardWPF
 {
     public static class AppInitializer
     {
-        // Ignore Spelling: Bionet, userprofile, appdata
+        // Ignore Spelling: appdata, Bionet, username, userprofile, MMMM dd, yyyy
 
         public static string AssemblyDate { get; }
 

@@ -12,6 +12,8 @@ namespace BuzzardWPF.Views
     /// </summary>
     public partial class DatasetsDataGridView : UserControl
     {
+        // Ignore Spelling: Deselects
+
         public DatasetsDataGridView()
         {
             InitializeComponent();

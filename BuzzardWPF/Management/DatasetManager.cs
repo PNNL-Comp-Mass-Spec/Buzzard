@@ -22,7 +22,7 @@ namespace BuzzardWPF.Management
     /// </summary>
     public sealed class DatasetManager : ReactiveObject, IStoredSettingsMonitor, IDisposable
     {
-        // Ignore Spelling: Altis, AgtVoyAcgEng, AgtVoyAcqEng, msinsctl, trie, xxx
+        // Ignore Spelling: Altis, AgtVoyAcgEng, AgtVoyAcqEng, Lumos, msinsctl, Orbitrap, trie, Velos, xxx
 
         public const string PREVIEW_TRIGGER_FILE_FLAG = "Nonexistent_Fake_TriggerFile.xmL";
 

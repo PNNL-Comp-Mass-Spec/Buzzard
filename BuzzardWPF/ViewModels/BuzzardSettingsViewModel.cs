@@ -16,6 +16,8 @@ namespace BuzzardWPF.ViewModels
 {
     public class BuzzardSettingsViewModel : ReactiveObject, IStoredSettingsMonitor, IDisposable
     {
+        // Ignore Spelling: Bruker, hostname, Solarix
+
         public const string DEFAULT_TRIGGER_FOLDER_PATH = @"\\proto-5\BionetXfer\Run_Complete_Trigger";
 
         public const string DefaultUnsetInstrumentName = @"PegasaurusRex";
