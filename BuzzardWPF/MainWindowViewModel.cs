@@ -317,7 +317,7 @@ namespace BuzzardWPF
 
         private void m_buzzadier_SearchStopped(object sender, EventArgs e)
         {
-            LastStatusMessage = "";
+            LastStatusMessage = string.Empty;
         }
 
         /// <summary>

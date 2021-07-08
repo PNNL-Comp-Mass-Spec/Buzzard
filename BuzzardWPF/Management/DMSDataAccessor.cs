@@ -48,7 +48,7 @@ namespace BuzzardWPF.Management
                 DeviceHostName.Equals(BuzzardSettingsViewModel.DefaultUnsetInstrumentName, StringComparison.OrdinalIgnoreCase) ||
                 Settings.Default.NeverLockInstrumentName)
             {
-                DeviceHostName = "";
+                DeviceHostName = string.Empty;
             }
 
             InterestRatingCollection = interestRatingOptions;
@@ -308,7 +308,7 @@ namespace BuzzardWPF.Management
         /// <returns></returns>
         public IReadOnlyList<string> GetAllowedDatasetTypesForInstrument(string instrumentName, out string defaultDatasetType)
         {
-            defaultDatasetType = "";
+            defaultDatasetType = string.Empty;
             if (string.IsNullOrWhiteSpace(instrumentName))
             {
                 return DatasetTypes;

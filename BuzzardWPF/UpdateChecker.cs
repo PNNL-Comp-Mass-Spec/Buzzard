@@ -176,10 +176,10 @@ namespace BuzzardWPF
 
             public bool IsNewVersion { get; }
             public Version InstallerVersion { get; set; }
-            public string InstallerVersionText { get; set; } = "";
+            public string InstallerVersionText { get; set; } = string.Empty;
             public Version RunningVersion { get; set; }
-            public string RunningVersionText { get; set; } = "";
-            public string InstallerFolderPath { get; set; } = "";
+            public string RunningVersionText { get; set; } = string.Empty;
+            public string InstallerFolderPath { get; set; } = string.Empty;
             public FileInfo InstallerFile { get; set; }
             public bool IsTestVersion { get; set; } = false;
 

@@ -67,8 +67,8 @@ namespace BuzzardWPF.Searching
         /// <returns>true if the user has read permissions on the shared directory</returns>
         public static bool CheckDirectorySharingAndPermissions(string path, string userName, out bool hasModifyPermissions, out string shareName, out string sharedDirectory)
         {
-            shareName = "";
-            sharedDirectory = "";
+            shareName = string.Empty;
+            sharedDirectory = string.Empty;
             hasModifyPermissions = false;
             if (!Directory.Exists(path))
             {

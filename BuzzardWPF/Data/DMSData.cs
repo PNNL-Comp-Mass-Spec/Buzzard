@@ -16,20 +16,20 @@ namespace BuzzardWPF.Data
         public DMSData()
         {
             LockData = false;
-            CartName = "";
-            CartConfigName = "";
-            Comment = "";
-            CommentAddition = "";
-            DatasetName = "";
-            DatasetType = "";
-            Experiment = "";
-            EMSLProposalID = "";
+            CartName = string.Empty;
+            CartConfigName = string.Empty;
+            Comment = string.Empty;
+            CommentAddition = string.Empty;
+            DatasetName = string.Empty;
+            DatasetType = string.Empty;
+            Experiment = string.Empty;
+            EMSLProposalID = string.Empty;
             RequestID = 0;
-            InstrumentGroup = "";
-            RequestName = "";
-            EMSLUsageType = "";
-            EMSLProposalUser = "";
-            WorkPackage = "";
+            InstrumentGroup = string.Empty;
+            RequestName = string.Empty;
+            EMSLUsageType = string.Empty;
+            EMSLProposalUser = string.Empty;
+            WorkPackage = string.Empty;
         }
 
         /// <summary>
@@ -38,20 +38,20 @@ namespace BuzzardWPF.Data
         public void Reset()
         {
             LockData = false;
-            CartName = "";
-            CartConfigName = "";
-            Comment = "";
-            CommentAddition = "";
-            DatasetName = "";
-            DatasetType = "";
-            Experiment = "";
-            EMSLProposalID = "";
+            CartName = string.Empty;
+            CartConfigName = string.Empty;
+            Comment = string.Empty;
+            CommentAddition = string.Empty;
+            DatasetName = string.Empty;
+            DatasetType = string.Empty;
+            Experiment = string.Empty;
+            EMSLProposalID = string.Empty;
             RequestID = 0;
-            InstrumentGroup = "";
-            RequestName = "";
-            EMSLUsageType = "";
-            EMSLProposalUser = "";
-            WorkPackage = "";
+            InstrumentGroup = string.Empty;
+            RequestName = string.Empty;
+            EMSLUsageType = string.Empty;
+            EMSLProposalUser = string.Empty;
+            WorkPackage = string.Empty;
         }
 
         /// <summary>

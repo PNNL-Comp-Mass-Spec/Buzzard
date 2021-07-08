@@ -84,11 +84,11 @@ namespace BuzzardWPF.ViewModels
         private bool remoteFolderLocationIsEnabled;
         private readonly ObservableAsPropertyHelper<bool> isNotMonitoring;
         private bool newVersionAvailable;
-        private string newVersionText = "";
+        private string newVersionText = string.Empty;
         private readonly ObservableAsPropertyHelper<string> displayedComputerInstrumentHostName;
         private bool computerNameNotDmsInstrumentHost;
-        private string selectedHostName = "";
-        private string storedHostName = "";
+        private string selectedHostName = string.Empty;
+        private string storedHostName = string.Empty;
         private readonly ObservableAsPropertyHelper<string> hostLinkedInstruments;
         private readonly ObservableAsPropertyHelper<string> hostLinkedInstrumentGroups;
 
@@ -305,7 +305,7 @@ namespace BuzzardWPF.ViewModels
             RxApp.MainThreadScheduler.Schedule(() =>
             {
                 NewVersionAvailable = updateAvailable;
-                NewVersionText = newVersion ?? "";
+                NewVersionText = newVersion ?? string.Empty;
             });
         }
 
