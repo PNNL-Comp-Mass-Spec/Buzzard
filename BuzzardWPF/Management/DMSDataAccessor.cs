@@ -316,18 +316,20 @@ namespace BuzzardWPF.Management
 
             // Get instrument details
             var instrument = InstrumentDetailsData.FirstOrDefault(x => x.DMSName.Equals(instrumentName, StringComparison.OrdinalIgnoreCase));
-            if (instrument != null)
+            if (instrument == null)
             {
-                // Get instrument group details
-                var group = instrumentGroupInfoList.FirstOrDefault(x => x.InstrumentGroup.Equals(instrument.InstrumentGroup, StringComparison.OrdinalIgnoreCase));
-                if (group != null)
-                {
-                    defaultDatasetType = group.DefaultDatasetType;
-                    return group.AllowedDatasetTypesList;
-                }
+                return DatasetTypes;
             }
 
-            return DatasetTypes;
+            // Get instrument group details
+            var instrumentGroup = instrumentGroupInfoList.Find(x => x.InstrumentGroup.Equals(instrument.InstrumentGroup, StringComparison.OrdinalIgnoreCase));
+            if (instrumentGroup == null)
+            {
+                return DatasetTypes;
+            }
+
+            defaultDatasetType = instrumentGroup.DefaultDatasetType;
+            return instrumentGroup.AllowedDatasetTypesList;
         }
 
         /// <summary>
