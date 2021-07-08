@@ -96,13 +96,12 @@ namespace BuzzardWPF.Properties
         private void UpgradeSettingValue(string settingName, string oldValue, string replacementValue)
         {
             var settingValue = this[settingName];
-            if (!(settingValue is string) || string.IsNullOrWhiteSpace((string)settingValue))
+            if (!(settingValue is string value) || string.IsNullOrWhiteSpace(value))
             {
                 // This should only be encountered when Upgrade is called twice.
                 return;
             }
 
-            var value = (string) settingValue;
             if (value.Equals(oldValue))
             {
                 this[settingName] = replacementValue;

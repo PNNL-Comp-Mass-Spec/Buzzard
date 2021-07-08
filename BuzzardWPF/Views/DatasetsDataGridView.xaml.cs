@@ -42,14 +42,12 @@ namespace BuzzardWPF.Views
         /// <param name="e"></param>
         private void DatasetDataGrid_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var dc = this.DataContext as DatasetsViewModel;
-            if (dc == null)
+            if (!(DataContext is DatasetsViewModel dc))
             {
                 return;
             }
 
-            var selector = sender as MultiSelector;
-            if (selector == null)
+            if (!(sender is MultiSelector selector))
             {
                 return;
             }
