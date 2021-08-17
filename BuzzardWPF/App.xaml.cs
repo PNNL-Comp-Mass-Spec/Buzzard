@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Reflection;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 using BuzzardWPF.Management;
 using LcmsNetData;
 using LcmsNetData.Logging;
+using LcmsNetDmsTools;
 using LcmsNetSQLiteTools;
 
 namespace BuzzardWPF
@@ -155,6 +157,9 @@ namespace BuzzardWPF
 
             // Block until the splash screen is displayed
             resetSplashCreated.WaitOne();
+
+            var assembly = Assembly.GetExecutingAssembly().GetName();
+            DMSDBTools.ApplicationName = $"Buzzard {assembly.Version}";
 
             var openMainWindow = AppInitializer.InitializeApplication(splashScreen, splashScreen.SetInstrumentHostName).Result;
             if (openMainWindow)

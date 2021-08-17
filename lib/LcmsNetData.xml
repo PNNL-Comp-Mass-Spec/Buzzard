@@ -357,7 +357,7 @@
         </member>
         <member name="P:LcmsNetData.Data.ITriggerFileData.Operator">
             <summary>
-            Name of operator (as entered in DMS)
+            Name of operator (as entered in DMS). Can be just userID, just user's name, or "user's name (userID)"
             </summary>
         </member>
         <member name="P:LcmsNetData.Data.ITriggerFileData.CaptureShareName">
@@ -489,7 +489,7 @@
         </member>
         <member name="M:LcmsNetData.Data.SampleQueryData.BuildSqlString">
             <summary>
-            Build the query string for retrieving data from V_Scheduled_Run_Export
+            Build the query string for retrieving data from V_Requested_Run_Active_Export
             </summary>
             <returns></returns>
         </member>
@@ -666,30 +666,6 @@
             <param name="obj"></param>
             <param name="backingField"></param>
             <param name="newValue"></param>
-            <param name="propertyName"></param>
-            <returns>true if changed, false if not</returns>
-        </member>
-        <member name="M:LcmsNetData.NotifyPropertyChangedExtensions.RaiseAndSetIfChangedLockCheck``1(LcmsNetData.INotifyPropertyChangedExt,``0@,``0,System.Boolean,System.String)">
-            <summary>
-            If isLocked is false and the newValue is not equal to the backingField value (using default EqualityComparer), sets backingField and raises OnPropertyChanged
-            </summary>
-            <typeparam name="TRet"></typeparam>
-            <param name="obj"></param>
-            <param name="backingField"></param>
-            <param name="newValue"></param>
-            <param name="isLocked"></param>
-            <param name="propertyName"></param>
-            <returns>final value of backingField</returns>
-        </member>
-        <member name="M:LcmsNetData.NotifyPropertyChangedExtensions.RaiseAndSetIfChangedLockCheckRetBool``1(LcmsNetData.INotifyPropertyChangedExt,``0@,``0,System.Boolean,System.String)">
-            <summary>
-            If isLocked is false and the newValue is not equal to the backingField value (using default EqualityComparer), sets backingField and raises OnPropertyChanged
-            </summary>
-            <typeparam name="TRet"></typeparam>
-            <param name="obj"></param>
-            <param name="backingField"></param>
-            <param name="newValue"></param>
-            <param name="isLocked"></param>
             <param name="propertyName"></param>
             <returns>true if changed, false if not</returns>
         </member>

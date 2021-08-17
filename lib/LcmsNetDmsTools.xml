@@ -236,7 +236,7 @@
             <summary>
             Gets a list of samples (essentially requested runs) from DMS
             </summary>
-            <remarks>Retrieves data from view V_Scheduled_Run_Export</remarks>
+            <remarks>Retrieves data from view V_Requested_Run_Active_Export</remarks>
         </member>
         <member name="M:LcmsNetDmsTools.DMSDBTools.GetMRMFilesFromDMS(System.String,System.Collections.Generic.List{System.ValueTuple{System.String,System.String}})">
             <summary>
