@@ -611,11 +611,11 @@ namespace BuzzardWPF.Management
                 instrumentGroupInfoList.Capacity = instrumentGroupInfoList.Count;
             }
 
-            // Load Operator Data (from V_Active_Instrument_Operators)
+            // Load Operator Data (from V_Active_Instrument_Users)
             var tempUserList = SQLiteTools.GetUserList(forceReloadFromCache);
             if (tempUserList == null)
             {
-                ApplicationLogger.LogError(0, "User retrieval returned null.");
+                ApplicationLogger.LogError(0, "Instrument user retrieval returned null.");
             }
             else
             {
