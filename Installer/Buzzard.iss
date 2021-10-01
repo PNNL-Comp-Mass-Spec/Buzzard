@@ -61,8 +61,6 @@ Source: "bin\Release\DotNetProjects.Input.Toolkit.dll";               DestDir: "
 Source: "bin\Release\DotNetProjects.Wpf.Extended.Toolkit.dll";        DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\DynamicData.dll";                                DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\LcmsNetData.dll";                                DestDir: "{app}";     Flags: ignoreversion
-Source: "bin\Release\LcmsNetDmsTools.dll";                            DestDir: "{app}";     Flags: ignoreversion
-Source: "bin\Release\LcmsNetSQLiteTools.dll";                         DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\Ookii.Dialogs.Wpf.dll";                          DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\PrismDMS.config";                                DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\PRISMWin.dll";                                   DestDir: "{app}";     Flags: ignoreversion

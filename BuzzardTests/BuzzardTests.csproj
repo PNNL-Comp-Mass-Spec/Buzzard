@@ -31,14 +31,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="LcmsNetData">
-      <HintPath>..\lib\LcmsNetData.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CriticalFileTests.cs" />
+    <Compile Include="DMSDataTests.cs" />
+    <Compile Include="SQLiteCacheTests.cs" />
     <Compile Include="TrieTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -46,6 +45,10 @@
     <ProjectReference Include="..\BuzzardWPF\BuzzardWPF.csproj">
       <Project>{f15ff76f-39b6-46de-a7b8-2633ac36dc6e}</Project>
       <Name>BuzzardWPF</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LcmsNetData\LcmsNetData.csproj">
+      <Project>{09993d8a-15ca-413e-bc48-ec80d399136a}</Project>
+      <Name>LcmsNetData</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

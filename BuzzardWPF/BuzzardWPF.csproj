@@ -45,18 +45,6 @@
     <ApplicationIcon>Resources\IconImage.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="LcmsNetData">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\LcmsNetData.dll</HintPath>
-    </Reference>
-    <Reference Include="LcmsNetDmsTools">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\LcmsNetDmsTools.dll</HintPath>
-    </Reference>
-    <Reference Include="LcmsNetSQLiteTools">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\LcmsNetSQLiteTools.dll</HintPath>
-    </Reference>
     <Reference Include="PresentationFramework.Aero" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -345,6 +333,12 @@
     <PackageReference Include="System.ValueTuple">
       <Version>4.5.0</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LcmsNetData\LcmsNetData.csproj">
+      <Project>{09993d8a-15ca-413e-bc48-ec80d399136a}</Project>
+      <Name>LcmsNetData</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

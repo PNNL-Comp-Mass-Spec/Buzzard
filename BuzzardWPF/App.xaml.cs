@@ -5,9 +5,9 @@ using System.Windows;
 using System.Windows.Threading;
 using BuzzardWPF.Management;
 using LcmsNetData;
+using LcmsNetData.DMS;
 using LcmsNetData.Logging;
-using LcmsNetDmsTools;
-using LcmsNetSQLiteTools;
+using LcmsNetData.SQLite;
 
 namespace BuzzardWPF
 {

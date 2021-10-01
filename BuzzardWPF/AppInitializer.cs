@@ -10,8 +10,8 @@ using BuzzardWPF.Management;
 using BuzzardWPF.ViewModels;
 using LcmsNetData;
 using LcmsNetData.Logging;
+using LcmsNetData.SQLite;
 using LcmsNetData.System;
-using LcmsNetSQLiteTools;
 
 namespace BuzzardWPF
 {
@@ -187,6 +187,7 @@ namespace BuzzardWPF
 
 #pragma warning restore CS0162 // Unreachable code detected
 
+            SQLiteTools.SetDefaultDirectoryPath(() => PersistDataPaths.LocalDataPath);
             SQLiteTools.Initialize("BuzzardCache.que");
             //SQLiteTools.SetCacheLocation("BuzzardCache.que");
             SQLiteTools.BuildConnectionString(false);

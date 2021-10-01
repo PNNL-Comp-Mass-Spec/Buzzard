@@ -13,10 +13,10 @@ using BuzzardWPF.ViewModels;
 using DynamicData;
 using DynamicData.Binding;
 using LcmsNetData;
-using LcmsNetDmsTools;
 using LcmsNetData.Data;
+using LcmsNetData.DMS;
 using LcmsNetData.Logging;
-using LcmsNetSQLiteTools;
+using LcmsNetData.SQLite;
 using ReactiveUI;
 
 namespace BuzzardWPF.Management
