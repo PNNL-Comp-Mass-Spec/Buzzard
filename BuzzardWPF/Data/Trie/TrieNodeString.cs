@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using LcmsNetData.Logging;
+using BuzzardWPF.Logging;
 
 namespace BuzzardWPF.Data.Trie
 {

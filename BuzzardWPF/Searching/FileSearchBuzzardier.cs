@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BuzzardWPF.IO;
-using LcmsNetData.Logging;
+using BuzzardWPF.Logging;
 
 namespace BuzzardWPF.Searching
 {

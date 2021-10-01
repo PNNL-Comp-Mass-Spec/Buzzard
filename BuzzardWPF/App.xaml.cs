@@ -3,11 +3,11 @@ using System.Reflection;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
+using BuzzardWPF.IO.DMS;
+using BuzzardWPF.IO.SQLite;
+using BuzzardWPF.Logging;
 using BuzzardWPF.Management;
-using LcmsNetData;
-using LcmsNetData.DMS;
-using LcmsNetData.Logging;
-using LcmsNetData.SQLite;
+using BuzzardWPF.Utility;
 
 namespace BuzzardWPF
 {

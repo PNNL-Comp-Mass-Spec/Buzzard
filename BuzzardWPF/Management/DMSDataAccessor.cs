@@ -8,15 +8,14 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using BuzzardWPF.Data;
+using BuzzardWPF.Data.DMS;
+using BuzzardWPF.IO.DMS;
+using BuzzardWPF.IO.SQLite;
+using BuzzardWPF.Logging;
 using BuzzardWPF.Properties;
 using BuzzardWPF.ViewModels;
 using DynamicData;
 using DynamicData.Binding;
-using LcmsNetData;
-using LcmsNetData.Data;
-using LcmsNetData.DMS;
-using LcmsNetData.Logging;
-using LcmsNetData.SQLite;
 using ReactiveUI;
 
 namespace BuzzardWPF.Management

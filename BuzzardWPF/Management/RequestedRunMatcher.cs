@@ -5,7 +5,7 @@ using System.Runtime;
 using System.Threading;
 using System.Threading.Tasks;
 using BuzzardWPF.Data;
-using LcmsNetData.Logging;
+using BuzzardWPF.Logging;
 using ReactiveUI;
 
 namespace BuzzardWPF.Management

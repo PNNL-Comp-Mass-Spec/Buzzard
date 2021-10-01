@@ -1,6 +1,6 @@
 ﻿using System.Windows;
+using BuzzardWPF.Logging;
 using BuzzardWPF.ViewModels;
-using LcmsNetData.Logging;
 
 namespace BuzzardWPF.Views
 {

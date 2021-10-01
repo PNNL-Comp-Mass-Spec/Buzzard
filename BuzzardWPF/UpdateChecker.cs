@@ -6,8 +6,8 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Windows;
-using LcmsNetData;
-using LcmsNetData.Logging;
+using BuzzardWPF.Logging;
+using BuzzardWPF.Utility;
 
 namespace BuzzardWPF
 {

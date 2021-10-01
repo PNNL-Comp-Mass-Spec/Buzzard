@@ -5,10 +5,10 @@ using System.IO;
 using System.Linq;
 using System.Management;
 using System.Security.AccessControl;
+using BuzzardWPF.Logging;
 using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
 using BuzzardWPF.ViewModels;
-using LcmsNetData.Logging;
 
 namespace BuzzardWPF.Searching
 {

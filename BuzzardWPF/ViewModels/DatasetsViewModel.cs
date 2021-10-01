@@ -8,11 +8,11 @@ using System.Reactive.Linq;
 using System.Windows;
 using BuzzardWPF.Data;
 using BuzzardWPF.IO;
+using BuzzardWPF.Logging;
 using BuzzardWPF.Management;
 using BuzzardWPF.Views;
 using DynamicData;
 using DynamicData.Binding;
-using LcmsNetData.Logging;
 using ReactiveUI;
 
 namespace BuzzardWPF.ViewModels

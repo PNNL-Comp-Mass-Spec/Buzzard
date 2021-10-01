@@ -81,6 +81,20 @@
     <Compile Include="Data\DatasetTrie.cs" />
     <Compile Include="Data\DatasetTrieException.cs" />
     <Compile Include="Data\DMSData.cs" />
+    <Compile Include="Data\DMS\CartConfigInfo.cs" />
+    <Compile Include="Data\DMS\ExperimentData.cs" />
+    <Compile Include="Data\DMS\IDmsData.cs" />
+    <Compile Include="Data\DMS\InstrumentGroupInfo.cs" />
+    <Compile Include="Data\DMS\InstrumentInfo.cs" />
+    <Compile Include="Data\DMS\IRequestedRunData.cs" />
+    <Compile Include="Data\DMS\ITriggerFileData.cs" />
+    <Compile Include="Data\DMS\PersistenceSettingAttribute.cs" />
+    <Compile Include="Data\DMS\ProposalUser.cs" />
+    <Compile Include="Data\DMS\SampleQueryData.cs" />
+    <Compile Include="Data\DMS\TriggerFileTools.cs" />
+    <Compile Include="Data\DMS\UserIDPIDCrossReferenceEntry.cs" />
+    <Compile Include="Data\DMS\UserInfo.cs" />
+    <Compile Include="Data\DMS\WorkPackageInfo.cs" />
     <Compile Include="Data\Enums.cs" />
     <Compile Include="Data\FilldownBuzzardDataset.cs" />
     <Compile Include="Data\Trie\ITrieNode.cs" />
@@ -91,6 +105,27 @@
     </Compile>
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="IO\BuzzardTriggerFileTools.cs" />
+    <Compile Include="IO\DMS\DMSDBTools.cs" />
+    <Compile Include="IO\DMS\EventArgs.cs" />
+    <Compile Include="IO\DMS\ExtensionMethods.cs" />
+    <Compile Include="IO\DMS\GlobalSuppressions.cs" />
+    <Compile Include="IO\SQLite\DatabaseConnectionStringException.cs" />
+    <Compile Include="IO\SQLite\DatabaseDataException.cs" />
+    <Compile Include="IO\SQLite\DatabaseStoredProcException.cs" />
+    <Compile Include="IO\SQLite\DatabaseTableTypes.cs" />
+    <Compile Include="IO\SQLite\ExtensionMethods.cs" />
+    <Compile Include="IO\SQLite\PropertyToColumnMapping.cs" />
+    <Compile Include="IO\SQLite\SQLiteCacheDefaultData.cs" />
+    <Compile Include="IO\SQLite\SQLiteCacheIO.cs" />
+    <Compile Include="IO\SQLite\SQLiteTools.cs" />
+    <Compile Include="Logging\ApplicationLogger.cs" />
+    <Compile Include="Logging\ErrorLoggerArgs.cs" />
+    <Compile Include="Logging\FileLogger.cs" />
+    <Compile Include="Logging\IHandlesLogging.cs" />
+    <Compile Include="Logging\LogLevel.cs" />
+    <Compile Include="Logging\LogWriterBase.cs" />
+    <Compile Include="Logging\MessageLoggerArgs.cs" />
+    <Compile Include="Logging\ThreadedLogger.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
@@ -118,6 +153,11 @@
     <Compile Include="Searching\SearchConfig.cs" />
     <Compile Include="UpdateChecker.cs" />
     <Compile Include="Utility\IgnoreCaseStringComparison.cs" />
+    <Compile Include="Utility\INotifyPropertyChangedExtensions.cs" />
+    <Compile Include="Utility\LCMSSettings.cs" />
+    <Compile Include="Utility\MessageBoxDisplayExtension.cs" />
+    <Compile Include="Utility\PersistDataPaths.cs" />
+    <Compile Include="Utility\SystemInformationReporter.cs" />
     <Compile Include="ViewModels\BuzzardSettingsViewModel.cs" />
     <Compile Include="ViewModels\DatasetOverwriteDialogViewModel.cs" />
     <Compile Include="ViewModels\DatasetsViewModel.cs" />
@@ -262,6 +302,9 @@
     <None Include="..\.editorconfig">
       <Link>.editorconfig</Link>
     </None>
+    <None Include="IO\DMS\PrismDMS.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -333,12 +376,6 @@
     <PackageReference Include="System.ValueTuple">
       <Version>4.5.0</Version>
     </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\LcmsNetData\LcmsNetData.csproj">
-      <Project>{09993d8a-15ca-413e-bc48-ec80d399136a}</Project>
-      <Name>LcmsNetData</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

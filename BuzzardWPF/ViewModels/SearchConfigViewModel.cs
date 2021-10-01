@@ -8,9 +8,9 @@ using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using BuzzardWPF.Logging;
 using BuzzardWPF.Management;
 using BuzzardWPF.Searching;
-using LcmsNetData.Logging;
 using ReactiveUI;
 
 namespace BuzzardWPF.ViewModels

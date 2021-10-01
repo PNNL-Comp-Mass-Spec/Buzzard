@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
+using BuzzardWPF.Data.DMS;
+using BuzzardWPF.Logging;
 using BuzzardWPF.Properties;
-using LcmsNetData.Data;
-using LcmsNetData.Logging;
 using ReactiveUI;
 
 namespace BuzzardWPF.Management

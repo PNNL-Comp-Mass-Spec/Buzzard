@@ -4,11 +4,11 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
+using BuzzardWPF.Data.DMS;
 using BuzzardWPF.Management;
 using BuzzardWPF.Utility;
 using DynamicData;
 using DynamicData.Binding;
-using LcmsNetData.Data;
 using ReactiveUI;
 
 namespace BuzzardWPF.ViewModels

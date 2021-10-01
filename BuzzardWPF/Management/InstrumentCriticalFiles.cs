@@ -4,8 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Text.RegularExpressions;
+using BuzzardWPF.Logging;
 using BuzzardWPF.Properties;
-using LcmsNetData.Logging;
 using ReactiveUI;
 
 namespace BuzzardWPF.Management

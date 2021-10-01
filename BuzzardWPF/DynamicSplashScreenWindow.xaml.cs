@@ -3,8 +3,8 @@ using System.ComponentModel;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Threading;
-using LcmsNetData;
-using LcmsNetData.Logging;
+using BuzzardWPF.Logging;
+using BuzzardWPF.Utility;
 
 namespace BuzzardWPF
 {

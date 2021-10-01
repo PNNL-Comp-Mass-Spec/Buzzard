@@ -6,12 +6,13 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
+using BuzzardWPF.Data.DMS;
+using BuzzardWPF.IO.DMS;
+using BuzzardWPF.IO.SQLite;
+using BuzzardWPF.Logging;
 using BuzzardWPF.Management;
+using BuzzardWPF.Utility;
 using BuzzardWPF.ViewModels;
-using LcmsNetData;
-using LcmsNetData.Logging;
-using LcmsNetData.SQLite;
-using LcmsNetData.System;
 
 namespace BuzzardWPF
 {
@@ -245,14 +246,14 @@ namespace BuzzardWPF
                 // Check to see if any trigger files need to be copied to the transfer server, and copy if necessary
                 var copyTriggerFiles = LCMSSettings.GetParameter("CopyTriggerFiles", false);
 
-                if (copyTriggerFiles && LcmsNetData.Data.TriggerFileTools.CheckLocalTriggerFiles())
+                if (copyTriggerFiles && TriggerFileTools.CheckLocalTriggerFiles())
                 {
                     ApplicationLogger.LogMessage(-1, "Copying trigger files to DMS");
-                    LcmsNetData.Data.TriggerFileTools.MoveLocalTriggerFiles();
+                    TriggerFileTools.MoveLocalTriggerFiles();
 
-                    if (LcmsNetData.Data.TriggerFileTools.ErrorMessages.Count > 0)
+                    if (TriggerFileTools.ErrorMessages.Count > 0)
                     {
-                        IO.BuzzardTriggerFileTools.ShowErrorMessages(LcmsNetData.Data.TriggerFileTools.ErrorMessages);
+                        IO.BuzzardTriggerFileTools.ShowErrorMessages(TriggerFileTools.ErrorMessages);
                     }
                 }
             }

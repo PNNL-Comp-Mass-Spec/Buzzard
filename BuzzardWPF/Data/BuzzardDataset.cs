@@ -4,8 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
+using BuzzardWPF.Data.DMS;
 using BuzzardWPF.Management;
-using LcmsNetData.Data;
 using ReactiveUI;
 
 namespace BuzzardWPF.Data

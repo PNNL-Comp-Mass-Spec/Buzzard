@@ -5,9 +5,9 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
+using BuzzardWPF.Data.DMS;
 using BuzzardWPF.Management;
 using BuzzardWPF.Views;
-using LcmsNetData.Data;
 using ReactiveUI;
 
 namespace BuzzardWPF.ViewModels

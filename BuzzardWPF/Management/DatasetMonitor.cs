@@ -6,9 +6,9 @@ using System.Linq;
 using System.Reactive.Concurrency;
 using System.Threading;
 using BuzzardWPF.Data;
+using BuzzardWPF.Logging;
 using BuzzardWPF.Properties;
 using DynamicData.Binding;
-using LcmsNetData.Logging;
 using ReactiveUI;
 
 namespace BuzzardWPF.Management

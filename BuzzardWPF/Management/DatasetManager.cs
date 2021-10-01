@@ -7,11 +7,11 @@ using System.Reactive.Concurrency;
 using System.Text.RegularExpressions;
 using BuzzardWPF.Data;
 using BuzzardWPF.IO;
+using BuzzardWPF.Logging;
 using BuzzardWPF.Properties;
 using BuzzardWPF.Searching;
+using BuzzardWPF.Utility;
 using DynamicData;
-using LcmsNetData;
-using LcmsNetData.Logging;
 using PRISMWin;
 using ReactiveUI;
 

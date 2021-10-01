@@ -4,9 +4,9 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
 using BuzzardWPF.Data;
+using BuzzardWPF.Data.DMS;
 using BuzzardWPF.ViewModels;
 using BuzzardWPF.Views;
-using LcmsNetData.Data;
 
 namespace BuzzardWPF.IO
 {

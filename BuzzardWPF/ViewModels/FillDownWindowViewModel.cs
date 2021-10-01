@@ -5,10 +5,10 @@ using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using BuzzardWPF.Data;
+using BuzzardWPF.Data.DMS;
+using BuzzardWPF.Logging;
 using BuzzardWPF.Management;
 using BuzzardWPF.Views;
-using LcmsNetData.Data;
-using LcmsNetData.Logging;
 using ReactiveUI;
 
 namespace BuzzardWPF.ViewModels

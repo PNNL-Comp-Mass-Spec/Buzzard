@@ -60,7 +60,6 @@ Source: "bin\Release\BuzzardWPF.exe.config";                          DestDir: "
 Source: "bin\Release\DotNetProjects.Input.Toolkit.dll";               DestDir: "{app}";     Flags: ignoreversion 
 Source: "bin\Release\DotNetProjects.Wpf.Extended.Toolkit.dll";        DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\DynamicData.dll";                                DestDir: "{app}";     Flags: ignoreversion
-Source: "bin\Release\LcmsNetData.dll";                                DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\Ookii.Dialogs.Wpf.dll";                          DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\PrismDMS.config";                                DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\PRISMWin.dll";                                   DestDir: "{app}";     Flags: ignoreversion

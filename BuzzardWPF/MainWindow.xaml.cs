@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Windows;
-using LcmsNetData.Logging;
+using BuzzardWPF.Logging;
 
 namespace BuzzardWPF
 {

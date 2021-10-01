@@ -3,9 +3,9 @@ using System.IO;
 using System.Text;
 using BuzzardWPF.Data;
 using BuzzardWPF.IO;
+using BuzzardWPF.Logging;
 using BuzzardWPF.ViewModels;
 using BuzzardWPF.Views;
-using LcmsNetData.Logging;
 
 namespace BuzzardWPF.Management
 {

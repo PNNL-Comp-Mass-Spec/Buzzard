@@ -1,5 +1,5 @@
 ﻿using BuzzardWPF.Data;
-using LcmsNetData.Data;
+using BuzzardWPF.Data.DMS;
 
 namespace BuzzardWPF.Management
 {

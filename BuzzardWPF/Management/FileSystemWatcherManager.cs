@@ -8,8 +8,8 @@ using System.Threading;
 using System.Windows;
 using BuzzardWPF.Data;
 using BuzzardWPF.IO;
+using BuzzardWPF.Logging;
 using BuzzardWPF.Searching;
-using LcmsNetData.Logging;
 using ReactiveUI;
 
 namespace BuzzardWPF.Management

@@ -6,9 +6,9 @@ using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using BuzzardWPF.Logging;
 using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
-using LcmsNetData.Logging;
 using Ookii.Dialogs.Wpf;
 using ReactiveUI;
 

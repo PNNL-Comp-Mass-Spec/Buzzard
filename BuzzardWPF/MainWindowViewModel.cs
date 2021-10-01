@@ -7,11 +7,11 @@ using System.Reactive.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using BuzzardWPF.Logging;
 using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
 using BuzzardWPF.Searching;
 using BuzzardWPF.ViewModels;
-using LcmsNetData.Logging;
 using ReactiveUI;
 
 namespace BuzzardWPF

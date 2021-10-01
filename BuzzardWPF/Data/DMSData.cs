@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
-using LcmsNetData;
-using LcmsNetData.Data;
+using BuzzardWPF.Data.DMS;
+using BuzzardWPF.Utility;
 
 namespace BuzzardWPF.Data
 {

@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using LcmsNetData.Data;
-using LcmsNetData.SQLite;
+using BuzzardWPF.Data.DMS;
+using BuzzardWPF.IO.SQLite;
 using NUnit.Framework;
 
 namespace BuzzardTests

@@ -1,7 +1,6 @@
 ﻿using System;
-using LcmsNetData;
-using LcmsNetData.DMS;
-using LcmsNetData.Logging;
+using BuzzardWPF.IO.DMS;
+using BuzzardWPF.Logging;
 
 namespace BuzzardTests
 {
