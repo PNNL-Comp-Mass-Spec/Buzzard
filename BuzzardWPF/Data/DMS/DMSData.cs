@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
-using BuzzardWPF.Data.DMS;
 using BuzzardWPF.Utility;
 
-namespace BuzzardWPF.Data
+namespace BuzzardWPF.Data.DMS
 {
     /// <summary>
     /// Dataset information supplied by or required by DMS; includes run request information
     /// </summary>
-    public class DMSData : IDmsData, INotifyPropertyChangedExt
+    public class DMSData : INotifyPropertyChangedExt
     {
         public DMSData()
         {

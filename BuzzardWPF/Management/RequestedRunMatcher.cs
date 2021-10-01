@@ -5,6 +5,7 @@ using System.Runtime;
 using System.Threading;
 using System.Threading.Tasks;
 using BuzzardWPF.Data;
+using BuzzardWPF.Data.DMS;
 using BuzzardWPF.Logging;
 using ReactiveUI;
 

@@ -1293,7 +1293,7 @@ namespace BuzzardWPF.IO.DMS
             }
         }
 
-        private IEnumerable<T> ReadRequestedRunsFromDMS<T>(SampleQueryData queryData) where T : IRequestedRunData, new()
+        private IEnumerable<DMSData> ReadRequestedRunsFromDMS(SampleQueryData queryData)
         {
             var connStr = GetConnectionString();
 
@@ -1319,33 +1319,20 @@ namespace BuzzardWPF.IO.DMS
                 {
                     while (reader.Read())
                     {
-                        var tmpDMSData = new T
+                        var tmpDMSData = new DMSData()
                         {
-                            // Sets the properties on the existing sub-object, which is why this is valid.
-                            DmsBasicData =
-                            {
-                                DatasetType = reader["Type"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
-                                Experiment = reader["Experiment"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
-                                EMSLProposalID = reader["Proposal ID"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
-                                RequestID = reader["Request"].CastDBValTo<int>(),
-                                RequestName = reader["Name"].CastDBValTo<string>(),
-                                InstrumentGroup = reader["Instrument"].CastDBValTo<string>(),
-                                WorkPackage = reader["Work Package"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
-                                EMSLUsageType = reader["Usage Type"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
-                                EMSLProposalUser = reader["EUS Users"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
-                                CartName = reader["Cart"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
-                                Comment = reader["Comment"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
-                            }
+                            DatasetType = reader["Type"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
+                            Experiment = reader["Experiment"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
+                            EMSLProposalID = reader["Proposal ID"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
+                            RequestID = reader["Request"].CastDBValTo<int>(),
+                            RequestName = reader["Name"].CastDBValTo<string>(),
+                            InstrumentGroup = reader["Instrument"].CastDBValTo<string>(),
+                            WorkPackage = reader["Work Package"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
+                            EMSLUsageType = reader["Usage Type"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
+                            EMSLProposalUser = reader["EUS Users"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
+                            CartName = reader["Cart"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
+                            Comment = reader["Comment"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
                         };
-
-                        if (tmpDMSData.DmsBasicData is IDmsDataForSampleRun dmsData)
-                        {
-                            dmsData.MRMFileID = reader["MRMFileID"].CastDBValTo<int>();
-                            dmsData.Block = reader["Block"].CastDBValTo<int>();
-                            dmsData.RunOrder = reader["RunOrder"].CastDBValTo<int>();
-                            dmsData.Batch = reader["Batch"].CastDBValTo<int>();
-                            dmsData.SelectedToRun = false;
-                        }
 
                         yield return tmpDMSData;
                     }
@@ -1587,18 +1574,18 @@ namespace BuzzardWPF.IO.DMS
         /// Gets a list of samples (essentially requested runs) from DMS
         /// </summary>
         /// <remarks>Retrieves data from view V_Requested_Run_Active_Export</remarks>
-        public IEnumerable<T> GetRequestedRunsFromDMS<T>(SampleQueryData queryData) where T : IRequestedRunData, new()
+        public IEnumerable<DMSData> GetRequestedRunsFromDMS(SampleQueryData queryData)
         {
             try
             {
-                return ReadRequestedRunsFromDMS<T>(queryData);
+                return ReadRequestedRunsFromDMS(queryData);
             }
             catch (Exception ex)
             {
                 ErrMsg = "Exception getting run request list";
                 //                  throw new DatabaseDataException(ErrMsg, ex);
                 ApplicationLogger.LogError(0, ErrMsg, ex);
-                return Enumerable.Empty<T>();
+                return Enumerable.Empty<DMSData>();
             }
         }
 

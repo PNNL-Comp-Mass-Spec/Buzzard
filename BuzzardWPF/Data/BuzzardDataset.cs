@@ -276,8 +276,6 @@ namespace BuzzardWPF.Data
             set => this.RaiseAndSetIfChanged(ref separationType, value);
         }
 
-        public IDmsData DmsBasicData => DmsData;
-
         public DMSData DmsData { get; }
 
         public DateTime DMSDataLastUpdate { get; set; }

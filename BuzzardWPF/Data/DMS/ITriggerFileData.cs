@@ -10,7 +10,7 @@ namespace BuzzardWPF.Data.DMS
         /// <summary>
         /// DMS Data: Request ID, Dataset Name, etc.
         /// </summary>
-        IDmsData DmsBasicData { get; }
+        DMSData DmsData { get; }
 
         /// <summary>
         /// Time when the Acquisition started

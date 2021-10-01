@@ -80,13 +80,11 @@
     <Compile Include="Data\DatasetStatus.cs" />
     <Compile Include="Data\DatasetTrie.cs" />
     <Compile Include="Data\DatasetTrieException.cs" />
-    <Compile Include="Data\DMSData.cs" />
     <Compile Include="Data\DMS\CartConfigInfo.cs" />
+    <Compile Include="Data\DMS\DMSData.cs" />
     <Compile Include="Data\DMS\ExperimentData.cs" />
-    <Compile Include="Data\DMS\IDmsData.cs" />
     <Compile Include="Data\DMS\InstrumentGroupInfo.cs" />
     <Compile Include="Data\DMS\InstrumentInfo.cs" />
-    <Compile Include="Data\DMS\IRequestedRunData.cs" />
     <Compile Include="Data\DMS\ITriggerFileData.cs" />
     <Compile Include="Data\DMS\PersistenceSettingAttribute.cs" />
     <Compile Include="Data\DMS\ProposalUser.cs" />
@@ -138,7 +136,6 @@
     <Compile Include="Management\IStoredSettingsMonitor.cs" />
     <Compile Include="Management\QcMonitorData.cs" />
     <Compile Include="Management\RenameDataRequest.cs" />
-    <Compile Include="Management\RequestedRun.cs" />
     <Compile Include="Management\RequestedRunMatcher.cs" />
     <Compile Include="Management\TriggerFileCreationManager.cs" />
     <Compile Include="Management\TriggerFileMonitor.cs" />

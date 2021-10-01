@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using BuzzardWPF.Data.DMS;
 using BuzzardWPF.Data.Trie;
 
 namespace BuzzardWPF.Data

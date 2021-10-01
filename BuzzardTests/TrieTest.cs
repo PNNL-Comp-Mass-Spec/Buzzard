@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using BuzzardWPF.Data;
+using BuzzardWPF.Data.DMS;
 using NUnit.Framework;
 
 namespace BuzzardTests
