@@ -1,30 +1,14 @@
 ﻿using System;
 using BuzzardWPF.IO.DMS;
 using BuzzardWPF.Logging;
+using NUnit.Framework;
 
 namespace BuzzardTests
 {
-    class DMSDataTests
+    public class DMSDataTests
     {
-        static void Main(string[] args)
-        {
-            try
-            {
-                TestDMSDataLoading();
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(@"Exception: " + ex.Message);
-                Console.WriteLine(ex.StackTrace);
-            }
-
-            Console.WriteLine("");
-            Console.WriteLine("Closing in 3 seconds");
-            System.Threading.Thread.Sleep(3000);
-        }
-
-        private static void TestDMSDataLoading()
+        [Test]
+        public void TestDMSDataLoading()
         {
             ApplicationLogger.Error += ApplicationLogger_Error;
             logErrorLevel = 3;
@@ -47,10 +31,10 @@ namespace BuzzardTests
             Console.WriteLine("Data loaded");
         }
 
-        private static int logErrorLevel = 3;
-        private static int logMessageLevel = 2;
+        private int logErrorLevel = 3;
+        private int logMessageLevel = 2;
 
-        private static void ApplicationLogger_Error(int errorLevel, ErrorLoggerArgs args)
+        private void ApplicationLogger_Error(int errorLevel, ErrorLoggerArgs args)
         {
             if (errorLevel > logErrorLevel)
             {
@@ -64,7 +48,7 @@ namespace BuzzardTests
                 Console.WriteLine(args.Exception.Message);
         }
 
-        private static void ApplicationLogger_Message(int messageLevel, MessageLoggerArgs args)
+        private void ApplicationLogger_Message(int messageLevel, MessageLoggerArgs args)
         {
             if (messageLevel > logMessageLevel)
             {
@@ -74,7 +58,7 @@ namespace BuzzardTests
             Console.WriteLine(args.Message);
         }
 
-        private static void Dbt_ProgressEvent(object sender, ProgressEventArgs e)
+        private void Dbt_ProgressEvent(object sender, ProgressEventArgs e)
         {
             Console.WriteLine(e.CurrentTask);
         }
