@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Xml;
 using BuzzardWPF.Logging;
+using BuzzardWPF.Properties;
 using BuzzardWPF.Utility;
 
 namespace BuzzardWPF.Data.DMS
@@ -187,10 +188,10 @@ namespace BuzzardWPF.Data.DMS
 
             try
             {
-                var copyTriggerFiles = LCMSSettings.GetParameter(LCMSSettings.PARAM_COPYTRIGGERFILES, false);
+                var copyTriggerFiles = Settings.Default.CopyTriggerFiles;
                 if (copyTriggerFiles)
                 {
-                    var remoteTriggerFolderPath = LCMSSettings.GetParameter(LCMSSettings.PARAM_TRIGGERFILEFOLDER);
+                    var remoteTriggerFolderPath = Settings.Default.TriggerFileFolder;
                     var remoteTriggerFilePath = Path.Combine(remoteTriggerFolderPath, outFileName);
 
                     // Attempt to write the trigger file directly to the remote server
@@ -216,7 +217,7 @@ namespace BuzzardWPF.Data.DMS
             }
 
             // Write trigger file to local folder
-            var appPath = LCMSSettings.GetParameter(LCMSSettings.PARAM_APPLICATIONDATAPATH);
+            var appPath = PersistDataPaths.LocalDataPath;
             var localTriggerFolder = new DirectoryInfo(Path.Combine(appPath, "TriggerFiles"));
 
             // If local folder doesn't exist, create it
@@ -271,7 +272,7 @@ namespace BuzzardWPF.Data.DMS
         public static bool CheckLocalTriggerFiles()
         {
             // Check for presence of local trigger file directory
-            var localFolderPath = Path.Combine(LCMSSettings.GetParameter(LCMSSettings.PARAM_APPLICATIONDATAPATH), "TriggerFiles");
+            var localFolderPath = Path.Combine(PersistDataPaths.LocalDataPath, "TriggerFiles");
 
             // If local folder doesn't exist, then there are no local trigger files
             if (!Directory.Exists(localFolderPath)) return false;
@@ -294,7 +295,7 @@ namespace BuzzardWPF.Data.DMS
         {
             ErrorMessages.Clear();
 
-            var localFolderPath = Path.Combine(LCMSSettings.GetParameter(LCMSSettings.PARAM_APPLICATIONDATAPATH), "TriggerFiles");
+            var localFolderPath = Path.Combine(PersistDataPaths.LocalDataPath, "TriggerFiles");
 
             // Verify local trigger file directory exists
             if (!Directory.Exists(localFolderPath))
@@ -313,7 +314,7 @@ namespace BuzzardWPF.Data.DMS
             }
 
             // Move the local files to the remote server
-            var remoteFolderPath = LCMSSettings.GetParameter(LCMSSettings.PARAM_TRIGGERFILEFOLDER);
+            var remoteFolderPath = Settings.Default.TriggerFileFolder;
 
             // Verify remote folder connection exists
             if (!Directory.Exists(remoteFolderPath))

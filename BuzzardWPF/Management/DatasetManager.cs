@@ -99,7 +99,7 @@ namespace BuzzardWPF.Management
             {
                 if (this.RaiseAndSetIfChangedMonitoredBool(ref triggerFileLocation, value))
                 {
-                    LCMSSettings.SetParameter(LCMSSettings.PARAM_TRIGGERFILEFOLDER, value);
+                    Settings.Default.TriggerFileFolder = value;
                 }
             }
         }
@@ -170,9 +170,9 @@ namespace BuzzardWPF.Management
                     return PREVIEW_TRIGGER_FILE_FLAG;
                 }
 
-                if (!string.Equals(LCMSSettings.GetParameter(LCMSSettings.PARAM_TRIGGERFILEFOLDER), Manager.TriggerFileLocation))
+                if (!string.Equals(Settings.Default.TriggerFileFolder, Manager.TriggerFileLocation))
                 {
-                    LCMSSettings.SetParameter(LCMSSettings.PARAM_TRIGGERFILEFOLDER, Manager.TriggerFileLocation);
+                    Settings.Default.TriggerFileFolder = Manager.TriggerFileLocation;
                 }
 
                 ApplicationLogger.LogMessage(0, string.Format("Creating Trigger File: {0} for {1}", DateTime.Now, dataset.DmsData.DatasetName));

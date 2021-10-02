@@ -106,10 +106,9 @@
     <Compile Include="IO\DMS\DMSDBTools.cs" />
     <Compile Include="IO\DMS\EventArgs.cs" />
     <Compile Include="IO\DMS\ExtensionMethods.cs" />
-    <Compile Include="IO\DMS\GlobalSuppressions.cs" />
-    <Compile Include="IO\SQLite\DatabaseConnectionStringException.cs" />
-    <Compile Include="IO\SQLite\DatabaseDataException.cs" />
-    <Compile Include="IO\SQLite\DatabaseStoredProcException.cs" />
+    <Compile Include="IO\DMS\DatabaseConnectionStringException.cs" />
+    <Compile Include="IO\DMS\DatabaseDataException.cs" />
+    <Compile Include="IO\DMS\DatabaseStoredProcException.cs" />
     <Compile Include="IO\SQLite\DatabaseTableTypes.cs" />
     <Compile Include="IO\SQLite\ExtensionMethods.cs" />
     <Compile Include="IO\SQLite\PropertyToColumnMapping.cs" />
@@ -151,7 +150,6 @@
     <Compile Include="UpdateChecker.cs" />
     <Compile Include="Utility\IgnoreCaseStringComparison.cs" />
     <Compile Include="Utility\INotifyPropertyChangedExtensions.cs" />
-    <Compile Include="Utility\LCMSSettings.cs" />
     <Compile Include="Utility\MessageBoxDisplayExtension.cs" />
     <Compile Include="Utility\PersistDataPaths.cs" />
     <Compile Include="Utility\SystemInformationReporter.cs" />

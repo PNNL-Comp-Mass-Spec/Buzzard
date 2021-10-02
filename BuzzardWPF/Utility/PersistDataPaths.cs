@@ -28,7 +28,7 @@ namespace BuzzardWPF.Utility
 
         static PersistDataPaths()
         {
-            ProgramExeDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+            ProgramExeDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         }
 
         /// <summary>
@@ -38,17 +38,17 @@ namespace BuzzardWPF.Utility
         {
             get
             {
-                var path = LCMSSettings.GetParameter(LCMSSettings.PARAM_LocalDataPath);
-
-                if (string.IsNullOrWhiteSpace(path))
+                if (string.IsNullOrWhiteSpace(localDataPath) || !localDataPath.EndsWith(AppName))
                 {
                     // Use 'Environment.SpecialFolder.CommonApplicationData' to get %ProgramData% instead.
-                    path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), AppName);
+                    localDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), AppName);
                 }
 
-                return path;
+                return localDataPath;
             }
         }
+
+        private static string localDataPath = "";
 
         /// <summary>
         /// Program data path; here for compatibility

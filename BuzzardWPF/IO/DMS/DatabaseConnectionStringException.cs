@@ -2,7 +2,7 @@
 
 // ReSharper disable UnusedMember.Global
 
-namespace BuzzardWPF.IO.SQLite
+namespace BuzzardWPF.IO.DMS
 {
     /// <summary>
     /// Custom exception for reporting invalid database connection string

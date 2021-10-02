@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.IO;
 using System.Text.RegularExpressions;
+using BuzzardWPF.Properties;
 using BuzzardWPF.Utility;
 
 namespace BuzzardWPF.Management
@@ -37,7 +38,7 @@ namespace BuzzardWPF.Management
         public void ReloadTriggerFileStates(ref string currentTask)
         {
             // We can use this to get an idea if any datasets already have trigger files that were sent.
-            var triggerFileDestination = LCMSSettings.GetParameter(LCMSSettings.PARAM_TRIGGERFILEFOLDER);
+            var triggerFileDestination = Settings.Default.TriggerFileFolder;
 
             var time = DateTime.Now;
             if (lastLoadTime.Day != time.Day)

@@ -11,6 +11,7 @@ using BuzzardWPF.IO.DMS;
 using BuzzardWPF.IO.SQLite;
 using BuzzardWPF.Logging;
 using BuzzardWPF.Management;
+using BuzzardWPF.Properties;
 using BuzzardWPF.Utility;
 using BuzzardWPF.ViewModels;
 
@@ -77,7 +78,7 @@ namespace BuzzardWPF
         /// Loads the application settings.
         /// </summary>
         /// <returns>An object that holds the application settings.</returns>
-        private static List<Tuple<string, Exception>> LoadSettings()
+        private static void LoadSettings()
         {
             // ReSharper disable CommentTypo
 
@@ -100,13 +101,6 @@ namespace BuzzardWPF
             {
                 Properties.Settings.Default.TriggerFileFolder = BuzzardSettingsViewModel.DEFAULT_TRIGGER_FOLDER_PATH;
             }
-
-            var loadErrors = LCMSSettings.LoadSettings(Properties.Settings.Default);
-
-            Properties.Settings.Default.PropertyChanged += (sender, args) =>
-                LCMSSettings.SetParameter(args.PropertyName, Properties.Settings.Default[args.PropertyName]?.ToString());
-
-            return loadErrors;
         }
 
         /// <summary>
@@ -166,7 +160,7 @@ namespace BuzzardWPF
             PersistDataPaths.SetAppName("Buzzard");
 
             // Load settings first - may include custom paths for log files and cache information
-            var settingsErrors = LoadSettings();
+            LoadSettings();
 
             // Start up the threaded logging
             ApplicationLogger.StartUpLogging();
@@ -204,22 +198,9 @@ namespace BuzzardWPF
             LogVersionNumbers();
             LogMachineInformation();
             ApplicationLogger.LogMessage(0, "[Log]");
+            ApplicationLogger.LogMessage(-1, "Loaded user settings");
 
-            // Report any settings loading errors that were encountered
-            if (settingsErrors.Count > 0)
-            {
-                ApplicationLogger.LogMessage(-1, "Settings load errors:");
-                foreach (var error in settingsErrors)
-                {
-                    ApplicationLogger.LogError(0, error.Item1, error.Item2);
-                }
-            }
-            else
-            {
-                ApplicationLogger.LogMessage(-1, "Loaded user settings");
-            }
-
-            var instHostName = LCMSSettings.GetParameter("DMSInstrumentHostName");
+            var instHostName = Settings.Default.DMSInstrumentHostName;
             if (instHostName != null)
             {
                 instrumentHostNameAction?.Invoke(instHostName);
@@ -244,7 +225,7 @@ namespace BuzzardWPF
             try
             {
                 // Check to see if any trigger files need to be copied to the transfer server, and copy if necessary
-                var copyTriggerFiles = LCMSSettings.GetParameter("CopyTriggerFiles", false);
+                var copyTriggerFiles = Settings.Default.CopyTriggerFiles;
 
                 if (copyTriggerFiles && TriggerFileTools.CheckLocalTriggerFiles())
                 {

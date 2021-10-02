@@ -7,6 +7,7 @@ using BuzzardWPF.IO.DMS;
 using BuzzardWPF.IO.SQLite;
 using BuzzardWPF.Logging;
 using BuzzardWPF.Management;
+using BuzzardWPF.Properties;
 using BuzzardWPF.Utility;
 
 namespace BuzzardWPF
@@ -181,9 +182,7 @@ namespace BuzzardWPF
                 // Set the logging levels (0 is most important; 5 is least important)
                 // When logLevel is 0, only critical messages are logged
                 // When logLevel is 5, all messages are logged
-                var logLevel = LCMSSettings.GetParameter("LoggingErrorLevel", MainWindowViewModel.CONST_DEFAULT_ERROR_LOG_LEVEL);
-                mainWindowViewModel.ErrorLevel = logLevel;
-
+                mainWindowViewModel.ErrorLevel = MainWindowViewModel.CONST_DEFAULT_ERROR_LOG_LEVEL;
                 mainWindowViewModel.MessageLevel = MainWindowViewModel.CONST_DEFAULT_MESSAGE_LOG_LEVEL;
 
                 // Do this here so that closing the splash screen doesn't minimize/throw to the background the main window.

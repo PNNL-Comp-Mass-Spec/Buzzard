@@ -5,13 +5,9 @@
     /// </summary>
     public enum DatabaseTableTypes
     {
-        WaitingQueue,
-        RunningQueue,
-        CompletedQueue,
         UserList,
         CartList,
         SeparationTypeList,
-        SeparationTypeSelected,
         DatasetTypeList,
         InstrumentList,
         /// <summary>
@@ -29,7 +25,6 @@
         PReferenceList,
         DatasetList,
         CartConfigNameList,
-        CartConfigNameSelected,
         WorkPackages,
         InstrumentGroupList,
     }

@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using BuzzardWPF.Data.DMS;
+using BuzzardWPF.IO.DMS;
 using BuzzardWPF.Logging;
 
 namespace BuzzardWPF.IO.SQLite

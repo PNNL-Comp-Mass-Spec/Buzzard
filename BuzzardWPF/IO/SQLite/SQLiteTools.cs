@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using BuzzardWPF.Data.DMS;
-using BuzzardWPF.Logging;
 
 // ReSharper disable UnusedMember.Global
 
@@ -47,7 +46,6 @@ namespace BuzzardWPF.IO.SQLite
         private static readonly List<ExperimentData> experimentsData = new List<ExperimentData>(0);
         private static readonly List<ProposalUser> proposalUsers = new List<ProposalUser>(0);
         private static readonly Dictionary<string, List<UserIDPIDCrossReferenceEntry>> proposalIdIndexedReferenceList = new Dictionary<string, List<UserIDPIDCrossReferenceEntry>>(0);
-        private static bool firstTimeLookupSelectedSepType = true;
 
         #endregion
 
@@ -454,66 +452,6 @@ namespace BuzzardWPF.IO.SQLite
             }
         }
 
-        /// <summary>
-        /// Retrieves the cached cart configuration name
-        /// </summary>
-        /// <returns>Cart configuration name</returns>
-        public static string GetDefaultCartConfigName()
-        {
-            List<string> cartConfigNamesList;
-            try
-            {
-                cartConfigNamesList = Cache.ReadSingleColumnListFromCacheCheckExceptions(DatabaseTableTypes.CartConfigNameSelected).ToList();
-            }
-            catch
-            {
-                // Table T_CartConfigNameSelected not found
-                // This will happen if the default has not yet been saved
-                return string.Empty;
-            }
-
-            if (cartConfigNamesList.Count < 1)
-            {
-                return string.Empty;
-            }
-
-            return cartConfigNamesList[0];
-        }
-
-        /// <summary>
-        /// Retrieves the cached separation type
-        /// </summary>
-        /// <returns>Separation type</returns>
-        public static string GetDefaultSeparationType()
-        {
-            List<string> sepType;
-            try
-            {
-                sepType = Cache.ReadSingleColumnListFromCacheCheckExceptions(DatabaseTableTypes.SeparationTypeSelected).ToList();
-            }
-            catch (Exception ex)
-            {
-                if (!firstTimeLookupSelectedSepType)
-                {
-                    const string errorMessage =
-                        "Exception getting default separation type. (NOTE: This is normal if a new cache is being used)";
-                    ApplicationLogger.LogError(0, errorMessage, ex);
-                }
-
-                firstTimeLookupSelectedSepType = false;
-                return string.Empty;
-            }
-
-            firstTimeLookupSelectedSepType = false;
-
-            if (sepType.Count < 1)
-            {
-                return string.Empty;
-            }
-
-            return sepType[0];
-        }
-
         #endregion
 
         #region Public Methods: Cache Writing
@@ -656,26 +594,6 @@ namespace BuzzardWPF.IO.SQLite
         public static void SaveSeparationTypeListToCache(IEnumerable<string> separationTypeList)
         {
             Cache.SaveSingleColumnListToCache(DatabaseTableTypes.SeparationTypeList, separationTypeList, separationNames);
-        }
-
-        /// <summary>
-        /// Caches the cart configuration name that is currently selected for this cart
-        /// </summary>
-        /// <param name="cartConfigName">Cart configuration name</param>
-        public static void SaveSelectedCartConfigName(string cartConfigName)
-        {
-            // Create a list for the Save call to use (it requires a list)
-            Cache.SaveSingleColumnListToCache(DatabaseTableTypes.CartConfigNameSelected, new List<string> { cartConfigName });
-        }
-
-        /// <summary>
-        /// Caches the separation type that is currently selected for this cart
-        /// </summary>
-        /// <param name="separationType">Separation type</param>
-        public static void SaveSelectedSeparationType(string separationType)
-        {
-            // Create a list for the Save call to use (it requires a list)
-            Cache.SaveSingleColumnListToCache(DatabaseTableTypes.SeparationTypeSelected, new List<string> { separationType });
         }
 
         #endregion

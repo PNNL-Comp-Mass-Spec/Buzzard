@@ -112,25 +112,6 @@ namespace BuzzardTests
         }
 
         /// <summary>
-        /// Tests that the default separation type is saved.
-        /// </summary>
-        [Test]
-        public void TestF()
-        {
-            SQLiteTools.SaveSelectedSeparationType("Separation3");
-        }
-
-        /// <summary>
-        /// Tests that GetDefaultSeparationType returns a non-empty string.
-        /// </summary>
-        [Test]
-        public void TestG()
-        {
-            var result = SQLiteTools.GetDefaultSeparationType();
-            Assert.AreEqual("Separation3", result);
-        }
-
-        /// <summary>
         /// Test that experiments are saved to cache correctly
         /// </summary>
         [Test]
