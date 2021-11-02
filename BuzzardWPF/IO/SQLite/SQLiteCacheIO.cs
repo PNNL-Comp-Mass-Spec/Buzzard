@@ -1227,7 +1227,11 @@ namespace BuzzardWPF.IO.SQLite
             using (var connection = GetConnection(ConnString))
             using (var command = connection.CreateCommand())
             {
-                command.CommandText = $"SELECT COUNT(*) FROM {tableName} WHERE {columnName} LIKE :DatasetName";
+                // SQLite by default uses case-sensitive comparisons for '=', and case-insensitive (for ASCII) comparisons for 'LIKE'
+                // We cannot use just 'LIKE', because '_' is a one-character wildcard and can cause false "dataset already in DMS" reports.
+                // Because we already declare all columns as 'COLLATE NOCASE', we can just use '=' without needing to append 'COLLATE NOCASE'.
+                // NOTE: we could also use $"SELECT COUNT(*) FROM {tableName} WHERE {columnName} LIKE :DatasetName ESCAPE '\\'";
+                command.CommandText = $"SELECT COUNT(*) FROM {tableName} WHERE {columnName} = :DatasetName";
                 command.Parameters.Add(new SQLiteParameter(":DatasetName", datasetName));
                 var result = command.ExecuteScalar();
                 // We always expect a result, because COUNT(*) returns 0 for no-match
