@@ -76,6 +76,10 @@ Source: "bin\Release\x64\Sqlite.Interop.DLL";                         DestDir: "
 Source: "Resources\IconImage.ico";                                    DestDir: "{app}";     Flags: ignoreversion
 Source: "..\RevisionHistory.txt";                                     DestDir: "{app}";     Flags: ignoreversion
 
+[InstallDelete]
+;Delete old DLLs that were used for Buzzard 2.4.* and older
+Type: files; Name: "LcmsNet*.dll"
+
 ;-----------------------------------------------------------------------------------------------------------------------------------------------
 
 [Icons]
