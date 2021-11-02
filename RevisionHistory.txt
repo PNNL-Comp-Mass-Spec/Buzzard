@@ -1,5 +1,26 @@
 Buzzard Change Log
 
+Version 2.5.2; November 2, 2021
+	- Fix some code that could lead to a false-positive "Dataset already in DMS" report
+	- Move some code that was in LCMSNet (and LcmsNet*.dll files) directly into the project
+
+Version 2.4.23; August 17, 2021
+	- Supply an application name in the database connection string
+	- Code updates and cleanup
+
+Version 2.4.7; June 16, 2021
+	- If QC or Blank is immediately followed by a number, also allow a single letter after that number.
+
+Version 2.4.6; June 14, 2021
+	- Allow a QC or Blank dataset to have a number between QC/Blank and the underscore/dash
+
+Version 2.4.5; May 27, 2021
+	- Upgrade the EUS Usage type to use USER_ONSITE/USER_REMOTE instead of USER
+
+Version 2.4.3; May 13, 2021
+	- Add calibration/tune file backup support for Thermo Exploris instruments
+	- Change the version update mechanism to automatically update 'z' in 'x.y.z' based on change sets in source control
+
 Version 2.3.2.1; February 13, 2021
 	- Fix a bug loading requested runs when first started
 	- Add notes in the metadata settings that clarify that values in the UI do not override values specified in a requested run
