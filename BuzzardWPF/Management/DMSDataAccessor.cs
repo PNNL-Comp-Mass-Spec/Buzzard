@@ -621,7 +621,7 @@ namespace BuzzardWPF.Management
                 operatorDataSource.Edit(sourceList =>
                 {
                     sourceList.Clear();
-                    sourceList.AddRange(tempUserList.Select(userDatum => userDatum.UserName));
+                    sourceList.AddRange(tempUserList.Select(userDatum => userDatum.Name));
                 });
             }
 

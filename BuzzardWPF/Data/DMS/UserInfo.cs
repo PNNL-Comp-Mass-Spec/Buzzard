@@ -10,12 +10,12 @@
         /// <summary>
         /// Name of user
         /// </summary>
-        public string UserName { get; set; }
+        public string Name { get; set; }
 
         /// <summary>
-        /// Payroll number (network login) of user
+        /// User ID (network login) of user
         /// </summary>
-        public string PayrollNum { get; set; }
+        public string Id { get; set; }
 
         #endregion
 
@@ -23,14 +23,14 @@
 
         public override string ToString()
         {
-            var name = string.IsNullOrWhiteSpace(UserName) ? "Undefined user" : UserName;
+            var name = string.IsNullOrWhiteSpace(Name) ? "Undefined user" : Name;
 
-            if (string.IsNullOrWhiteSpace(PayrollNum))
+            if (string.IsNullOrWhiteSpace(Id))
             {
                 return name;
             }
 
-            return PayrollNum + ": " + name;
+            return Id + ": " + name;
         }
 
         #endregion

@@ -92,8 +92,8 @@ namespace BuzzardTests
             var usersExampleData = new List<UserInfo>();
             var example = new UserInfo
             {
-                PayrollNum = "1",
-                UserName = "Test User"
+                Id = "1",
+                Name = "Test User"
             };
             usersExampleData.Add(example);
             SQLiteTools.SaveUserListToCache(usersExampleData);
@@ -108,7 +108,7 @@ namespace BuzzardTests
         {
             var users = SQLiteTools.GetUserList(false).ToList();
             Assert.AreEqual(1, users.Count);
-            Assert.IsTrue(users.Exists(x => x.UserName == "Test User" && x.PayrollNum == "1"));
+            Assert.IsTrue(users.Exists(x => x.Name == "Test User" && x.Id == "1"));
         }
 
         /// <summary>

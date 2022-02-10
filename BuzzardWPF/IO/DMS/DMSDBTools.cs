@@ -1348,7 +1348,7 @@ namespace BuzzardWPF.IO.DMS
             // Switched from V_Active_Users to V_Active_Instrument_Operators in January 2020
             // Switched from V_Active_Instrument_Operators to V_Active_Instrument_Users in October 2021
             // Note that EMSL Users have a separate list
-            const string sqlCmd = "SELECT Name, [Payroll Num] as Payroll FROM V_Active_Instrument_Users ORDER BY Name";
+            const string sqlCmd = "SELECT Name, Username FROM V_Active_Instrument_Users ORDER BY Name";
 
             var cn = GetConnection(connStr);
             if (!cn.IsValid)
@@ -1369,8 +1369,8 @@ namespace BuzzardWPF.IO.DMS
                     {
                         yield return new UserInfo
                         {
-                            UserName = reader["Name"].CastDBValTo<string>(),
-                            PayrollNum = reader["Payroll"].CastDBValTo<string>()
+                            Name = reader["Name"].CastDBValTo<string>(),
+                            Id = reader["Username"].CastDBValTo<string>()
                         };
                     }
                 }
