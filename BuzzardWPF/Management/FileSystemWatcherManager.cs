@@ -247,6 +247,7 @@ namespace BuzzardWPF.Management
         public void StartWatching()
         {
             var diBaseFolder = new DirectoryInfo(Config.DirectoryPath);
+            DatasetManager.ResetWatcherEUSHistory();
 
             if (!diBaseFolder.Exists)
             {

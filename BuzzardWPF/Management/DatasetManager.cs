@@ -5,12 +5,12 @@ using System.IO;
 using System.Linq;
 using System.Reactive.Concurrency;
 using System.Text.RegularExpressions;
+using System.Threading;
 using BuzzardWPF.Data;
 using BuzzardWPF.IO;
 using BuzzardWPF.Logging;
 using BuzzardWPF.Properties;
 using BuzzardWPF.Searching;
-using BuzzardWPF.Utility;
 using DynamicData;
 using PRISMWin;
 using ReactiveUI;
@@ -39,9 +39,16 @@ namespace BuzzardWPF.Management
         public const string QcDatasetNameRegExString = "^QC(\\d+\\w?)?(_|-).*";
         public const string BlankDatasetNameRegExString = "^BLANK(\\d+\\w?)?(_|-).*";
 
-        private readonly Regex BlockingProcessNamesRegEx = new Regex(BlockingProcessNamesRegExString, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private readonly Regex blockingProcessNamesRegEx = new Regex(BlockingProcessNamesRegExString, RegexOptions.Compiled | RegexOptions.IgnoreCase);
         private readonly Regex qcDatasetNameRegEx = new Regex(QcDatasetNameRegExString, RegexOptions.Compiled | RegexOptions.IgnoreCase);
         private readonly Regex blankDatasetNameRegEx = new Regex(BlankDatasetNameRegExString, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+        private string lastMonitorNonQcEusType = "MAINTENANCE";
+        private string lastMonitorNonQcEusProposal = null;
+        private string lastMonitorNonQcEusUser = null;
+        private string lastMonitorNonQcWorkPackage = "none";
+        private int qcsOrBlanksSinceLastMonitorNonQc = 4;
+        private const int LastMonitorDataCopyMaxQcs = 4;
 
         /// <summary>
         /// Constructor.
@@ -105,6 +112,15 @@ namespace BuzzardWPF.Management
         }
 
         public WatcherMetadata WatcherMetadata { get; } = new WatcherMetadata();
+
+        public void ResetWatcherEUSHistory()
+        {
+            lastMonitorNonQcEusType = "MAINTENANCE";
+            lastMonitorNonQcEusProposal = null;
+            lastMonitorNonQcEusUser = null;
+            lastMonitorNonQcWorkPackage = "none";
+            qcsOrBlanksSinceLastMonitorNonQc = LastMonitorDataCopyMaxQcs;
+        }
 
         /// <summary>
         /// Creates trigger files based on the dataset data sent
@@ -227,13 +243,13 @@ namespace BuzzardWPF.Management
         /// <summary>
         /// Resolves a list of datasets (instrument files) with the requested runs and datasets in DMS
         /// </summary>
-        public void ResolveDms(BuzzardDataset dataset, bool forceUpdate)
+        public bool ResolveDms(BuzzardDataset dataset, bool forceUpdate)
         {
             const int SEARCH_DEPTH_AMBIGUOUS_MATCH = 5;
 
             if (dataset == null)
             {
-                return;
+                return false;
             }
 
             // Here we don't want to resolve the dataset in DMS. if it was told to be ignored...or if we already sent it...
@@ -241,13 +257,13 @@ namespace BuzzardWPF.Management
             {
                 case DatasetStatus.Ignored:
                 case DatasetStatus.TriggerFileSent:
-                    return;
+                    return false;
             }
 
             if (string.IsNullOrWhiteSpace(dataset.FilePath))
             {
                 RxApp.MainThreadScheduler.Schedule(() => dataset.DatasetStatus = DatasetStatus.FailedFileError);
-                return;
+                return false;
             }
 
             if (!forceUpdate)
@@ -255,12 +271,13 @@ namespace BuzzardWPF.Management
                 // Update the DMS info every 2 minutes
                 if (DateTime.UtcNow.Subtract(dataset.DMSDataLastUpdate).TotalMinutes < 2)
                 {
-                    return;
+                    return false;
                 }
             }
 
             var fiDataset = new FileInfo(dataset.FilePath);
             var datasetName = string.Empty;
+            var matched = false;
 
             try
             {
@@ -286,6 +303,8 @@ namespace BuzzardWPF.Management
                         dataset.DmsData.CartConfigName = cartConfigName;
                     }
                 });
+
+                matched = true;
             }
             catch (DatasetTrieException ex)
             {
@@ -322,6 +341,8 @@ namespace BuzzardWPF.Management
                     RxApp.MainThreadScheduler.Schedule(() => dataset.DatasetStatus = DatasetStatus.DatasetAlreadyInDMS);
                 }
             }
+
+            return matched;
         }
 
         public void ClearDatasets()
@@ -608,7 +629,50 @@ namespace BuzzardWPF.Management
                 ApplicationLogger.LogMessage(0, $"Data source: '{datasetFileOrFolderPath}' found.");
             }
 
-            ResolveDms(dataset, newDatasetFound);
+            var matched = ResolveDms(dataset, newDatasetFound);
+
+            if (dataset.DatasetSource == DatasetSource.Watcher)
+            {
+                if (matched)
+                {
+                    // Sleep to ensure that DmsData is updated before we try to copy values
+                    Thread.Sleep(1000);
+                }
+
+                if ((dataset.IsQC || dataset.IsBlank) && !(dataset.DmsData.LockData || matched))
+                {
+                    if (qcsOrBlanksSinceLastMonitorNonQc < LastMonitorDataCopyMaxQcs)
+                    {
+                        qcsOrBlanksSinceLastMonitorNonQc++;
+                        dataset.DmsData.EMSLUsageType = lastMonitorNonQcEusType;
+                        dataset.DmsData.EMSLProposalID = lastMonitorNonQcEusProposal;
+                        dataset.DmsData.EMSLProposalUser = lastMonitorNonQcEusUser;
+                        dataset.DmsData.WorkPackage = lastMonitorNonQcWorkPackage;
+                    }
+                    else
+                    {
+                        dataset.DmsData.EMSLUsageType = "MAINTENANCE";
+                        dataset.DmsData.EMSLProposalID = null;
+                        dataset.DmsData.EMSLProposalUser = null;
+                        dataset.DmsData.WorkPackage = "none";
+                    }
+                }
+                else
+                {
+                    if (!Monitor.CreateTriggerOnDMSFail && !(dataset.DmsData.LockData || matched))
+                    {
+                        qcsOrBlanksSinceLastMonitorNonQc = LastMonitorDataCopyMaxQcs;
+                    }
+                    else
+                    {
+                        lastMonitorNonQcEusType = dataset.DmsData.EMSLUsageType;
+                        lastMonitorNonQcEusProposal = dataset.DmsData.EMSLProposalID;
+                        lastMonitorNonQcEusUser = dataset.DmsData.EMSLProposalUser;
+                        lastMonitorNonQcWorkPackage = dataset.DmsData.WorkPackage;
+                        qcsOrBlanksSinceLastMonitorNonQc = 0;
+                    }
+                }
+            }
         }
 
         public bool DatasetHasAcquisitionLock(string path)
@@ -631,7 +695,7 @@ namespace BuzzardWPF.Management
 
                 foreach (var process in processes)
                 {
-                    if (BlockingProcessNamesRegEx.IsMatch(process.ProcessName))
+                    if (blockingProcessNamesRegEx.IsMatch(process.ProcessName))
                     {
                         return true;
                     }
