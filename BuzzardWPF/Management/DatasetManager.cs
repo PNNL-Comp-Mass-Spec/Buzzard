@@ -643,6 +643,7 @@ namespace BuzzardWPF.Management
                 {
                     if (qcsOrBlanksSinceLastMonitorNonQc < LastMonitorDataCopyMaxQcs)
                     {
+                        // Previous data - use for up to 4 QCs/Blanks in a row, immediately after a prior uploaded non-QC/non-Blank
                         qcsOrBlanksSinceLastMonitorNonQc++;
                         dataset.DmsData.EMSLUsageType = lastMonitorNonQcEusType;
                         dataset.DmsData.EMSLProposalID = lastMonitorNonQcEusProposal;
@@ -651,6 +652,7 @@ namespace BuzzardWPF.Management
                     }
                     else
                     {
+                        // No previous data, or too many preceding QCs/Blanks: use generic data for QCs/Blanks
                         dataset.DmsData.EMSLUsageType = "MAINTENANCE";
                         dataset.DmsData.EMSLProposalID = null;
                         dataset.DmsData.EMSLProposalUser = null;
@@ -661,10 +663,12 @@ namespace BuzzardWPF.Management
                 {
                     if (!Monitor.CreateTriggerOnDMSFail && !(dataset.DmsData.LockData || matched))
                     {
+                        // Not uploading when no request - block copying data to QCs/Blanks
                         qcsOrBlanksSinceLastMonitorNonQc = LastMonitorDataCopyMaxQcs;
                     }
                     else
                     {
+                        // Will upload the data file (unless other issues) - cache the work package and EUS data for subsequent QCs/Blanks
                         lastMonitorNonQcEusType = dataset.DmsData.EMSLUsageType;
                         lastMonitorNonQcEusProposal = dataset.DmsData.EMSLProposalID;
                         lastMonitorNonQcEusUser = dataset.DmsData.EMSLProposalUser;

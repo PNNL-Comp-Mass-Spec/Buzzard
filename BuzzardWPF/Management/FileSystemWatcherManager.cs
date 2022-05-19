@@ -247,6 +247,7 @@ namespace BuzzardWPF.Management
         public void StartWatching()
         {
             var diBaseFolder = new DirectoryInfo(Config.DirectoryPath);
+            // When starting the monitor, always reset the data that might be applied to QC/Blank datasets
             DatasetManager.ResetWatcherEUSHistory();
 
             if (!diBaseFolder.Exists)
