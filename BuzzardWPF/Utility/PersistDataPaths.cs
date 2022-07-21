@@ -47,69 +47,6 @@ namespace BuzzardWPF.Utility
         private static string ProgramDataPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), AppName);
 
         /// <summary>
-        /// Get the path where the file should be saved
-        /// </summary>
-        /// <param name="fileSubPath"></param>
-        /// <returns></returns>
-        public static string GetFileSavePath(string fileSubPath)
-        {
-            // Prefer the local data path
-            // Transitioning to this, so don't return the programFiles path at all.
-            var localDataPath = Path.Combine(LocalDataPath, fileSubPath);
-            if (File.Exists(localDataPath))
-            {
-                return localDataPath;
-            }
-
-            // Ensure that the needed directory tree exists
-            var parent = Path.GetDirectoryName(localDataPath);
-            if (parent != null && !Directory.Exists(parent))
-            {
-                Directory.CreateDirectory(parent);
-            }
-
-            return localDataPath;
-        }
-
-        /// <summary>
-        /// Get the full path of the provided file subPath that exists
-        /// </summary>
-        /// <param name="fileSubPath"></param>
-        /// <returns></returns>
-        public static string GetFileLoadPath(string fileSubPath)
-        {
-            // Prefer the local data path
-            var localDataPath = Path.Combine(LocalDataPath, fileSubPath);
-            if (File.Exists(localDataPath))
-            {
-                return localDataPath;
-            }
-
-            // fallback 1: program data path (used for a time)
-            var programDataPath = Path.Combine(ProgramDataPath, fileSubPath);
-            if (Directory.Exists(programDataPath))
-            {
-                return programDataPath;
-            }
-
-            // fallback 2: program files path (may cause exceptions if not running as administrator)
-            var programFilesPath = Path.Combine(ProgramExeDirectory, fileSubPath);
-            if (File.Exists(programFilesPath))
-            {
-                return programFilesPath;
-            }
-
-            // fallback 3: working directory (usually ends up being the same as programFilesPath)
-            if (File.Exists(fileSubPath))
-            {
-                return fileSubPath;
-            }
-
-            // final: nothing meets the criteria, return the preferred local data path
-            return localDataPath;
-        }
-
-        /// <summary>
         /// Get the path where the directory should be located
         /// </summary>
         /// <param name="directorySubPath"></param>
@@ -173,44 +110,6 @@ namespace BuzzardWPF.Utility
         /// </summary>
         /// <param name="directorySubPath"></param>
         /// <returns></returns>
-        public static string GetDirectoryLoadPath(string directorySubPath)
-        {
-            // Prefer the local data path
-            var localDataPath = Path.Combine(LocalDataPath, directorySubPath);
-            if (Directory.Exists(localDataPath))
-            {
-                return localDataPath;
-            }
-
-            // fallback 1: program data path (used for a time)
-            var programDataPath = Path.Combine(ProgramDataPath, directorySubPath);
-            if (Directory.Exists(programDataPath))
-            {
-                return programDataPath;
-            }
-
-            // fallback 2: program files path (may cause exceptions if not running as administrator)
-            var programFilesPath = Path.Combine(ProgramExeDirectory, directorySubPath);
-            if (Directory.Exists(programFilesPath))
-            {
-                return programFilesPath;
-            }
-
-            // fallback 3: working directory (usually ends up being the same as programFilesPath)
-            if (Directory.Exists(directorySubPath))
-            {
-                return directorySubPath;
-            }
-
-            // final: nothing meets the criteria, return the preferred local data path
-            return localDataPath;
-        }
-
-        /// <summary>
-        /// Get the full path of the provided directory subPath that exists
-        /// </summary>
-        /// <param name="directorySubPath"></param>
-        /// <returns></returns>
         public static string GetDirectoryLoadPathCheckContents(string directorySubPath)
         {
             // Prefer the local data path
@@ -236,45 +135,6 @@ namespace BuzzardWPF.Utility
 
             // fallback 3: working directory (usually ends up being the same as programFilesPath)
             if (Directory.Exists(directorySubPath) && Directory.EnumerateFileSystemEntries(directorySubPath).Any())
-            {
-                return directorySubPath;
-            }
-
-            // final: nothing meets the criteria, return the preferred local data path
-            return localDataPath;
-        }
-
-        /// <summary>
-        /// Get the full path of the provided directory subPath that exists
-        /// </summary>
-        /// <param name="directorySubPath"></param>
-        /// <param name="fileFilter">file filter string</param>
-        /// <returns></returns>
-        public static string GetDirectoryLoadPathCheckFiles(string directorySubPath, string fileFilter = "*")
-        {
-            // Prefer the local data path
-            var localDataPath = Path.Combine(LocalDataPath, directorySubPath);
-            if (Directory.Exists(localDataPath) && Directory.EnumerateFiles(localDataPath, fileFilter).Any())
-            {
-                return localDataPath;
-            }
-
-            // fallback 1: program data path (used for a time)
-            var programDataPath = Path.Combine(ProgramDataPath, directorySubPath);
-            if (Directory.Exists(programDataPath) && Directory.EnumerateFiles(programDataPath, fileFilter).Any())
-            {
-                return programDataPath;
-            }
-
-            // fallback 2: program files path (may cause exceptions if not running as administrator)
-            var programFilesPath = Path.Combine(ProgramExeDirectory, directorySubPath);
-            if (Directory.Exists(programFilesPath) && Directory.EnumerateFiles(programFilesPath, fileFilter).Any())
-            {
-                return programFilesPath;
-            }
-
-            // fallback 3: working directory (usually ends up being the same as programFilesPath)
-            if (Directory.Exists(directorySubPath) && Directory.EnumerateFiles(directorySubPath, fileFilter).Any())
             {
                 return directorySubPath;
             }
