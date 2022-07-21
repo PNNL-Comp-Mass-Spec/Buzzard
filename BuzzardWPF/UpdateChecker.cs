@@ -30,9 +30,10 @@ namespace BuzzardWPF
             {
                 var updateMsg = "A new version of Buzzard is available at " + update.InstallerFolderPath + "; Close Buzzard and install the new version now?";
                 updateMsg += $"\n\nCurrent Version:\t{update.RunningVersion.ToString(3)}\nNew Version:\t{update.InstallerVersionText}";
+                var currentInstallIsAllUsersInstall = IsCurrentInstallAllUsersInstall();
                 var currentUserIsAnAdministrator = UserAdminHelper.IsUserAnAdministrator();
 
-                if (!currentUserIsAnAdministrator)
+                if (!currentUserIsAnAdministrator && currentInstallIsAllUsersInstall)
                 {
                     updateMsg += $"\n\nWARNING: Current user '{Environment.UserName}' is not an administrator and cannot install the update.\nSelecting 'Yes' will prompt for an administrator login!";
                 }
@@ -54,7 +55,7 @@ namespace BuzzardWPF
                     // Launch the installer
                     // First need to copy it locally (since running over the network fails on some of the computers)
 
-                    LaunchTheInstaller(update.InstallerFile);
+                    LaunchTheInstaller(update.InstallerFile, currentInstallIsAllUsersInstall);
 
                     // Settings: Change the setting 'IsTestVersion' based on installer location, since the compiled version generally doesn't know if it is a test version or not.
                     Properties.Settings.Default.IsTestVersion = update.IsTestVersion;
@@ -63,6 +64,21 @@ namespace BuzzardWPF
                     return true;
                 }
             }
+
+            return false;
+        }
+
+        private static bool IsCurrentInstallAllUsersInstall()
+        {
+            // Basic check: check install location
+            var asm = Assembly.GetExecutingAssembly();
+            var path = asm.Location;
+            if (path.StartsWith(@"C:\Program Files", StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
+            // TODO: more detailed check; check registry, file permissions, something like that?
 
             return false;
         }
@@ -185,7 +201,7 @@ namespace BuzzardWPF
 
         }
 
-        private static void LaunchTheInstaller(FileInfo fiInstaller)
+        private static void LaunchTheInstaller(FileInfo fiInstaller, bool installForAllUsers)
         {
             var localInstallerPath = "??";
 
@@ -202,6 +218,8 @@ namespace BuzzardWPF
                 {
                     UseShellExecute = true
                 };
+
+                startInfo.Arguments = installForAllUsers ? "/ALLUSERS" : "/CURRENTUSER";
 
                 Process.Start(startInfo);
             }
