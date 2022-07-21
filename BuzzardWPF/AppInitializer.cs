@@ -157,8 +157,6 @@ namespace BuzzardWPF
         /// </summary>
         public static async Task<bool> InitializeApplication(Window displayWindow, Action<string> instrumentHostNameAction = null)
         {
-            PersistDataPaths.SetAppName("Buzzard");
-
             // Load settings first - may include custom paths for log files and cache information
             LoadSettings();
 
