@@ -42,6 +42,11 @@ Compression=lzma
 SolidCompression=yes
 DisableWelcomePage=no
 WizardStyle=modern
+; Don't install to all users, instead install to the current user only. May install to all users if running as administrator
+PrivilegesRequired=lowest
+; Allow overriding the install mode via dialog or commandline (hides dialog); this lets the Buzzard auto-update continue to use the all-users install if the current install is all-users
+; Command-line flags: /ALLUSERS, /CURRENTUSER
+PrivilegesRequiredOverridesAllowed=dialog
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -85,7 +90,7 @@ Type: files; Name: "LcmsNet*.dll"
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; WorkingDir: "{app}"
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
-Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\IconImage.ico"; WorkingDir: "{app}"; Tasks: desktopicon
+Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\IconImage.ico"; WorkingDir: "{app}"; Tasks: desktopicon
 
 [Run]
 ;Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#MyAppName}}"; Flags: nowait postinstall skipifsilent
