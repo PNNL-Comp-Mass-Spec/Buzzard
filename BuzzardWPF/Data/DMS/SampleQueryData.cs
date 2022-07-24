@@ -152,7 +152,7 @@ namespace BuzzardWPF.Data.DMS
             AddQueryFilter(queryBldr, "Batch = {0}", "BatchID");
             AddQueryFilter(queryBldr, "Block = {0}", "Block");
 
-            AddQueryFilter(queryBldr, "[Wellplate Number] LIKE '%{0}%'", "Wellplate");
+            AddQueryFilter(queryBldr, "Wellplate LIKE '%{0}%'", "Wellplate");
 
             if (queryBldr.Length == 0)
             {
