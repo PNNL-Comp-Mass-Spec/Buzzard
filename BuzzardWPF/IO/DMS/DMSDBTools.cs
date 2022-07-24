@@ -21,7 +21,7 @@ namespace BuzzardWPF.IO.DMS
     /// </summary>
     public class DMSDBTools : IDisposable
     {
-        // Ignore Spelling: typeof, DMSPwd, SqlConnection, ini, yyyy-MM-dd, Wellplate, usernames, utf, xmlns, xs, T_Secondary_Sep, unallowable, subaccount
+        // Ignore Spelling: typeof, DMSPwd, SqlConnection, ini, yyyy-MM-dd, usernames, utf, xmlns, xs, T_Secondary_Sep, unallowable, subaccount
 
         public static string ApplicationName { get; set; } = "-LcmsNetDmsTools- -version-";
 
