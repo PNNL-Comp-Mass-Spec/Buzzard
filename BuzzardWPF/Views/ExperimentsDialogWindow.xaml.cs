@@ -25,13 +25,13 @@ namespace BuzzardWPF.Views
             }
 
             DialogResult = true;
-            this.Close();
+            Close();
         }
 
         private void Cancel_OnClick(object sender, RoutedEventArgs e)
         {
             DialogResult = false;
-            this.Close();
+            Close();
         }
     }
 }

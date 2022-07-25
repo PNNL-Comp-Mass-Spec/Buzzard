@@ -251,7 +251,7 @@ namespace BuzzardWPF
             AddDataset(e.Path, e.CaptureSubfolderPath, e.CurrentSearchConfig);
         }
 
-        private void m_buzzadier_ErrorEvent(object sender, Searching.ErrorEventArgs e)
+        private void m_buzzadier_ErrorEvent(object sender, ErrorEventArgs e)
         {
             MessageBox.Show(e.ErrorMessage, "Search Error", MessageBoxButton.OK, MessageBoxImage.Exclamation);
         }

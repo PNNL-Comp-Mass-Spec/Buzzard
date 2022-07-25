@@ -78,7 +78,7 @@ namespace BuzzardTests
         [Test]
         public void TestTrieBuilding()
         {
-            BuzzardWPF.Data.DatasetTrie trie = new BuzzardWPF.Data.DatasetTrie();
+            DatasetTrie trie = new DatasetTrie();
             foreach (var datum in m_datasets)
             {
                 trie.AddData(datum);

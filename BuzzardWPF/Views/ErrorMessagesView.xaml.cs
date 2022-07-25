@@ -17,7 +17,7 @@ namespace BuzzardWPF.Views
 
         private void Close_OnClick(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void CtrlCCopyCmdExecuted(object sender, ExecutedRoutedEventArgs e)

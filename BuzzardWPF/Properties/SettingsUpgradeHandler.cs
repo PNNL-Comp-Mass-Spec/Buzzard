@@ -17,7 +17,7 @@ namespace BuzzardWPF.Properties
             base.Upgrade();
 
             // Upgrade settings that have been renamed.
-            var oldSettings = this.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
+            var oldSettings = GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
                 .Select(x => new
                 {
                     Property = x,
@@ -150,7 +150,7 @@ namespace BuzzardWPF.Properties
         [Obsolete("Use  " + nameof(FilldownEMSLUser), true)]
         [SettingUpgradeName(nameof(FilldownEMSLUser))]
         // ReSharper disable once UnusedMember.Global
-        public global::System.Collections.Specialized.StringCollection FilldownEMSLUsers { get; set; }
+        public StringCollection FilldownEMSLUsers { get; set; }
 
         [UserScopedSetting]
         [DebuggerNonUserCode]
@@ -159,7 +159,7 @@ namespace BuzzardWPF.Properties
         [Obsolete("Use  " + nameof(WatcherEMSLUser), true)]
         [SettingUpgradeName(nameof(WatcherEMSLUser))]
         // ReSharper disable once UnusedMember.Global
-        public global::System.Collections.Specialized.StringCollection WatcherEMSLUsers { get; set; }
+        public StringCollection WatcherEMSLUsers { get; set; }
 
         [UserScopedSetting]
         [DebuggerNonUserCode]

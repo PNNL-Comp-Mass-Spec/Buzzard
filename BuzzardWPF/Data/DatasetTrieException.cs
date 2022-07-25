@@ -22,15 +22,15 @@ namespace BuzzardWPF.Data
         public DatasetTrieException(string message, int searchDepth, string datasetName)
             : base(message)
         {
-            this.SearchDepth = searchDepth;
-            this.DatasetName = datasetName;
+            SearchDepth = searchDepth;
+            DatasetName = datasetName;
         }
 
         public DatasetTrieException(string message, int searchDepth, string datasetName, Exception inner)
             : base(message, inner)
         {
-            this.SearchDepth = searchDepth;
-            this.DatasetName = datasetName;
+            SearchDepth = searchDepth;
+            DatasetName = datasetName;
         }
     }
 }

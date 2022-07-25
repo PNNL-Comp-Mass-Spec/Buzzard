@@ -301,7 +301,7 @@ namespace BuzzardWPF.IO.DMS
             };
             readerSettings.ValidationEventHandler += SettingsValidationEventHandler;
 
-            var folderPath = Path.GetDirectoryName(global::System.Reflection.Assembly.GetExecutingAssembly().Location);
+            var folderPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             if (string.IsNullOrEmpty(folderPath))
             {
                 throw new DirectoryNotFoundException("Directory for the executing assembly is empty; unable to load the configuration in DMSDBTools");

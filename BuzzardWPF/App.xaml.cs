@@ -176,7 +176,7 @@ namespace BuzzardWPF
                 {
                     DataContext = mainWindowViewModel
                 };
-                Application.Current.MainWindow = mainWindow;
+                Current.MainWindow = mainWindow;
                 MainWindow = mainWindow;
 
                 // Set the logging levels (0 is most important; 5 is least important)
@@ -232,7 +232,7 @@ namespace BuzzardWPF
 
             // set the reset, to allow startup to continue
             resetSplashCreated.Set();
-            System.Windows.Threading.Dispatcher.Run();
+            Dispatcher.Run();
         }
     }
 }
