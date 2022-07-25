@@ -135,7 +135,7 @@ namespace BuzzardWPF.Data.DMS
         /// <returns></returns>
         public string BuildSqlString()
         {
-            const string cmdBase = "SELECT * FROM V_Requested_Run_Active_Export";
+            const string cmdBase = "SELECT Request, Name, Instrument, Type, Experiment, Comment, Work_Package, Cart, Usage_Type, EUS_Users, Proposal_ID FROM V_Requested_Run_Active_Export";
 
             var queryBuilder = new StringBuilder();
 

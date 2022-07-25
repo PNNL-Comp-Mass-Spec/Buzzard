@@ -1323,13 +1323,13 @@ namespace BuzzardWPF.IO.DMS
                         {
                             DatasetType = reader["Type"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
                             Experiment = reader["Experiment"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
-                            EMSLProposalID = reader["Proposal ID"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
+                            EMSLProposalID = reader["Proposal_ID"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
                             RequestID = reader["Request"].CastDBValTo<int>(),
                             RequestName = reader["Name"].CastDBValTo<string>(),
                             InstrumentGroup = reader["Instrument"].CastDBValTo<string>(),
-                            WorkPackage = reader["Work Package"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
-                            EMSLUsageType = reader["Usage Type"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
-                            EMSLProposalUser = reader["EUS Users"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
+                            WorkPackage = reader["Work_Package"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
+                            EMSLUsageType = reader["Usage_Type"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
+                            EMSLProposalUser = reader["EUS_Users"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
                             CartName = reader["Cart"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
                             Comment = reader["Comment"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
                         };
