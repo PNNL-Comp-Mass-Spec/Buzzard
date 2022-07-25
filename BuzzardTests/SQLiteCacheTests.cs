@@ -184,9 +184,7 @@ namespace BuzzardTests
         [Test]
         public void TestQ()
         {
-            List<ProposalUser> users;
-            Dictionary<string, List<UserIDPIDCrossReferenceEntry>> dict;
-            SQLiteTools.GetProposalUsers(out users, out dict);
+            SQLiteTools.GetProposalUsers(out var users, out _);
             Assert.AreEqual(1, users[0].UserID);
         }
 
@@ -196,9 +194,11 @@ namespace BuzzardTests
         [Test]
         public void TestR()
         {
-            var cols = new List<string>();
-            var col = "ColTest1";
-            cols.Add(col);
+            var cols = new List<string>
+            {
+                "ColTest1"
+            };
+
             SQLiteTools.SaveColumnListToCache(cols);
         }
 

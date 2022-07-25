@@ -101,12 +101,12 @@ namespace BuzzardTests
                 {
                     try
                     {
-                        string xname    = Path.GetFileNameWithoutExtension(Path.GetDirectoryName(name));
-                        datum           = trie.FindData(xname);
+                        var xname    = Path.GetFileNameWithoutExtension(Path.GetDirectoryName(name));
+                        datum        = trie.FindData(xname);
                     }
                     catch (KeyNotFoundException)
                     {
-                        int xx = 0;
+                        var xx = 0;
                         xx++;
                     }
                 }

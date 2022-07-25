@@ -41,7 +41,7 @@ namespace BuzzardTests
                 return;
             }
 
-            Console.WriteLine(@"=== Exception ===");
+            Console.WriteLine("=== Exception ===");
             Console.WriteLine(args.Message);
 
             if (!string.Equals(args.Message, args.Exception.Message))

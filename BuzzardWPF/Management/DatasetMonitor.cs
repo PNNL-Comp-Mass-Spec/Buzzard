@@ -159,7 +159,7 @@ namespace BuzzardWPF.Management
                                 continue;
                             }
 
-                            if ((dataset.FileSize / 1024d) < Manager.Config.MinimumSizeKB)
+                            if (dataset.FileSize / 1024d < Manager.Config.MinimumSizeKB)
                             {
                                 dataset.DatasetStatus = DatasetStatus.PendingFileSize;
                                 continue;

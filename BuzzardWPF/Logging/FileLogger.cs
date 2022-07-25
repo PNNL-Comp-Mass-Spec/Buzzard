@@ -9,7 +9,7 @@ namespace BuzzardWPF.Logging
     /// <summary>
     /// Logs errors and messages to a file
     /// </summary>
-    public class FileLogger : LogWriterBase, IDisposable
+    public sealed class FileLogger : LogWriterBase, IDisposable
     {
         // Ignore Spelling: dd, yyyy
 
@@ -90,7 +90,7 @@ namespace BuzzardWPF.Logging
                 {
                     // Get all exception messages if exceptions are nested
                     GetExceptionMessage(args.Exception, out var exceptionMsg);
-                    msgStr.Append("Exception message: " + exceptionMsg);
+                    msgStr.AppendFormat("Exception message: {0}", exceptionMsg);
                 }
                 // Write the message to the log file
                 WriteToLogFile(msgStr.ToString());
@@ -117,7 +117,7 @@ namespace BuzzardWPF.Logging
             msgStr.Append("\t");
             msgStr.Append(msgLevel.ToString());
             msgStr.Append("\t");
-            msgStr.Append("Message: " + args.Message);
+            msgStr.AppendFormat("Message: {0}", args.Message);
 
             // Write the message to the log file
             WriteToLogFile(msgStr.ToString());
@@ -161,7 +161,7 @@ namespace BuzzardWPF.Logging
                 // because our file names will be Date_TimeOfDay which
                 // will change.
                 //
-                if (logFileCreated == false || string.IsNullOrWhiteSpace(LogPath))
+                if (!logFileCreated || string.IsNullOrWhiteSpace(LogPath))
                 {
                     var path = CreateLogFilePath();
                     LogPath = path;
@@ -188,10 +188,11 @@ namespace BuzzardWPF.Logging
 
                 if (logFile.Directory.Exists)
                 {
-                    logWriter = new StreamWriter(new FileStream(logFile.FullName, FileMode.Append, FileAccess.Write, FileShare.ReadWrite));
-
-                    // Set AutoFlush to true to help ensure full log output.
-                    logWriter.AutoFlush = true;
+                    logWriter = new StreamWriter(new FileStream(logFile.FullName, FileMode.Append, FileAccess.Write, FileShare.ReadWrite))
+                    {
+                        // Set AutoFlush to true to help ensure full log output.
+                        AutoFlush = true
+                    };
                     return true;
                 }
             }

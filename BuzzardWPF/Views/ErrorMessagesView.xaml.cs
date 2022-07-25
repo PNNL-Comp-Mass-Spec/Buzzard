@@ -22,7 +22,7 @@ namespace BuzzardWPF.Views
 
         private void CtrlCCopyCmdExecuted(object sender, ExecutedRoutedEventArgs e)
         {
-            var lb = (ListBox)(sender);
+            var lb = (ListBox)sender;
             var selected = lb.SelectedItem;
             if (selected != null) Clipboard.SetText(selected.ToString());
         }

@@ -112,7 +112,7 @@ namespace BuzzardWPF.Searching
                     return;
                 }
 
-                var shouldSearchBelow = (config.SearchDepth == SearchOption.AllDirectories);
+                var shouldSearchBelow = config.SearchDepth == SearchOption.AllDirectories;
                 var extensionFilter = string.Format("*{0}", config.FileExtension);
 
                 if (string.IsNullOrWhiteSpace(config.DirectoryPath))
@@ -231,7 +231,7 @@ namespace BuzzardWPF.Searching
                             if (datasetEntry.Key == DatasetType.File)
                             {
                                 var datasetFile = (FileInfo)datasetEntry.Value;
-                                datasetSizeKB = (datasetFile.Length / 1024.0);
+                                datasetSizeKB = datasetFile.Length / 1024.0;
                                 creationDate = datasetFile.CreationTime;
                                 lastWriteDate = datasetFile.LastAccessTime;
                                 parentFolderPath = BuzzardTriggerFileTools.GetCaptureSubfolderPath(diBaseFolder, datasetFile);

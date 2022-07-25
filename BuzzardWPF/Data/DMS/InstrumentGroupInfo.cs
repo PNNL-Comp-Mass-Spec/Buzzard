@@ -34,10 +34,10 @@ namespace BuzzardWPF.Data.DMS
         /// <summary>
         /// Clone - make a deep copy
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Cloned object</returns>
         public object Clone()
         {
-            // Memberwise clone is sufficient
+            // Member-wise clone is sufficient
             return MemberwiseClone();
         }
 
@@ -48,14 +48,14 @@ namespace BuzzardWPF.Data.DMS
 
         public bool Equals(InstrumentGroupInfo other)
         {
-            if (ReferenceEquals(null, other)) return false;
+            if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
             return InstrumentGroup == other.InstrumentGroup;
         }
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
+            if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
             return Equals((InstrumentGroupInfo) obj);
@@ -63,7 +63,7 @@ namespace BuzzardWPF.Data.DMS
 
         public override int GetHashCode()
         {
-            return (InstrumentGroup != null ? InstrumentGroup.GetHashCode() : 0);
+            return InstrumentGroup?.GetHashCode() ?? 0;
         }
     }
 }

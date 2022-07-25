@@ -122,7 +122,7 @@ namespace BuzzardWPF.Data.DMS
 
         public override int GetHashCode()
         {
-            return (DMSName != null ? DMSName.GetHashCode() : 0);
+            return DMSName?.GetHashCode() ?? 0;
         }
     }
 }

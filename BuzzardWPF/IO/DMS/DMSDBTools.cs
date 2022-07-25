@@ -619,7 +619,7 @@ namespace BuzzardWPF.IO.DMS
             var retStr = "";
             for (var byteCounter = 0; byteCounter < pwdBytes.Length; byteCounter++)
             {
-                if ((byteCounter % 2) == 0)
+                if (byteCounter % 2 == 0)
                 {
                     pwdBytes[byteCounter]++;
                 }

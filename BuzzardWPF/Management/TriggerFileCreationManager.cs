@@ -291,7 +291,7 @@ namespace BuzzardWPF.Management
                 if (DateTime.UtcNow >= nextLogTime)
                 {
                     nextLogTime = nextLogTime.AddSeconds(2);
-                    var secondsRemaining = (int)(Math.Round(SECONDS_TO_WAIT - DateTime.UtcNow.Subtract(startTime).TotalSeconds));
+                    var secondsRemaining = (int)Math.Round(SECONDS_TO_WAIT - DateTime.UtcNow.Subtract(startTime).TotalSeconds);
                     ApplicationLogger.LogMessage(0, baseMessage + "; " + secondsRemaining + " seconds remain");
                 }
             }

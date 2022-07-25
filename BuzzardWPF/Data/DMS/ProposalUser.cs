@@ -63,7 +63,7 @@ namespace BuzzardWPF.Data.DMS
         {
             unchecked
             {
-                return (userID * 397) ^ (userName != null ? userName.GetHashCode() : 0);
+                return (userID * 397) ^ (userName?.GetHashCode() ?? 0);
             }
         }
     }
