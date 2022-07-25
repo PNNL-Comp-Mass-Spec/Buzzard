@@ -9,6 +9,8 @@ namespace BuzzardWPF.Data.DMS
     /// </summary>
     public class SampleQueryData
     {
+        // Ignore Spelling: Wellplate
+
         #region "Class variables"
 
         /// <summary>
@@ -116,7 +118,7 @@ namespace BuzzardWPF.Data.DMS
         }
 
         /// <summary>
-        /// Tests for existence of spcified key in dictionary
+        /// Tests for existence of specified key in dictionary
         /// </summary>
         /// <param name="dictKey">Key name</param>
         /// <returns>Key value if found, otherwise empty string</returns>
