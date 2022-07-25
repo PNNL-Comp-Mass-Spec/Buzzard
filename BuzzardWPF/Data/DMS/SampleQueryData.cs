@@ -134,7 +134,7 @@ namespace BuzzardWPF.Data.DMS
         /// <summary>
         /// Build the query string for retrieving data from V_Requested_Run_Active_Export
         /// </summary>
-        /// <returns></returns>
+        /// <returns>SQL string, including defined filters</returns>
         public string BuildSqlString()
         {
             const string cmdBase = "SELECT Request, Name, Instrument, Type, Experiment, Comment, Work_Package, Cart, Usage_Type, EUS_Users, Proposal_ID FROM V_Requested_Run_Active_Export";

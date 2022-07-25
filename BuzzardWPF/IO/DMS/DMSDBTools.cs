@@ -273,6 +273,7 @@ namespace BuzzardWPF.IO.DMS
                 return connection.CreateCommand();
             }
 
+            // ReSharper disable once UnusedMember.Local
             public SqlTransaction BeginTransaction()
             {
                 return connection.BeginTransaction();
@@ -480,6 +481,7 @@ namespace BuzzardWPF.IO.DMS
         /// <returns>DataTable containing requested data</returns>
         /// <remarks>This tends to use more memory than directly reading and parsing data.</remarks>
         [Obsolete("Unused")]
+        // ReSharper disable once UnusedMember.Local
         private DataTable GetDataTable(string cmdStr, string connStr)
         {
             var returnTable = new DataTable();
@@ -1482,7 +1484,7 @@ namespace BuzzardWPF.IO.DMS
 
         public void LoadCacheFromDMS(bool loadExperiments)
         {
-            ReportProgress("Loading data from DMS (entering LoadCacheFromDMS(bool loadExperiments)", 0, 20);
+            ReportProgress("Loading data from DMS (entering LoadCacheFromDMS(boolean loadExperiments)", 0, 20);
             LoadCacheFromDMS(loadExperiments, LoadDatasets);
         }
 
