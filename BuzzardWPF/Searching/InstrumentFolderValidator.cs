@@ -4,7 +4,9 @@ using System.DirectoryServices.AccountManagement;
 using System.IO;
 using System.Linq;
 using System.Management;
+using System.Net;
 using System.Security.AccessControl;
+using System.Security.Principal;
 using BuzzardWPF.Logging;
 using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
@@ -131,8 +133,8 @@ namespace BuzzardWPF.Searching
             });
 
             var security = Directory.GetAccessControl(path);
-            var owner = security.GetOwner(typeof(System.Security.Principal.NTAccount)).Value;
-            var rules = security.GetAccessRules(true, true, typeof(System.Security.Principal.NTAccount));
+            var owner = security.GetOwner(typeof(NTAccount)).Value;
+            var rules = security.GetAccessRules(true, true, typeof(NTAccount));
 
             // owner and rules always appear to have a domain/workspace/scope context, in the form of '[Domain]\[User or group]'.
             // Check permissions accordingly
@@ -327,7 +329,7 @@ namespace BuzzardWPF.Searching
 
                 var alternateBaseFolderHostName = Settings.Default.DMSInstrumentHostName;
                 if (alternateBaseFolderHostName.Equals(BuzzardSettingsViewModel.DefaultUnsetInstrumentName, StringComparison.OrdinalIgnoreCase) ||
-                    alternateBaseFolderHostName.Equals(System.Net.Dns.GetHostName(), StringComparison.OrdinalIgnoreCase))
+                    alternateBaseFolderHostName.Equals(Dns.GetHostName(), StringComparison.OrdinalIgnoreCase))
                 {
                     alternateBaseFolderHostName = string.Empty;
                 }
@@ -367,7 +369,7 @@ namespace BuzzardWPF.Searching
                 }
                 else
                 {
-                    baseFolderHostName = System.Net.Dns.GetHostName();
+                    baseFolderHostName = Dns.GetHostName();
 
                     // Base folder is on this computer
                     // Determine the local shares

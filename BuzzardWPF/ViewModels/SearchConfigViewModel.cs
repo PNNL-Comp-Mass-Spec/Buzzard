@@ -11,13 +11,14 @@ using System.Windows;
 using BuzzardWPF.Logging;
 using BuzzardWPF.Management;
 using BuzzardWPF.Searching;
+using Ookii.Dialogs.Wpf;
 using ReactiveUI;
 
 namespace BuzzardWPF.ViewModels
 {
     public class SearchConfigViewModel : ReactiveObject
     {
-        private readonly Ookii.Dialogs.Wpf.VistaFolderBrowserDialog m_folderDialog;
+        private readonly VistaFolderBrowserDialog m_folderDialog;
         private string[] directoryPathOptions;
 
         private readonly IBuzzadier datasetSearcher;
@@ -43,7 +44,7 @@ namespace BuzzardWPF.ViewModels
         {
             datasetSearcher = datasetSearcherImpl;
 
-            m_folderDialog = new Ookii.Dialogs.Wpf.VistaFolderBrowserDialog { ShowNewFolderButton = true };
+            m_folderDialog = new VistaFolderBrowserDialog { ShowNewFolderButton = true };
 
             // Combo box for the search types.
             SearchDepthOptions = new List<SearchOption>

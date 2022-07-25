@@ -175,7 +175,7 @@ namespace BuzzardWPF.ViewModels
         private void PickExperiment()
         {
             var dialogVm = ViewModelCache.Instance.GetExperimentsVm();
-            var dialog = new ExperimentsDialogWindow()
+            var dialog = new ExperimentsDialogWindow
             {
                 DataContext = dialogVm
             };
@@ -189,7 +189,7 @@ namespace BuzzardWPF.ViewModels
         private void PickWorkPackage()
         {
             var dialogVm = ViewModelCache.Instance.GetWorkPackageVm();
-            var dialog = new WorkPackageSelectionWindow()
+            var dialog = new WorkPackageSelectionWindow
             {
                 DataContext = dialogVm
             };

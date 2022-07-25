@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.IO;
 using System.Text.RegularExpressions;
 using BuzzardWPF.Properties;
-using BuzzardWPF.Utility;
 
 namespace BuzzardWPF.Management
 {

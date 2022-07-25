@@ -169,7 +169,7 @@ namespace BuzzardWPF.IO.SQLite
         /// <returns>List containing cart names</returns>
         public static IEnumerable<string> GetCartNameList()
         {
-            return Cache.ReadSingleColumnListFromCache(DatabaseTableTypes.CartList, cartNames, false);
+            return Cache.ReadSingleColumnListFromCache(DatabaseTableTypes.CartList, cartNames);
         }
 
         /// <summary>
@@ -306,7 +306,7 @@ namespace BuzzardWPF.IO.SQLite
         /// <returns>List containing separation types</returns>
         public static IEnumerable<string> GetDatasetList()
         {
-            return Cache.ReadSingleColumnListFromCache(DatabaseTableTypes.DatasetList, datasetNames, false);
+            return Cache.ReadSingleColumnListFromCache(DatabaseTableTypes.DatasetList, datasetNames);
         }
 
         /// <summary>
@@ -409,7 +409,7 @@ namespace BuzzardWPF.IO.SQLite
 
         public static IEnumerable<ExperimentData> GetExperimentList()
         {
-            return Cache.ReadMultiColumnDataFromCache(DatabaseTableTypes.ExperimentList, () => new ExperimentData(), experimentsData, false);
+            return Cache.ReadMultiColumnDataFromCache(DatabaseTableTypes.ExperimentList, () => new ExperimentData(), experimentsData);
         }
 
         public static void GetProposalUsers(

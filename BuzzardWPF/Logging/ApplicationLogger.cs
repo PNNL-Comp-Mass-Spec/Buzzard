@@ -141,9 +141,9 @@ namespace BuzzardWPF.Logging
             }
         }
 
-        private static bool loggingStarted = false;
-        private static bool loggingStopped = false;
-        private static ThreadedLogger<MessageLoggerArgs> loggingRunner = null;
+        private static bool loggingStarted;
+        private static bool loggingStopped;
+        private static ThreadedLogger<MessageLoggerArgs> loggingRunner;
 
         static ApplicationLogger()
         {

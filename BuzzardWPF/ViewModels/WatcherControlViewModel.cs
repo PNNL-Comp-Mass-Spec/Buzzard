@@ -6,13 +6,14 @@ using System.Reactive;
 using System.Reactive.Linq;
 using BuzzardWPF.Management;
 using BuzzardWPF.Searching;
+using Ookii.Dialogs.Wpf;
 using ReactiveUI;
 
 namespace BuzzardWPF.ViewModels
 {
     public class WatcherControlViewModel : ReactiveObject
     {
-        private readonly Ookii.Dialogs.Wpf.VistaFolderBrowserDialog mFolderDialog;
+        private readonly VistaFolderBrowserDialog mFolderDialog;
         private string[] directorySelectorOptionsList;
         private readonly ObservableAsPropertyHelper<bool> isNotMonitoring;
 
@@ -29,7 +30,7 @@ namespace BuzzardWPF.ViewModels
                 SearchOption.TopDirectoryOnly
             };
 
-            mFolderDialog = new Ookii.Dialogs.Wpf.VistaFolderBrowserDialog { ShowNewFolderButton = true };
+            mFolderDialog = new VistaFolderBrowserDialog { ShowNewFolderButton = true };
 
             ResetToDefaults();
 

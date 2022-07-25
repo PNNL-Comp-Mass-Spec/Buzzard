@@ -5,8 +5,10 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
+using System.Threading;
 using System.Windows;
 using BuzzardWPF.Logging;
+using BuzzardWPF.Properties;
 using BuzzardWPF.Utility;
 
 namespace BuzzardWPF
@@ -58,8 +60,8 @@ namespace BuzzardWPF
                     LaunchTheInstaller(update.InstallerFile, currentInstallIsAllUsersInstall);
 
                     // Settings: Change the setting 'IsTestVersion' based on installer location, since the compiled version generally doesn't know if it is a test version or not.
-                    Properties.Settings.Default.IsTestVersion = update.IsTestVersion;
-                    Properties.Settings.Default.Save();
+                    Settings.Default.IsTestVersion = update.IsTestVersion;
+                    Settings.Default.Save();
 
                     return true;
                 }
@@ -87,7 +89,7 @@ namespace BuzzardWPF
         {
             var updateInfo = new UpdateInfo();
 
-            if (Properties.Settings.Default.UpgradeWithTestVersion)
+            if (Settings.Default.UpgradeWithTestVersion)
             {
                 updateInfo = CheckForNewVersion(installerFolderPath, true);
             }
@@ -178,7 +180,7 @@ namespace BuzzardWPF
             catch (Exception ex)
             {
                 ApplicationLogger.LogMessage(0, "Error checking for a new version: " + ex.Message);
-                System.Threading.Thread.Sleep(750);
+                Thread.Sleep(750);
                 return noUpdate;
             }
         }
@@ -197,7 +199,7 @@ namespace BuzzardWPF
             public string RunningVersionText { get; set; } = string.Empty;
             public string InstallerFolderPath { get; set; } = string.Empty;
             public FileInfo InstallerFile { get; set; }
-            public bool IsTestVersion { get; set; } = false;
+            public bool IsTestVersion { get; set; }
 
         }
 
@@ -226,7 +228,7 @@ namespace BuzzardWPF
             catch (Exception ex)
             {
                 ApplicationLogger.LogMessage(0, "Error launching the installer for the new version (" + localInstallerPath + "): " + ex.Message);
-                System.Threading.Thread.Sleep(750);
+                Thread.Sleep(750);
             }
         }
 

@@ -118,7 +118,7 @@ namespace BuzzardWPF.ViewModels
         private void SelectExperiment()
         {
             var dialogVm = ViewModelCache.Instance.GetExperimentsVm();
-            var dialog = new ExperimentsDialogWindow()
+            var dialog = new ExperimentsDialogWindow
             {
                 DataContext = dialogVm
             };
@@ -173,7 +173,7 @@ namespace BuzzardWPF.ViewModels
 
             if (!string.IsNullOrWhiteSpace(ExperimentName) && string.IsNullOrWhiteSpace(Settings.Default.WatcherQCMonitors))
             {
-                var monitor = new QcMonitorData()
+                var monitor = new QcMonitorData
                 {
                     ExperimentName = ExperimentName,
                     DatasetNameMatch = "*"

@@ -28,7 +28,7 @@ namespace BuzzardWPF.Data.DMS
 
         [PersistenceSetting(IgnoreProperty = true)]
         public List<string> AllowedDatasetTypesList =>
-            AllowedDatasetTypes?.Split(new char[] {','}, StringSplitOptions.RemoveEmptyEntries).ToList() ??
+            AllowedDatasetTypes?.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries).ToList() ??
             new List<string>();
 
 

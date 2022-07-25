@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 
 namespace BuzzardWPF.Data
 {
-    [Serializable()]
+    [Serializable]
     public class DatasetTrieException : SystemException
     {
         public int SearchDepth { get; set; }

@@ -807,7 +807,7 @@ namespace BuzzardWPF.IO.SQLite
             var tableName = GetTableName(tableType);
 
             // If table exists, clear it. Otherwise create one
-            if (!VerifyTableExists(tableName, ConnString, out _, out var rowCount, true))
+            if (!VerifyTableExists(tableName, ConnString, out _, out var rowCount))
             {
                 if (!PrepareSingleColumnTable(tableType, ConnString, false, false))
                 {
@@ -1121,7 +1121,7 @@ namespace BuzzardWPF.IO.SQLite
                         {
                             // Only clears the table if we have at least one item we are adding.
                             // Verify table exists, and column names are correct; if not, create it; Otherwise, clear it
-                            if (!PrepareMultiColumnTable(tableName, connStr, mappings, true, true))
+                            if (!PrepareMultiColumnTable(tableName, connStr, mappings))
                             {
                                 return;
                             }
@@ -1192,7 +1192,7 @@ namespace BuzzardWPF.IO.SQLite
                     if (firstItem)
                     {
                         // Only clears the table if we have at least one item we are adding.
-                        if (!PrepareSingleColumnTable(tableType, ConnString, true, true))
+                        if (!PrepareSingleColumnTable(tableType, ConnString))
                         {
                             return;
                         }

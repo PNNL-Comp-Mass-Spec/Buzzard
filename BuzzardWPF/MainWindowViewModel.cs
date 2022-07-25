@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Windows;
 using System.Windows.Media.Imaging;
@@ -57,7 +58,7 @@ namespace BuzzardWPF
             ErrorLevel = CONST_DEFAULT_ERROR_LOG_LEVEL;
             MessageLevel = CONST_DEFAULT_MESSAGE_LOG_LEVEL;
 
-            var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            var assembly = Assembly.GetExecutingAssembly();
             var version = assembly.GetName().Version.ToString(3);
             Title = "Buzzard - v." + version;
 
@@ -331,7 +332,7 @@ namespace BuzzardWPF
             var n = m_animationImages.Count;
 
             // Don't display the turd if the user has that setting turned off.
-            if (!Properties.Settings.Default.TurdAlert)
+            if (!Settings.Default.TurdAlert)
             {
                 n--;
             }
@@ -353,7 +354,7 @@ namespace BuzzardWPF
             settingsSaveTimer.Dispose();
 
             // Save settings
-            SaveSettings(true);
+            SaveSettings();
         }
 
         /// <summary>

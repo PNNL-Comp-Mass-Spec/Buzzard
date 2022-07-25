@@ -105,7 +105,7 @@ namespace BuzzardWPF.Data.DMS
         private string emslProposalId;
         private string emslProposalUser;
         private string experiment;
-        private bool lockData = false;
+        private bool lockData;
         private string cartName;
         private string comment;
         private string commentAddition;

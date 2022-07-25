@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Threading;
 using BuzzardWPF.Logging;
+using BuzzardWPF.Properties;
 using BuzzardWPF.Utility;
 
 namespace BuzzardWPF
@@ -34,7 +35,7 @@ namespace BuzzardWPF
                 Version = assemblyName.Version.ToString(3) + "; " + AppInitializer.AssemblyDate;
             }
 
-            if (Properties.Settings.Default.IsTestVersion)
+            if (Settings.Default.IsTestVersion)
             {
                 Version += "    TEST VERSION";
             }

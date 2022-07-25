@@ -3,7 +3,7 @@
     /// <summary>
     /// Logging levels enum
     /// </summary>
-    public enum LogLevel : int
+    public enum LogLevel
     {
         /// <summary>
         /// Errors causing program shutdown

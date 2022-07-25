@@ -11,13 +11,13 @@ namespace BuzzardWPF.Logging
     public class ThreadedLogger<T> : IDisposable
     {
         private readonly BlockingCollection<T> buffer = new BlockingCollection<T>(new ConcurrentQueue<T>());
-        private readonly Thread consumerThread = null;
+        private readonly Thread consumerThread;
         private readonly Action<T> consumeAction;
 
         /// <summary>
         /// True if the logger has been shut down.
         /// </summary>
-        private bool isShutdown = false;
+        private bool isShutdown;
 
         /// <summary>
         /// Consume all items, continuing until the queue is shutdown

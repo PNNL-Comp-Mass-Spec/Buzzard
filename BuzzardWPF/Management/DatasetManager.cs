@@ -44,8 +44,8 @@ namespace BuzzardWPF.Management
         private readonly Regex blankDatasetNameRegEx = new Regex(BlankDatasetNameRegExString, RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         private string lastMonitorNonQcEusType = "MAINTENANCE";
-        private string lastMonitorNonQcEusProposal = null;
-        private string lastMonitorNonQcEusUser = null;
+        private string lastMonitorNonQcEusProposal;
+        private string lastMonitorNonQcEusUser;
         private string lastMonitorNonQcWorkPackage = "none";
         private int qcsOrBlanksSinceLastMonitorNonQc = 4;
         private const int LastMonitorDataCopyMaxQcs = 4;

@@ -20,7 +20,7 @@ namespace BuzzardWPF.Logging
 
         private readonly object fileWriteLock = new object();
 
-        private StreamWriter logWriter = null;
+        private StreamWriter logWriter;
 
         private readonly Timer logFileStreamTimeout;
 

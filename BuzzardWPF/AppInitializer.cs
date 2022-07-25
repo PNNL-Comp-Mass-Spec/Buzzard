@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using BuzzardWPF.Data.DMS;
+using BuzzardWPF.IO;
 using BuzzardWPF.IO.DMS;
 using BuzzardWPF.IO.SQLite;
 using BuzzardWPF.Logging;
@@ -89,17 +90,17 @@ namespace BuzzardWPF
             // ReSharper restore CommentTypo
 
             // Possibly upgrade the settings from a previous version
-            if (Properties.Settings.Default.SettingsUpgradeRequired)
+            if (Settings.Default.SettingsUpgradeRequired)
             {
                 // User settings for this version was not found
                 // Try to upgrade from the previous version
-                Properties.Settings.Default.Upgrade();
-                Properties.Settings.Default.SettingsUpgradeRequired = false;
+                Settings.Default.Upgrade();
+                Settings.Default.SettingsUpgradeRequired = false;
             }
 
-            if (string.IsNullOrWhiteSpace(Properties.Settings.Default.TriggerFileFolder))
+            if (string.IsNullOrWhiteSpace(Settings.Default.TriggerFileFolder))
             {
-                Properties.Settings.Default.TriggerFileFolder = BuzzardSettingsViewModel.DEFAULT_TRIGGER_FOLDER_PATH;
+                Settings.Default.TriggerFileFolder = BuzzardSettingsViewModel.DEFAULT_TRIGGER_FOLDER_PATH;
             }
         }
 
@@ -232,7 +233,7 @@ namespace BuzzardWPF
 
                     if (TriggerFileTools.ErrorMessages.Count > 0)
                     {
-                        IO.BuzzardTriggerFileTools.ShowErrorMessages(TriggerFileTools.ErrorMessages);
+                        BuzzardTriggerFileTools.ShowErrorMessages(TriggerFileTools.ErrorMessages);
                     }
                 }
             }
@@ -265,7 +266,7 @@ namespace BuzzardWPF
                 //Properties.Settings.Default.Operator                = LCMSSettings.GetParameter("Operator");
                 //Properties.Settings.Default.CacheFileName           = LCMSSettings.GetParameter("CacheFileName");
 
-                Properties.Settings.Default.Save();
+                Settings.Default.Save();
 
                 FileLogger.Instance.LogMessage(0, new MessageLoggerArgs(0, "---------------------------------------"));
             }
@@ -290,7 +291,7 @@ namespace BuzzardWPF
                 "Test error message 7 - Brown",
                 "Test error message 8 - Orange"
             };
-            IO.BuzzardTriggerFileTools.ShowErrorMessages(testErrorMessages);
+            BuzzardTriggerFileTools.ShowErrorMessages(testErrorMessages);
         }
 
         private static void LogCriticalError(string errorMessage, Exception ex, bool showPopup = true)

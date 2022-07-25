@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
@@ -40,7 +42,7 @@ namespace BuzzardWPF.ViewModels
                                   string.Equals(Environment.MachineName, "we36309", StringComparison.OrdinalIgnoreCase);
 
             // Use System.Net.Dns.GetHostName() to get the hostname with correct casing, and possibly support names longer than 15 characters
-            ComputerName = System.Net.Dns.GetHostName();
+            ComputerName = Dns.GetHostName();
 
             UseInstrumentHostNameCommand = ReactiveCommand.Create(UseInstrumentHostName);
             UseDefaultTriggerFileLocationCommand = ReactiveCommand.Create(UseDefaultTriggerFileLocation);
@@ -235,9 +237,9 @@ namespace BuzzardWPF.ViewModels
                 logDirectory = Path.GetTempPath();
             }
 
-            var process = new System.Diagnostics.Process
+            var process = new Process
             {
-                StartInfo = new System.Diagnostics.ProcessStartInfo
+                StartInfo = new ProcessStartInfo
                 {
                     UseShellExecute = true,
                     FileName = logDirectory
@@ -249,9 +251,9 @@ namespace BuzzardWPF.ViewModels
         private void OpenLogFile()
         {
             var logPath = FileLogger.LogPath;
-            var process = new System.Diagnostics.Process
+            var process = new Process
             {
-                StartInfo = new System.Diagnostics.ProcessStartInfo
+                StartInfo = new ProcessStartInfo
                 {
                     UseShellExecute = true,
                     FileName = logPath

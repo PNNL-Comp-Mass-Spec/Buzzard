@@ -27,7 +27,7 @@ namespace BuzzardWPF.Searching
         private bool mMatchFolders;
         private int mMinimumSizeKB;
 
-        private bool useDateRange = false;
+        private bool useDateRange;
         private DateTime mStartDate;
         private DateTime mEndDate;
 

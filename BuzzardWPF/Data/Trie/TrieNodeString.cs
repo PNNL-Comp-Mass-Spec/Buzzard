@@ -123,7 +123,7 @@ namespace BuzzardWPF.Data.Trie
                 var key = datasetNamePart.Substring(0, keyCharCount);
                 if (!TryGetValue(key, out var node))
                 {
-                    node = new TrieNodeString() { keyCharCount = (byte)(datasetNamePart.Length - keyCharCount) };
+                    node = new TrieNodeString { keyCharCount = (byte)(datasetNamePart.Length - keyCharCount) };
                     Add(key, node);
                 }
 

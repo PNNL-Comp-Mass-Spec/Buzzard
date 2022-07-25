@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Xml;
 using System.Xml.Schema;
@@ -301,7 +302,7 @@ namespace BuzzardWPF.IO.DMS
             };
             readerSettings.ValidationEventHandler += SettingsValidationEventHandler;
 
-            var folderPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            var folderPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             if (string.IsNullOrEmpty(folderPath))
             {
                 throw new DirectoryNotFoundException("Directory for the executing assembly is empty; unable to load the configuration in DMSDBTools");
@@ -1319,7 +1320,7 @@ namespace BuzzardWPF.IO.DMS
                 {
                     while (reader.Read())
                     {
-                        var tmpDMSData = new DMSData()
+                        var tmpDMSData = new DMSData
                         {
                             DatasetType = reader["Type"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
                             Experiment = reader["Experiment"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
@@ -1443,7 +1444,7 @@ namespace BuzzardWPF.IO.DMS
                 // Test getting 1 row from every table we query?...
                 using (var cmd = conn.CreateCommand())
                 {
-                    var tableNames = new List<string>()
+                    var tableNames = new List<string>
                     {
                         "V_LC_Cart_Config_Export", "V_Charge_Code_Export", "V_LC_Cart_Active_Export",
                         "V_LCMSNet_Dataset_Export", "V_LCMSNet_Column_Export", "T_Secondary_Sep", "t_DatasetTypeName",

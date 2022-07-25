@@ -323,10 +323,8 @@ namespace BuzzardWPF.Management
                     {
                         return $"{timestamp}_{SoftwareSeries}_{SoftwareVersion}_{File.Name}";
                     }
-                    else
-                    {
-                        return $"{timestamp}_{SoftwareSeries}_{File.Name}";
-                    }
+
+                    return $"{timestamp}_{SoftwareSeries}_{File.Name}";
                 }
 
                 return $"{timestamp}_{File.Name}";

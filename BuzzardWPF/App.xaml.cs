@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Reflection;
+using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
@@ -7,8 +9,6 @@ using BuzzardWPF.IO.DMS;
 using BuzzardWPF.IO.SQLite;
 using BuzzardWPF.Logging;
 using BuzzardWPF.Management;
-using BuzzardWPF.Properties;
-using BuzzardWPF.Utility;
 
 namespace BuzzardWPF
 {
@@ -63,9 +63,9 @@ namespace BuzzardWPF
             ShutdownCleanup();
         }
 
-        private void CurrentDomainOnFirstChanceException(object sender, System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs e)
+        private void CurrentDomainOnFirstChanceException(object sender, FirstChanceExceptionEventArgs e)
         {
-            if (e.Exception is System.IO.FileNotFoundException && e.Exception.Message.Contains("System.XmlSerializers"))
+            if (e.Exception is FileNotFoundException && e.Exception.Message.Contains("System.XmlSerializers"))
             {
                 // Exception is "Could not load file or assembly 'System.XmlSerializers, ... The system cannot find the file specified."
                 // It can safely be ignored (see http://stackoverflow.com/questions/1127431/xmlserializer-giving-filenotfoundexception-at-constructor)
@@ -172,7 +172,7 @@ namespace BuzzardWPF
                 // Uncomment the following line to test with default settings.
                 //BuzzardWPF.Properties.Settings.Default.Reset();
                 mainWindowViewModel.LoadSettings();
-                var mainWindow = new MainWindow()
+                var mainWindow = new MainWindow
                 {
                     DataContext = mainWindowViewModel
                 };
