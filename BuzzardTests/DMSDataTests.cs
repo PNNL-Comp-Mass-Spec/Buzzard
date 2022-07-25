@@ -62,6 +62,5 @@ namespace BuzzardTests
         {
             Console.WriteLine(e.CurrentTask);
         }
-
     }
 }

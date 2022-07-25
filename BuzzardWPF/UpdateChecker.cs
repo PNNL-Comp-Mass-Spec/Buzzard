@@ -200,7 +200,6 @@ namespace BuzzardWPF
             public string InstallerFolderPath { get; set; } = string.Empty;
             public FileInfo InstallerFile { get; set; }
             public bool IsTestVersion { get; set; }
-
         }
 
         private static void LaunchTheInstaller(FileInfo fiInstaller, bool installForAllUsers)

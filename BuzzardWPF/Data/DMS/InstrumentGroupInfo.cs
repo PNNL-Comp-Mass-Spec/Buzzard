@@ -31,7 +31,6 @@ namespace BuzzardWPF.Data.DMS
             AllowedDatasetTypes?.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries).ToList() ??
             new List<string>();
 
-
         /// <summary>
         /// Clone - make a deep copy
         /// </summary>

@@ -11,6 +11,8 @@ namespace BuzzardWPF.Logging
     /// </summary>
     public class FileLogger : LogWriterBase, IDisposable
     {
+        // Ignore Spelling: dd, yyyy
+
         public static FileLogger Instance { get; } = new FileLogger();
 
         /// <summary>

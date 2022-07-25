@@ -18,7 +18,6 @@ namespace BuzzardTests
 
         public SQLiteCacheTests()
         {
-
             SQLiteTools.Initialize(CONST_TEST_FOLDER);
 
             var appPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
@@ -31,7 +30,6 @@ namespace BuzzardTests
             // Note that this will call BuildConnectionString
             SQLiteTools.SetCacheLocation(file);
         }
-
 
         /**
          * Tests are named TestA-TestZ  to get NUnit to execute them in order
@@ -99,7 +97,6 @@ namespace BuzzardTests
             SQLiteTools.SaveUserListToCache(usersExampleData);
         }
 
-
         /// <summary>
         /// Tests that GetUserList returns correct users. Specifically the one added by TestD.
         /// </summary>
@@ -129,7 +126,6 @@ namespace BuzzardTests
             experiments.Add(experiment);
             SQLiteTools.SaveExperimentListToCache(experiments);
         }
-
 
         /// <summary>
         /// Tests that experiments are read from cache
