@@ -669,8 +669,8 @@ namespace BuzzardWPF.IO.DMS
             var connStr = GetConnectionString();
 
             // Get a List containing all the carts
-            const string sqlCmd = "SELECT DISTINCT Cart_Name FROM V_LC_Cart_Active_Export " +
-                                  "ORDER BY Cart_Name";
+            const string sqlCmd = "SELECT DISTINCT cart_name FROM v_lc_cart_active_export " +
+                                  "ORDER BY cart_name";
             try
             {
                 tmpCartList = GetSingleColumnTableFromDMS(sqlCmd, connStr);
@@ -698,12 +698,12 @@ namespace BuzzardWPF.IO.DMS
         {
             var connStr = GetConnectionString();
 
-            var sqlCmd = "SELECT Dataset FROM V_LCMSNet_Dataset_Export";
+            var sqlCmd = "SELECT dataset FROM v_lcmsnet_dataset_export";
 
             if (RecentDatasetsMonthsToLoad > 0)
             {
                 var dateThreshold = DateTime.Now.AddMonths(-RecentDatasetsMonthsToLoad).ToString("yyyy-MM-dd");
-                sqlCmd += " WHERE Created >= '" + dateThreshold + "'";
+                sqlCmd += " WHERE created >= '" + dateThreshold + "'";
             }
 
             try
@@ -737,7 +737,7 @@ namespace BuzzardWPF.IO.DMS
             var connStr = GetConnectionString();
 
             // Get a list of active columns
-            const string sqlCmd = "SELECT ColumnNumber FROM V_LCMSNet_Column_Export WHERE State <> 'Retired' ORDER BY ColumnNumber";
+            const string sqlCmd = "SELECT column_number FROM v_lcmsnet_column_export WHERE state <> 'Retired' ORDER BY column_number";
             try
             {
                 tmpColList = GetSingleColumnTableFromDMS(sqlCmd, connStr);
@@ -770,7 +770,7 @@ namespace BuzzardWPF.IO.DMS
             IEnumerable<string> tmpRetVal; // Temp list for holding separation types
             var connStr = GetConnectionString();
 
-            const string sqlCmd = "SELECT Distinct SS_Name FROM T_Secondary_Sep WHERE SS_active > 0 ORDER BY SS_Name";
+            const string sqlCmd = "SELECT Distinct separation_type FROM v_secondary_sep_export WHERE active > 0 ORDER BY separation_type";
 
             try
             {
@@ -805,7 +805,7 @@ namespace BuzzardWPF.IO.DMS
             var connStr = GetConnectionString();
 
             // Get a list of the dataset types
-            const string sqlCmd = "SELECT Distinct DST_Name FROM t_DatasetTypeName ORDER BY DST_Name";
+            const string sqlCmd = "SELECT Distinct dataset_type FROM v_dataset_type_name_export ORDER BY dataset_type";
             try
             {
                 tmpRetVal = GetSingleColumnTableFromDMS(sqlCmd, connStr);
@@ -992,10 +992,10 @@ namespace BuzzardWPF.IO.DMS
 
             // Get a list containing all active cart configuration names
             const string sqlCmd =
-                "SELECT Cart_Config_Name, Cart_Name " +
-                "FROM V_LC_Cart_Config_Export " +
-                "WHERE Cart_Config_State = 'Active' " +
-                "ORDER BY Cart_Name, Cart_Config_Name";
+                "SELECT cart_config_name, cart_name " +
+                "FROM v_lc_cart_config_export " +
+                "WHERE cart_config_state = 'Active' " +
+                "ORDER BY cart_name, cart_config_name";
 
             var cn = GetConnection(connStr);
             if (!cn.IsValid)
@@ -1015,8 +1015,8 @@ namespace BuzzardWPF.IO.DMS
                     while (reader.Read())
                     {
                         yield return new CartConfigInfo(
-                            reader["Cart_Config_Name"].CastDBValTo<string>(),
-                            reader["Cart_Name"].CastDBValTo<string>());
+                            reader["cart_config_name"].CastDBValTo<string>(),
+                            reader["cart_name"].CastDBValTo<string>());
                     }
                 }
             }
@@ -1026,12 +1026,12 @@ namespace BuzzardWPF.IO.DMS
         {
             var connStr = GetConnectionString();
 
-            var sqlCmd = "SELECT ID, Experiment, Created, Organism, Reason, Request, Researcher FROM V_LCMSNet_Experiment_Export";
+            var sqlCmd = "SELECT id, experiment, created, organism, reason, request, researcher FROM v_lcmsnet_experiment_export";
 
             if (RecentExperimentsMonthsToLoad > 0)
             {
                 var dateThreshold = DateTime.Now.AddMonths(-RecentExperimentsMonthsToLoad).ToString("yyyy-MM-dd");
-                sqlCmd += " WHERE Last_Used >= '" + dateThreshold + "'";
+                sqlCmd += " WHERE last_used >= '" + dateThreshold + "'";
             }
 
             var cn = GetConnection(connStr);
@@ -1055,13 +1055,13 @@ namespace BuzzardWPF.IO.DMS
                     {
                         yield return new ExperimentData
                         {
-                            Created = reader["Created"].CastDBValTo<DateTime>(),
-                            Experiment = reader["Experiment"].CastDBValTo<string>(),
-                            ID = reader["ID"].CastDBValTo<int>(),
-                            Organism = reader["Organism"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
-                            Reason = reader["Reason"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
-                            Request = reader["Request"].CastDBValTo<int>(),
-                            Researcher = reader["Researcher"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary)
+                            Created = reader["created"].CastDBValTo<DateTime>(),
+                            Experiment = reader["experiment"].CastDBValTo<string>(),
+                            ID = reader["id"].CastDBValTo<int>(),
+                            Organism = reader["organism"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
+                            Reason = reader["reason"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
+                            Request = reader["request"].CastDBValTo<int>(),
+                            Researcher = reader["researcher"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary)
                         };
                     }
                 }
@@ -1073,10 +1073,10 @@ namespace BuzzardWPF.IO.DMS
             var connStr = GetConnectionString();
 
             // Get a table containing the instrument data
-            const string sqlCmd = "SELECT Instrument, NameAndUsage, InstrumentGroup, CaptureMethod, " +
-                                  "Status, HostName, SharePath " +
-                                  "FROM V_Instrument_Info_LCMSNet " +
-                                  "ORDER BY Instrument";
+            const string sqlCmd = "SELECT instrument, name_and_usage, instrument_group, capture_method, " +
+                                  "status, host_name, share_path " +
+                                  "FROM v_instrument_info_lcmsnet " +
+                                  "ORDER BY instrument";
 
             var cn = GetConnection(connStr);
             if (!cn.IsValid)
@@ -1097,13 +1097,13 @@ namespace BuzzardWPF.IO.DMS
                     {
                         yield return new InstrumentInfo
                         {
-                            DMSName = reader["Instrument"].CastDBValTo<string>(),
-                            CommonName = reader["NameAndUsage"].CastDBValTo<string>(),
-                            InstrumentGroup = reader["InstrumentGroup"].CastDBValTo<string>(),
-                            CaptureMethod = reader["CaptureMethod"].CastDBValTo<string>(),
-                            Status = reader["Status"].CastDBValTo<string>(),
-                            HostName = reader["HostName"].CastDBValTo<string>().Replace(".bionet", ""),
-                            SharePath = reader["SharePath"].CastDBValTo<string>()
+                            DMSName = reader["instrument"].CastDBValTo<string>(),
+                            CommonName = reader["name_and_usage"].CastDBValTo<string>(),
+                            InstrumentGroup = reader["instrument_group"].CastDBValTo<string>(),
+                            CaptureMethod = reader["capture_method"].CastDBValTo<string>(),
+                            Status = reader["status"].CastDBValTo<string>(),
+                            HostName = reader["host_name"].CastDBValTo<string>().Replace(".bionet", ""),
+                            SharePath = reader["share_path"].CastDBValTo<string>()
                         };
                     }
                 }
@@ -1115,8 +1115,8 @@ namespace BuzzardWPF.IO.DMS
             var connStr = GetConnectionString();
 
             // Get a table containing the instrument data
-            const string sqlCmd = "SELECT InstrumentGroup, DefaultDatasetType, AllowedDatasetTypes " +
-                                  "FROM V_Instrument_Group_Dataset_Types_Active";
+            const string sqlCmd = "SELECT instrument_group, default_dataset_type, allowed_dataset_types " +
+                                  "FROM v_instrument_group_dataset_types_active";
 
             var cn = GetConnection(connStr);
             if (!cn.IsValid)
@@ -1137,9 +1137,9 @@ namespace BuzzardWPF.IO.DMS
                     {
                         yield return new InstrumentGroupInfo
                         {
-                            InstrumentGroup = reader["InstrumentGroup"].CastDBValTo<string>(),
-                            DefaultDatasetType = reader["DefaultDatasetType"].CastDBValTo<string>(),
-                            AllowedDatasetTypes = reader["AllowedDatasetTypes"].CastDBValTo<string>()
+                            InstrumentGroup = reader["instrument_group"].CastDBValTo<string>(),
+                            DefaultDatasetType = reader["default_dataset_type"].CastDBValTo<string>(),
+                            AllowedDatasetTypes = reader["allowed_dataset_types"].CastDBValTo<string>()
                         };
                     }
                 }
@@ -1164,12 +1164,12 @@ namespace BuzzardWPF.IO.DMS
         {
             var connStr = GetConnectionString();
 
-            const string sqlCmdStart = "SELECT [User ID], [User Name], [#Proposal] FROM V_EUS_Proposal_Users";
+            const string sqlCmdStart = "SELECT user_id, user_name, proposal FROM v_eus_proposal_users";
             var sqlCmd = sqlCmdStart;
             if (EMSLProposalsRecentMonthsToLoad > -1)
             {
                 var oldestExpiration = DateTime.Now.AddMonths(-EMSLProposalsRecentMonthsToLoad);
-                sqlCmd += $" WHERE Proposal_End_Date >= '{oldestExpiration:yyyy-MM-dd}' OR Proposal_End_Date IS NULL";
+                sqlCmd += $" WHERE proposal_end_date >= '{oldestExpiration:yyyy-MM-dd}' OR proposal_end_date IS NULL";
             }
 
             var cn = GetConnection(connStr);
@@ -1191,9 +1191,9 @@ namespace BuzzardWPF.IO.DMS
                     {
                         yield return new DmsProposalUserEntry
                         (
-                            reader["User ID"].CastDBValTo<int?>(),
-                            reader["User Name"].CastDBValTo<string>(),
-                            reader["#Proposal"].CastDBValTo<string>()
+                            reader["user_id"].CastDBValTo<int?>(),
+                            reader["user_name"].CastDBValTo<string>(),
+                            reader["proposal"].CastDBValTo<string>()
                         );
                     }
                 }
@@ -1203,7 +1203,7 @@ namespace BuzzardWPF.IO.DMS
         private IEnumerable<DMSData> ReadRequestedRunsFromDMS()
         {
             var connStr = GetConnectionString();
-            const string sqlCmd = "SELECT Request, Name, Instrument, Type, Experiment, Comment, Work_Package, Cart, Usage_Type, EUS_Users, Proposal_ID FROM V_Requested_Run_Active_Export ORDER BY Name";
+            const string sqlCmd = "SELECT request, name, instrument, type, experiment, comment, work_package, cart, usage_type, eus_users, proposal_id FROM v_requested_run_active_export ORDER BY name";
 
             var cn = GetConnection(connStr);
             if (!cn.IsValid)
@@ -1226,17 +1226,17 @@ namespace BuzzardWPF.IO.DMS
                     {
                         var tmpDMSData = new DMSData
                         {
-                            DatasetType = reader["Type"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
-                            Experiment = reader["Experiment"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
-                            EMSLProposalID = reader["Proposal_ID"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
-                            RequestID = reader["Request"].CastDBValTo<int>(),
-                            RequestName = reader["Name"].CastDBValTo<string>(),
-                            InstrumentGroup = reader["Instrument"].CastDBValTo<string>(),
-                            WorkPackage = reader["Work_Package"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
-                            EMSLUsageType = reader["Usage_Type"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
-                            EMSLProposalUser = reader["EUS_Users"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
-                            CartName = reader["Cart"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
-                            Comment = reader["Comment"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
+                            DatasetType = reader["type"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
+                            Experiment = reader["experiment"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
+                            EMSLProposalID = reader["proposal_id"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
+                            RequestID = reader["request"].CastDBValTo<int>(),
+                            RequestName = reader["name"].CastDBValTo<string>(),
+                            InstrumentGroup = reader["instrument"].CastDBValTo<string>(),
+                            WorkPackage = reader["work_package"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
+                            EMSLUsageType = reader["usage_type"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
+                            EMSLProposalUser = reader["eus_users"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
+                            CartName = reader["cart"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
+                            Comment = reader["comment"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
                         };
 
                         yield return tmpDMSData;
@@ -1253,7 +1253,7 @@ namespace BuzzardWPF.IO.DMS
             // Switched from V_Active_Users to V_Active_Instrument_Operators in January 2020
             // Switched from V_Active_Instrument_Operators to V_Active_Instrument_Users in October 2021
             // Note that EMSL Users have a separate list
-            const string sqlCmd = "SELECT Name, Username FROM V_Active_Instrument_Users ORDER BY Name";
+            const string sqlCmd = "SELECT name, username FROM v_active_instrument_users ORDER BY name";
 
             var cn = GetConnection(connStr);
             if (!cn.IsValid)
@@ -1274,8 +1274,8 @@ namespace BuzzardWPF.IO.DMS
                     {
                         yield return new UserInfo
                         {
-                            Name = reader["Name"].CastDBValTo<string>(),
-                            Id = reader["Username"].CastDBValTo<string>()
+                            Name = reader["name"].CastDBValTo<string>(),
+                            Id = reader["username"].CastDBValTo<string>()
                         };
                     }
                 }
@@ -1294,10 +1294,10 @@ namespace BuzzardWPF.IO.DMS
             // * None that are inactive and never used
             // * None that have not been used, where the owner name is unknown (not in DMS)
             var sqlCmd =
-                "SELECT Charge_Code, State, SubAccount, WorkBreakdownStructure, Title, Owner_PRN, Owner_Name " +
-                "FROM V_Charge_Code_Export " +
-                $"WHERE Setup_Date > '{DateTime.Now.AddYears(-6):yyyy-MM-dd}' AND SubAccount NOT LIKE '%UNALLOWABLE%' AND State <> 'Inactive, unused' AND (State LIKE '%, used%' OR Owner_Name IS NOT NULL)" +
-                "ORDER BY SortKey";
+                "SELECT charge_code, state, sub_account, work_breakdown_structure, title, owner_prn, owner_name " +
+                "FROM v_charge_code_export " +
+                $"WHERE setup_date > '{DateTime.Now.AddYears(-6):yyyy-MM-dd}' AND sub_account NOT LIKE '%UNALLOWABLE%' AND state <> 'Inactive, unused' AND (state LIKE '%, used%' OR owner_name IS NOT NULL)" +
+                "ORDER BY sort_key";
 
             var cn = GetConnection(connStr);
             if (!cn.IsValid)
@@ -1319,13 +1319,13 @@ namespace BuzzardWPF.IO.DMS
                     while (reader.Read())
                     {
                         yield return new WorkPackageInfo(
-                            reader["Charge_Code"].CastDBValTo<string>()?.Trim(),
-                            reader["State"].CastDBValTo<string>()?.Trim().LimitStringDuplication(deDupDictionary),
-                            reader["SubAccount"].CastDBValTo<string>()?.Trim().LimitStringDuplication(deDupDictionary),
-                            reader["WorkBreakdownStructure"].CastDBValTo<string>()?.Trim().LimitStringDuplication(deDupDictionary),
-                            reader["Title"].CastDBValTo<string>()?.Trim().LimitStringDuplication(deDupDictionary),
-                            reader["Owner_PRN"].CastDBValTo<string>()?.Trim().LimitStringDuplication(deDupDictionary),
-                            reader["Owner_Name"].CastDBValTo<string>()?.Trim().LimitStringDuplication(deDupDictionary));
+                            reader["charge_code"].CastDBValTo<string>()?.Trim(),
+                            reader["state"].CastDBValTo<string>()?.Trim().LimitStringDuplication(deDupDictionary),
+                            reader["sub_account"].CastDBValTo<string>()?.Trim().LimitStringDuplication(deDupDictionary),
+                            reader["work_breakdown_structure"].CastDBValTo<string>()?.Trim().LimitStringDuplication(deDupDictionary),
+                            reader["title"].CastDBValTo<string>()?.Trim().LimitStringDuplication(deDupDictionary),
+                            reader["owner_prn"].CastDBValTo<string>()?.Trim().LimitStringDuplication(deDupDictionary),
+                            reader["owner_name"].CastDBValTo<string>()?.Trim().LimitStringDuplication(deDupDictionary));
                     }
                 }
             }
@@ -1350,10 +1350,10 @@ namespace BuzzardWPF.IO.DMS
                 {
                     var tableNames = new List<string>
                     {
-                        "V_LC_Cart_Config_Export", "V_Charge_Code_Export", "V_LC_Cart_Active_Export",
-                        "V_LCMSNet_Dataset_Export", "V_LCMSNet_Column_Export", "T_Secondary_Sep", "t_DatasetTypeName",
-                        "V_Active_Instrument_Users", "V_LCMSNet_Experiment_Export", "V_EUS_Proposal_Users",
-                        "V_Instrument_Info_LCMSNet", "V_Requested_Run_Active_Export", "V_Instrument_Group_Dataset_Types_Active"
+                        "v_lc_cart_config_export", "v_charge_code_export", "v_lc_cart_active_export",
+                        "v_lcmsnet_dataset_export", "v_lcmsnet_column_export", "v_secondary_sep_export", "v_dataset_type_name_export",
+                        "v_active_instrument_users", "v_lcmsnet_experiment_export", "v_eus_proposal_users",
+                        "v_instrument_info_lcmsnet", "v_requested_run_active_export", "v_instrument_group_dataset_types_active"
                     };
 
                     foreach (var tableName in tableNames)
