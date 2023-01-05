@@ -515,43 +515,6 @@ namespace BuzzardWPF.IO.DMS
             return returnTable;
         }
 
-        /// <summary>
-        /// Executes a stored procedure
-        /// </summary>
-        /// <param name="spCmd">SQL command object containing SP parameters</param>
-        /// <param name="connStr">Connection string</param>
-        /// <returns>SP result code</returns>
-        private int ExecuteSP(SqlCommand spCmd, string connStr)
-        {
-            var resultCode = -9999;
-            try
-            {
-                var cn = GetConnection(connStr);
-                if (!cn.IsValid)
-                {
-                    cn.Dispose();
-                    throw new Exception(cn.FailedConnectionAttemptMessage);
-                }
-
-                using (cn)
-                using (var da = new SqlDataAdapter())
-                using (var ds = new DataSet())
-                {
-                    spCmd.Connection = cn.GetConnection();
-                    da.SelectCommand = spCmd;
-                    da.Fill(ds);
-                    resultCode = (int)da.SelectCommand.Parameters["@Return"].Value;
-                }
-            }
-            catch (Exception ex)
-            {
-                ErrMsg = "Exception executing stored procedure " + spCmd.CommandText;
-                ApplicationLogger.LogError(0, ErrMsg, ex);
-                throw new DatabaseStoredProcException(spCmd.CommandText, resultCode, ex.Message);
-            }
-            return resultCode;
-        }
-
         private static void CreateDefaultConfigFile(string configurationPath)
         {
             // Create a new file with default config data
@@ -706,8 +669,8 @@ namespace BuzzardWPF.IO.DMS
             var connStr = GetConnectionString();
 
             // Get a List containing all the carts
-            const string sqlCmd = "SELECT DISTINCT [Cart_Name] FROM V_LC_Cart_Active_Export " +
-                                  "ORDER BY [Cart_Name]";
+            const string sqlCmd = "SELECT DISTINCT Cart_Name FROM V_LC_Cart_Active_Export " +
+                                  "ORDER BY Cart_Name";
             try
             {
                 tmpCartList = GetSingleColumnTableFromDMS(sqlCmd, connStr);
@@ -1183,69 +1146,6 @@ namespace BuzzardWPF.IO.DMS
             }
         }
 
-        private IEnumerable<KeyValuePair<int, int>> ReadMRMFileListFromDMS(int minID, int maxID)
-        {
-            var connStr = GetConnectionString();
-            var sqlCmd = "SELECT ID, RDS_MRM_Attachment FROM T_Requested_Run WHERE (not RDS_MRM_Attachment is null) " +
-                         "AND (ID BETWEEN " + minID + " AND " + maxID + ")";
-
-            var cn = GetConnection(connStr);
-            if (!cn.IsValid)
-            {
-                cn.Dispose();
-                throw new Exception(cn.FailedConnectionAttemptMessage);
-            }
-
-            using (cn)
-            using (var cmd = cn.CreateCommand())
-            {
-                cmd.CommandText = sqlCmd;
-                cmd.CommandType = CommandType.Text;
-
-                using (var reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        yield return new KeyValuePair<int, int>(
-                            reader["ID"].CastDBValTo<int>(),
-                            reader["RDS_MRM_Attachment"].CastDBValTo<int>()
-                        );
-                    }
-                }
-            }
-        }
-
-        private IEnumerable<(string FileName, string FileContents)> ReadMRMFilesFromDMS(string fileIndexList)
-        {
-            var connStr = GetConnectionString();
-            var sqlCmd = "SELECT File_Name, Contents FROM T_Attachments WHERE ID IN (" + fileIndexList + ")";
-
-            var cn = GetConnection(connStr);
-            if (!cn.IsValid)
-            {
-                cn.Dispose();
-                throw new Exception(cn.FailedConnectionAttemptMessage);
-            }
-
-            using (cn)
-            using (var cmd = cn.CreateCommand())
-            {
-                cmd.CommandText = sqlCmd;
-                cmd.CommandType = CommandType.Text;
-
-                using (var reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        yield return (
-                            reader["File_Name"].CastDBValTo<string>(),
-                            reader["Contents"].CastDBValTo<string>()
-                        );
-                    }
-                }
-            }
-        }
-
         private readonly struct DmsProposalUserEntry
         {
             public readonly int? UserId;
@@ -1452,8 +1352,8 @@ namespace BuzzardWPF.IO.DMS
                     {
                         "V_LC_Cart_Config_Export", "V_Charge_Code_Export", "V_LC_Cart_Active_Export",
                         "V_LCMSNet_Dataset_Export", "V_LCMSNet_Column_Export", "T_Secondary_Sep", "t_DatasetTypeName",
-                        "V_Active_Users", "V_LCMSNet_Experiment_Export", "V_EUS_Proposal_Users",
-                        "V_Instrument_Info_LCMSNet", "V_Requested_Run_Active_Export", "T_Attachments", "T_Requested_Run"
+                        "V_Active_Instrument_Users", "V_LCMSNet_Experiment_Export", "V_EUS_Proposal_Users",
+                        "V_Instrument_Info_LCMSNet", "V_Requested_Run_Active_Export", "V_Instrument_Group_Dataset_Types_Active"
                     };
 
                     foreach (var tableName in tableNames)
@@ -1592,129 +1492,6 @@ namespace BuzzardWPF.IO.DMS
                 ApplicationLogger.LogError(0, ErrMsg, ex);
                 return Enumerable.Empty<DMSData>();
             }
-        }
-
-        /// <summary>
-        /// Adds data for block of MRM files to file data list
-        /// </summary>
-        /// <param name="fileIndexList">Comma-separated list of file indices needing data</param>
-        /// <param name="fileData">List of file names and contents; new data will be appended to this list</param>
-        public void GetMRMFilesFromDMS(string fileIndexList, List<(string FileName, string FileContents)> fileData)
-        {
-            if (fileData == null)
-            {
-                throw new ArgumentNullException(nameof(fileData), "fileData must be initialized before calling GetMRMFilesFromDMS");
-            }
-
-            // Get the data from DMS
-            try
-            {
-                fileData.AddRange(ReadMRMFilesFromDMS(fileIndexList));
-            }
-            catch (Exception ex)
-            {
-                ErrMsg = "Exception getting MRM file data from DMS";
-                ApplicationLogger.LogError(0, ErrMsg, ex);
-                throw new DatabaseDataException(ErrMsg, ex);
-            }
-        }
-
-        /// <summary>
-        /// Gets a list of MRM files to retrieve
-        /// </summary>
-        /// <param name="minID">Minimum request ID for MRM file search</param>
-        /// <param name="maxID"></param>
-        /// <returns></returns>
-        public Dictionary<int, int> GetMRMFileListFromDMS(int minID, int maxID)
-        {
-            var retList = new Dictionary<int, int>();
-
-            // Get the data from DMS
-            try
-            {
-                // Pull the data from the table
-                foreach (var file in ReadMRMFileListFromDMS(minID, maxID))
-                {
-                    retList.Add(file.Key, file.Value);
-                }
-            }
-            catch (Exception ex)
-            {
-                ErrMsg = "Exception getting MRM file list from DMS";
-                ApplicationLogger.LogError(0, ErrMsg, ex);
-                throw new DatabaseDataException(ErrMsg, ex);
-            }
-
-            return retList;
-        }
-
-        /// <summary>
-        /// Updates the cart assignment in DMS
-        /// </summary>
-        /// <param name="requestList">Comma-delimited string of request ID's (must be less than 8000 chars long)</param>
-        /// <param name="cartName">Name of cart to assign (ignored for removing assignment)</param>
-        /// <param name="cartConfigName">Name of cart config name to assign</param>
-        /// <param name="updateMode">TRUE for updating assignment; FALSE to clear assignment</param>
-        /// <returns>TRUE for success; FALSE for error</returns>
-        public bool UpdateDMSCartAssignment(string requestList, string cartName, string cartConfigName, bool updateMode)
-        {
-            var connStr = GetConnectionString();
-            string mode;
-            int resultCode;
-
-            // Verify request list is < 8000 chars (stored procedure limitation)
-            if (requestList.Length > 8000)
-            {
-                ErrMsg = "Too many requests selected for import.\r\nReduce the number of requests being imported.";
-                return false;
-            }
-
-            // Convert mode to string value
-            if (updateMode)
-            {
-                mode = "Add";
-            }
-            else
-            {
-                mode = "Remove";
-            }
-
-            // Set up parameters for stored procedure call
-            var spCmd = new SqlCommand
-            {
-                CommandType = CommandType.StoredProcedure,
-                CommandText = "AddRemoveRequestCartAssignment"
-            };
-            spCmd.Parameters.Add(new SqlParameter("@Return", SqlDbType.Int)).Direction = ParameterDirection.ReturnValue;
-
-            spCmd.Parameters.Add(new SqlParameter("@RequestIDList", SqlDbType.VarChar, 8000)).Value = requestList;
-            spCmd.Parameters.Add(new SqlParameter("@CartName", SqlDbType.VarChar, 128)).Value = cartName;
-            spCmd.Parameters.Add(new SqlParameter("@CartConfigName", SqlDbType.VarChar, 128)).Value = cartConfigName;
-            spCmd.Parameters.Add(new SqlParameter("@Mode", SqlDbType.VarChar, 32)).Value = mode;
-
-            spCmd.Parameters.Add(new SqlParameter("@message", SqlDbType.VarChar, 512));
-            spCmd.Parameters["@message"].Direction = ParameterDirection.InputOutput;
-            spCmd.Parameters["@message"].Value = "";
-
-            // Execute the SP
-            try
-            {
-                resultCode = ExecuteSP(spCmd, connStr);
-            }
-            catch (Exception ex)
-            {
-                ApplicationLogger.LogError(0, "Exception updating DMS cart information", ex);
-                return false;
-            }
-
-            if (resultCode != 0)    // Error occurred
-            {
-                var returnMsg = spCmd.Parameters["@message"].ToString();
-                throw new DatabaseStoredProcException("AddRemoveRequestCartAssignment", resultCode, returnMsg);
-            }
-
-            // Success!
-            return true;
         }
 
         #endregion
