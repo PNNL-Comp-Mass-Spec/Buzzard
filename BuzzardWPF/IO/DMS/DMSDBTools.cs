@@ -1300,12 +1300,10 @@ namespace BuzzardWPF.IO.DMS
             }
         }
 
-        private IEnumerable<DMSData> ReadRequestedRunsFromDMS(SampleQueryData queryData)
+        private IEnumerable<DMSData> ReadRequestedRunsFromDMS()
         {
             var connStr = GetConnectionString();
-
-            // Retrieve run requests from V_Requested_Run_Active_Export, filtering based on settings in queryData
-            var sqlCmd = queryData.BuildSqlString();
+            const string sqlCmd = "SELECT Request, Name, Instrument, Type, Experiment, Comment, Work_Package, Cart, Usage_Type, EUS_Users, Proposal_ID FROM V_Requested_Run_Active_Export ORDER BY Name";
 
             var cn = GetConnection(connStr);
             if (!cn.IsValid)
@@ -1581,11 +1579,11 @@ namespace BuzzardWPF.IO.DMS
         /// Gets a list of samples (essentially requested runs) from DMS
         /// </summary>
         /// <remarks>Retrieves data from view V_Requested_Run_Active_Export</remarks>
-        public IEnumerable<DMSData> GetRequestedRunsFromDMS(SampleQueryData queryData)
+        public IEnumerable<DMSData> GetRequestedRunsFromDMS()
         {
             try
             {
-                return ReadRequestedRunsFromDMS(queryData);
+                return ReadRequestedRunsFromDMS();
             }
             catch (Exception ex)
             {

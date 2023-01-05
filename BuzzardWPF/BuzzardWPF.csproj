@@ -88,7 +88,6 @@
     <Compile Include="Data\DMS\ITriggerFileData.cs" />
     <Compile Include="Data\DMS\PersistenceSettingAttribute.cs" />
     <Compile Include="Data\DMS\ProposalUser.cs" />
-    <Compile Include="Data\DMS\SampleQueryData.cs" />
     <Compile Include="Data\DMS\TriggerFileTools.cs" />
     <Compile Include="Data\DMS\UserIDPIDCrossReferenceEntry.cs" />
     <Compile Include="Data\DMS\UserInfo.cs" />

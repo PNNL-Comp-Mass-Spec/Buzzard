@@ -444,10 +444,6 @@ namespace BuzzardWPF.Management
 
         public IEnumerable<DMSData> LoadDMSRequestedRuns()
         {
-            // Instantiate SampleQueryData using default filters (essentially no filters)
-            // Only active requested runs are retrieved
-            var queryData = new SampleQueryData();
-
             var allowedInstrumentGroups = instrumentDetailsDataSource.Items
                 .Where(x => string.IsNullOrWhiteSpace(DeviceHostName) ||
                             x.HostName.Equals(DeviceHostName, StringComparison.OrdinalIgnoreCase))
@@ -456,7 +452,7 @@ namespace BuzzardWPF.Management
             // Load the samples (essentially requested runs) from DMS
             // Return clones of the objects; for some reason, if we don't, the SampleDataBasic objects are all kept alive (probably some database interaction logic)
             // Also process through a parsing method that will let us minimize the number of duplicate strings in memory.
-            return dmsDbTools.GetRequestedRunsFromDMS(queryData).Where(x =>
+            return dmsDbTools.GetRequestedRunsFromDMS().Where(x =>
                 string.IsNullOrWhiteSpace(x.InstrumentGroup) || string.IsNullOrWhiteSpace(DeviceHostName) ||
                 allowedInstrumentGroups.Contains(x.InstrumentGroup));
         }
