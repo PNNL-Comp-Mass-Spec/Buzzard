@@ -370,6 +370,8 @@ namespace BuzzardWPF.IO.DMS
             // Construct the connection string, for example:
             // Data Source=Gigasax;Initial Catalog=DMS5;User ID=LCMSNetUser;Password=ThePassword"
 
+            // ToDo: update this to construct a Postgres connection string
+
             var retStr = "Data Source=";
 
             // Get the DMS Server name
@@ -1344,21 +1346,33 @@ namespace BuzzardWPF.IO.DMS
             try
             {
                 var connStr = GetConnectionString();
+
                 using (var conn = GetConnection(connStr))
+
                 // Test getting 1 row from every table we query?...
                 using (var cmd = conn.CreateCommand())
                 {
-                    var tableNames = new List<string>
+                    // Keys in this dictionary are view names, values are the column to use when ranking rows using Row_number()
+                    var viewInfo = new Dictionary<string, string>
                     {
-                        "v_lc_cart_config_export", "v_charge_code_export", "v_lc_cart_active_export",
-                        "v_lcmsnet_dataset_export", "v_lcmsnet_column_export", "v_secondary_sep_export", "v_dataset_type_name_export",
-                        "v_active_instrument_users", "v_lcmsnet_experiment_export", "v_eus_proposal_users",
-                        "v_instrument_info_lcmsnet", "v_requested_run_active_export", "v_instrument_group_dataset_types_active"
+                        { "v_lc_cart_config_export", "Cart_Config_ID" },
+                        { "v_charge_code_export", "Charge_Code" },
+                        { "v_lc_cart_active_export", "ID" },
+                        { "v_lcmsnet_dataset_export", "ID" },
+                        { "v_lcmsnet_column_export", "ID" },
+                        { "v_secondary_sep_export", "Separation_Type_ID" },
+                        { "v_dataset_type_name_export", "Dataset_Type_ID" },
+                        { "v_active_instrument_users", "Username" },
+                        { "v_lcmsnet_experiment_export", "ID" },
+                        { "v_eus_proposal_users", "user_id" },
+                        { "v_instrument_info_lcmsnet", "Instrument" },
+                        { "v_requested_run_active_export", "Request" },
+                        { "v_instrument_group_dataset_types_active", "Instrument_Group" }
                     };
 
-                    foreach (var tableName in tableNames)
+                    foreach (var item in viewInfo)
                     {
-                        cmd.CommandText = $"SELECT TOP(1) * FROM {tableName}";
+                        cmd.CommandText = $"SELECT RowNum FROM (SELECT Row_number() Over (ORDER BY {item.Value}) AS RowNum FROM {item.Key}) RankQ WHERE RowNum = 1;";
                         cmd.ExecuteScalar(); // TODO: Test the returned value? (for what?)
                     }
                 }
