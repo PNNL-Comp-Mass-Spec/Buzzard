@@ -505,7 +505,10 @@ namespace BuzzardWPF.Management
         public bool UpdateSQLiteCacheFromDms(EventHandler<ProgressEventArgs> progressEventHandler = null, Action<string, Exception> errorAction = null)
         {
             var retries = 3;
-            var dmsAvailable = dmsDbTools.CheckDMSConnection();
+
+            // ReSharper disable once SimplifyConditionalTernaryExpression
+            var dmsAvailable = SQLiteTools.DatabaseImageBad ? dmsDbTools.CheckDMSConnection() : true;
+
             var result = false;
 
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
