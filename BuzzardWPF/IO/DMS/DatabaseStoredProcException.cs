@@ -9,8 +9,6 @@ namespace BuzzardWPF.IO.DMS
     /// </summary>
     public class DatabaseStoredProcException : Exception
     {
-        #region "Methods"
-
         /// <summary>
         /// Constructor
         /// </summary>
@@ -36,35 +34,19 @@ namespace BuzzardWPF.IO.DMS
         {
         }
 
-        #endregion
-
-        #region "Class variables"
-
-        #endregion
-
-        #region "Properties"
-
         /// <summary>
         /// Stored procedure return code
         /// </summary>
         public int ReturnCode { get; }
-
-        // End property
 
         /// <summary>
         /// Name of stored procedure that returned error
         /// </summary>
         public string ProcName { get; }
 
-        // End property
-
         /// <summary>
         /// Error message returned by stored procedure
         /// </summary>
         public string ErrMessage { get; }
-
-        // End property
-
-        #endregion
     }
 }

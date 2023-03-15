@@ -11,8 +11,6 @@ namespace BuzzardWPF.IO.SQLite
     {
         // Ignore Spelling: configs
 
-        #region Properties
-
         public static string ConnString => Cache.ConnString;
 
         public static bool DatabaseImageBad => Cache.DatabaseImageBad;
@@ -29,10 +27,6 @@ namespace BuzzardWPF.IO.SQLite
         /// <remarks>Starts off as a filename, but is changed to a path by BuildConnectionString</remarks>
         public static string CacheName => Cache.CacheName;
 
-        #endregion
-
-        #region Class Variables
-
         private static readonly List<string> cartNames = new List<string>(0);
         private static readonly Dictionary<string, List<string>> cartConfigNames = new Dictionary<string, List<string>>(0);
         private static readonly List<string> columnNames = new List<string>(0);
@@ -46,10 +40,6 @@ namespace BuzzardWPF.IO.SQLite
         private static readonly List<ExperimentData> experimentsData = new List<ExperimentData>(0);
         private static readonly List<ProposalUser> proposalUsers = new List<ProposalUser>(0);
         private static readonly Dictionary<string, List<UserIDPIDCrossReferenceEntry>> proposalIdIndexedReferenceList = new Dictionary<string, List<UserIDPIDCrossReferenceEntry>>(0);
-
-        #endregion
-
-        #region Initialize
 
         /// <summary>
         /// Constructor
@@ -83,10 +73,6 @@ namespace BuzzardWPF.IO.SQLite
             Cache.SetDefaultDirectoryPath(pathGetMethod);
         }
 
-        #endregion
-
-        #region Instance
-
         private static SQLiteCacheIO Cache { get; }
 
         public static IDisposable GetDisposable()
@@ -101,10 +87,6 @@ namespace BuzzardWPF.IO.SQLite
         {
             Cache.CloseConnection();
         }
-
-        #endregion
-
-        #region Private Methods
 
         private static void UpdateProposalIdIndexReferenceList(IReadOnlyDictionary<string, List<UserIDPIDCrossReferenceEntry>> pidIndexedReferenceList)
         {
@@ -135,10 +117,6 @@ namespace BuzzardWPF.IO.SQLite
             }
         }
 
-        #endregion
-
-        #region Public Methods
-
         /// <summary>
         /// Delete a cache file that has issues so a good cache can be made it its place.
         /// It is the responsibility of the calling method to ensure no other database operations are occurring that could interfere.
@@ -158,10 +136,6 @@ namespace BuzzardWPF.IO.SQLite
         {
             Cache.SetCacheLocation(location);
         }
-
-        #endregion
-
-        #region Public Methods: Cache Reading
 
         /// <summary>
         /// Wrapper around generic retrieval method specifically for cart lists
@@ -452,10 +426,6 @@ namespace BuzzardWPF.IO.SQLite
             }
         }
 
-        #endregion
-
-        #region Public Methods: Cache Writing
-
         public static void CheckOrCreateCache(SQLiteCacheDefaultData defaultData = null)
         {
             Cache.CheckOrCreateCache(defaultData);
@@ -595,7 +565,5 @@ namespace BuzzardWPF.IO.SQLite
         {
             Cache.SaveSingleColumnListToCache(DatabaseTableTypes.SeparationTypeList, separationTypeList, separationNames);
         }
-
-        #endregion
     }
 }

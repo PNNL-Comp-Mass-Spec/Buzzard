@@ -5,8 +5,6 @@
     /// </summary>
     public class UserInfo
     {
-        #region "Properties"
-
         /// <summary>
         /// Name of user
         /// </summary>
@@ -16,10 +14,6 @@
         /// User ID (network login) of user
         /// </summary>
         public string Id { get; set; }
-
-        #endregion
-
-        #region Methods
 
         public override string ToString()
         {
@@ -32,7 +26,5 @@
 
             return Id + ": " + name;
         }
-
-        #endregion
     }
 }

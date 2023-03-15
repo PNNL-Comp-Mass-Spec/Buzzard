@@ -13,8 +13,6 @@ namespace BuzzardWPF.Data.DMS
     {
         private string captureMethod;
 
-        #region "Properties"
-
         /// <summary>
         /// Instrument name as used in DMS
         /// </summary>
@@ -61,8 +59,6 @@ namespace BuzzardWPF.Data.DMS
         /// <remarks>Typically a single folder name, like ProteomicsData\ but might contain subfolders, e.g. UserData\Nikola\AMOLF\</remarks>
         public string SharePath { get; set; }
 
-        #endregion
-
         /// <summary>
         /// Clone - make a deep copy
         /// </summary>
@@ -82,8 +78,6 @@ namespace BuzzardWPF.Data.DMS
             return newInstrumentInfo;
         }
 
-        #region Methods
-
         public override string ToString()
         {
             if (!string.IsNullOrWhiteSpace(DMSName))
@@ -94,8 +88,6 @@ namespace BuzzardWPF.Data.DMS
 
             return "Undefined instrument";
         }
-
-        #endregion
 
         [field: NonSerialized]
         public event PropertyChangedEventHandler PropertyChanged;

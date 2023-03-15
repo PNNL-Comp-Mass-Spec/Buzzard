@@ -8,8 +8,6 @@ namespace BuzzardWPF.Data.DMS
     [Serializable]
     public class ExperimentData : INotifyPropertyChangedExt
     {
-        #region Initialization
-
         public ExperimentData()
         {
             //Campaign = null;
@@ -24,20 +22,12 @@ namespace BuzzardWPF.Data.DMS
             Researcher = null;
         }
 
-        #endregion
-
-        #region INotifyPropertyChangedExt
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         public void OnPropertyChanged([CallerMemberName]string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
-        #endregion
-
-        #region Attributes
 
         private int id;
         private string experimentName;
@@ -49,10 +39,6 @@ namespace BuzzardWPF.Data.DMS
         private int request;
         //private string comment;
         //private string campaign;
-
-        #endregion
-
-        #region Properties
 
         //public string Campaign
         //{
@@ -113,10 +99,6 @@ namespace BuzzardWPF.Data.DMS
             set => this.RaiseAndSetIfChanged(ref request, value);
         }
 
-        #endregion
-
-        #region Methods
-
         public override string ToString()
         {
             var experiment = string.IsNullOrWhiteSpace(experimentName) ? "Undefined experiment" : experimentName;
@@ -128,7 +110,5 @@ namespace BuzzardWPF.Data.DMS
         {
             return Reason?.Replace("'", "") ?? "";
         }
-
-        #endregion
     }
 }

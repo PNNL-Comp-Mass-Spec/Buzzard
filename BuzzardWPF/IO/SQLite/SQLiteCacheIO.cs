@@ -25,8 +25,6 @@ namespace BuzzardWPF.IO.SQLite
 
         private Func<string> defaultDirectoryPathGetMethod = () => ".";
 
-        #region Properties
-
         /// <summary>
         /// Cache file name or path
         /// </summary>
@@ -69,10 +67,6 @@ namespace BuzzardWPF.IO.SQLite
 
             BuildConnectionString(!File.Exists(location));
         }
-
-        #endregion
-
-        #region Initialize and Dispose
 
         public SQLiteCacheIO()
         {
@@ -153,10 +147,6 @@ namespace BuzzardWPF.IO.SQLite
                 // Swallow any exceptions that occurred...
             }
         }
-
-        #endregion
-
-        #region Connection Management
 
         /// <summary>
         /// Get a SQLiteConnection, but limit how often we open a new connection
@@ -239,10 +229,6 @@ namespace BuzzardWPF.IO.SQLite
                 GC.SuppressFinalize(this);
             }
         }
-
-        #endregion
-
-        #region Private Methods
 
         private void CheckExceptionMessageForDbState(Exception ex)
         {
@@ -830,10 +816,6 @@ namespace BuzzardWPF.IO.SQLite
             }
         }
 
-        #endregion
-
-        #region Public Methods
-
         /// <summary>
         /// Delete a cache file that has issues so a good cache can be made it its place.
         /// It is the responsibility of the calling method to ensure no other database operations are occurring that could interfere.
@@ -1336,7 +1318,5 @@ namespace BuzzardWPF.IO.SQLite
                 }
             }
         }
-
-        #endregion
     }
 }

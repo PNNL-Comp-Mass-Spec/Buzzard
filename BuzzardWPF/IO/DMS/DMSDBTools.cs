@@ -30,8 +30,6 @@ namespace BuzzardWPF.IO.DMS
 
         public static string ApplicationName { get; set; } = "-LcmsNetDmsTools- -version-";
 
-        #region "Class variables"
-
         private bool mConnectionStringLogged;
 
         /// <summary>
@@ -53,9 +51,6 @@ namespace BuzzardWPF.IO.DMS
 
         private const string CONFIG_FILE = "PrismDMS.config";
 
-        #endregion
-
-        #region "Properties"
         public bool ForceValidation => true;
 
         public string ErrMsg { get; set; } = "";
@@ -93,10 +88,6 @@ namespace BuzzardWPF.IO.DMS
 
         private readonly Dictionary<string,string> mConfiguration;
 
-        #endregion
-
-        #region "Events"
-
         public event EventHandler<ProgressEventArgs> ProgressEvent;
 
         public void OnProgressUpdate(ProgressEventArgs e)
@@ -106,10 +97,6 @@ namespace BuzzardWPF.IO.DMS
             else
                 ProgressEvent.Invoke(this, e);
         }
-
-        #endregion
-
-        #region "Constructors"
 
         /// <summary>
         /// Constructor
@@ -124,9 +111,6 @@ namespace BuzzardWPF.IO.DMS
             // This should generally be true for SqlClient/SqlConnection, false means connection reuse (and potential multi-threading problems)
             UseConnectionPooling = true;
         }
-        #endregion
-
-        #region Instance
 
         private SqlConnection connection;
         private string lastConnectionString = "";
@@ -217,10 +201,6 @@ namespace BuzzardWPF.IO.DMS
 
             return new SqlConnectionWrapper(connection, failedConnectionAttemptMessage);
         }
-
-        #endregion
-
-        #region Private Methods
 
         /// <summary>
         /// Loads DMS configuration from file
@@ -530,8 +510,6 @@ namespace BuzzardWPF.IO.DMS
             var percentComplete = currentStep / (double)stepCountTotal * 100;
             OnProgressUpdate(new ProgressEventArgs(currentTask, percentComplete));
         }
-
-        #endregion
 
         #region Private Methods: Read from DMS and cache to SQLite
 
@@ -1262,8 +1240,6 @@ namespace BuzzardWPF.IO.DMS
 
         #endregion
 
-        #region Public Methods
-
         /// <summary>
         /// Test if we can query each of the needed DMS tables/views.
         /// </summary>
@@ -1434,7 +1410,5 @@ namespace BuzzardWPF.IO.DMS
                 return Enumerable.Empty<DMSData>();
             }
         }
-
-        #endregion
     }
 }
