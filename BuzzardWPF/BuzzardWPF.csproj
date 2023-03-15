@@ -108,6 +108,7 @@
     <Compile Include="IO\DMS\DatabaseConnectionStringException.cs" />
     <Compile Include="IO\DMS\DatabaseDataException.cs" />
     <Compile Include="IO\DMS\DatabaseStoredProcException.cs" />
+    <Compile Include="IO\DMS\SqlConnectionWrapper.cs" />
     <Compile Include="IO\SQLite\DatabaseTableTypes.cs" />
     <Compile Include="IO\SQLite\ExtensionMethods.cs" />
     <Compile Include="IO\SQLite\PropertyToColumnMapping.cs" />
