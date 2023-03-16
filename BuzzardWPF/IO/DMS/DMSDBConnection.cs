@@ -9,6 +9,7 @@ using System.Threading;
 using System.Xml;
 using System.Xml.Schema;
 using BuzzardWPF.Logging;
+using PRISM;
 
 namespace BuzzardWPF.IO.DMS
 {
@@ -272,7 +273,8 @@ namespace BuzzardWPF.IO.DMS
             var dmsPassword = GetConfigSetting(CONST_DMS_PASSWORD_KEY, "Mprptq3v");
             if (dmsPassword != null)
             {
-                retStr += ";Password=" + DecodePassword(dmsPassword);
+                // Decrypts password received from ini file
+                retStr += ";Password=" + AppUtils.DecodeShiftCipher(dmsPassword);
             }
             else
             {
@@ -326,44 +328,6 @@ namespace BuzzardWPF.IO.DMS
                 writer.WriteLine("  </p:PrismDMSConfig>");
                 writer.WriteLine("</catalog>");
             }
-        }
-
-        /// <summary>
-        /// Decrypts password received from ini file
-        /// </summary>
-        /// <param name="enPwd">Encoded password</param>
-        /// <returns>Clear text password</returns>
-        private static string DecodePassword(string enPwd)
-        {
-            // Decrypts password received from ini file
-            // Password was created by alternately subtracting or adding 1 to the ASCII value of each character
-
-            // Convert the password string to a character array
-            var pwdChars = enPwd.ToCharArray();
-            var pwdBytes = new byte[pwdChars.Length];
-            var pwdCharsAdj = new char[pwdChars.Length];
-
-            for (var i = 0; i < pwdChars.Length; i++)
-            {
-                pwdBytes[i] = (byte)pwdChars[i];
-            }
-
-            // Modify the byte array by shifting alternating bytes up or down and convert back to char, and add to output string
-            var retStr = "";
-            for (var byteCounter = 0; byteCounter < pwdBytes.Length; byteCounter++)
-            {
-                if (byteCounter % 2 == 0)
-                {
-                    pwdBytes[byteCounter]++;
-                }
-                else
-                {
-                    pwdBytes[byteCounter]--;
-                }
-                pwdCharsAdj[byteCounter] = (char)pwdBytes[byteCounter];
-                retStr += pwdCharsAdj[byteCounter].ToString(CultureInfo.InvariantCulture);
-            }
-            return retStr;
         }
 
         /// <summary>

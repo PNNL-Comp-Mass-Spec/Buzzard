@@ -66,6 +66,7 @@ Source: "bin\Release\DotNetProjects.Input.Toolkit.dll";               DestDir: "
 Source: "bin\Release\DotNetProjects.Wpf.Extended.Toolkit.dll";        DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\DynamicData.dll";                                DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\Ookii.Dialogs.Wpf.dll";                          DestDir: "{app}";     Flags: ignoreversion
+Source: "bin\Release\PRISM.dll";                                      DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\PrismDMS.config";                                DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\PRISMWin.dll";                                   DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\ReactiveUI*.dll";                                DestDir: "{app}";     Flags: ignoreversion

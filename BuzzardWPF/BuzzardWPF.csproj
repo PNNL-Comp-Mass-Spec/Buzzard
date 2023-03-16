@@ -362,6 +362,9 @@
     <PackageReference Include="Ookii.Dialogs.Wpf">
       <Version>5.0.1</Version>
     </PackageReference>
+    <PackageReference Include="PRISM-Library">
+      <Version>2.8.7</Version>
+    </PackageReference>
     <PackageReference Include="PRISMWin-Library">
       <Version>1.1.5</Version>
     </PackageReference>
