@@ -102,6 +102,7 @@
     </Compile>
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="IO\BuzzardTriggerFileTools.cs" />
+    <Compile Include="IO\DMS\DMSDBConnection.cs" />
     <Compile Include="IO\DMS\DMSDBTools.cs" />
     <Compile Include="IO\DMS\EventArgs.cs" />
     <Compile Include="IO\DMS\ExtensionMethods.cs" />

@@ -160,7 +160,7 @@ namespace BuzzardWPF
             resetSplashCreated.WaitOne();
 
             var assembly = Assembly.GetExecutingAssembly().GetName();
-            DMSDBTools.ApplicationName = $"Buzzard {assembly.Version}";
+            DMSDBConnection.ApplicationName = $"Buzzard {assembly.Version}";
 
             var openMainWindow = AppInitializer.InitializeApplication(splashScreen, splashScreen.SetInstrumentHostName).Result;
             if (openMainWindow)
