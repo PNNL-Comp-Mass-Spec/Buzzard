@@ -148,7 +148,7 @@ namespace BuzzardWPF.IO
                 {"LC Cart Name", dataset.DmsData.CartName},
                 {"LC Cart Config", dataset.DmsData.CartConfigName},
                 {"LC Column", dataset.ColumnName},
-                {"Operator (PRN)", dataset.Operator},
+                {"Operator (Username)", dataset.Operator},
             };
 
             // Validate that the key fields are defined

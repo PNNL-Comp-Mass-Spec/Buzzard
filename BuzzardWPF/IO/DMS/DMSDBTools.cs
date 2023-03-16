@@ -1201,7 +1201,7 @@ namespace BuzzardWPF.IO.DMS
             // * None that are inactive and never used
             // * None that have not been used, where the owner name is unknown (not in DMS)
             var sqlCmd =
-                "SELECT charge_code, state, sub_account, work_breakdown_structure, title, owner_prn, owner_name " +
+                "SELECT charge_code, state, sub_account, work_breakdown_structure, title, owner_username, owner_name " +
                 "FROM v_charge_code_export " +
                 $"WHERE setup_date > '{DateTime.Now.AddYears(-6):yyyy-MM-dd}' AND sub_account NOT LIKE '%UNALLOWABLE%' AND state <> 'Inactive, unused' AND (state LIKE '%, used%' OR owner_name IS NOT NULL)" +
                 "ORDER BY sort_key";
@@ -1231,7 +1231,7 @@ namespace BuzzardWPF.IO.DMS
                             reader["sub_account"].CastDBValTo<string>()?.Trim().LimitStringDuplication(deDupDictionary),
                             reader["work_breakdown_structure"].CastDBValTo<string>()?.Trim().LimitStringDuplication(deDupDictionary),
                             reader["title"].CastDBValTo<string>()?.Trim().LimitStringDuplication(deDupDictionary),
-                            reader["owner_prn"].CastDBValTo<string>()?.Trim().LimitStringDuplication(deDupDictionary),
+                            reader["owner_username"].CastDBValTo<string>()?.Trim().LimitStringDuplication(deDupDictionary),
                             reader["owner_name"].CastDBValTo<string>()?.Trim().LimitStringDuplication(deDupDictionary));
                     }
                 }

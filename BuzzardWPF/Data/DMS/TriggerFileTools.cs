@@ -76,7 +76,7 @@ namespace BuzzardWPF.Data.DMS
 
             AddParam(rootElement, "Dataset Type", TrimWhitespace(sample.DmsData.DatasetType));
 
-            AddParam(rootElement, "Operator (PRN)", TrimWhitespace(sample.Operator));
+            AddParam(rootElement, "Operator (Username)", TrimWhitespace(sample.Operator));
             AddParam(rootElement, "Work Package", TrimWhitespace(sample.DmsData.WorkPackage));
             AddParam(rootElement, "Comment", TrimWhitespace(sample.DmsData.Comment));
             AddParam(rootElement, "Interest Rating", TrimWhitespace(sample.InterestRating ?? "Unreviewed"));
