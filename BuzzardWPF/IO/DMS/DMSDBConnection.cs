@@ -16,7 +16,7 @@ namespace BuzzardWPF.IO.DMS
     {
         // ReSharper disable CommentTypo
 
-        // Ignore Spelling: DMSPwd, ini, username, usernames, utf, xmlns, xs
+        // Ignore Spelling: DMSPwd, ini, username, utf, xmlns, xs
 
         // ReSharper restore CommentTypo
 
@@ -367,23 +367,23 @@ namespace BuzzardWPF.IO.DMS
         }
 
         /// <summary>
-        /// Generic method to retrieve data from a single-column table in DMS
+        /// Generic method to retrieve data from a single-column table
         /// </summary>
         /// <param name="cmdStr">SQL command to execute</param>
         /// <returns>List containing the table's contents</returns>
-        public IEnumerable<string> GetSingleColumnTableFromDMS(string cmdStr)
+        public IEnumerable<string> GetSingleColumnTable(string cmdStr)
         {
             var connStr = GetConnectionString();
-            return GetSingleColumnTableFromDMS(cmdStr, connStr);
+            return GetSingleColumnTable(cmdStr, connStr);
         }
 
         /// <summary>
-        /// Generic method to retrieve data from a single-column table in DMS
+        /// Generic method to retrieve data from a single-column table
         /// </summary>
         /// <param name="cmdStr">SQL command to execute</param>
         /// <param name="connStr">Database connection string</param>
         /// <returns>List containing the table's contents</returns>
-        public IEnumerable<string> GetSingleColumnTableFromDMS(string cmdStr, string connStr)
+        public IEnumerable<string> GetSingleColumnTable(string cmdStr, string connStr)
         {
             var cn = GetConnection(connStr);
             if (!cn.IsValid)
@@ -497,8 +497,9 @@ namespace BuzzardWPF.IO.DMS
         /// <summary>
         /// Test if we can query each of the needed DMS tables/views.
         /// </summary>
+        /// <param name="tableNamesAndCheckColumns">Dictionary where the key is a table/view name, and the value a sortable column name</param>
         /// <returns></returns>
-        public bool CheckDMSConnection()
+        public bool CheckDMSConnection(IReadOnlyDictionary<string, string> tableNamesAndCheckColumns)
         {
             try
             {
@@ -509,25 +510,8 @@ namespace BuzzardWPF.IO.DMS
                 // Test getting 1 row from every table we query?...
                 using (var cmd = conn.CreateCommand())
                 {
-                    // Keys in this dictionary are view names, values are the column to use when ranking rows using Row_number()
-                    var viewInfo = new Dictionary<string, string>
-                    {
-                        { "v_lc_cart_config_export", "Cart_Config_ID" },
-                        { "v_charge_code_export", "Charge_Code" },
-                        { "v_lc_cart_active_export", "ID" },
-                        { "v_lcmsnet_dataset_export", "ID" },
-                        { "v_lcmsnet_column_export", "ID" },
-                        { "v_secondary_sep_export", "Separation_Type_ID" },
-                        { "v_dataset_type_name_export", "Dataset_Type_ID" },
-                        { "v_active_instrument_users", "Username" },
-                        { "v_lcmsnet_experiment_export", "ID" },
-                        { "v_eus_proposal_users", "user_id" },
-                        { "v_instrument_info_lcmsnet", "Instrument" },
-                        { "v_requested_run_active_export", "Request" },
-                        { "v_instrument_group_dataset_types_active", "Instrument_Group" }
-                    };
-
-                    foreach (var item in viewInfo)
+                    // Keys in the dictionary are view names, values are the column to use when ranking rows using Row_number()
+                    foreach (var item in tableNamesAndCheckColumns)
                     {
                         cmd.CommandText = $"SELECT RowNum FROM (SELECT Row_number() Over (ORDER BY {item.Value}) AS RowNum FROM {item.Key}) RankQ WHERE RowNum = 1;";
                         cmd.ExecuteScalar(); // TODO: Test the returned value? (for what?)
