@@ -108,10 +108,11 @@ namespace BuzzardWPF.IO.DMS
         /// <summary>
         /// Get a SQLiteConnection, but control creation of new connections based on UseConnectionPooling
         /// </summary>
-        /// <param name="connString"></param>
         /// <returns></returns>
-        private SqlConnectionWrapper GetConnection(string connString)
+        private SqlConnectionWrapper GetConnection()
         {
+            var connString = GetConnectionString();
+
             // Reset out the close timer with every use
             connectionTimeoutTimer?.Dispose();
             connectionTimeoutTimer = new Timer(ConnectionTimeoutActions, this, connectionTimeoutTime, TimeSpan.FromMilliseconds(-1));
@@ -337,19 +338,7 @@ namespace BuzzardWPF.IO.DMS
         /// <returns>List containing the table's contents</returns>
         public IEnumerable<string> GetSingleColumnTable(string cmdStr)
         {
-            var connStr = GetConnectionString();
-            return GetSingleColumnTable(cmdStr, connStr);
-        }
-
-        /// <summary>
-        /// Generic method to retrieve data from a single-column table
-        /// </summary>
-        /// <param name="cmdStr">SQL command to execute</param>
-        /// <param name="connStr">Database connection string</param>
-        /// <returns>List containing the table's contents</returns>
-        public IEnumerable<string> GetSingleColumnTable(string cmdStr, string connStr)
-        {
-            var cn = GetConnection(connStr);
+            var cn = GetConnection();
             if (!cn.IsValid)
             {
                 cn.Dispose();
@@ -399,8 +388,7 @@ namespace BuzzardWPF.IO.DMS
         private DataTable GetDataTable(string cmdStr)
         {
             var returnTable = new DataTable();
-            var connStr = GetConnectionString();
-            var cn = GetConnection(connStr);
+            var cn = GetConnection();
             if (!cn.IsValid)
             {
                 cn.Dispose();
@@ -433,9 +421,7 @@ namespace BuzzardWPF.IO.DMS
         // TODO: do I need to wrap usages of this in a foreach loop and yield return?
         public IEnumerable<T> ExecuteReader<T>(string sqlCmd, Func<IDataReader, T> rowParseObjectCreator)
         {
-            var connStr = GetConnectionString();
-
-            var cn = GetConnection(connStr);
+            var cn = GetConnection();
             if (!cn.IsValid)
             {
                 cn.Dispose();
@@ -467,9 +453,7 @@ namespace BuzzardWPF.IO.DMS
         {
             try
             {
-                var connStr = GetConnectionString();
-
-                using (var conn = GetConnection(connStr))
+                using (var conn = GetConnection())
 
                 // Test getting 1 row from every table we query?...
                 using (var cmd = conn.CreateCommand())
