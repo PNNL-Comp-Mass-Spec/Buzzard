@@ -47,6 +47,69 @@ namespace BuzzardWPF.Utility
         private static string ProgramDataPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), AppName);
 
         /// <summary>
+        /// Get the path where the file should be saved
+        /// </summary>
+        /// <param name="fileSubPath"></param>
+        /// <returns></returns>
+        public static string GetFileSavePath(string fileSubPath)
+        {
+            // Prefer the local data path
+            // Transitioning to this, so don't return the programFiles path at all.
+            var localDataPath = Path.Combine(LocalDataPath, fileSubPath);
+            if (File.Exists(localDataPath))
+            {
+                return localDataPath;
+            }
+
+            // Ensure that the needed directory tree exists
+            var parent = Path.GetDirectoryName(localDataPath);
+            if (parent != null && !Directory.Exists(parent))
+            {
+                Directory.CreateDirectory(parent);
+            }
+
+            return localDataPath;
+        }
+
+        /// <summary>
+        /// Get the full path of the provided file subPath that exists
+        /// </summary>
+        /// <param name="fileSubPath"></param>
+        /// <returns></returns>
+        public static string GetFileLoadPath(string fileSubPath)
+        {
+            // Prefer the local data path
+            var localDataPath = Path.Combine(LocalDataPath, fileSubPath);
+            if (File.Exists(localDataPath))
+            {
+                return localDataPath;
+            }
+
+            // fallback 1: program data path (used for a time)
+            var programDataPath = Path.Combine(ProgramDataPath, fileSubPath);
+            if (File.Exists(programDataPath))
+            {
+                return programDataPath;
+            }
+
+            // fallback 2: program files path (may cause exceptions if not running as administrator)
+            var programFilesPath = Path.Combine(ProgramExeDirectory, fileSubPath);
+            if (File.Exists(programFilesPath))
+            {
+                return programFilesPath;
+            }
+
+            // fallback 3: working directory (usually ends up being the same as programFilesPath)
+            if (File.Exists(fileSubPath))
+            {
+                return fileSubPath;
+            }
+
+            // final: nothing meets the criteria, return the preferred local data path
+            return localDataPath;
+        }
+
+        /// <summary>
         /// Get the path where the directory should be located
         /// </summary>
         /// <param name="directorySubPath"></param>

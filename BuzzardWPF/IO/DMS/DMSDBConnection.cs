@@ -2,63 +2,38 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Globalization;
 using System.IO;
-using System.Reflection;
 using System.Threading;
-using System.Xml;
-using System.Xml.Schema;
 using BuzzardWPF.Logging;
+using BuzzardWPF.Utility;
 using PRISM;
 
 namespace BuzzardWPF.IO.DMS
 {
     internal class DMSDBConnection : IDisposable
     {
-        // ReSharper disable CommentTypo
-
-        // Ignore Spelling: DMSPwd, ini, username, utf, xmlns, xs
-
-        // ReSharper restore CommentTypo
-
         public static string ApplicationName { get; set; } = "-Buzzard- -version-";
 
         private bool mConnectionStringLogged;
 
-        /// <summary>
-        /// Key to access the DMS version string in the configuration dictionary.
-        /// </summary>
-        private const string CONST_DMS_SERVER_KEY = "DMSServer";
-
-        /// <summary>
-        /// Key to access the DMS version string in the configuration dictionary.
-        /// </summary>
-        /// <remarks>This is the name of the database to connect to</remarks>
-        private const string CONST_DMS_VERSION_KEY = "DMSVersion";
-
-        /// <summary>
-        /// Key to access the encoded DMS password string in the configuration dictionary.
-        /// </summary>
-        /// <remarks>This is the password of SQL Server user LCMSNetUser</remarks>
-        private const string CONST_DMS_PASSWORD_KEY = "DMSPwd";
-
-        private const string CONFIG_FILE = "PrismDMS.config";
+        private const string CONFIG_FILE = "PrismDMS.json";
+        private const string CENTRAL_CONFIG_FILE_PATH = @"\\proto-5\BionetSoftware\Buzzard\PrismDMS.json";
 
         public string ErrMsg { get; set; } = "";
 
-        public string DMSVersion => GetConfigSetting(CONST_DMS_VERSION_KEY, "UnknownVersion");
+        public string DMSVersion => mConfiguration.DatabaseName;
 
         public bool UseConnectionPooling { get; set; }
 
-        private readonly Dictionary<string, string> mConfiguration;
+        private DMSConfig mConfiguration;
 
         /// <summary>
         /// Constructor
         /// </summary>
         public DMSDBConnection()
         {
-            mConfiguration = new Dictionary<string, string>();
-            LoadConfiguration();
+            mConfiguration = new DMSConfig();
+            LoadLocalConfiguration();
             // This should generally be true for SqlClient/SqlConnection, false means connection reuse (and potential multi-threading problems)
             UseConnectionPooling = true;
         }
@@ -69,6 +44,8 @@ namespace BuzzardWPF.IO.DMS
         private readonly TimeSpan minTimeBetweenConnectionAttempts = TimeSpan.FromSeconds(30);
         private readonly TimeSpan connectionTimeoutTime = TimeSpan.FromSeconds(60);
         private Timer connectionTimeoutTimer;
+        private string lastConnectionStringLoaded = "";
+        private DateTime lastConnectionStringLoadTime = DateTime.MinValue;
         private string failedConnectionAttemptMessage = "";
 
         private void ConnectionTimeoutActions(object sender)
@@ -155,180 +132,124 @@ namespace BuzzardWPF.IO.DMS
         }
 
         /// <summary>
-        /// Loads DMS configuration from file
-        /// </summary>
-        private void LoadConfiguration()
-        {
-            var readerSettings = new XmlReaderSettings
-            {
-                ValidationType = ValidationType.Schema,
-                ValidationFlags = XmlSchemaValidationFlags.ProcessInlineSchema
-            };
-            readerSettings.ValidationEventHandler += SettingsValidationEventHandler;
-
-            var folderPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            if (string.IsNullOrEmpty(folderPath))
-            {
-                throw new DirectoryNotFoundException("Directory for the executing assembly is empty; unable to load the configuration in DMSDBTools");
-            }
-
-            var configurationPath = Path.Combine(folderPath, CONFIG_FILE);
-            if (!File.Exists(configurationPath))
-            {
-                CreateDefaultConfigFile(configurationPath);
-            }
-
-            var reader = XmlReader.Create(configurationPath, readerSettings);
-            while (reader.Read())
-            {
-                switch (reader.NodeType)
-                {
-                    case XmlNodeType.Element:
-                        if (string.Equals(reader.GetAttribute("DmsSetting"), "true", StringComparison.OrdinalIgnoreCase))
-                        {
-                            var settingName = reader.Name.Remove(0, 2);
-                            // Add/update the configuration item
-                            mConfiguration[settingName] = reader.ReadString();
-                        }
-                        break;
-                }
-            }
-        }
-
-        private void SettingsValidationEventHandler(object sender, ValidationEventArgs e)
-        {
-            if (e.Severity == XmlSeverityType.Error)
-            {
-                throw new InvalidOperationException(e.Message, e.Exception);
-            }
-
-            ApplicationLogger.LogMessage(ApplicationLogger.CONST_STATUS_LEVEL_CRITICAL, "DmsTools Configuration warning: " + e.Message);
-        }
-
-        /// <summary>
-        /// Lookup the value for the given setting
-        /// </summary>
-        /// <param name="configName">Setting name</param>
-        /// <param name="valueIfMissing">Value to return if configName is not defined in mConfiguration</param>
-        /// <returns></returns>
-        private string GetConfigSetting(string configName, string valueIfMissing)
-        {
-            if (mConfiguration.TryGetValue(configName, out var configValue))
-            {
-                return configValue;
-            }
-            return valueIfMissing;
-        }
-
-        /// <summary>
         /// Gets DMS connection string from config file
         /// </summary>
         /// <returns></returns>
         public string GetConnectionString()
         {
+            if (lastConnectionStringLoadTime > DateTime.UtcNow.AddMinutes(-10))
+            {
+                return lastConnectionStringLoaded;
+            }
+
             // Construct the connection string, for example:
             // Data Source=Gigasax;Initial Catalog=DMS5;User ID=LCMSNetUser;Password=ThePassword"
 
             // ToDo: update this to construct a Postgres connection string
 
+            var loaded = LoadCentralConfiguration();
+            if (!loaded)
+            {
+                LoadLocalConfiguration();
+            }
+
+            mConfiguration.ValidateConfig();
+
             var retStr = "Data Source=";
 
             // Get the DMS Server name
-            var dmsServer = GetConfigSetting(CONST_DMS_SERVER_KEY, "Gigasax");
-            if (dmsServer != null)
-            {
-                retStr += dmsServer;
-            }
-            else
-            {
-                retStr += "Gigasax";
-            }
+            retStr += mConfiguration.DatabaseServer;
 
             // Get name of the DMS database to use
-            var dmsVersion = GetConfigSetting(CONST_DMS_VERSION_KEY, "DMS5");
-            if (dmsVersion != null)
-            {
-                retStr += ";Initial Catalog=" + dmsVersion + ";User ID=LCMSNetUser";
-            }
-            else
-            {
-                throw new DatabaseConnectionStringException(
-                    "DMS version string not found in configuration file (this parameter is the " +
-                    "name of the database to connect to).  Delete the " + CONFIG_FILE + " file and " +
-                    "it will be automatically re-created with the default values.");
-            }
+            retStr += ";Initial Catalog=" + mConfiguration.DatabaseName + ";User ID=LCMSNetUser";
 
             if (!string.IsNullOrWhiteSpace(ApplicationName))
             {
                 retStr += $";Application Name={ApplicationName}";
             }
 
-            if (!mConnectionStringLogged)
+            if (!mConnectionStringLogged || !lastConnectionStringLoaded.StartsWith(retStr))
             {
                 ApplicationLogger.LogMessage(ApplicationLogger.CONST_STATUS_LEVEL_DETAILED,
-                                                  "Database connection string: " + retStr + ";Password=....");
+                    "Database connection string: " + retStr + ";Password=....");
                 mConnectionStringLogged = true;
             }
 
             // Get the password for user LCMSNetUser
-            var dmsPassword = GetConfigSetting(CONST_DMS_PASSWORD_KEY, "Mprptq3v");
-            if (dmsPassword != null)
-            {
-                // Decrypts password received from ini file
-                retStr += ";Password=" + AppUtils.DecodeShiftCipher(dmsPassword);
-            }
-            else
-            {
-                throw new DatabaseConnectionStringException(
-                    "DMS password string not found in configuration file (this is the password " +
-                    "for the LCMSOperator username.  Delete the " + CONFIG_FILE + " file and " +
-                    "it will be automatically re-created with the default values.");
-            }
+            // Decrypts password received from config file
+            retStr += ";Password=" + AppUtils.DecodeShiftCipher(mConfiguration.EncodedPassword);
 
+            lastConnectionStringLoadTime = DateTime.UtcNow;
+            lastConnectionStringLoaded = retStr;
             return retStr;
         }
 
-        private static void CreateDefaultConfigFile(string configurationPath)
+        /// <summary>
+        /// Loads DMS configuration from a centralized file
+        /// </summary>
+        /// <returns>True if able to read/load the central configuration</returns>
+        private bool LoadCentralConfiguration()
         {
-            // Create a new file with default config data
-            using (var writer = new StreamWriter(new FileStream(configurationPath, FileMode.Create, FileAccess.Write, FileShare.Read)))
+            var remoteConfigLoaded = false;
+
+            try
             {
-                writer.WriteLine("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
-                writer.WriteLine("<catalog>");
-                writer.WriteLine("  <!-- DMS Configuration Schema definition -->");
-                writer.WriteLine("  <xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" targetNamespace=\"PrismDMS\"> ");
-                writer.WriteLine("    <xs:element name=\"PrismDMSConfig\">");
-                writer.WriteLine("      <xs:complexType><xs:sequence>");
-                writer.WriteLine("          <xs:element name=\"DMSServer\" minOccurs=\"0\" maxOccurs=\"1\">");
-                writer.WriteLine("             <xs:complexType><xs:simpleContent><xs:extension base=\"xs:string\">");
-                writer.WriteLine("                  <xs:attribute name=\"dmssetting\" use=\"optional\" type=\"xs:string\"/>");
-                writer.WriteLine("             </xs:extension></xs:simpleContent></xs:complexType>");
-                writer.WriteLine("          </xs:element>");
-                writer.WriteLine("          <xs:element name=\"DMSVersion\">");
-                writer.WriteLine("             <xs:complexType><xs:simpleContent><xs:extension base=\"xs:string\">");
-                writer.WriteLine("                  <xs:attribute name=\"dmssetting\" use=\"required\" type=\"xs:string\"/>                 ");
-                writer.WriteLine("             </xs:extension></xs:simpleContent></xs:complexType>");
-                writer.WriteLine("          </xs:element>");
-                writer.WriteLine("          <xs:element name=\"DMSPwd\">");
-                writer.WriteLine("             <xs:complexType><xs:simpleContent><xs:extension base=\"xs:string\">");
-                writer.WriteLine("                  <xs:attribute name=\"dmssetting\" use=\"required\" type=\"xs:string\"/>");
-                writer.WriteLine("             </xs:extension></xs:simpleContent></xs:complexType>");
-                writer.WriteLine("          </xs:element>                 ");
-                writer.WriteLine("      </xs:sequence></xs:complexType>");
-                writer.WriteLine("    </xs:element>");
-                writer.WriteLine("  </xs:schema>");
-                writer.WriteLine(" ");
-                writer.WriteLine("  <!-- DMS configuration -->");
-                writer.WriteLine("  <p:PrismDMSConfig xmlns:p=\"PrismDMS\">");
-                writer.WriteLine("    <!-- Server hosting DMS (defaults to Gigasax if missing) -->");
-                writer.WriteLine("    <p:DMSServer dmssetting=\"true\">Gigasax</p:DMSServer>");
-                writer.WriteLine("    <!-- DMSVersion is the name of the database to connect to -->");
-                writer.WriteLine("    <p:DMSVersion dmssetting=\"true\">DMS5</p:DMSVersion>");
-                writer.WriteLine("    <!-- DMSPwd is the encoded DMS password for SQL server user LCMSNetUser -->");
-                writer.WriteLine("    <p:DMSPwd dmssetting=\"true\">Mprptq3v</p:DMSPwd>");
-                writer.WriteLine("  </p:PrismDMSConfig>");
-                writer.WriteLine("</catalog>");
+                if (File.Exists(CENTRAL_CONFIG_FILE_PATH))
+                {
+                    // Centralized config file exists; read it
+                    var config = DMSConfig.FromJson(CENTRAL_CONFIG_FILE_PATH);
+                    var good = config.ValidateConfig();
+
+                    // Centralized config file contains all the important information; cache it and use it, if it is not a match for the current cached config
+                    if (good && !config.Equals(mConfiguration))
+                    {
+                        ApplicationLogger.LogMessage(LogLevel.Info, "Loading updated DMS database configuration from centralized config file...");
+                        mConfiguration = config;
+                        remoteConfigLoaded = true;
+                        var configPath = PersistDataPaths.GetFileSavePath(CONFIG_FILE);
+                        config.ToJson(configPath);
+                    }
+
+                    remoteConfigLoaded = good;
+                }
             }
+            catch (Exception ex)
+            {
+                ApplicationLogger.LogError(LogLevel.Info, "Exception attempting to load centralized database configuration file", ex);
+            }
+
+            return remoteConfigLoaded;
+        }
+
+        /// <summary>
+        /// Loads DMS configuration from file
+        /// </summary>
+        private void LoadLocalConfiguration()
+        {
+            var configurationPath = PersistDataPaths.GetFileLoadPath(CONFIG_FILE);
+            if (!File.Exists(configurationPath))
+            {
+                mConfiguration = CreateDefaultConfigFile(configurationPath);
+            }
+            else
+            {
+                try
+                {
+                    mConfiguration = DMSConfig.FromJson(configurationPath);
+                }
+                catch (Exception ex)
+                {
+                    ApplicationLogger.LogError(LogLevel.Info, "Exception attempting to load local database configuration file", ex);
+                }
+            }
+        }
+
+        private static DMSConfig CreateDefaultConfigFile(string configurationPath)
+        {
+            var config = new DMSConfig();
+            config.LoadDefaults();
+            config.ToJson(configurationPath);
+            return config;
         }
 
         /// <summary>

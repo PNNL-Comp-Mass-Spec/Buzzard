@@ -62,5 +62,21 @@ namespace BuzzardTests
         {
             Console.WriteLine(e.CurrentTask);
         }
+
+        [Test]
+        public void LoadJsonDbConfig()
+        {
+            var path = @"\\proto-5\BionetSoftware\Buzzard\PrismDMS.json";
+            var config = DMSConfig.FromJson(path);
+            Console.WriteLine(config);
+        }
+
+        [Test]
+        public void WriteJsonDbConfig()
+        {
+            var path = @"\\proto-5\BionetSoftware\Buzzard\PrismDMS2.json";
+            var config = new DMSConfig();
+            config.ToJson(path);
+        }
     }
 }
