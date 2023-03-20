@@ -12,7 +12,7 @@ namespace BuzzardWPF.IO.DMS
     {
         public const string DefaultDatabaseServer = "Gigasax";
         public const string DefaultDatabaseName = "DMS5";
-        public const string DefaultDatabaseSchema = "";
+        public const string DefaultDatabaseSchemaPrefix = ""; // if non-empty, always needs to end with a '.'
         public const string DefaultEncodedPassword = "Mprptq3v";
         public const DbServerTypes DefaultDatabaseSoftware =  DbServerTypes.MSSQLServer;
 
@@ -20,7 +20,7 @@ namespace BuzzardWPF.IO.DMS
         {
             DatabaseServer = "";
             DatabaseName = "";
-            DatabaseSchema = "";
+            DatabaseSchemaPrefix = "";
             EncodedPassword = "";
             DatabaseSoftware = DbServerTypes.Undefined;
             databaseServerSoftware = DatabaseSoftware.ToString();
@@ -30,10 +30,16 @@ namespace BuzzardWPF.IO.DMS
         {
             DatabaseServer = DefaultDatabaseServer;
             DatabaseName = DefaultDatabaseName;
-            DatabaseSchema = DefaultDatabaseSchema;
+            DatabaseSchemaPrefix = DefaultDatabaseSchemaPrefix;
             EncodedPassword = DefaultEncodedPassword;
             DatabaseSoftware = DefaultDatabaseSoftware;
             databaseServerSoftware = DatabaseSoftware.ToString();
+
+            if (!string.IsNullOrWhiteSpace(DatabaseSchemaPrefix) && !DatabaseSchemaPrefix.EndsWith("."))
+            {
+                // Not considering this a config file issue, just automatically adding it.
+                DatabaseSchemaPrefix += ".";
+            }
         }
 
         private string databaseServerSoftware;
@@ -42,7 +48,7 @@ namespace BuzzardWPF.IO.DMS
 
         public string DatabaseName { get; set; }
 
-        public string DatabaseSchema { get; set; }
+        public string DatabaseSchemaPrefix { get; set; }
 
         public string EncodedPassword { get; set; }
 
@@ -69,7 +75,7 @@ namespace BuzzardWPF.IO.DMS
         public override string ToString()
         {
             var software = DatabaseSoftware == DbServerTypes.Undefined ? DatabaseSoftware + $"(read '{databaseServerSoftware}')" : DatabaseSoftware.ToString();
-            var schema = string.IsNullOrWhiteSpace(DatabaseSchema) ? "" : $", Schema '{DatabaseSchema}'";
+            var schema = string.IsNullOrWhiteSpace(DatabaseSchemaPrefix) ? "" : $", SchemaPrefix '{DatabaseSchemaPrefix}'";
             return $"Server '{DatabaseServer}', Database '{DatabaseName}'{schema}, Password (encoded) '{EncodedPassword}', Software is {software}";
         }
 
@@ -115,8 +121,8 @@ namespace BuzzardWPF.IO.DMS
                 $"    \"databaseServer\" : \"{DatabaseServer}\",",
                 "    // database is the name of the database to connect to",
                 $"    \"databaseName\" : \"{DatabaseName}\",",
-                "    // databaseSchema is the name of the database to connect to; can be an empty string for default/unspecified schema",
-                $"    \"databaseSchema\" : \"{DatabaseSchema}\",",
+                "    // databaseSchemaPrefix is the schema prefix for the database; can be an empty string for default/unspecified schema. If not empty, must end with a '.' (period)",
+                $"    \"databaseSchemaPrefix\" : \"{DatabaseSchemaPrefix}\",",
                 "    // encodedPassword is the encoded DMS password for SQL server user LCMSNetUser",
                 $"    \"encodedPassword\" : \"{EncodedPassword}\",",
                 "    // Database Server Software is a reference to the database software running on the server; currently supports \"PostgreSQL\" and \"MSSQLServer\"",
@@ -154,10 +160,16 @@ namespace BuzzardWPF.IO.DMS
                 changed = true;
             }
 
-            if (string.IsNullOrWhiteSpace(DatabaseSchema) && !DatabaseSchema.Equals(DefaultDatabaseSchema))
+            if (string.IsNullOrWhiteSpace(DatabaseSchemaPrefix) && !DatabaseSchemaPrefix.Equals(DefaultDatabaseSchemaPrefix))
             {
-                DatabaseSchema = DefaultDatabaseSchema;
+                DatabaseSchemaPrefix = DefaultDatabaseSchemaPrefix;
                 changed = true;
+            }
+
+            if (!string.IsNullOrWhiteSpace(DatabaseSchemaPrefix) && !DatabaseSchemaPrefix.EndsWith("."))
+            {
+                // Not considering this a config file issue, just automatically adding it.
+                DatabaseSchemaPrefix += ".";
             }
 
             if (string.IsNullOrWhiteSpace(EncodedPassword))
@@ -182,7 +194,7 @@ namespace BuzzardWPF.IO.DMS
             return databaseServerSoftware == other.databaseServerSoftware &&
                    DatabaseServer == other.DatabaseServer &&
                    DatabaseName == other.DatabaseName &&
-                   DatabaseSchema == other.DatabaseSchema &&
+                   DatabaseSchemaPrefix == other.DatabaseSchemaPrefix &&
                    EncodedPassword == other.EncodedPassword &&
                    DatabaseSoftware == other.DatabaseSoftware;
         }
@@ -197,7 +209,7 @@ namespace BuzzardWPF.IO.DMS
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(databaseServerSoftware, DatabaseServer, DatabaseName, DatabaseSchema, EncodedPassword, (int)DatabaseSoftware);
+            return HashCode.Combine(databaseServerSoftware, DatabaseServer, DatabaseName, DatabaseSchemaPrefix, EncodedPassword, (int)DatabaseSoftware);
         }
     }
 }

@@ -141,6 +141,7 @@ namespace BuzzardWPF.IO.DMS
             else
                 cacheFilePath = "SQLite cache file path: " + sqLiteConnectionString;
 
+            dbReader.RefreshConnectionConfiguration();
             var dmsConnectionString = dbReader.GetConnectionString();
 
             // Remove the password from the connection string
@@ -213,6 +214,7 @@ namespace BuzzardWPF.IO.DMS
         {
             try
             {
+                dbReader.RefreshConnectionConfiguration();
                 return dbReader.ReadRequestedRuns();
             }
             catch (Exception ex)

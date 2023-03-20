@@ -42,6 +42,15 @@ namespace BuzzardWPF.IO.DMS
         }
 
         /// <summary>
+        /// Checks for updates to the connection configuration if it hasn't been done recently
+        /// </summary>
+        /// <returns>True if the connection configuration was updated and is different from the previous configuration</returns>
+        public bool RefreshConnectionConfiguration()
+        {
+            return db.RefreshConnectionConfiguration();
+        }
+
+        /// <summary>
         /// Gets DMS connection string from config file
         /// </summary>
         /// <returns></returns>
@@ -56,14 +65,14 @@ namespace BuzzardWPF.IO.DMS
         public IEnumerable<string> ReadCartList()
         {
             // Get a List containing all the carts
-            const string sqlCmd = "SELECT DISTINCT cart_name FROM v_lc_cart_active_export " +
-                                  "ORDER BY cart_name";
+            var sqlCmd = $"SELECT DISTINCT cart_name FROM {db.SchemaPrefix}v_lc_cart_active_export " +
+                         "ORDER BY cart_name";
             return db.GetSingleColumnTable(sqlCmd);
         }
 
         public IEnumerable<string> ReadDatasetList(int recentDatasetsMonthsToLoad = 12)
         {
-            var sqlCmd = "SELECT dataset FROM v_lcmsnet_dataset_export";
+            var sqlCmd = $"SELECT dataset FROM {db.SchemaPrefix}v_lcmsnet_dataset_export";
 
             if (recentDatasetsMonthsToLoad > 0)
             {
@@ -80,7 +89,7 @@ namespace BuzzardWPF.IO.DMS
         public IEnumerable<string> ReadColumnList()
         {
             // Get a list of active columns
-            const string sqlCmd = "SELECT column_number FROM v_lcmsnet_column_export WHERE state <> 'Retired' ORDER BY column_number";
+            var sqlCmd = $"SELECT column_number FROM {db.SchemaPrefix}v_lcmsnet_column_export WHERE state <> 'Retired' ORDER BY column_number";
             return db.GetSingleColumnTable(sqlCmd);
         }
 
@@ -89,7 +98,7 @@ namespace BuzzardWPF.IO.DMS
         /// </summary>
         public IEnumerable<string> ReadSeparationTypeList()
         {
-            const string sqlCmd = "SELECT Distinct separation_type FROM v_secondary_sep_export WHERE active > 0 ORDER BY separation_type";
+            var sqlCmd = $"SELECT Distinct separation_type FROM {db.SchemaPrefix}v_secondary_sep_export WHERE active > 0 ORDER BY separation_type";
             return db.GetSingleColumnTable(sqlCmd);
         }
 
@@ -99,16 +108,16 @@ namespace BuzzardWPF.IO.DMS
         public IEnumerable<string> ReadDatasetTypeList()
         {
             // Get a list of the dataset types
-            const string sqlCmd = "SELECT Distinct dataset_type FROM v_dataset_type_name_export ORDER BY dataset_type";
+            var sqlCmd = $"SELECT Distinct dataset_type FROM {db.SchemaPrefix}v_dataset_type_name_export ORDER BY dataset_type";
             return db.GetSingleColumnTable(sqlCmd);
         }
 
         public IEnumerable<CartConfigInfo> ReadCartConfigNames()
         {
             // Get a list containing all active cart configuration names
-            const string sqlCmd =
+            var sqlCmd =
                 "SELECT cart_config_name, cart_name " +
-                "FROM v_lc_cart_config_export " +
+                $"FROM {db.SchemaPrefix}v_lc_cart_config_export " +
                 "WHERE cart_config_state = 'Active' " +
                 "ORDER BY cart_name, cart_config_name";
 
@@ -121,7 +130,7 @@ namespace BuzzardWPF.IO.DMS
 
         public IEnumerable<ExperimentData> ReadExperiments(int recentExperimentsMonthsToLoad = 18)
         {
-            var sqlCmd = "SELECT id, experiment, created, organism, reason, request, researcher FROM v_lcmsnet_experiment_export";
+            var sqlCmd = $"SELECT id, experiment, created, organism, reason, request, researcher FROM {db.SchemaPrefix}v_lcmsnet_experiment_export";
 
             if (recentExperimentsMonthsToLoad > 0)
             {
@@ -146,10 +155,10 @@ namespace BuzzardWPF.IO.DMS
         public IEnumerable<InstrumentInfo> ReadInstrument()
         {
             // Get a table containing the instrument data
-            const string sqlCmd = "SELECT instrument, name_and_usage, instrument_group, capture_method, " +
-                                  "status, host_name, share_path " +
-                                  "FROM v_instrument_info_lcmsnet " +
-                                  "ORDER BY instrument";
+            var sqlCmd = "SELECT instrument, name_and_usage, instrument_group, capture_method, " +
+                         "status, host_name, share_path " +
+                         $"FROM {db.SchemaPrefix}v_instrument_info_lcmsnet " +
+                         "ORDER BY instrument";
 
             return db.ExecuteReader(sqlCmd, reader => new InstrumentInfo
             {
@@ -166,8 +175,8 @@ namespace BuzzardWPF.IO.DMS
         public IEnumerable<InstrumentGroupInfo> ReadInstrumentGroup()
         {
             // Get a table containing the instrument data
-            const string sqlCmd = "SELECT instrument_group, default_dataset_type, allowed_dataset_types " +
-                                  "FROM v_instrument_group_dataset_types_active";
+            var sqlCmd = "SELECT instrument_group, default_dataset_type, allowed_dataset_types " +
+                         $"FROM {db.SchemaPrefix}v_instrument_group_dataset_types_active";
 
             return db.ExecuteReader(sqlCmd, reader => new InstrumentGroupInfo
             {
@@ -193,7 +202,7 @@ namespace BuzzardWPF.IO.DMS
 
         public IEnumerable<DmsProposalUserEntry> ReadProposalUsers(int emslProposalsRecentMonthsToLoad = 12)
         {
-            const string sqlCmdStart = "SELECT user_id, user_name, proposal FROM v_eus_proposal_users";
+            var sqlCmdStart = $"SELECT user_id, user_name, proposal FROM {db.SchemaPrefix}v_eus_proposal_users";
             var sqlCmd = sqlCmdStart;
             if (emslProposalsRecentMonthsToLoad > -1)
             {
@@ -211,7 +220,7 @@ namespace BuzzardWPF.IO.DMS
 
         public IEnumerable<DMSData> ReadRequestedRuns()
         {
-            const string sqlCmd = "SELECT request, name, instrument, type, experiment, comment, work_package, cart, usage_type, eus_users, proposal_id FROM v_requested_run_active_export ORDER BY name";
+            var sqlCmd = $"SELECT request, name, instrument, type, experiment, comment, work_package, cart, usage_type, eus_users, proposal_id FROM {db.SchemaPrefix}v_requested_run_active_export ORDER BY name";
 
             var deDupDictionary = new Dictionary<string, string>();
 
@@ -237,7 +246,7 @@ namespace BuzzardWPF.IO.DMS
             // Switched from V_Active_Users to V_Active_Instrument_Operators in January 2020
             // Switched from V_Active_Instrument_Operators to V_Active_Instrument_Users in October 2021
             // Note that EMSL Users have a separate list
-            const string sqlCmd = "SELECT name, username FROM v_active_instrument_users ORDER BY name";
+            var sqlCmd = $"SELECT name, username FROM {db.SchemaPrefix}v_active_instrument_users ORDER BY name";
 
             return db.ExecuteReader(sqlCmd, reader => new UserInfo
             {
@@ -257,7 +266,7 @@ namespace BuzzardWPF.IO.DMS
             // * None that have not been used, where the owner name is unknown (not in DMS)
             var sqlCmd =
                 "SELECT charge_code, state, sub_account, work_breakdown_structure, title, owner_username, owner_name " +
-                "FROM v_charge_code_export " +
+                $"FROM {db.SchemaPrefix}v_charge_code_export " +
                 $"WHERE setup_date > '{DateTime.Now.AddYears(-6):yyyy-MM-dd}' AND sub_account NOT LIKE '%UNALLOWABLE%' AND state <> 'Inactive, unused' AND (state LIKE '%, used%' OR owner_name IS NOT NULL)" +
                 "ORDER BY sort_key";
 
@@ -281,22 +290,24 @@ namespace BuzzardWPF.IO.DMS
         /// <returns></returns>
         public bool CheckDMSConnection()
         {
+            db.RefreshConnectionConfiguration();
+
             // Keys in this dictionary are view names, values are the column to use when ranking rows using Row_number()
             var viewInfo = new Dictionary<string, string>
             {
-                { "v_lc_cart_config_export", "Cart_Config_ID" },
-                { "v_charge_code_export", "Charge_Code" },
-                { "v_lc_cart_active_export", "ID" },
-                { "v_lcmsnet_dataset_export", "ID" },
-                { "v_lcmsnet_column_export", "ID" },
-                { "v_secondary_sep_export", "Separation_Type_ID" },
-                { "v_dataset_type_name_export", "Dataset_Type_ID" },
-                { "v_active_instrument_users", "Username" },
-                { "v_lcmsnet_experiment_export", "ID" },
-                { "v_eus_proposal_users", "user_id" },
-                { "v_instrument_info_lcmsnet", "Instrument" },
-                { "v_requested_run_active_export", "Request" },
-                { "v_instrument_group_dataset_types_active", "Instrument_Group" }
+                { $"{db.SchemaPrefix}v_lc_cart_config_export", "Cart_Config_ID" },
+                { $"{db.SchemaPrefix}v_charge_code_export", "Charge_Code" },
+                { $"{db.SchemaPrefix}v_lc_cart_active_export", "ID" },
+                { $"{db.SchemaPrefix}v_lcmsnet_dataset_export", "ID" },
+                { $"{db.SchemaPrefix}v_lcmsnet_column_export", "ID" },
+                { $"{db.SchemaPrefix}v_secondary_sep_export", "Separation_Type_ID" },
+                { $"{db.SchemaPrefix}v_dataset_type_name_export", "Dataset_Type_ID" },
+                { $"{db.SchemaPrefix}v_active_instrument_users", "Username" },
+                { $"{db.SchemaPrefix}v_lcmsnet_experiment_export", "ID" },
+                { $"{db.SchemaPrefix}v_eus_proposal_users", "user_id" },
+                { $"{db.SchemaPrefix}v_instrument_info_lcmsnet", "Instrument" },
+                { $"{db.SchemaPrefix}v_requested_run_active_export", "Request" },
+                { $"{db.SchemaPrefix}v_instrument_group_dataset_types_active", "Instrument_Group" }
             };
 
             return db.CheckDMSConnection(viewInfo);

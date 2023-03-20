@@ -68,6 +68,7 @@ namespace BuzzardTests
         {
             var path = @"\\proto-5\BionetSoftware\Buzzard\PrismDMS.json";
             var config = DMSConfig.FromJson(path);
+            config.ValidateConfig();
             Console.WriteLine(config);
         }
 

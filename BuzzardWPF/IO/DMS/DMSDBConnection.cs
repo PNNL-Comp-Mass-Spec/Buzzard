@@ -23,6 +23,8 @@ namespace BuzzardWPF.IO.DMS
 
         public string DMSVersion => mConfiguration.DatabaseName;
 
+        public string SchemaPrefix => mConfiguration.DatabaseSchemaPrefix;
+
         public bool UseConnectionPooling { get; set; }
 
         private DMSConfig mConfiguration;
@@ -129,6 +131,17 @@ namespace BuzzardWPF.IO.DMS
             }
 
             return new SqlConnectionWrapper(connection, failedConnectionAttemptMessage);
+        }
+
+        /// <summary>
+        /// Checks for updates to the connection configuration if it hasn't been done recently
+        /// </summary>
+        /// <returns>True if the connection configuration was updated and is different from the previous configuration</returns>
+        public bool RefreshConnectionConfiguration()
+        {
+            var lastLoaded = lastConnectionStringLoaded;
+            var newConnString = GetConnectionString();
+            return !lastLoaded.Equals(newConnString);
         }
 
         /// <summary>

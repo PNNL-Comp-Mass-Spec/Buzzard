@@ -3,8 +3,8 @@
     "databaseServer" : "Gigasax",
     // database is the name of the database to connect to
     "databaseName" : "DMS5",
-    // databaseSchema is the name of the database to connect to; can be an empty string for default/unspecified schema
-    "databaseSchema" : "",
+    // databaseSchemaPrefix is the schema prefix for the database; can be an empty string for default/unspecified schema. If not empty, must end with a '.' (period)
+    "databaseSchemaPrefix" : "",
     // encodedPassword is the encoded DMS password for SQL server user LCMSNetUser
     "encodedPassword" : "Mprptq3v",
     // Database Server Software is a reference to the database software running on the server; currently supports "PostgreSQL" and "MSSQLServer"
