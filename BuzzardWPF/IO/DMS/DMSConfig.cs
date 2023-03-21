@@ -13,6 +13,7 @@ namespace BuzzardWPF.IO.DMS
         public const string DefaultDatabaseServer = "Gigasax";
         public const string DefaultDatabaseName = "DMS5";
         public const string DefaultDatabaseSchemaPrefix = ""; // if non-empty, always needs to end with a '.'
+        public const string DefaultUsername = "LCMSNetUser";
         public const string DefaultEncodedPassword = "Mprptq3v";
         public const DbServerTypes DefaultDatabaseSoftware =  DbServerTypes.MSSQLServer;
 
@@ -21,6 +22,7 @@ namespace BuzzardWPF.IO.DMS
             DatabaseServer = "";
             DatabaseName = "";
             DatabaseSchemaPrefix = "";
+            Username = "";
             EncodedPassword = "";
             DatabaseSoftware = DbServerTypes.Undefined;
             databaseServerSoftware = DatabaseSoftware.ToString();
@@ -31,6 +33,7 @@ namespace BuzzardWPF.IO.DMS
             DatabaseServer = DefaultDatabaseServer;
             DatabaseName = DefaultDatabaseName;
             DatabaseSchemaPrefix = DefaultDatabaseSchemaPrefix;
+            Username = DefaultUsername;
             EncodedPassword = DefaultEncodedPassword;
             DatabaseSoftware = DefaultDatabaseSoftware;
             databaseServerSoftware = DatabaseSoftware.ToString();
@@ -49,6 +52,8 @@ namespace BuzzardWPF.IO.DMS
         public string DatabaseName { get; set; }
 
         public string DatabaseSchemaPrefix { get; set; }
+
+        public string Username { get; set; }
 
         public string EncodedPassword { get; set; }
 
@@ -76,7 +81,7 @@ namespace BuzzardWPF.IO.DMS
         {
             var software = DatabaseSoftware == DbServerTypes.Undefined ? DatabaseSoftware + $"(read '{databaseServerSoftware}')" : DatabaseSoftware.ToString();
             var schema = string.IsNullOrWhiteSpace(DatabaseSchemaPrefix) ? "" : $", SchemaPrefix '{DatabaseSchemaPrefix}'";
-            return $"Server '{DatabaseServer}', Database '{DatabaseName}'{schema}, Password (encoded) '{EncodedPassword}', Software is {software}";
+            return $"Server '{DatabaseServer}', Database '{DatabaseName}'{schema}, Username '{Username}', Password (encoded) '{EncodedPassword}', Software is {software}";
         }
 
         public static DMSConfig FromJson(string path)
@@ -123,7 +128,9 @@ namespace BuzzardWPF.IO.DMS
                 $"    \"databaseName\" : \"{DatabaseName}\",",
                 "    // databaseSchemaPrefix is the schema prefix for the database; can be an empty string for default/unspecified schema. If not empty, must end with a '.' (period)",
                 $"    \"databaseSchemaPrefix\" : \"{DatabaseSchemaPrefix}\",",
-                "    // encodedPassword is the encoded DMS password for SQL server user LCMSNetUser",
+                "    // username is the DMS username for SQL server user (default is LCMSNetUser)",
+                $"    \"username\" : \"{Username}\",",
+                "    // encodedPassword is the encoded DMS password for the SQL server user",
                 $"    \"encodedPassword\" : \"{EncodedPassword}\",",
                 "    // Database Server Software is a reference to the database software running on the server; currently supports \"PostgreSQL\" and \"MSSQLServer\"",
                 $"    \"databaseServerSoftware\" : \"{DatabaseServerSoftware}\"",
@@ -172,6 +179,12 @@ namespace BuzzardWPF.IO.DMS
                 DatabaseSchemaPrefix += ".";
             }
 
+            if (string.IsNullOrWhiteSpace(Username))
+            {
+                Username = DefaultUsername;
+                changed = true;
+            }
+
             if (string.IsNullOrWhiteSpace(EncodedPassword))
             {
                 EncodedPassword = DefaultEncodedPassword;
@@ -191,12 +204,7 @@ namespace BuzzardWPF.IO.DMS
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return databaseServerSoftware == other.databaseServerSoftware &&
-                   DatabaseServer == other.DatabaseServer &&
-                   DatabaseName == other.DatabaseName &&
-                   DatabaseSchemaPrefix == other.DatabaseSchemaPrefix &&
-                   EncodedPassword == other.EncodedPassword &&
-                   DatabaseSoftware == other.DatabaseSoftware;
+            return DatabaseServer == other.DatabaseServer && DatabaseName == other.DatabaseName && DatabaseSchemaPrefix == other.DatabaseSchemaPrefix && Username == other.Username && EncodedPassword == other.EncodedPassword && DatabaseSoftware == other.DatabaseSoftware;
         }
 
         public override bool Equals(object obj)
@@ -209,7 +217,7 @@ namespace BuzzardWPF.IO.DMS
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(databaseServerSoftware, DatabaseServer, DatabaseName, DatabaseSchemaPrefix, EncodedPassword, (int)DatabaseSoftware);
+            return HashCode.Combine(DatabaseServer, DatabaseName, DatabaseSchemaPrefix, Username, EncodedPassword, (int)DatabaseSoftware);
         }
     }
 }
