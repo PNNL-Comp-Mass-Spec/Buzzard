@@ -51,12 +51,12 @@ namespace BuzzardWPF.IO.DMS
         }
 
         /// <summary>
-        /// Gets DMS connection string from config file
+        /// Gets DMS connection string from config file, excluding the password
         /// </summary>
         /// <returns></returns>
         public string GetConnectionString()
         {
-            return db.GetConnectionString();
+            return db.GetCleanConnectionString();
         }
 
         /// <summary>

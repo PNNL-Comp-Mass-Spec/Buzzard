@@ -144,11 +144,6 @@ namespace BuzzardWPF.IO.DMS
             dbReader.RefreshConnectionConfiguration();
             var dmsConnectionString = dbReader.GetConnectionString();
 
-            // Remove the password from the connection string
-            var passwordStartIndex = dmsConnectionString.IndexOf(";Password", StringComparison.InvariantCultureIgnoreCase);
-            if (passwordStartIndex > 0)
-                dmsConnectionString = dmsConnectionString.Substring(0, passwordStartIndex);
-
             ReportProgress("Loading data from DMS (" + dmsConnectionString + ") and storing in " + cacheFilePath, 0, stepCountTotal);
 
             ReportProgress("Loading cart names", 1, stepCountTotal);

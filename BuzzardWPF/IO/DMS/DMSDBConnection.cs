@@ -25,8 +25,6 @@ namespace BuzzardWPF.IO.DMS
 
         public string SchemaPrefix => mConfiguration.DatabaseSchemaPrefix;
 
-        public bool UseConnectionPooling { get; set; }
-
         private DMSConfig mConfiguration;
 
         /// <summary>
@@ -36,8 +34,6 @@ namespace BuzzardWPF.IO.DMS
         {
             mConfiguration = new DMSConfig();
             LoadLocalConfiguration();
-            // This should generally be true for SqlClient/SqlConnection, false means connection reuse (and potential multi-threading problems)
-            UseConnectionPooling = true;
         }
 
         private SqlConnection connection;
@@ -122,7 +118,7 @@ namespace BuzzardWPF.IO.DMS
                 }
             }
 
-            if (UseConnectionPooling && connection != null)
+            if (connection != null)
             {
                 // MSSQL/SqlConnection connection pooling: handled transparently based on connection strings
                 // https://docs.microsoft.com/en-us/dotnet/framework/data/adonet/sql-server-connection-pooling
@@ -145,10 +141,20 @@ namespace BuzzardWPF.IO.DMS
         }
 
         /// <summary>
+        /// Gets DMS connection string from config file, excluding the password
+        /// </summary>
+        /// <returns></returns>
+        public string GetCleanConnectionString()
+        {
+            GetConnectionString();
+            return lastCleanConnectionString;
+        }
+
+        /// <summary>
         /// Gets DMS connection string from config file
         /// </summary>
         /// <returns></returns>
-        public string GetConnectionString()
+        private string GetConnectionString()
         {
             if (lastConnectionStringLoadTime > DateTime.UtcNow.AddMinutes(-10))
             {
@@ -187,6 +193,8 @@ namespace BuzzardWPF.IO.DMS
                     "Database connection string: " + retStr + ";Password=....");
                 mConnectionStringLogged = true;
             }
+
+            lastCleanConnectionString = retStr;
 
             // Get the password for user LCMSNetUser
             // Decrypts password received from config file
@@ -255,6 +263,8 @@ namespace BuzzardWPF.IO.DMS
                     ApplicationLogger.LogError(LogLevel.Info, "Exception attempting to load local database configuration file", ex);
                 }
             }
+
+            mConfiguration.ValidateConfig();
         }
 
         private static DMSConfig CreateDefaultConfigFile(string configurationPath)
