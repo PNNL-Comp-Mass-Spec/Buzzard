@@ -137,11 +137,26 @@
                                 Background="Transparent"
                                 FontSize="13"
                                 FontWeight="Bold"
-                                Text="{Binding FormattedStatus, Mode=OneWay}">
+                                Text="{Binding FormattedStatus, Mode=OneWay}"
+                                ToolTipService.ShowDuration="20000">
+                                <TextBlock.ToolTip>
+                                    <ToolTip Content="{Binding StatusToolTip, Mode=OneWay}" FontSize="13" />
+                                </TextBlock.ToolTip>
                             </TextBlock>
                         </Grid>
                     </DataTemplate>
                 </DataGridTemplateColumn.CellTemplate>
+                <DataGridTemplateColumn.CellStyle>
+                    <Style TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource {x:Type DataGridCell}}">
+                        <Setter Property="Background" Value="Transparent" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding StatusWarning}" Value="True">
+                                <Setter Property="Background" Value="Yellow" />
+                                <Setter Property="Foreground" Value="Black" /> <!-- Set the foreground so that selecting the row doesn't change it to White -->
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGridTemplateColumn.CellStyle>
             </DataGridTemplateColumn>
 
             <DataGridTextColumn

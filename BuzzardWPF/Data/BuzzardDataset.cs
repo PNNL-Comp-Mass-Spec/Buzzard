@@ -51,6 +51,8 @@ namespace BuzzardWPF.Data
 
         private bool cartConfigError;
         private DateTime lastRecordedLastWriteTime;
+        private string statusToolTip = null;
+        private bool statusWarning = false;
         private readonly ObservableAsPropertyHelper<bool> isMonitored;
         private readonly List<IDisposable> disposables = new List<IDisposable>();
         private readonly ObservableAsPropertyHelper<string> emslProjectText;
@@ -218,6 +220,18 @@ namespace BuzzardWPF.Data
         public double ProgressValue => progressValue.Value;
         public string FormattedStatus => formattedStatus.Value;
 
+        public string StatusToolTip
+        {
+            get => statusToolTip;
+            set => this.RaiseAndSetIfChanged(ref statusToolTip, value);
+        }
+
+        public bool StatusWarning
+        {
+            get => statusWarning;
+            set => this.RaiseAndSetIfChanged(ref statusWarning, value);
+        }
+
         public ReactiveCommand<Unit, Unit> ToggleMonitoringCommand { get; }
 
         /// <summary>
@@ -381,8 +395,16 @@ namespace BuzzardWPF.Data
         /// </summary>
         public bool IsFile { get; set; }
 
-        private static string FormatStatus(int waitSeconds, DatasetStatus status, DatasetSource source)
+        private const string RunRequestMismatchToolTip =
+            "Check run request in DMS." +
+            "\n* Dataset name must start with the run request name (case insensitive)" +
+            "\n* Instrument group must match the instrument (did you assign the run request to this instrument?)";
+
+        private string FormatStatus(int waitSeconds, DatasetStatus status, DatasetSource source)
         {
+            StatusToolTip = null; // needs to be null to not show an empty pop-up
+            StatusWarning = false;
+
             switch (status)
             {
                 case DatasetStatus.TriggerFileSent:
@@ -392,8 +414,12 @@ namespace BuzzardWPF.Data
                 case DatasetStatus.FailedFileError:
                     return "File Error";
                 case DatasetStatus.FailedAmbiguousDmsRequest:
+                    StatusToolTip = RunRequestMismatchToolTip;
+                    StatusWarning = true;
                     return "Matches Multiple Requests";
                 case DatasetStatus.FailedNoDmsRequest:
+                    StatusToolTip = RunRequestMismatchToolTip;
+                    StatusWarning = true;
                     return "No DMS Request";
                 case DatasetStatus.FailedUnknown:
                     return "Error";
