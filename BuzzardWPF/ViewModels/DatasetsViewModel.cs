@@ -7,7 +7,6 @@ using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Windows;
 using BuzzardWPF.Data;
-using BuzzardWPF.IO;
 using BuzzardWPF.Logging;
 using BuzzardWPF.Management;
 using BuzzardWPF.Views;
@@ -277,11 +276,11 @@ namespace BuzzardWPF.ViewModels
                     continue;
                 }
 
-                var currentName = BuzzardTriggerFileTools.GetDatasetNameFromFilePath(dataset.FilePath);
+                var currentName = DMSDatasetPolicy.GetDatasetNameFromFilePath(dataset.FilePath);
 
-                if (BuzzardTriggerFileTools.NameHasInvalidCharacters(currentName) ||
-                    currentName.Length < BuzzardTriggerFileTools.MINIMUM_DATASET_NAME_LENGTH ||
-                    currentName.Length > BuzzardTriggerFileTools.MAXIMUM_DATASET_NAME_LENGTH)
+                if (DMSDatasetPolicy.NameHasInvalidCharacters(currentName) ||
+                    currentName.Length < DMSDatasetPolicy.MINIMUM_DATASET_NAME_LENGTH ||
+                    currentName.Length > DMSDatasetPolicy.MAXIMUM_DATASET_NAME_LENGTH)
                 {
                     datasetsToRename.Add(dataset);
                 }

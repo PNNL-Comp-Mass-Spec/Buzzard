@@ -2,7 +2,6 @@
 using System.IO;
 using System.Text;
 using BuzzardWPF.Data;
-using BuzzardWPF.IO;
 using BuzzardWPF.Logging;
 using BuzzardWPF.ViewModels;
 using BuzzardWPF.Views;
@@ -124,7 +123,7 @@ namespace BuzzardWPF.Management
 
             var hasArchivePrefix = fiFile.Name.StartsWith("x_", StringComparison.OrdinalIgnoreCase);
 
-            var datasetName = BuzzardTriggerFileTools.GetDatasetNameFromFilePath(fiFile.Name);
+            var datasetName = DMSDatasetPolicy.GetDatasetNameFromFilePath(fiFile.Name);
 
             var fixedName = FixName(sourceDataPath, datasetName);
 
@@ -152,7 +151,7 @@ namespace BuzzardWPF.Management
             // If it is invalid, replace with an underscore
             foreach (var letter in datasetName)
             {
-                if (BuzzardTriggerFileTools.NameHasInvalidCharacters(letter.ToString()))
+                if (DMSDatasetPolicy.NameHasInvalidCharacters(letter.ToString()))
                 {
                     fixedName.Append('_');
                 }
@@ -162,7 +161,7 @@ namespace BuzzardWPF.Management
                 }
             }
 
-            if (fixedName.Length < BuzzardTriggerFileTools.MINIMUM_DATASET_NAME_LENGTH)
+            if (fixedName.Length < DMSDatasetPolicy.MINIMUM_DATASET_NAME_LENGTH)
             {
                 // Add a date stamp
                 var fiSourceFile = new FileInfo(sourceDataPath);

@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using BuzzardWPF.IO;
 using BuzzardWPF.Logging;
 
 namespace BuzzardWPF.Searching
@@ -234,7 +233,7 @@ namespace BuzzardWPF.Searching
                                 datasetSizeKB = datasetFile.Length / 1024.0;
                                 creationDate = datasetFile.CreationTime;
                                 lastWriteDate = datasetFile.LastAccessTime;
-                                parentFolderPath = BuzzardTriggerFileTools.GetCaptureSubfolderPath(diBaseFolder, datasetFile);
+                                parentFolderPath = CapturePath.GetCaptureSubfolderPath(diBaseFolder, datasetFile);
                             }
                             else
                             {
@@ -242,7 +241,7 @@ namespace BuzzardWPF.Searching
                                 datasetSizeKB += datasetFolder.GetFiles("*", SearchOption.AllDirectories).Sum(file => file.Length / 1024.0);
                                 creationDate = datasetFolder.CreationTime;
                                 lastWriteDate = datasetFolder.LastAccessTime;
-                                parentFolderPath = BuzzardTriggerFileTools.GetCaptureSubfolderPath(diBaseFolder, datasetFolder);
+                                parentFolderPath = CapturePath.GetCaptureSubfolderPath(diBaseFolder, datasetFolder);
                             }
 
                             if (datasetSizeKB < config.MinimumSizeKB)

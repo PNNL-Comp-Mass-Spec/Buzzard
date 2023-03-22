@@ -7,7 +7,6 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using BuzzardWPF.Data.DMS;
-using BuzzardWPF.IO;
 using BuzzardWPF.IO.DMS;
 using BuzzardWPF.IO.SQLite;
 using BuzzardWPF.Logging;
@@ -233,7 +232,7 @@ namespace BuzzardWPF
 
                     if (TriggerFileTools.ErrorMessages.Count > 0)
                     {
-                        BuzzardTriggerFileTools.ShowErrorMessages(TriggerFileTools.ErrorMessages);
+                        TriggerFileTools.ShowErrorMessages(TriggerFileTools.ErrorMessages);
                     }
                 }
             }
@@ -291,7 +290,7 @@ namespace BuzzardWPF
                 "Test error message 7 - Brown",
                 "Test error message 8 - Orange"
             };
-            BuzzardTriggerFileTools.ShowErrorMessages(testErrorMessages);
+            TriggerFileTools.ShowErrorMessages(testErrorMessages);
         }
 
         private static void LogCriticalError(string errorMessage, Exception ex, bool showPopup = true)

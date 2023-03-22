@@ -76,6 +76,7 @@
     <Compile Include="Converters\EmptyRequestNameConverter.cs" />
     <Compile Include="Converters\EnumDescriptionConverter.cs" />
     <Compile Include="Data\BuzzardDataset.cs" />
+    <Compile Include="Data\DatasetPolicy.cs" />
     <Compile Include="Data\DatasetSource.cs" />
     <Compile Include="Data\DatasetStatus.cs" />
     <Compile Include="Data\DatasetTrie.cs" />
@@ -101,7 +102,6 @@
       <DependentUpon>DynamicSplashScreenWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="IO\BuzzardTriggerFileTools.cs" />
     <Compile Include="IO\DMS\DMSConfig.cs" />
     <Compile Include="IO\DMS\DMSDBConnection.cs" />
     <Compile Include="IO\DMS\DMSDBReader.cs" />
@@ -143,6 +143,7 @@
     <Compile Include="Management\ViewModelCache.cs" />
     <Compile Include="Management\WatcherMetadata.cs" />
     <Compile Include="Properties\SettingsUpgradeHandler.cs" />
+    <Compile Include="Searching\CapturePath.cs" />
     <Compile Include="Searching\DatasetFoundEventArgs.cs" />
     <Compile Include="Searching\ErrorEventArgs.cs" />
     <Compile Include="Searching\FileSearchBuzzardier.cs" />

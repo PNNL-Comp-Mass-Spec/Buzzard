@@ -7,7 +7,6 @@ using System.Reactive.Concurrency;
 using System.Threading;
 using System.Windows;
 using BuzzardWPF.Data;
-using BuzzardWPF.IO;
 using BuzzardWPF.Logging;
 using BuzzardWPF.Searching;
 using ReactiveUI;
@@ -186,7 +185,7 @@ namespace BuzzardWPF.Management
                     // File was renamed, either update an existing dataset, or add a new one
                     DatasetManager.CreatePendingDataset(
                         fullFilePath,
-                        BuzzardTriggerFileTools.GetCaptureSubfolderPath(Config.DirectoryPath, fullFilePath),
+                        CapturePath.GetCaptureSubfolderPath(Config.DirectoryPath, fullFilePath),
                         allowFolderMatch,
                         DatasetSource.Watcher,
                         renamed.OldFullPath);
@@ -198,14 +197,14 @@ namespace BuzzardWPF.Management
                     var fiDatasetFile = new FileInfo(fullFilePath);
                     if (fiDatasetFile.Exists)
                     {
-                        parentFolderPath = BuzzardTriggerFileTools.GetCaptureSubfolderPath(diBaseFolder, fiDatasetFile);
+                        parentFolderPath = CapturePath.GetCaptureSubfolderPath(diBaseFolder, fiDatasetFile);
                     }
                     else
                     {
                         var diDatasetFolder = new DirectoryInfo(fullFilePath);
                         if (diDatasetFolder.Exists)
                         {
-                            parentFolderPath = BuzzardTriggerFileTools.GetCaptureSubfolderPath(diBaseFolder, diDatasetFolder);
+                            parentFolderPath = CapturePath.GetCaptureSubfolderPath(diBaseFolder, diDatasetFolder);
                         }
                         else
                         {

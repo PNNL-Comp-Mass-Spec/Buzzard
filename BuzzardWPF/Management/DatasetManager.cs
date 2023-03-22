@@ -7,7 +7,7 @@ using System.Reactive.Concurrency;
 using System.Text.RegularExpressions;
 using System.Threading;
 using BuzzardWPF.Data;
-using BuzzardWPF.IO;
+using BuzzardWPF.Data.DMS;
 using BuzzardWPF.Logging;
 using BuzzardWPF.Properties;
 using BuzzardWPF.Searching;
@@ -163,7 +163,7 @@ namespace BuzzardWPF.Management
                     return null;
                 }
 
-                if (!BuzzardTriggerFileTools.ValidateDatasetName(dataset))
+                if (!DMSDatasetPolicy.ValidateDatasetName(dataset))
                 {
                     return null;
                 }
@@ -176,7 +176,7 @@ namespace BuzzardWPF.Management
                         dataset.DatasetStatus = DatasetStatus.Pending;
                     }
 
-                    BuzzardTriggerFileTools.CreateTriggerString(dataset);
+                    TriggerFileTools.CreateTriggerString(dataset);
 
                     if (dataset.DatasetStatus == DatasetStatus.MissingRequiredInfo)
                     {
@@ -192,7 +192,7 @@ namespace BuzzardWPF.Management
                 }
 
                 ApplicationLogger.LogMessage(0, string.Format("Creating Trigger File: {0} for {1}", DateTime.Now, dataset.DmsData.DatasetName));
-                var triggerFilePath = BuzzardTriggerFileTools.VerifyAndGenerateTriggerFile(dataset);
+                var triggerFilePath = TriggerFileTools.VerifyAndGenerateTriggerFile(dataset);
 
                 if (string.IsNullOrEmpty(triggerFilePath))
                 {
@@ -472,7 +472,7 @@ namespace BuzzardWPF.Management
                     FilePath = datasetFileOrFolderPath,
                     DmsData =
                     {
-                        DatasetName = BuzzardTriggerFileTools.GetDatasetNameFromFilePath(datasetFileOrFolderPath),
+                        DatasetName = DMSDatasetPolicy.GetDatasetNameFromFilePath(datasetFileOrFolderPath),
                         CartName = WatcherMetadata.CartName
                     }
                 };
@@ -500,7 +500,7 @@ namespace BuzzardWPF.Management
                     dataset.CaptureSubdirectoryPath = Path.Combine(Config.BaseCaptureSubdirectory, captureSubfolderPath);
                 }
 
-                BuzzardTriggerFileTools.ValidateDatasetName(dataset);
+                DMSDatasetPolicy.ValidateDatasetName(dataset);
 
                 newDatasetFound = true;
             }

@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Windows;
 using System.Xml;
 using BuzzardWPF.Logging;
 using BuzzardWPF.Properties;
 using BuzzardWPF.Utility;
+using BuzzardWPF.ViewModels;
+using BuzzardWPF.Views;
 
 namespace BuzzardWPF.Data.DMS
 {
@@ -21,6 +24,98 @@ namespace BuzzardWPF.Data.DMS
         /// </summary>
         /// <remarks>This list is cleared each time GenerateTriggerFile or MoveLocalTriggerFiles is called</remarks>
         public static List<string> ErrorMessages { get; } = new List<string>();
+
+        /// <summary>
+        /// Show error messages in a top-most window
+        /// </summary>
+        /// <param name="errorMessages"></param>
+        public static void ShowErrorMessages(List<string> errorMessages)
+        {
+            // Use the Dispatcher to avoid apartment threading error
+            // "The calling thread must be STA, because many UI components require this"
+            Application.Current.Dispatcher.Invoke(delegate
+            {
+                ShowErrorMessagesWork(errorMessages);
+            });
+        }
+
+        private static void ShowErrorMessagesWork(List<string> errorMessages)
+        {
+            var errorMessagesViewModel = new ErrorMessagesViewModel(errorMessages);
+
+            var errorMessagesView = new ErrorMessagesView
+            {
+                DataContext = errorMessagesViewModel,
+                ShowActivated = true,
+                Topmost = true
+            };
+
+            errorMessagesView.Show();
+        }
+
+        /// <summary>
+        /// Generates the trigger file text, but does not save a file
+        /// </summary>
+        /// <param name="dataset"></param>
+        /// <returns>Trigger file XML (as a string) if success, otherwise null</returns>
+        /// <remarks>In the dataset object, DatasetStatus will be set to MissingRequiredInfo if field validation fails</remarks>
+        public static string CreateTriggerString(BuzzardDataset dataset)
+        {
+            if (!DMSDatasetPolicy.ValidateDatasetName(dataset))
+            {
+                return null;
+            }
+
+            if (!DMSDatasetPolicy.VerifyDataset(dataset) || dataset.DatasetStatus == DatasetStatus.MissingRequiredInfo)
+            {
+                return null;
+            }
+
+            var data = GenerateXmlDoc(dataset);
+
+            return data.ToString();
+        }
+
+        /// <summary>
+        /// Generates a trigger file for a sample
+        /// </summary>
+        /// <param name="dataset">Dataset object</param>
+        /// <returns>Trigger file path if success, otherwise null</returns>
+        /// <remarks>In the dataset object, DatasetStatus will be set to MissingRequiredInfo if field validation fails</remarks>
+        public static string VerifyAndGenerateTriggerFile(BuzzardDataset dataset)
+        {
+            if (!DMSDatasetPolicy.ValidateDatasetName(dataset))
+            {
+                return null;
+            }
+
+            if (!DMSDatasetPolicy.VerifyDataset(dataset) || dataset.DatasetStatus == DatasetStatus.MissingRequiredInfo)
+            {
+                return null;
+            }
+
+            var triggerFilePath = GenerateTriggerFile(dataset);
+            if (!string.IsNullOrWhiteSpace(triggerFilePath))
+            {
+                if (ErrorMessages.Count > 0)
+                {
+                    ShowErrorMessages(ErrorMessages);
+                }
+
+                return triggerFilePath;
+            }
+
+            if (ErrorMessages.Count == 0)
+            {
+                ShowErrorMessages(new List<string> { "Unknown error creating the trigger file for " + dataset });
+            }
+            else
+            {
+                ShowErrorMessages(ErrorMessages);
+            }
+
+            return null;
+        }
 
         /// <summary>
         /// Generates a trigger file for a sample
