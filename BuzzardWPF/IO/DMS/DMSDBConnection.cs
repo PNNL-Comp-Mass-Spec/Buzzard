@@ -36,6 +36,7 @@ namespace BuzzardWPF.IO.DMS
         }
 
         private string connectionString = "";
+        private bool connectionStringUpdated = true;
         private DateTime lastConnectionAttempt = DateTime.MinValue;
         private readonly TimeSpan minTimeBetweenConnectionAttempts = TimeSpan.FromSeconds(30);
         private DateTime connectionStringLoadTime = DateTime.MinValue;
@@ -55,7 +56,7 @@ namespace BuzzardWPF.IO.DMS
         {
             var updated = RefreshConfiguration();
 
-            if (dbTools != null && !updated)
+            if (dbTools != null && !updated && !connectionStringUpdated)
             {
                 if (dbTools.TestDatabaseConnection())
                 {
@@ -80,6 +81,7 @@ namespace BuzzardWPF.IO.DMS
             if (db.TestDatabaseConnection())
             {
                 dbTools = db;
+                connectionStringUpdated = false;
                 ErrMsg = "";
             }
             else
@@ -131,6 +133,7 @@ namespace BuzzardWPF.IO.DMS
 
             if (!string.IsNullOrWhiteSpace(connectionString) && mConfiguration.Equals(lastConfig))
             {
+                connectionStringLoadTime = DateTime.UtcNow;
                 return false;
             }
 
@@ -145,6 +148,7 @@ namespace BuzzardWPF.IO.DMS
                 AppUtils.DecodeShiftCipher(mConfiguration.EncodedPassword), ApplicationName);
 
             connectionStringLoadTime = DateTime.UtcNow;
+            connectionStringUpdated = true;
 
             if (!mConnectionStringLogged || !lastConnectionString.StartsWith(cleanConnectionString))
             {
