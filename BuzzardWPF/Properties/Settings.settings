@@ -5,12 +5,6 @@
     <Setting Name="CacheFileName" Type="System.String" Scope="User">
       <Value Profile="(Default)">offlinecache.db3</Value>
     </Setting>
-    <Setting Name="DMSPwd" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Mprptq3v</Value>
-    </Setting>
-    <Setting Name="DMSVersion" Type="System.String" Scope="User">
-      <Value Profile="(Default)">DMS5</Value>
-    </Setting>
     <Setting Name="FirstTime" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>

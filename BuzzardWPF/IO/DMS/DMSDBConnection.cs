@@ -21,8 +21,6 @@ namespace BuzzardWPF.IO.DMS
 
         public string ErrMsg { get; set; } = "";
 
-        public string DMSVersion => mConfiguration.DatabaseName;
-
         public string SchemaPrefix => mConfiguration.DatabaseSchemaPrefix;
 
         private DMSConfig mConfiguration;
