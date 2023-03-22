@@ -22,14 +22,18 @@ namespace BuzzardWPF.Management
             fillDownVm?.Dispose();
             experimentsVm?.Dispose();
             workPackageVm?.Dispose();
+            errorMessagesVm?.Dispose();
             fillDownVm = null;
             experimentsVm = null;
             workPackageVm = null;
+            errorMessagesVm = null;
         }
 
         private FillDownWindowViewModel fillDownVm;
         private ExperimentsViewerViewModel experimentsVm;
         private WorkPackageSelectionViewModel workPackageVm;
+        private ErrorMessagesViewModel errorMessagesVm;
+
         public FilldownBuzzardDataset FilldownDataset { get; private set; }
 
         public FillDownWindowViewModel GetFillDownVm(FilldownBuzzardDataset filldownDataset)
@@ -70,6 +74,19 @@ namespace BuzzardWPF.Management
         public WorkPackageSelectionViewModel GetWorkPackageVm()
         {
             return workPackageVm ?? (workPackageVm = new WorkPackageSelectionViewModel());
+        }
+
+        public ErrorMessagesViewModel GetErrorMessagesVm()
+        {
+            // The goal of this method is to only ever show a single instance of the error messages window.
+            // If other errors occur before the user acknowledges/closes the window, they are added to the list displayed.
+            return errorMessagesVm ?? (errorMessagesVm = new ErrorMessagesViewModel(() =>
+            {
+                // When the window is closed, dispose of the view model
+                var errorVm = errorMessagesVm;
+                errorMessagesVm = null;
+                errorVm?.Dispose();
+            }));
         }
     }
 }

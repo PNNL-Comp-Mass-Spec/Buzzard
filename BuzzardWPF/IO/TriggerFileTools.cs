@@ -6,6 +6,7 @@ using System.Windows;
 using System.Xml;
 using BuzzardWPF.Data;
 using BuzzardWPF.Logging;
+using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
 using BuzzardWPF.Utility;
 using BuzzardWPF.ViewModels;
@@ -32,26 +33,9 @@ namespace BuzzardWPF.IO
         /// <param name="errorMessages"></param>
         public static void ShowErrorMessages(List<string> errorMessages)
         {
-            // Use the Dispatcher to avoid apartment threading error
-            // "The calling thread must be STA, because many UI components require this"
-            Application.Current.Dispatcher.Invoke(delegate
-            {
-                ShowErrorMessagesWork(errorMessages);
-            });
-        }
-
-        private static void ShowErrorMessagesWork(List<string> errorMessages)
-        {
-            var errorMessagesViewModel = new ErrorMessagesViewModel(errorMessages);
-
-            var errorMessagesView = new ErrorMessagesView
-            {
-                DataContext = errorMessagesViewModel,
-                ShowActivated = true,
-                Topmost = true
-            };
-
-            errorMessagesView.Show();
+            var vm = ViewModelCache.Instance.GetErrorMessagesVm();
+            vm.AddMessages(errorMessages);
+            vm.ShowWindow();
         }
 
         /// <summary>
