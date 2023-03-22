@@ -86,10 +86,8 @@
     <Compile Include="Data\DMS\ExperimentData.cs" />
     <Compile Include="Data\DMS\InstrumentGroupInfo.cs" />
     <Compile Include="Data\DMS\InstrumentInfo.cs" />
-    <Compile Include="Data\DMS\ITriggerFileData.cs" />
     <Compile Include="Data\DMS\PersistenceSettingAttribute.cs" />
     <Compile Include="Data\DMS\ProposalUser.cs" />
-    <Compile Include="Data\DMS\TriggerFileTools.cs" />
     <Compile Include="Data\DMS\UserIDPIDCrossReferenceEntry.cs" />
     <Compile Include="Data\DMS\UserInfo.cs" />
     <Compile Include="Data\DMS\WorkPackageInfo.cs" />
@@ -117,6 +115,7 @@
     <Compile Include="IO\SQLite\SQLiteCacheDefaultData.cs" />
     <Compile Include="IO\SQLite\SQLiteCacheIO.cs" />
     <Compile Include="IO\SQLite\SQLiteTools.cs" />
+    <Compile Include="IO\TriggerFileTools.cs" />
     <Compile Include="Logging\ApplicationLogger.cs" />
     <Compile Include="Logging\ErrorLoggerArgs.cs" />
     <Compile Include="Logging\FileLogger.cs" />

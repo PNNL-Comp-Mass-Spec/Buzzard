@@ -4,13 +4,14 @@ using System.Globalization;
 using System.IO;
 using System.Windows;
 using System.Xml;
+using BuzzardWPF.Data;
 using BuzzardWPF.Logging;
 using BuzzardWPF.Properties;
 using BuzzardWPF.Utility;
 using BuzzardWPF.ViewModels;
 using BuzzardWPF.Views;
 
-namespace BuzzardWPF.Data.DMS
+namespace BuzzardWPF.IO
 {
     /// <summary>
     /// Tools for generation of trigger files
@@ -121,7 +122,7 @@ namespace BuzzardWPF.Data.DMS
         /// Generates a trigger file for a sample
         /// </summary>
         /// <param name="sample"></param>
-        public static string GenerateTriggerFile(ITriggerFileData sample)
+        public static string GenerateTriggerFile(BuzzardDataset sample)
         {
             /*
              * NOTE: Disabled because the 'CopyTriggerFiles' setting allows us to create the trigger file locally, but not copy it to the server.
@@ -147,7 +148,7 @@ namespace BuzzardWPF.Data.DMS
         /// Generates the XML-formatted trigger file contents
         /// </summary>
         /// <param name="sample">sample object for sample that was run</param>
-        protected static XmlDocument GenerateXmlDoc(ITriggerFileData sample)
+        private static XmlDocument GenerateXmlDoc(BuzzardDataset sample)
         {
             // Create and initialize the document
             var triggerFileContents = new XmlDocument();
@@ -258,7 +259,7 @@ namespace BuzzardWPF.Data.DMS
         /// <param name="sample"></param>
         /// <param name="extension"></param>
         /// <returns></returns>
-        public static string GetTriggerFileName(ITriggerFileData sample, string extension)
+        public static string GetTriggerFileName(BuzzardDataset sample, string extension)
         {
             var datasetName = sample.DmsData.DatasetName;
             var outFileName =
@@ -276,7 +277,7 @@ namespace BuzzardWPF.Data.DMS
         /// <param name="doc">XML document to be written</param>
         /// <param name="sample">Name of the sample this trigger file is for</param>
         /// <returns>The remote (or local) trigger file path if successful; an empty string if an error</returns>
-        protected static string SaveFile(XmlDocument doc, ITriggerFileData sample)
+        protected static string SaveFile(XmlDocument doc, BuzzardDataset sample)
         {
             var sampleName = sample.DmsData.DatasetName;
             var outFileName = GetTriggerFileName(sample, ".xml");

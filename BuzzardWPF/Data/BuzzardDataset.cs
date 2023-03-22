@@ -10,7 +10,7 @@ using ReactiveUI;
 
 namespace BuzzardWPF.Data
 {
-    public class BuzzardDataset : ReactiveObject, ITriggerFileData, IDisposable
+    public class BuzzardDataset : ReactiveObject, IDisposable
     {
         // Ignore Spelling: Unreviewed
 
@@ -181,18 +181,27 @@ namespace BuzzardWPF.Data
             set => this.RaiseAndSetIfChanged(ref emslProposalUser, value);
         }
 
+        /// <summary>
+        /// Name of the column used (as entered in DMS)
+        /// </summary>
         public string ColumnName
         {
             get => columnName;
             set => this.RaiseAndSetIfChanged(ref columnName, value);
         }
 
+        /// <summary>
+        /// Name of the shared directory used to access the dataset. If empty, the instrument default (in DMS) is used.
+        /// </summary>
         public string CaptureShareName
         {
             get => captureShareName;
             set => this.RaiseAndSetIfChanged(ref captureShareName, value);
         }
 
+        /// <summary>
+        /// Subdirectory containing the dataset
+        /// </summary>
         public string CaptureSubdirectoryPath
         {
             get => captureSubdirectoryPath;
@@ -272,28 +281,43 @@ namespace BuzzardWPF.Data
             set => this.RaiseAndSetIfChanged(ref notOnlySource, value);
         }
 
+        /// <summary>
+        /// Name of the instrument (as entered in DMS)
+        /// </summary>
         public string InstrumentName
         {
             get => instrumentName;
             set => this.RaiseAndSetIfChanged(ref instrumentName, value);
         }
 
+        /// <summary>
+        /// Name of operator (as entered in DMS). Can be just userID, just user's name, or "user's name (userID)"
+        /// </summary>
         public string Operator
         {
             get => instrumentOperator;
             set => this.RaiseAndSetIfChanged(ref instrumentOperator, value);
         }
 
+        /// <summary>
+        /// Separation type used (as entered in DMS)
+        /// </summary>
         public string SeparationType
         {
             get => separationType;
             set => this.RaiseAndSetIfChanged(ref separationType, value);
         }
 
+        /// <summary>
+        /// DMS Data: Request ID, Dataset Name, etc.
+        /// </summary>
         public DMSData DmsData { get; }
 
         public DateTime DMSDataLastUpdate { get; set; }
 
+        /// <summary>
+        /// DMS interest rating (or 'Unreviewed')
+        /// </summary>
         public string InterestRating
         {
             get => interestRating;
@@ -364,12 +388,18 @@ namespace BuzzardWPF.Data
             }
         }
 
+        /// <summary>
+        /// Time when the Acquisition started
+        /// </summary>
         public DateTime RunStart
         {
             get => runStart;
             private set => this.RaiseAndSetIfChanged(ref runStart, value);
         }
 
+        /// <summary>
+        /// Time when the Acquisition ended
+        /// </summary>
         public DateTime RunFinish
         {
             get => runFinish;

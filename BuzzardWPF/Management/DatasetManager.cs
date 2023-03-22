@@ -7,7 +7,7 @@ using System.Reactive.Concurrency;
 using System.Text.RegularExpressions;
 using System.Threading;
 using BuzzardWPF.Data;
-using BuzzardWPF.Data.DMS;
+using BuzzardWPF.IO;
 using BuzzardWPF.Logging;
 using BuzzardWPF.Properties;
 using BuzzardWPF.Searching;
