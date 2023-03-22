@@ -4,7 +4,7 @@ using BuzzardWPF.Data.DMS;
 
 namespace BuzzardWPF.IO.DMS
 {
-    internal class DMSDBReader : IDisposable
+    internal class DMSDBReader
     {
         // ReSharper disable CommentTypo
 
@@ -20,25 +20,6 @@ namespace BuzzardWPF.IO.DMS
         public DMSDBReader()
         {
             db = new DMSDBConnection();
-        }
-
-        /// <summary>
-        /// Close the stored SqlConnection
-        /// </summary>
-        public void CloseConnection()
-        {
-            db.CloseConnection();
-        }
-
-        ~DMSDBReader()
-        {
-            Dispose();
-        }
-
-        public void Dispose()
-        {
-            CloseConnection();
-            GC.SuppressFinalize(this);
         }
 
         /// <summary>

@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.IO;
-using System.Threading;
 using BuzzardWPF.Logging;
 using BuzzardWPF.Utility;
 using PRISM;
+using PRISMDatabaseUtils;
 
 namespace BuzzardWPF.IO.DMS
 {
-    internal class DMSDBConnection : IDisposable
+    internal class DMSDBConnection
     {
         public static string ApplicationName { get; set; } = "-Buzzard- -version-";
 
@@ -19,11 +18,13 @@ namespace BuzzardWPF.IO.DMS
         private const string CONFIG_FILE = "PrismDMS.json";
         private const string CENTRAL_CONFIG_FILE_PATH = @"\\proto-5\BionetSoftware\Buzzard\PrismDMS.json";
 
-        public string ErrMsg { get; set; } = "";
+        public string ErrMsg { get; private set; } = "";
 
         public string SchemaPrefix => mConfiguration.DatabaseSchemaPrefix;
 
         private DMSConfig mConfiguration;
+
+        private IDBTools dbTools = null;
 
         /// <summary>
         /// Constructor
@@ -34,97 +35,59 @@ namespace BuzzardWPF.IO.DMS
             LoadLocalConfiguration();
         }
 
-        private SqlConnection connection;
-        private string lastConnectionString = "";
+        private string connectionString = "";
         private DateTime lastConnectionAttempt = DateTime.MinValue;
         private readonly TimeSpan minTimeBetweenConnectionAttempts = TimeSpan.FromSeconds(30);
-        private readonly TimeSpan connectionTimeoutTime = TimeSpan.FromSeconds(60);
-        private Timer connectionTimeoutTimer;
-        private string lastConnectionStringLoaded = "";
-        private DateTime lastConnectionStringLoadTime = DateTime.MinValue;
-        private string failedConnectionAttemptMessage = "";
+        private DateTime connectionStringLoadTime = DateTime.MinValue;
+        private string cleanConnectionString = "";
 
-        private void ConnectionTimeoutActions(object sender)
+        private void ConnectionErrorEvent(string message, Exception ex)
         {
-            CloseConnection();
-        }
-
-        /// <summary>
-        /// Close the stored SqlConnection
-        /// </summary>
-        public void CloseConnection()
-        {
-            try
-            {
-                connection?.Close();
-                connection?.Dispose();
-                connectionTimeoutTimer?.Dispose();
-                connection = null;
-            }
-            catch
-            {
-                // Swallow any exceptions that occurred...
-            }
-        }
-
-        ~DMSDBConnection()
-        {
-            Dispose();
-        }
-
-        public void Dispose()
-        {
-            CloseConnection();
-            GC.SuppressFinalize(this);
+            ErrMsg = $"{message}; {ex.Message}";
+            ApplicationLogger.LogError(0, ErrMsg);
         }
 
         /// <summary>
         /// Get a SQLiteConnection, but control creation of new connections based on UseConnectionPooling
         /// </summary>
         /// <returns></returns>
-        private SqlConnectionWrapper GetConnection()
+        private IDBTools GetConnection()
         {
-            var connString = GetConnectionString();
+            var updated = RefreshConfiguration();
 
-            // Reset out the close timer with every use
-            connectionTimeoutTimer?.Dispose();
-            connectionTimeoutTimer = new Timer(ConnectionTimeoutActions, this, connectionTimeoutTime, TimeSpan.FromMilliseconds(-1));
-
-            var newServer = false;
-            if (!lastConnectionString.Equals(connString))
+            if (dbTools != null && !updated)
             {
-                CloseConnection();
-                newServer = true;
-            }
-
-            if (connection == null && (DateTime.UtcNow > lastConnectionAttempt.Add(minTimeBetweenConnectionAttempts) || newServer))
-            {
-                lastConnectionString = connString;
-                lastConnectionAttempt = DateTime.UtcNow;
-                try
+                if (dbTools.TestDatabaseConnection())
                 {
-                    var cn = new SqlConnection(connString);
-                    cn.Open();
-                    connection = cn;
-                    failedConnectionAttemptMessage = "";
+                    ErrMsg = "";
+                    return dbTools;
                 }
-                catch (Exception e)
-                {
-                    failedConnectionAttemptMessage = $"Error connecting to database; Please check network connections and try again. Exception message: {e.Message}";
-                    ErrMsg = failedConnectionAttemptMessage;
-                    ApplicationLogger.LogError(0, failedConnectionAttemptMessage);
-                }
+
+                // Assuming temporary failure of the connection
+                return null;
             }
 
-            if (connection != null)
+            if (dbTools == null && (DateTime.UtcNow <= lastConnectionAttempt.Add(minTimeBetweenConnectionAttempts) && !updated))
             {
-                // MSSQL/SqlConnection connection pooling: handled transparently based on connection strings
-                // https://docs.microsoft.com/en-us/dotnet/framework/data/adonet/sql-server-connection-pooling
-                connection.Close();
-                return new SqlConnectionWrapper(connString);
+                // Prevent multiple checks for a database connection in close succession
+                return null;
             }
 
-            return new SqlConnectionWrapper(connection, failedConnectionAttemptMessage);
+            var db = DbToolsFactory.GetDBTools(mConfiguration.DatabaseSoftware, connectionString);
+            db.ErrorEvent += ConnectionErrorEvent;
+            lastConnectionAttempt = DateTime.UtcNow;
+
+            if (db.TestDatabaseConnection())
+            {
+                dbTools = db;
+                ErrMsg = "";
+            }
+            else
+            {
+                dbTools = null;
+            }
+
+            return dbTools;
         }
 
         /// <summary>
@@ -133,9 +96,7 @@ namespace BuzzardWPF.IO.DMS
         /// <returns>True if the connection configuration was updated and is different from the previous configuration</returns>
         public bool RefreshConnectionConfiguration()
         {
-            var lastLoaded = lastConnectionStringLoaded;
-            var newConnString = GetConnectionString();
-            return !lastLoaded.Equals(newConnString);
+            return RefreshConfiguration();
         }
 
         /// <summary>
@@ -144,26 +105,22 @@ namespace BuzzardWPF.IO.DMS
         /// <returns></returns>
         public string GetCleanConnectionString()
         {
-            GetConnectionString();
-            return lastCleanConnectionString;
+            RefreshConfiguration();
+            return cleanConnectionString;
         }
 
         /// <summary>
         /// Gets DMS connection string from config file
         /// </summary>
-        /// <returns></returns>
-        private string GetConnectionString()
+        /// <returns>True if the configuration was updated</returns>
+        private bool RefreshConfiguration()
         {
-            if (lastConnectionStringLoadTime > DateTime.UtcNow.AddMinutes(-10))
+            if (connectionStringLoadTime > DateTime.UtcNow.AddMinutes(-10))
             {
-                return lastConnectionStringLoaded;
+                return false;
             }
 
-            // Construct the connection string, for example:
-            // Data Source=Gigasax;Initial Catalog=DMS5;User ID=LCMSNetUser;Password=ThePassword"
-
-            // ToDo: update this to construct a Postgres connection string
-
+            var lastConfig = mConfiguration;
             var loaded = LoadCentralConfiguration();
             if (!loaded)
             {
@@ -172,35 +129,31 @@ namespace BuzzardWPF.IO.DMS
 
             mConfiguration.ValidateConfig();
 
-            var retStr = "Data Source=";
-
-            // Get the DMS Server name
-            retStr += mConfiguration.DatabaseServer;
-
-            // Get name of the DMS database to use
-            retStr += ";Initial Catalog=" + mConfiguration.DatabaseName + ";User ID=LCMSNetUser";
-
-            if (!string.IsNullOrWhiteSpace(ApplicationName))
+            if (!string.IsNullOrWhiteSpace(connectionString) && mConfiguration.Equals(lastConfig))
             {
-                retStr += $";Application Name={ApplicationName}";
+                return false;
             }
 
-            if (!mConnectionStringLogged || !lastConnectionStringLoaded.StartsWith(retStr))
+            var lastConnectionString = cleanConnectionString;
+
+            cleanConnectionString = DbToolsFactory.GetConnectionString(mConfiguration.DatabaseSoftware,
+                mConfiguration.DatabaseServer, mConfiguration.DatabaseName, mConfiguration.Username,
+                "", ApplicationName, false);
+
+            connectionString = DbToolsFactory.GetConnectionString(mConfiguration.DatabaseSoftware,
+                mConfiguration.DatabaseServer, mConfiguration.DatabaseName, mConfiguration.Username,
+                AppUtils.DecodeShiftCipher(mConfiguration.EncodedPassword), ApplicationName);
+
+            connectionStringLoadTime = DateTime.UtcNow;
+
+            if (!mConnectionStringLogged || !lastConnectionString.StartsWith(cleanConnectionString))
             {
                 ApplicationLogger.LogMessage(ApplicationLogger.CONST_STATUS_LEVEL_DETAILED,
-                    "Database connection string: " + retStr + ";Password=....");
+                    "Database connection string: " + cleanConnectionString + ";Password=....");
                 mConnectionStringLogged = true;
             }
 
-            lastCleanConnectionString = retStr;
-
-            // Get the password for user LCMSNetUser
-            // Decrypts password received from config file
-            retStr += ";Password=" + AppUtils.DecodeShiftCipher(mConfiguration.EncodedPassword);
-
-            lastConnectionStringLoadTime = DateTime.UtcNow;
-            lastConnectionStringLoaded = retStr;
-            return retStr;
+            return true;
         }
 
         /// <summary>
@@ -280,43 +233,13 @@ namespace BuzzardWPF.IO.DMS
         /// <returns>List containing the table's contents</returns>
         public IEnumerable<string> GetSingleColumnTable(string cmdStr)
         {
-            var cn = GetConnection();
-            if (!cn.IsValid)
+            var db = GetConnection();
+            if (db == null)
             {
-                cn.Dispose();
-                throw new Exception(cn.FailedConnectionAttemptMessage);
+                throw new Exception(ErrMsg);
             }
 
-            using (cn)
-            using (var cmd = cn.CreateCommand())
-            {
-                cmd.CommandText = cmdStr;
-                cmd.CommandType = CommandType.Text;
-
-                SqlDataReader reader;
-
-                // Get a table from the database
-                try
-                {
-                    reader = cmd.ExecuteReader();
-                }
-                catch (Exception ex)
-                {
-                    ErrMsg = "Exception getting single column table via command: " + cmdStr;
-                    //                  throw new DatabaseDataException(ErrMsg, ex);
-                    ApplicationLogger.LogError(0, ErrMsg, ex);
-                    throw new Exception(ErrMsg, ex);
-                }
-
-                using (reader)
-                {
-                    // Copy the table contents into the list
-                    while (reader.Read())
-                    {
-                        yield return reader.GetString(0);
-                    }
-                }
-            }
+            return db.GetQueryResultsEnumerable(cmdStr, reader => reader.GetString(0));
         }
 
         /// <summary>
@@ -330,30 +253,21 @@ namespace BuzzardWPF.IO.DMS
         private DataTable GetDataTable(string cmdStr)
         {
             var returnTable = new DataTable();
-            var cn = GetConnection();
-            if (!cn.IsValid)
+            var db = GetConnection();
+            if (db == null)
             {
-                cn.Dispose();
-                throw new Exception(cn.FailedConnectionAttemptMessage);
+                throw new Exception(ErrMsg);
             }
 
-            using (cn)
-            using (var da = new SqlDataAdapter())
-            using (var cmd = cn.CreateCommand())
+            try
             {
-                cmd.CommandText = cmdStr;
-                cmd.CommandType = CommandType.Text;
-                da.SelectCommand = cmd;
-                try
-                {
-                    da.Fill(returnTable);
-                }
-                catch (Exception ex)
-                {
-                    var errMsg = "SQL exception getting data table via query " + cmdStr;
-                    ApplicationLogger.LogError(0, errMsg, ex);
-                    throw new DatabaseDataException(errMsg, ex);
-                }
+                db.GetQueryResultsDataTable(cmdStr, out returnTable);
+            }
+            catch (Exception ex)
+            {
+                var errMsg = "SQL exception getting data table via query " + cmdStr;
+                ApplicationLogger.LogError(0, errMsg, ex);
+                throw new DatabaseDataException(errMsg, ex);
             }
 
             // Return the output table
@@ -363,27 +277,13 @@ namespace BuzzardWPF.IO.DMS
         // TODO: do I need to wrap usages of this in a foreach loop and yield return?
         public IEnumerable<T> ExecuteReader<T>(string sqlCmd, Func<IDataReader, T> rowParseObjectCreator)
         {
-            var cn = GetConnection();
-            if (!cn.IsValid)
+            var db = GetConnection();
+            if (db == null)
             {
-                cn.Dispose();
-                throw new Exception(cn.FailedConnectionAttemptMessage);
+                throw new Exception(ErrMsg);
             }
 
-            using (cn)
-            using (var cmd = cn.CreateCommand())
-            {
-                cmd.CommandText = sqlCmd;
-                cmd.CommandType = CommandType.Text;
-
-                using (var reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        yield return rowParseObjectCreator(reader);
-                    }
-                }
-            }
+            return db.GetQueryResultsEnumerable(sqlCmd, rowParseObjectCreator);
         }
 
         /// <summary>
@@ -395,16 +295,22 @@ namespace BuzzardWPF.IO.DMS
         {
             try
             {
-                using (var conn = GetConnection())
+                var db = GetConnection();
+                if (db == null)
+                {
+                    throw new Exception(ErrMsg);
+                }
 
                 // Test getting 1 row from every table we query?...
-                using (var cmd = conn.CreateCommand())
+                // Keys in the dictionary are view names, values are the column to use when ranking rows using Row_number()
+                foreach (var item in tableNamesAndCheckColumns)
                 {
-                    // Keys in the dictionary are view names, values are the column to use when ranking rows using Row_number()
-                    foreach (var item in tableNamesAndCheckColumns)
+                    var cmdText = $"SELECT RowNum FROM (SELECT Row_number() Over (ORDER BY {item.Value}) AS RowNum FROM {item.Key}) RankQ WHERE RowNum = 1;";
+                    var result = db.GetQueryScalar(cmdText, out _); // TODO: Test the returned value? (for what?)
+
+                    if (!result)
                     {
-                        cmd.CommandText = $"SELECT RowNum FROM (SELECT Row_number() Over (ORDER BY {item.Value}) AS RowNum FROM {item.Key}) RankQ WHERE RowNum = 1;";
-                        cmd.ExecuteScalar(); // TODO: Test the returned value? (for what?)
+                        return false;
                     }
                 }
             }

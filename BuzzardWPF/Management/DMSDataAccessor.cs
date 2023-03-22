@@ -901,7 +901,6 @@ namespace BuzzardWPF.Management
         public void Dispose()
         {
             autoUpdateTimer?.Dispose();
-            dmsDbTools?.Dispose();
             proposalIDsSource.Dispose();
             columnDataSource.Dispose();
             instrumentDetailsDataSource.Dispose();

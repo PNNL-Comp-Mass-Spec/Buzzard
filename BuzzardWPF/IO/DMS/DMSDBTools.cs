@@ -12,7 +12,7 @@ namespace BuzzardWPF.IO.DMS
     /// <summary>
     /// Class for interacting with DMS database
     /// </summary>
-    public class DMSDBTools : IDisposable
+    public class DMSDBTools
     {
         private readonly DMSDBReader dbReader;
 
@@ -66,25 +66,6 @@ namespace BuzzardWPF.IO.DMS
             RecentExperimentsMonthsToLoad = 18;
             EMSLProposalsRecentMonthsToLoad = 12;
             dbReader = new DMSDBReader();
-        }
-
-        /// <summary>
-        /// Close the stored SqlConnection
-        /// </summary>
-        public void CloseConnection()
-        {
-            dbReader.CloseConnection();
-        }
-
-        ~DMSDBTools()
-        {
-            Dispose();
-        }
-
-        public void Dispose()
-        {
-            CloseConnection();
-            GC.SuppressFinalize(this);
         }
 
         private void ReportProgress(string currentTask, int currentStep, int stepCountTotal)
