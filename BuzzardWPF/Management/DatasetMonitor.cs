@@ -271,6 +271,13 @@ namespace BuzzardWPF.Management
                     }
                 }
 
+                if (!DatasetInstrumentChecks.DoFilesMatchInstrument(dataset, out var instrumentNameErrorMessage))
+                {
+                    dataset.DatasetStatus = DatasetStatus.TriggerAbortedDatasetInstrumentMismatch;
+                    dataset.DatasetInstrumentMismatchMessage = instrumentNameErrorMessage;
+                    return;
+                }
+
                 // NOTE: Not checking for duplicate files in DMS here; we generally shouldn't see duplicated files coming through the monitor
 
                 var triggerFilePath = DatasetManager.CreateTriggerFileBuzzard(dataset, forceSend: false, preview: false);

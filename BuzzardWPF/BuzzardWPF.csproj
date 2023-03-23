@@ -76,6 +76,7 @@
     <Compile Include="Converters\EmptyRequestNameConverter.cs" />
     <Compile Include="Converters\EnumDescriptionConverter.cs" />
     <Compile Include="Data\BuzzardDataset.cs" />
+    <Compile Include="Data\DatasetInstrumentChecks.cs" />
     <Compile Include="Data\DatasetPolicy.cs" />
     <Compile Include="Data\DatasetSource.cs" />
     <Compile Include="Data\DatasetStatus.cs" />

@@ -78,6 +78,11 @@ namespace BuzzardWPF.Data
         [Description("Duplicate File(s)")]
         TriggerAbortedDuplicateFiles,
         /// <summary>
+        /// Aborted trigger creation while validating that the file type matches the instrument (for production systems that upload for multiple DMS instruments)
+        /// </summary>
+        [Description("Instrument Name Error")]
+        TriggerAbortedDatasetInstrumentMismatch,
+        /// <summary>
         /// Dataset size changed over 60 seconds
         /// </summary>
         [Description("Aborted, File Size Changed")]

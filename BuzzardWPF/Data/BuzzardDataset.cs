@@ -437,6 +437,8 @@ namespace BuzzardWPF.Data
             duplicateDatasetFiles.Clear();
         }
 
+        public string DatasetInstrumentMismatchMessage { get; set; }
+
         private readonly List<DatasetFileInfo> duplicateDatasetFiles = new List<DatasetFileInfo>();
 
         private const string RunRequestMismatchToolTip =
@@ -480,6 +482,10 @@ namespace BuzzardWPF.Data
                     StatusToolTip = $"File data matched file(s) already in DMS. Contact DMS sys admins.\nFile(s) already in DMS:\n{matchedFilesString}";
                     StatusWarning = true;
                     return "Duplicate File(s) in DMS";
+                case DatasetStatus.TriggerAbortedDatasetInstrumentMismatch:
+                    StatusToolTip = DatasetInstrumentMismatchMessage;
+                    StatusWarning = true;
+                    return "Instrument Name Error";
                 case DatasetStatus.FileSizeChanged:
                     return "Aborted, size changed";
                 case DatasetStatus.DatasetAlreadyInDMS:

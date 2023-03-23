@@ -140,8 +140,14 @@ namespace BuzzardWPF.Management
                     return;
                 }
 
+                var instrumentGoodDatasets = VerifyDatasetsMatchInstrument(validDatasets);
+                if (instrumentGoodDatasets.Count == 0)
+                {
+                    return;
+                }
+
                 // Confirm that the dataset are not changing and are thus safe to create trigger files for
-                var stableDatasets = VerifyDatasetsStable(validDatasets);
+                var stableDatasets = VerifyDatasetsStable(instrumentGoodDatasets);
 
                 if (abortTriggerCreationNow)
                 {
@@ -333,11 +339,11 @@ namespace BuzzardWPF.Management
             return stableDatasets;
         }
 
-        private List<BuzzardDataset> VerifyDatasetsNotDuplicates(IReadOnlyCollection<BuzzardDataset> selectedDatasets)
+        private List<BuzzardDataset> VerifyDatasetsNotDuplicates(IReadOnlyCollection<BuzzardDataset> datasets)
         {
             var nonDuplicateDatasets = new List<BuzzardDataset>();
 
-            foreach (var dataset in selectedDatasets)
+            foreach (var dataset in datasets)
             {
                 var hashes = FileHashChecks.GetHashedFiles(dataset.FilePath);
 
@@ -356,6 +362,26 @@ namespace BuzzardWPF.Management
             }
 
             return nonDuplicateDatasets;
+        }
+
+        private List<BuzzardDataset> VerifyDatasetsMatchInstrument(IReadOnlyCollection<BuzzardDataset> datasets)
+        {
+            var verifiedDatasets = new List<BuzzardDataset>();
+
+            foreach (var dataset in datasets)
+            {
+                var matched = DatasetInstrumentChecks.DoFilesMatchInstrument(dataset, out var message);
+                if (matched)
+                {
+                    verifiedDatasets.Add(dataset);
+                    continue;
+                }
+
+                dataset.DatasetInstrumentMismatchMessage = message;
+                dataset.DatasetStatus = DatasetStatus.TriggerAbortedDatasetInstrumentMismatch;
+            }
+
+            return verifiedDatasets;
         }
     }
 }
