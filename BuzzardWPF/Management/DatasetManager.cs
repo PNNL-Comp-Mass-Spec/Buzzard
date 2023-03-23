@@ -262,7 +262,7 @@ namespace BuzzardWPF.Management
 
             if (string.IsNullOrWhiteSpace(dataset.FilePath))
             {
-                RxApp.MainThreadScheduler.Schedule(() => dataset.DatasetStatus = DatasetStatus.FailedFileError);
+                dataset.DatasetStatus = DatasetStatus.FailedFileError;
                 return false;
             }
 
@@ -310,7 +310,7 @@ namespace BuzzardWPF.Management
             {
                 if (fiDataset.Name.StartsWith("x_", StringComparison.OrdinalIgnoreCase))
                 {
-                    RxApp.MainThreadScheduler.Schedule(() => dataset.DatasetStatus = DatasetStatus.DatasetMarkedCaptured);
+                    dataset.DatasetStatus = DatasetStatus.DatasetMarkedCaptured;
                 }
                 else
                 {
@@ -319,18 +319,18 @@ namespace BuzzardWPF.Management
                         // Either there was no match, or it was an ambiguous match
                         if (ex.SearchDepth >= SEARCH_DEPTH_AMBIGUOUS_MATCH)
                         {
-                            RxApp.MainThreadScheduler.Schedule(() => dataset.DatasetStatus = DatasetStatus.FailedAmbiguousDmsRequest);
+                            dataset.DatasetStatus = DatasetStatus.FailedAmbiguousDmsRequest;
                         }
                         else
                         {
-                            RxApp.MainThreadScheduler.Schedule(() => dataset.DatasetStatus = DatasetStatus.FailedNoDmsRequest);
+                            dataset.DatasetStatus = DatasetStatus.FailedNoDmsRequest;
                         }
                     }
                 }
             }
             catch (Exception)
             {
-                RxApp.MainThreadScheduler.Schedule(() => dataset.DatasetStatus = DatasetStatus.FailedUnknown);
+                dataset.DatasetStatus = DatasetStatus.FailedUnknown;
             }
 
             if (!string.IsNullOrWhiteSpace(datasetName))
@@ -338,7 +338,7 @@ namespace BuzzardWPF.Management
                 // Look for a match to an existing dataset in DMS
                 if (DMSDataAccessor.Instance.CheckDatasetExists(datasetName))
                 {
-                    RxApp.MainThreadScheduler.Schedule(() => dataset.DatasetStatus = DatasetStatus.DatasetAlreadyInDMS);
+                    dataset.DatasetStatus = DatasetStatus.DatasetAlreadyInDMS;
                 }
             }
 

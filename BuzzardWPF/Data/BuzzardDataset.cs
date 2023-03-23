@@ -111,6 +111,7 @@ namespace BuzzardWPF.Data
                         x => x.EMSLProposalUser).Select(x => x.Item1.IndexOf("USER", StringComparison.OrdinalIgnoreCase) == 0 ? $"ProposalID: {x.Item2}\nEMSL User: {x.Item3?.UserName}" : null)
                     .ToProperty(this, x => x.EmslUserProposalText);
             formattedStatus = this.WhenAnyValue(x => x.SecondsTillTriggerCreation, x => x.DatasetStatus, x => x.DatasetSource)
+                .ObserveOn(RxApp.MainThreadScheduler)
                 .Select(x => FormatStatus(x.Item1, x.Item2, x.Item3))
                 .ToProperty(this, x => x.FormattedStatus);
         }
