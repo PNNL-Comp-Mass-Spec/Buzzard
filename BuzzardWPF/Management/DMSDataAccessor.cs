@@ -457,6 +457,11 @@ namespace BuzzardWPF.Management
                 allowedInstrumentGroups.Contains(x.InstrumentGroup));
         }
 
+        public IEnumerable<DatasetFileInfo> GetMatchingDatasetFiles(IReadOnlyList<string> fileSha1Hashes)
+        {
+            return dmsDbTools.GetMatchingDatasetFiles(fileSha1Hashes);
+        }
+
         /// <summary>
         /// Force updating the SQLite cache database with instrument, experiment, dataset, etc. info
         /// </summary>

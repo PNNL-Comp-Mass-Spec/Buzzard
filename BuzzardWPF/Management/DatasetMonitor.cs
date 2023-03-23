@@ -271,6 +271,8 @@ namespace BuzzardWPF.Management
                     }
                 }
 
+                // NOTE: Not checking for duplicate files in DMS here; we generally shouldn't see duplicated files coming through the monitor
+
                 var triggerFilePath = DatasetManager.CreateTriggerFileBuzzard(dataset, forceSend: false, preview: false);
                 if (string.IsNullOrWhiteSpace(triggerFilePath))
                 {

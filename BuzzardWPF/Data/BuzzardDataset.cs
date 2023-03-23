@@ -425,6 +425,19 @@ namespace BuzzardWPF.Data
         /// </summary>
         public bool IsFile { get; set; }
 
+        public void SetDuplicateDatasetFiles(IReadOnlyList<DatasetFileInfo> files)
+        {
+            duplicateDatasetFiles.Clear();
+            duplicateDatasetFiles.AddRange(files);
+        }
+
+        public void ClearDuplicateDatasetFiles()
+        {
+            duplicateDatasetFiles.Clear();
+        }
+
+        private readonly List<DatasetFileInfo> duplicateDatasetFiles = new List<DatasetFileInfo>();
+
         private const string RunRequestMismatchToolTip =
             "Check run request in DMS." +
             "\n* Dataset name must start with the run request name (case insensitive)" +
@@ -461,6 +474,11 @@ namespace BuzzardWPF.Data
                     return "In Progress";
                 case DatasetStatus.TriggerAborted:
                     return "Aborted manual trigger";
+                case DatasetStatus.TriggerAbortedDuplicateFiles:
+                    var matchedFilesString = string.Join("\n", duplicateDatasetFiles.Select(x => $"Dataset {x.DatasetId}: matched file '{x.FileName}'"));
+                    StatusToolTip = $"File data matched file(s) already in DMS. Contact DMS sys admins.\nFile(s) already in DMS:\n{matchedFilesString}";
+                    StatusWarning = true;
+                    return "Duplicate File(s) in DMS";
                 case DatasetStatus.FileSizeChanged:
                     return "Aborted, size changed";
                 case DatasetStatus.DatasetAlreadyInDMS:

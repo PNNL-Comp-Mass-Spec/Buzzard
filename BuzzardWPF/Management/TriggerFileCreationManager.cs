@@ -7,6 +7,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using BuzzardWPF.Data;
+using BuzzardWPF.Data.DMS;
+using BuzzardWPF.IO;
 using BuzzardWPF.Logging;
 using ReactiveUI;
 
@@ -119,6 +121,7 @@ namespace BuzzardWPF.Management
                 foreach (var dataset in selectedDatasets)
                 {
                     dataset.TriggerCreationWarning = string.Empty;
+                    dataset.ClearDuplicateDatasetFiles();
 
                     var fiFile = new FileInfo(dataset.FilePath);
                     if (!fiFile.Exists)
@@ -145,15 +148,17 @@ namespace BuzzardWPF.Management
                     return;
                 }
 
+                var nonDuplicateDatasets = VerifyDatasetsNotDuplicates(stableDatasets);
+
                 var completedDatasets = new List<BuzzardDataset>();
 
-                foreach (var dataset in stableDatasets)
+                foreach (var dataset in nonDuplicateDatasets)
                 {
                     var triggerFilePath = DatasetManager.CreateTriggerFileBuzzard(dataset, forceSend: true, preview: false);
 
                     if (abortTriggerCreationNow)
                     {
-                        MarkAborted(stableDatasets.Except(completedDatasets).ToList());
+                        MarkAborted(nonDuplicateDatasets.Except(completedDatasets).ToList());
                         return;
                     }
                     else
@@ -326,6 +331,31 @@ namespace BuzzardWPF.Management
             }
 
             return stableDatasets;
+        }
+
+        private List<BuzzardDataset> VerifyDatasetsNotDuplicates(IReadOnlyCollection<BuzzardDataset> selectedDatasets)
+        {
+            var nonDuplicateDatasets = new List<BuzzardDataset>();
+
+            foreach (var dataset in selectedDatasets)
+            {
+                var hashes = FileHashChecks.GetHashedFiles(dataset.FilePath);
+
+                // Compare the hashes against DMS...
+                var matches = DMSDataAccessor.Instance.GetMatchingDatasetFiles(hashes.Select(x => x.Sha1Hash).ToList()).ToList();
+                if (matches.Count == 0)
+                {
+                    nonDuplicateDatasets.Add(dataset);
+                    continue;
+                }
+
+                // Check the returned hashes...
+                // TODO: At some point we should check the file size first
+                dataset.SetDuplicateDatasetFiles(matches);
+                dataset.DatasetStatus = DatasetStatus.TriggerAbortedDuplicateFiles;
+            }
+
+            return nonDuplicateDatasets;
         }
     }
 }

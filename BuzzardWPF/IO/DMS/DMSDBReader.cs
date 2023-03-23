@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using BuzzardWPF.Data.DMS;
 
 namespace BuzzardWPF.IO.DMS
@@ -262,6 +263,20 @@ namespace BuzzardWPF.IO.DMS
                 reader["title"].CastDBValTo<string>()?.Trim().LimitStringDuplication(deDupDictionary),
                 reader["owner_username"].CastDBValTo<string>()?.Trim().LimitStringDuplication(deDupDictionary),
                 reader["owner_name"].CastDBValTo<string>()?.Trim().LimitStringDuplication(deDupDictionary)
+            ));
+        }
+
+        public IEnumerable<DatasetFileInfo> ReadMatchingDatasetFiles(IReadOnlyList<string> fileSha1Hashes)
+        {
+            var whereIn = string.Join(", ", fileSha1Hashes.Select(x => $"'{x}'"));
+            var sqlCmd = $"SELECT dataset_id, file_path, file_size_bytes, file_hash FROM {db.SchemaPrefix}v_dataset_files_export WHERE file_hash IN ({whereIn})";
+
+            return db.ExecuteReader(sqlCmd, reader => new DatasetFileInfo
+            (
+                reader["dataset_id"].CastDBValTo<int>(),
+                reader["file_path"].CastDBValTo<string>()?.Trim(),
+                reader["file_size_bytes"].CastDBValTo<long>(),
+                reader["file_hash"].CastDBValTo<string>()?.Trim()
             ));
         }
 

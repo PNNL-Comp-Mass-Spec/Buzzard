@@ -202,6 +202,11 @@ namespace BuzzardWPF.IO.DMS
             }
         }
 
+        public IEnumerable<DatasetFileInfo> GetMatchingDatasetFiles(IReadOnlyList<string> fileSha1Hashes)
+        {
+            return dbReader.ReadMatchingDatasetFiles(fileSha1Hashes);
+        }
+
         private void CacheDMSList<T>(Func<T> dmsReadMethod, Action<T> cacheMethod, string listNameForErrors)
         {
             try

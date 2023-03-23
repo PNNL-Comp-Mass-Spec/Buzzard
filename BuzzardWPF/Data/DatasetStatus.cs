@@ -73,6 +73,11 @@ namespace BuzzardWPF.Data
         [Description("Trigger Aborted")]
         TriggerAborted,
         /// <summary>
+        /// Aborted trigger creation while validating that there is not a duplicate file in DMS
+        /// </summary>
+        [Description("Duplicate File(s)")]
+        TriggerAbortedDuplicateFiles,
+        /// <summary>
         /// Dataset size changed over 60 seconds
         /// </summary>
         [Description("Aborted, File Size Changed")]
