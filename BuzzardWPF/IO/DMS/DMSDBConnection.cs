@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using BuzzardWPF.Logging;
+using BuzzardWPF.Properties;
 using BuzzardWPF.Utility;
 using PRISM;
 using PRISMDatabaseUtils;
@@ -16,7 +17,12 @@ namespace BuzzardWPF.IO.DMS
         private bool mConnectionStringLogged;
 
         private const string CONFIG_FILE = "PrismDMS.json";
-        private const string CENTRAL_CONFIG_FILE_PATH = @"\\proto-5\BionetSoftware\Buzzard\PrismDMS.json";
+        private static string _centralConfigFilePath = "";
+
+        public static void LoadSettings()
+        {
+            _centralConfigFilePath = Settings.Default.DBConfigRemoteUpdatePath;
+        }
 
         public string ErrMsg { get; private set; } = "";
 
@@ -167,13 +173,17 @@ namespace BuzzardWPF.IO.DMS
         private bool LoadCentralConfiguration()
         {
             var remoteConfigLoaded = false;
+            if (string.IsNullOrWhiteSpace(_centralConfigFilePath))
+            {
+                return false;
+            }
 
             try
             {
-                if (File.Exists(CENTRAL_CONFIG_FILE_PATH))
+                if (File.Exists(_centralConfigFilePath))
                 {
                     // Centralized config file exists; read it
-                    var config = DMSConfig.FromJson(CENTRAL_CONFIG_FILE_PATH);
+                    var config = DMSConfig.FromJson(_centralConfigFilePath);
                     var good = config.ValidateConfig();
 
                     // Centralized config file contains all the important information; cache it and use it, if it is not a match for the current cached config

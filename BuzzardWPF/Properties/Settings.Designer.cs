@@ -109,6 +109,18 @@ namespace BuzzardWPF.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("\\\\proto-5\\BionetSoftware\\Buzzard\\PrismDMS.json")]
+        public string DBConfigRemoteUpdatePath {
+            get {
+                return ((string)(this["DBConfigRemoteUpdatePath"]));
+            }
+            set {
+                this["DBConfigRemoteUpdatePath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool TurdAlert {
             get {

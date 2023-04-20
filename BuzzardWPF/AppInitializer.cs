@@ -159,6 +159,7 @@ namespace BuzzardWPF
         {
             // Load settings first - may include custom paths for log files and cache information
             LoadSettings();
+            DMSDBConnection.LoadSettings();
 
             // Start up the threaded logging
             ApplicationLogger.StartUpLogging();

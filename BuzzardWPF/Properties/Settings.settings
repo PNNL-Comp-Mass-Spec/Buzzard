@@ -23,6 +23,9 @@
     <Setting Name="CalibrationBackupDirectory" Type="System.String" Scope="User">
       <Value Profile="(Default)">\\proto-5\BionetXfer\Calibration_Backups</Value>
     </Setting>
+    <Setting Name="DBConfigRemoteUpdatePath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">\\proto-5\BionetSoftware\Buzzard\PrismDMS.json</Value>
+    </Setting>
     <Setting Name="TurdAlert" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
