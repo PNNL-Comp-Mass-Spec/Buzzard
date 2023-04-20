@@ -232,6 +232,9 @@
             FontSize="15"
             IsChecked="{Binding Path=SearchConfigVm.Config.DisableBaseFolderValidation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
             IsEnabled="{Binding Path=IsNotMonitoring}" />
+        <TextBlock Grid.Row="6" Grid.Column="2" Grid.ColumnSpan="2" Margin="3" VerticalAlignment="Center" Visibility="{Binding DmsDbData.ConnectedDatabaseIsNotDefault, Converter={StaticResource BoolToVis}}">
+            Database: <Run FontWeight="Bold" Text="{Binding DmsDbData.ConnectedDatabase, Mode=OneWay}" />
+        </TextBlock>
         <Label
             Grid.Row="7"
             Grid.Column="0"

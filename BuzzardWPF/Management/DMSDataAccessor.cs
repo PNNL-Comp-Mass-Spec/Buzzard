@@ -36,6 +36,9 @@ namespace BuzzardWPF.Management
 
         public static DMSDataAccessor Instance { get; }
 
+        public bool ConnectedDatabaseIsNotDefault => !dmsDbTools.ConnectedDatabaseIsDefault;
+        public string ConnectedDatabase => dmsDbTools.ConnectedDatabase;
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -452,9 +455,13 @@ namespace BuzzardWPF.Management
             // Load the samples (essentially requested runs) from DMS
             // Return clones of the objects; for some reason, if we don't, the SampleDataBasic objects are all kept alive (probably some database interaction logic)
             // Also process through a parsing method that will let us minimize the number of duplicate strings in memory.
-            return dmsDbTools.GetRequestedRunsFromDMS().Where(x =>
+            var requestedRuns = dmsDbTools.GetRequestedRunsFromDMS().Where(x =>
                 string.IsNullOrWhiteSpace(x.InstrumentGroup) || string.IsNullOrWhiteSpace(DeviceHostName) ||
                 allowedInstrumentGroups.Contains(x.InstrumentGroup));
+
+            this.RaisePropertyChanged(nameof(ConnectedDatabase));
+            this.RaisePropertyChanged(nameof(ConnectedDatabaseIsNotDefault));
+            return requestedRuns;
         }
 
         public IEnumerable<DatasetFileInfo> GetMatchingDatasetFiles(IReadOnlyList<string> fileSha1Hashes)
@@ -564,6 +571,9 @@ namespace BuzzardWPF.Management
                     }
                 }
             }
+
+            this.RaisePropertyChanged(nameof(ConnectedDatabase));
+            this.RaisePropertyChanged(nameof(ConnectedDatabaseIsNotDefault));
 
             // Force a garbage collection to try to clean up the temporary memory from the SQLite cache update
             GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;

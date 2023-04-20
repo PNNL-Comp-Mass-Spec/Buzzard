@@ -15,6 +15,9 @@ namespace BuzzardWPF.IO.DMS
 
         private readonly DMSDBConnection db;
 
+        public bool ConnectedDatabaseIsDefault => db.ConnectedDatabaseIsDefault;
+        public string ConnectedDatabase => db.ConnectedDatabase;
+
         /// <summary>
         /// Constructor
         /// </summary>

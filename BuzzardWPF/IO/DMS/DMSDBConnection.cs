@@ -28,6 +28,9 @@ namespace BuzzardWPF.IO.DMS
 
         public string SchemaPrefix => mConfiguration.DatabaseSchemaPrefix;
 
+        public bool ConnectedDatabaseIsDefault => DMSConfig.DefaultDatabaseServer.Equals(mConfiguration.DatabaseServer) && DMSConfig.DefaultDatabaseName.Equals(mConfiguration.DatabaseName);
+        public string ConnectedDatabase => $"{mConfiguration.DatabaseServer}.{mConfiguration.DatabaseName}";
+
         private DMSConfig mConfiguration;
 
         private IDBTools dbTools = null;

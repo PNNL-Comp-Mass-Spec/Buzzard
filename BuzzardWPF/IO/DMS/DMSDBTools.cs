@@ -47,6 +47,9 @@ namespace BuzzardWPF.IO.DMS
         /// </summary>
         public int EMSLProposalsRecentMonthsToLoad { get; set; }
 
+        public bool ConnectedDatabaseIsDefault => dbReader.ConnectedDatabaseIsDefault;
+        public string ConnectedDatabase => dbReader.ConnectedDatabase;
+
         public event EventHandler<ProgressEventArgs> ProgressEvent;
 
         public void OnProgressUpdate(ProgressEventArgs e)
