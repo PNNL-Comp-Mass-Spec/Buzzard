@@ -53,7 +53,13 @@ namespace BuzzardWPF.IO.DMS
 
         private void ConnectionErrorEvent(string message, Exception ex)
         {
-            ErrMsg = $"{message}; {ex.Message}";
+            ErrMsg = message;
+
+            if (ex != null)
+            {
+                ErrMsg = $"{message}; {ex.Message}";
+            }
+
             ApplicationLogger.LogError(0, ErrMsg);
         }
 
