@@ -348,6 +348,12 @@ namespace BuzzardWPF.Management
                 ApplicationLogger.LogMessage(0, $"Verifying non-duplicate files for dataset {dataset.DmsData.DatasetName}...");
                 var hashes = FileHashChecks.GetHashedFiles(dataset.FilePath);
 
+                if (hashes.Count == 0)
+                {
+                    nonDuplicateDatasets.Add(dataset);
+                    continue;
+                }
+
                 // Compare the hashes against DMS...
                 var matches = DMSDataAccessor.Instance.GetMatchingDatasetFiles(hashes.Select(x => x.Sha1Hash).ToList()).ToList();
                 if (matches.Count == 0)
