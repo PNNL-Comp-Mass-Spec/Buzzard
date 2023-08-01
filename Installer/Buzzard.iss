@@ -61,8 +61,8 @@ Name: "{app}\x86"
 [Files]
 ; Exe and supporting libraries
 Source: "bin\Release\BuzzardWPF.exe";                                 DestDir: "{app}";     Flags: ignoreversion
-Source: "bin\Release\BuzzardWPF.exe.config";                          DestDir: "{app}";     Flags: ignoreversion 
-Source: "bin\Release\DotNetProjects.Input.Toolkit.dll";               DestDir: "{app}";     Flags: ignoreversion 
+Source: "bin\Release\BuzzardWPF.exe.config";                          DestDir: "{app}";     Flags: ignoreversion
+Source: "bin\Release\DotNetProjects.Input.Toolkit.dll";               DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\DotNetProjects.Wpf.Extended.Toolkit.dll";        DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\DynamicData.dll";                                DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\Microsoft.Bcl.AsyncInterfaces.dll";              DestDir: "{app}";     Flags: ignoreversion
@@ -94,6 +94,9 @@ Source: "bin\Release\x86\Sqlite.Interop.DLL";                         DestDir: "
 Source: "bin\Release\x64\Sqlite.Interop.DLL";                         DestDir: "{app}\x64"; Flags: ignoreversion
 Source: "Resources\IconImage.ico";                                    DestDir: "{app}";     Flags: ignoreversion
 Source: "..\RevisionHistory.txt";                                     DestDir: "{app}";     Flags: ignoreversion
+
+; Include the BuzzardWPF pdb file to see line numbers in exception stack traces
+Source: "bin\Release\BuzzardWPF.pdb";                                 DestDir: "{app}";     Flags: ignoreversion
 
 [InstallDelete]
 ;Delete old DLLs that were used for Buzzard 2.4.* and older
