@@ -345,6 +345,7 @@ namespace BuzzardWPF.Management
 
             foreach (var dataset in datasets)
             {
+                ApplicationLogger.LogMessage(0, $"Verifying non-duplicate files for dataset {dataset.DmsData.DatasetName}...");
                 var hashes = FileHashChecks.GetHashedFiles(dataset.FilePath);
 
                 // Compare the hashes against DMS...
