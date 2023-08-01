@@ -33,17 +33,17 @@ namespace BuzzardWPF.Data
         public static bool ValidateDatasetName(BuzzardDataset dataset)
         {
             var datasetName = dataset.DmsData.DatasetName;
-            if (string.IsNullOrWhiteSpace(datasetName) || datasetName.Length < DMSDatasetPolicy.MINIMUM_DATASET_NAME_LENGTH)
+            if (string.IsNullOrWhiteSpace(datasetName) || datasetName.Length < MINIMUM_DATASET_NAME_LENGTH)
             {
                 dataset.DatasetStatus = DatasetStatus.MissingRequiredInfo;
-                dataset.TriggerCreationWarning = "Name too short (" + DMSDatasetPolicy.MINIMUM_DATASET_NAME_LENGTH + " char minimum)";
+                dataset.TriggerCreationWarning = "Name too short (" + MINIMUM_DATASET_NAME_LENGTH + " char minimum)";
                 return false;
             }
 
-            if (datasetName.Length > DMSDatasetPolicy.MAXIMUM_DATASET_NAME_LENGTH)
+            if (datasetName.Length > MAXIMUM_DATASET_NAME_LENGTH)
             {
                 dataset.DatasetStatus = DatasetStatus.MissingRequiredInfo;
-                dataset.TriggerCreationWarning = "Name too long (" + DMSDatasetPolicy.MAXIMUM_DATASET_NAME_LENGTH + " char maximum)";
+                dataset.TriggerCreationWarning = "Name too long (" + MAXIMUM_DATASET_NAME_LENGTH + " char maximum)";
                 return false;
             }
 
@@ -54,7 +54,7 @@ namespace BuzzardWPF.Data
                 return false;
             }
 
-            if (DMSDatasetPolicy.NameHasInvalidCharacters(datasetName))
+            if (NameHasInvalidCharacters(datasetName))
             {
                 dataset.DatasetStatus = DatasetStatus.MissingRequiredInfo;
                 dataset.TriggerCreationWarning = "Invalid chars in name";
