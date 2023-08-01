@@ -2,15 +2,12 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Windows;
 using System.Xml;
 using BuzzardWPF.Data;
 using BuzzardWPF.Logging;
 using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
 using BuzzardWPF.Utility;
-using BuzzardWPF.ViewModels;
-using BuzzardWPF.Views;
 
 namespace BuzzardWPF.IO
 {
