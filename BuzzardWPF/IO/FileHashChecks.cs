@@ -50,7 +50,11 @@ namespace BuzzardWPF.IO
                 var matched = di.EnumerateFiles(fileSpec, SearchOption.AllDirectories);
                 foreach (var fi in matched)
                 {
-                    hashedFiles.Add(HashFile(fi));
+                    // Ignore zero-byte files in directories
+                    if (fi.Length > 0)
+                    {
+                        hashedFiles.Add(HashFile(fi));
+                    }
                 }
             }
 
