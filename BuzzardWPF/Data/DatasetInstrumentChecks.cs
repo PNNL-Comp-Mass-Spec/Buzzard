@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using BuzzardWPF.Logging;
 using BuzzardWPF.Management;
 
 namespace BuzzardWPF.Data
@@ -19,7 +20,7 @@ namespace BuzzardWPF.Data
             message = "";
             const string brukerErrorMessage = "Check dataset instrument!" +
                                               "\nNon-imaging instrument dataset folders must end with '.d'" +
-                                              "\nMALDI imaging instrument dataset folders must NOT end with '.d'";
+                                              "\nMALDI imaging instrument dataset folders must NOT end with '.d' - instead should upload the folder containing the '.d' folder and .jpg files";
             if (!Directory.Exists(dataset.FilePath) || string.IsNullOrWhiteSpace(DMSDataAccessor.Instance.DeviceHostName))
             {
                 return true;
@@ -34,12 +35,15 @@ namespace BuzzardWPF.Data
                 return true;
             }
 
+            var di = new DirectoryInfo(dataset.FilePath);
+
             if (allowedInstrumentGroups.Count(x =>
                     x.Equals("MALDI-Imaging", StringComparison.OrdinalIgnoreCase) ||
                     x.Equals("Bruker_FTMS", StringComparison.OrdinalIgnoreCase)) == 2)
             {
-                // Bruker_FTMS: must be a .d directory
-                // MALDI-Imaging: must be a directory with the dataset name, and inside the directory is a .D directory (and typically some jpg files)
+                // 'ser' file exists for any 'serial acquisition'; 'fid' is for single scans?
+                // Bruker_FTMS: must be a .d directory, may contain a 'fid' or 'ser' file, will not contain a 'ImagingInfo.xml' file
+                // MALDI-Imaging: must be a directory with the dataset name, and inside the directory is a .D directory (and typically some jpg files); should not contain any 'fid' files (but should have 'ImagingInfo.xml' file(s))
 
                 var instrumentGroup = DMSDataAccessor.Instance.InstrumentDetailsData
                     .FirstOrDefault(x => x.DMSName.Equals(dataset.InstrumentName, StringComparison.OrdinalIgnoreCase));
@@ -59,6 +63,15 @@ namespace BuzzardWPF.Data
                     if (instrumentGroup.InstrumentGroup.Equals("MALDI-Imaging", StringComparison.OrdinalIgnoreCase))
                     {
                         message = brukerErrorMessage;
+                        ApplicationLogger.LogMessage(LogLevel.Warning, $"Blocking upload of dataset {dataset.FilePath}: instrument chosen is 'imaging', dataset folder ends with '.d'");
+                        return false;
+                    }
+
+                    // Check if the directory contains a 'ImagingInfo.xml' file
+                    if (di.GetFiles("ImagingInfo.xml", SearchOption.AllDirectories).Length > 0)
+                    {
+                        message = brukerErrorMessage;
+                        ApplicationLogger.LogMessage(LogLevel.Warning, $"Blocking upload of dataset {dataset.FilePath}: instrument chosen is not 'imaging', dataset folder contains a 'ImagingInfo.xml' file");
                         return false;
                     }
 
@@ -70,10 +83,19 @@ namespace BuzzardWPF.Data
                 // must be a directory with the dataset name, and inside the directory is a .D directory (and typically some jpg files)
                 if (instrumentGroup.InstrumentGroup.Equals("MALDI-Imaging", StringComparison.OrdinalIgnoreCase))
                 {
+                    // Check if the directory contains a 'ImagingInfo.xml' file
+                    if (di.GetFiles("ImagingInfo.xml", SearchOption.AllDirectories).Length == 0)
+                    {
+                        message = brukerErrorMessage;
+                        ApplicationLogger.LogMessage(LogLevel.Warning, $"Blocking upload of dataset {dataset.FilePath}: instrument chosen is 'imaging', dataset folder does not contain a 'ImagingInfo.xml' file");
+                        return false;
+                    }
+
                     return true;
                 }
 
                 message = brukerErrorMessage;
+                ApplicationLogger.LogMessage(LogLevel.Warning, $"Blocking upload of dataset {dataset.FilePath}: instrument chosen is not 'imaging', dataset folder does not end with '.d'");
                 return false;
             }
 
