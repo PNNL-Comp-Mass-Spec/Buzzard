@@ -12,7 +12,6 @@ using BuzzardWPF.Logging;
 using BuzzardWPF.Properties;
 using BuzzardWPF.Searching;
 using DynamicData;
-using PRISMWin;
 using ReactiveUI;
 
 namespace BuzzardWPF.Management
@@ -22,24 +21,13 @@ namespace BuzzardWPF.Management
     /// </summary>
     public sealed class DatasetManager : ReactiveObject, IStoredSettingsMonitor, IDisposable
     {
-        // Ignore Spelling: Altis, AgtVoyAcgEng, AgtVoyAcqEng, Lumos, msinsctl, Orbitrap, trie, Velos, xxx
+        // Ignore Spelling: trie, xxx
 
         public const string PREVIEW_TRIGGER_FILE_FLAG = "Nonexistent_Fake_TriggerFile.xmL";
-
-        // Thermo General: 'HomePage', 'ThermoFisher.Foundation.AcquisitionService'
-        // Thermo Lumos: Thermo General + 'Thermo.TNG.InstrumentServer'
-        // Thermo QExactive: Thermo General
-        // Thermo LTQ Orbitrap Velos: Thermo General + LTQManager
-        // Thermo TSQ Altis: Thermo General + 'Thermo.TNG.InstrumentServer'
-        // Thermo TSQ Vantage: Thermo General + ?
-        // Agilent QQQ/TOF/QTOF General: AgtVoyAcqEng
-        // Agilent GC-MS: msinsctl
-        public const string BlockingProcessNamesRegExString = @"HomePage|ThermoFisher\.Foundation\.AcquisitionService|Thermo\.TNG\.InstrumentServer|LTQManager|AgtVoyAcgEng|msinsctl";
 
         public const string QcDatasetNameRegExString = "^QC(\\d+\\w?)?(_|-).*";
         public const string BlankDatasetNameRegExString = "^BLANK(\\d+\\w?)?(_|-).*";
 
-        private readonly Regex blockingProcessNamesRegEx = new Regex(BlockingProcessNamesRegExString, RegexOptions.Compiled | RegexOptions.IgnoreCase);
         private readonly Regex qcDatasetNameRegEx = new Regex(QcDatasetNameRegExString, RegexOptions.Compiled | RegexOptions.IgnoreCase);
         private readonly Regex blankDatasetNameRegEx = new Regex(BlankDatasetNameRegExString, RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
@@ -677,41 +665,6 @@ namespace BuzzardWPF.Management
                     }
                 }
             }
-        }
-
-        public bool DatasetHasAcquisitionLock(string path)
-        {
-            try
-            {
-                List<Process> processes;
-                if (File.Exists(path))
-                {
-                    processes = FileInUseUtils.WhoIsLocking(path);
-                }
-                else if (Directory.Exists(path))
-                {
-                    processes = FileInUseUtils.WhoIsLockingDirectory(path);
-                }
-                else
-                {
-                    return false;
-                }
-
-                foreach (var process in processes)
-                {
-                    if (blockingProcessNamesRegEx.IsMatch(process.ProcessName))
-                    {
-                        return true;
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                ApplicationLogger.LogError(4, $"Error getting processes with locks on dataset as \"{path}\"!", e);
-                return false;
-            }
-
-            return false;
         }
 
         public void UpdateDataset(string path)

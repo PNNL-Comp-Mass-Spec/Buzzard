@@ -166,7 +166,7 @@ namespace BuzzardWPF.Management
                             }
 
                             if (DateTime.UtcNow.Subtract(dataset.FileLastChangedUtc).TotalSeconds < 60 ||
-                                Manager.DatasetHasAcquisitionLock(dataset.FilePath))
+                                FileBlockingChecks.DatasetHasAcquisitionLock(dataset.FilePath))
                             {
                                 dataset.DatasetStatus = DatasetStatus.PendingFileStable;
                                 continue;

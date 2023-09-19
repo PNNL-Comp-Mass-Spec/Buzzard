@@ -316,7 +316,7 @@ namespace BuzzardWPF.Management
                     {
                         stableDatasets.Add(entry.Key);
                     }
-                    else if (DatasetManager.Manager.DatasetHasAcquisitionLock(entry.Key.FilePath))
+                    else if (FileBlockingChecks.DatasetHasAcquisitionLock(entry.Key.FilePath))
                     {
                         entry.Key.DatasetStatus = DatasetStatus.FileSizeChanged;
                     }
