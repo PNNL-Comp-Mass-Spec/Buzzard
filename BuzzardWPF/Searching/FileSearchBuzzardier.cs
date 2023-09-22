@@ -149,11 +149,11 @@ namespace BuzzardWPF.Searching
                     config.ShareName = shareName;
                 }
 
-                var folderNameFilterLCase = string.Empty;
+                var parentFolderNameFilterLCase = string.Empty;
 
-                if (!string.IsNullOrWhiteSpace(config.FolderNameFilter))
+                if (!string.IsNullOrWhiteSpace(config.ParentFolderNameFilter))
                 {
-                    folderNameFilterLCase = config.FolderNameFilter.ToLower();
+                    parentFolderNameFilterLCase = config.ParentFolderNameFilter.ToLower();
                 }
 
                 // Breadth first search across directories as to make it fast and responsive to a listening UI
@@ -175,9 +175,9 @@ namespace BuzzardWPF.Searching
                     {
                         var processFolder = true;
 
-                        if (!string.IsNullOrWhiteSpace(folderNameFilterLCase))
+                        if (!string.IsNullOrWhiteSpace(parentFolderNameFilterLCase))
                         {
-                            if (!currentDirectory.FullName.ToLower().Contains(folderNameFilterLCase))
+                            if (!currentDirectory.FullName.ToLower().Contains(parentFolderNameFilterLCase))
                             {
                                 processFolder = false;
                             }
@@ -217,8 +217,8 @@ namespace BuzzardWPF.Searching
                     {
                         try
                         {
-                            if (!string.IsNullOrWhiteSpace(config.FilenameFilter) &&
-                                datasetEntry.Value.Name.IndexOf(config.FilenameFilter, StringComparison.OrdinalIgnoreCase) < 0)
+                            if (!string.IsNullOrWhiteSpace(config.DatasetNameFilter) &&
+                                datasetEntry.Value.Name.IndexOf(config.DatasetNameFilter, StringComparison.OrdinalIgnoreCase) < 0)
                             {
                                 continue;
                             }

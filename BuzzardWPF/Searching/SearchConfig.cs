@@ -21,8 +21,8 @@ namespace BuzzardWPF.Searching
         /// </summary>
         private string mDirectoryPath;
         private string mFileExtension;
-        private string mFolderNameFilter;
-        private string mFilenameFilter;
+        private string mParentFolderNameFilter;
+        private string mDatasetNameFilter;
         private SearchOption mSearchDepth;
         private bool mMatchFolders;
         private int mMinimumSizeKB;
@@ -103,21 +103,21 @@ namespace BuzzardWPF.Searching
         }
 
         /// <summary>
-        /// Gets or sets the folder name to filter on (partial match)
+        /// Gets or sets the parent folder name to filter on (partial match)
         /// </summary>
-        public string FolderNameFilter
+        public string ParentFolderNameFilter
         {
-            get => mFolderNameFilter;
-            set => this.RaiseAndSetIfChanged(ref mFolderNameFilter, value);
+            get => mParentFolderNameFilter;
+            set => this.RaiseAndSetIfChanged(ref mParentFolderNameFilter, value);
         }
 
         /// <summary>
-        /// Gets or sets the filename to filter on (partial match)
+        /// Gets or sets the dataset name to filter on (partial match) - applied to files, or ( that match <see cref="FileExtension"/>
         /// </summary>
-        public string FilenameFilter
+        public string DatasetNameFilter
         {
-            get => mFilenameFilter;
-            set => this.RaiseAndSetIfChanged(ref mFilenameFilter, value);
+            get => mDatasetNameFilter;
+            set => this.RaiseAndSetIfChanged(ref mDatasetNameFilter, value);
         }
 
         /// <summary>

@@ -49,7 +49,7 @@
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
             VerticalContentAlignment="Center"
-            Content="Watch for files in..."
+            Content="Watch for datasets in..."
             FontSize="16" />
 
         <controls:AutoCompleteBox
