@@ -40,6 +40,7 @@
             Content="Look for datasets in..."
             FontSize="16" />
 
+        <!-- TODO: Consider using https://github.com/quicoli/WPF-AutoComplete-TextBox instead? -->
         <controls:AutoCompleteBox
             Grid.Row="0"
             Grid.Column="1"
@@ -53,6 +54,7 @@
             MinimumPrefixLength="3"
             IsEnabled="{Binding Path=IsNotMonitoring}"
             ItemsSource="{Binding DirectoryPathOptions}"
+            SelectionChanged="AutoCompleteBox_OnSelectionChanged"
             Text="{Binding Path=Config.DirectoryPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
             <controls:AutoCompleteBox.ContextMenu>
                 <ContextMenu>
