@@ -7,6 +7,7 @@ using System.Reactive.Concurrency;
 using System.Text.RegularExpressions;
 using System.Threading;
 using BuzzardWPF.Data;
+using BuzzardWPF.Data.DMS;
 using BuzzardWPF.IO;
 using BuzzardWPF.Logging;
 using BuzzardWPF.Properties;
@@ -31,7 +32,7 @@ namespace BuzzardWPF.Management
         private readonly Regex qcDatasetNameRegEx = new Regex(QcDatasetNameRegExString, RegexOptions.Compiled | RegexOptions.IgnoreCase);
         private readonly Regex blankDatasetNameRegEx = new Regex(BlankDatasetNameRegExString, RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-        private string lastMonitorNonQcEusType = "MAINTENANCE";
+        private EmslUsageType lastMonitorNonQcEusType = EmslUsageType.MAINTENANCE;
         private string lastMonitorNonQcEusProposal;
         private string lastMonitorNonQcEusUser;
         private string lastMonitorNonQcWorkPackage = "none";
@@ -103,7 +104,7 @@ namespace BuzzardWPF.Management
 
         public void ResetWatcherEUSHistory()
         {
-            lastMonitorNonQcEusType = "MAINTENANCE";
+            lastMonitorNonQcEusType = EmslUsageType.MAINTENANCE;
             lastMonitorNonQcEusProposal = null;
             lastMonitorNonQcEusUser = null;
             lastMonitorNonQcWorkPackage = "none";
@@ -586,8 +587,7 @@ namespace BuzzardWPF.Management
                 }
 
                 dataset.DmsData.EMSLUsageType = WatcherMetadata.EMSLUsageType;
-                if (!string.IsNullOrWhiteSpace(dataset.DmsData.EMSLUsageType) &&
-                    dataset.DmsData.EMSLUsageType.IndexOf("USER", StringComparison.OrdinalIgnoreCase) == 0)
+                if (dataset.DmsData.EMSLUsageType.IsUserType())
                 {
                     dataset.DmsData.EMSLProposalID = WatcherMetadata.EMSLProposalID;
                     dataset.EMSLProposalUser = WatcherMetadata.EMSLProposalUser;
@@ -641,7 +641,7 @@ namespace BuzzardWPF.Management
                     else
                     {
                         // No previous data, or too many preceding QCs/Blanks: use generic data for QCs/Blanks
-                        dataset.DmsData.EMSLUsageType = "MAINTENANCE";
+                        dataset.DmsData.EMSLUsageType = EmslUsageType.MAINTENANCE;
                         dataset.DmsData.EMSLProposalID = null;
                         dataset.DmsData.EMSLProposalUser = null;
                         dataset.DmsData.WorkPackage = "none";

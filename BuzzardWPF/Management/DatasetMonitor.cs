@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reactive.Concurrency;
 using System.Threading;
 using BuzzardWPF.Data;
+using BuzzardWPF.Data.DMS;
 using BuzzardWPF.Logging;
 using BuzzardWPF.Properties;
 using DynamicData.Binding;
@@ -355,11 +356,11 @@ namespace BuzzardWPF.Management
                 missingFields.Add("Invalid LC Column name");
             }
 
-            if (string.IsNullOrWhiteSpace(WatcherMetadata.EMSLUsageType))
+            if (WatcherMetadata.EMSLUsageType == EmslUsageType.NONE)
             {
                 missingFields.Add(EmslUsageTypeDescription);
             }
-            else if (WatcherMetadata.EMSLUsageType.IndexOf("USER", StringComparison.OrdinalIgnoreCase) == 0 && string.IsNullOrWhiteSpace(WatcherMetadata.EMSLProposalID))
+            else if (WatcherMetadata.EMSLUsageType.IsUserType() && string.IsNullOrWhiteSpace(WatcherMetadata.EMSLProposalID))
             {
                 missingFields.Add(EmslProposalIdDescription);
             }

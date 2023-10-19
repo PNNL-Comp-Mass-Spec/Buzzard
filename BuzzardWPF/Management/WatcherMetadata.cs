@@ -20,7 +20,7 @@ namespace BuzzardWPF.Management
         private string cartConfigName;
         private string separationType;
         private string datasetType;
-        private string emslUsageType;
+        private EmslUsageType emslUsageType;
         private string emslProposalId;
         private ProposalUser emslProposalUser;
         private string userComments;
@@ -34,7 +34,7 @@ namespace BuzzardWPF.Management
             Instrument = null;
             InstrumentOperator = null;
             SeparationType = null;
-            EMSLUsageType = null;
+            EMSLUsageType = EmslUsageType.NONE;
             EMSLProposalID = null;
             EMSLProposalUser = null;
             WorkPackage = "none";
@@ -161,7 +161,7 @@ namespace BuzzardWPF.Management
             set => this.RaiseAndSetIfChangedMonitored(ref instrumentOperator, value);
         }
 
-        public string EMSLUsageType
+        public EmslUsageType EMSLUsageType
         {
             get => emslUsageType;
             set => this.RaiseAndSetIfChangedMonitored(ref emslUsageType, value);
@@ -209,7 +209,7 @@ namespace BuzzardWPF.Management
             Settings.Default.WatcherColumn = LCColumn;
             Settings.Default.WatcherComment = UserComments;
             Settings.Default.WatcherSeparationType = SeparationType;
-            Settings.Default.WatcherEMSLUsageType = EMSLUsageType;
+            Settings.Default.WatcherEMSLUsageType = EMSLUsageType.ToString();
             Settings.Default.WatcherEMSLProposalID = EMSLProposalID;
             Settings.Default.WatcherInterestRating = InterestRating;
             Settings.Default.WatcherWorkPackage = WorkPackage;
@@ -223,7 +223,7 @@ namespace BuzzardWPF.Management
         public void LoadSettings()
         {
             ExperimentName = Settings.Default.WatcherExperimentName;
-            EMSLUsageType = Settings.Default.WatcherEMSLUsageType;
+            EMSLUsageType = Settings.Default.WatcherEMSLUsageType.ToEmslUsageType();
             EMSLProposalID = Settings.Default.WatcherEMSLProposalID;
             EMSLProposalUser = DMSDataAccessor.Instance.FindSavedEMSLProposalUser(EMSLProposalID, Settings.Default.WatcherEMSLUser);
 

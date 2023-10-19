@@ -104,11 +104,11 @@ namespace BuzzardWPF.Data
                 .Select(x => x.Item2 ? DMSStatus.DMSResolved : DMSStatus.NoDMSRequest)
                 .ToProperty(this, x => x.DMSStatus);
             emslProjectText =
-                this.WhenAnyValue(x => x.DmsData.EMSLUsageType, x => x.DmsData.EMSLProposalID).Select(x => x.Item1.IndexOf("USER", StringComparison.OrdinalIgnoreCase) == 0 ? $"USER: {x.Item2}" : x.Item1)
+                this.WhenAnyValue(x => x.DmsData.EMSLUsageType, x => x.DmsData.EMSLProposalID).Select(x => x.Item1.IsUserType() ? $"USER: {x.Item2}" : x.Item1.ToString())
                     .ToProperty(this, x => x.EmslProjectText);
             emslUserProposalText =
                 this.WhenAnyValue(x => x.DmsData.EMSLUsageType, x => x.DmsData.EMSLProposalID,
-                        x => x.EMSLProposalUser).Select(x => x.Item1.IndexOf("USER", StringComparison.OrdinalIgnoreCase) == 0 ? $"ProposalID: {x.Item2}\nEMSL User: {x.Item3?.UserName}" : null)
+                        x => x.EMSLProposalUser).Select(x => x.Item1.IsUserType() ? $"ProposalID: {x.Item2}\nEMSL User: {x.Item3?.UserName}" : null)
                     .ToProperty(this, x => x.EmslUserProposalText);
             formattedStatus = this.WhenAnyValue(x => x.SecondsTillTriggerCreation, x => x.DatasetStatus, x => x.DatasetSource)
                 .ObserveOn(RxApp.MainThreadScheduler)

@@ -6,6 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:BuzzardWPF.ViewModels"
     xmlns:cueBannerOverlay="clr-namespace:WpfExtras.CueBannerOverlay;assembly=WpfExtras"
+    xmlns:converters="clr-namespace:BuzzardWPF.Converters"
     d:DesignHeight="500"
     d:DesignWidth="1050"
     mc:Ignorable="d"
@@ -37,6 +38,7 @@
             <Setter Property="FontSize" Value="15" />
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
+        <converters:EnumDescriptionConverter x:Key="EnumDesc" />
     </UserControl.Resources>
 
     <Grid Margin="0" Grid.IsSharedSizeScope="True">
@@ -375,7 +377,14 @@
                         ItemsSource="{Binding Path=UsageTypesSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                         SelectedItem="{Binding Path=WatcherMetadata.EMSLUsageType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         Style="{StaticResource ComboBoxStyle}"
-                        ToolTip="USER_ONSITE/USER_REMOTE: Refers to whether the EUS proposal P.I. is currently on-site, or remote. PNNL staff P.I. is always onsite." />
+                        ToolTip="{Binding WatcherMetadata.EMSLUsageType, Converter={StaticResource EnumDesc}}"
+                        ToolTipService.ShowDuration="30000">
+                        <ComboBox.ItemContainerStyle>
+                            <Style TargetType="ComboBoxItem" BasedOn="{StaticResource {x:Type ComboBoxItem}}">
+                                <Setter Property="ToolTip" Value="{Binding Converter={StaticResource EnumDesc}}" />
+                            </Style>
+                        </ComboBox.ItemContainerStyle>
+                    </ComboBox>
 
                     <TextBlock
                         Grid.Row="1"

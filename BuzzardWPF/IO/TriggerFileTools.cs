@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Xml;
 using BuzzardWPF.Data;
+using BuzzardWPF.Data.DMS;
 using BuzzardWPF.Logging;
 using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
@@ -168,8 +169,16 @@ namespace BuzzardWPF.IO
             if (sample.DmsData.RequestID <= 0)
             {
                 proposal = sample.DmsData.EMSLProposalID;
-                usage = sample.DmsData.EMSLUsageType;
                 user = sample.DmsData.EMSLProposalUser;
+
+                if (sample.DmsData.EMSLUsageType != EmslUsageType.NONE)
+                {
+                    usage = sample.DmsData.EMSLUsageType.ToString();
+                }
+                else
+                {
+                    usage = sample.DmsData.EMSLUsageTypeDbText;
+                }
             }
 
             AddParam(rootElement, "Request", sample.DmsData.RequestID.ToString());

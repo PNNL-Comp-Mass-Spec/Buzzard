@@ -26,7 +26,7 @@ namespace BuzzardWPF.Data.DMS
             RequestID = 0;
             InstrumentGroup = string.Empty;
             RequestName = string.Empty;
-            EMSLUsageType = string.Empty;
+            EMSLUsageType = EmslUsageType.NONE;
             EMSLProposalUser = string.Empty;
             WorkPackage = string.Empty;
         }
@@ -48,7 +48,7 @@ namespace BuzzardWPF.Data.DMS
             RequestID = 0;
             InstrumentGroup = string.Empty;
             RequestName = string.Empty;
-            EMSLUsageType = string.Empty;
+            EMSLUsageType = EmslUsageType.NONE;
             EMSLProposalUser = string.Empty;
             WorkPackage = string.Empty;
         }
@@ -101,7 +101,8 @@ namespace BuzzardWPF.Data.DMS
         private string datasetType;
         private string cartConfigName;
         private string workPackage;
-        private string emslUsageType;
+        private EmslUsageType emslUsageType;
+        private string emslUsageTypeDbText;
         private string emslProposalId;
         private string emslProposalUser;
         private string experiment;
@@ -117,7 +118,7 @@ namespace BuzzardWPF.Data.DMS
         public bool LockData
         {
             get => lockData;
-            private set => this.RaiseAndSetIfChanged(ref lockData, value, nameof(LockData));
+            private set => this.RaiseAndSetIfChanged(ref lockData, value);
         }
 
         /// <summary>
@@ -129,7 +130,7 @@ namespace BuzzardWPF.Data.DMS
             get => requestName;
             set
             {
-                if (this.RaiseAndSetIfChangedLockCheckRetBool(ref requestName, value, LockData, nameof(RequestName)))
+                if (this.RaiseAndSetIfChangedLockCheckRetBool(ref requestName, value, LockData))
                 {
                     if (string.IsNullOrWhiteSpace(DatasetName))
                     {
@@ -145,7 +146,7 @@ namespace BuzzardWPF.Data.DMS
         public string DatasetName
         {
             get => datasetName;
-            set => this.RaiseAndSetIfChangedLockCheck(ref datasetName, value, LockData, nameof(DatasetName));
+            set => this.RaiseAndSetIfChangedLockCheck(ref datasetName, value, LockData);
         }
 
         /// <summary>
@@ -154,7 +155,7 @@ namespace BuzzardWPF.Data.DMS
         public int RequestID
         {
             get => requestId;
-            set => this.RaiseAndSetIfChangedLockCheck(ref requestId, value, LockData, nameof(RequestID));
+            set => this.RaiseAndSetIfChangedLockCheck(ref requestId, value, LockData);
         }
 
         /// <summary>
@@ -163,7 +164,7 @@ namespace BuzzardWPF.Data.DMS
         public string InstrumentGroup
         {
             get => instrumentGroup;
-            set => this.RaiseAndSetIfChangedLockCheck(ref instrumentGroup, value, LockData, nameof(InstrumentGroup));
+            set => this.RaiseAndSetIfChangedLockCheck(ref instrumentGroup, value, LockData);
         }
 
         /// <summary>
@@ -172,7 +173,7 @@ namespace BuzzardWPF.Data.DMS
         public string Experiment
         {
             get => experiment;
-            set => this.RaiseAndSetIfChangedLockCheck(ref experiment, value, LockData, nameof(Experiment));
+            set => this.RaiseAndSetIfChangedLockCheck(ref experiment, value, LockData);
         }
 
         /// <summary>
@@ -181,7 +182,7 @@ namespace BuzzardWPF.Data.DMS
         public string DatasetType
         {
             get => datasetType;
-            set => this.RaiseAndSetIfChangedLockCheck(ref datasetType, value, LockData, nameof(DatasetType));
+            set => this.RaiseAndSetIfChangedLockCheck(ref datasetType, value, LockData);
         }
 
         /// <summary>
@@ -190,16 +191,29 @@ namespace BuzzardWPF.Data.DMS
         public string WorkPackage
         {
             get => workPackage;
-            set => this.RaiseAndSetIfChangedLockCheck(ref workPackage, value, LockData, nameof(WorkPackage));
+            set => this.RaiseAndSetIfChangedLockCheck(ref workPackage, value, LockData);
         }
 
         /// <summary>
         /// EMSL usage type
         /// </summary>
-        public string EMSLUsageType
+        public EmslUsageType EMSLUsageType
         {
             get => emslUsageType;
-            set => this.RaiseAndSetIfChangedLockCheck(ref emslUsageType, value, LockData, nameof(EMSLUsageType));
+            set => this.RaiseAndSetIfChangedLockCheck(ref emslUsageType, value, LockData);
+        }
+
+        /// <summary>
+        /// EMSL usage type - text as read from DMS, otherwise should not be used. This is to support changes in the DMS database that are not yet implemented in Buzzard
+        /// </summary>
+        public string EMSLUsageTypeDbText
+        {
+            get => emslUsageTypeDbText;
+            set
+            {
+                EMSLUsageType = value.ToEmslUsageType();
+                this.RaiseAndSetIfChangedLockCheck(ref emslUsageTypeDbText, value, LockData);
+            }
         }
 
         /// <summary>
@@ -208,7 +222,7 @@ namespace BuzzardWPF.Data.DMS
         public string EMSLProposalID
         {
             get => emslProposalId;
-            set => this.RaiseAndSetIfChangedLockCheck(ref emslProposalId, value, LockData, nameof(EMSLProposalID));
+            set => this.RaiseAndSetIfChangedLockCheck(ref emslProposalId, value, LockData);
         }
 
         /// <summary>
@@ -217,7 +231,7 @@ namespace BuzzardWPF.Data.DMS
         public string EMSLProposalUser
         {
             get => emslProposalUser;
-            set => this.RaiseAndSetIfChangedLockCheck(ref emslProposalUser, value, LockData, nameof(EMSLProposalUser));
+            set => this.RaiseAndSetIfChangedLockCheck(ref emslProposalUser, value, LockData);
         }
 
         /// <summary>
@@ -227,7 +241,7 @@ namespace BuzzardWPF.Data.DMS
         public string CartName
         {
             get => cartName;
-            set => this.RaiseAndSetIfChanged(ref cartName, value, nameof(CartName));
+            set => this.RaiseAndSetIfChanged(ref cartName, value);
         }
 
         /// <summary>
@@ -237,7 +251,7 @@ namespace BuzzardWPF.Data.DMS
         public string CartConfigName
         {
             get => cartConfigName;
-            set => this.RaiseAndSetIfChanged(ref cartConfigName, value, nameof(CartConfigName));
+            set => this.RaiseAndSetIfChanged(ref cartConfigName, value);
         }
 
         /// <summary>
@@ -246,7 +260,7 @@ namespace BuzzardWPF.Data.DMS
         public string Comment
         {
             get => $"{comment} {(string.IsNullOrWhiteSpace(CommentAdditionPrefix) ? string.Empty : CommentAdditionPrefix.Trim() + " ")}{CommentAddition}".Trim();
-            set => this.RaiseAndSetIfChangedLockCheck(ref comment, value, LockData, nameof(Comment));
+            set => this.RaiseAndSetIfChangedLockCheck(ref comment, value, LockData);
         }
 
         /// <summary>

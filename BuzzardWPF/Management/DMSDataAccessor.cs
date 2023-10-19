@@ -53,11 +53,7 @@ namespace BuzzardWPF.Management
             }
 
             InterestRatingCollection = interestRatingOptions;
-            // These values come from table T_EUS_UsageType
-            // It is rarely updated, so we're not querying the database every time
-            // Previously used, but deprecated in April 2017 is USER_UNKNOWN
-            // Previously used, but deprecated in April 2021 is USER (Replaced with USER_ONSITE and USER_REMOTE)
-            EMSLUsageTypesSource = new[] { "BROKEN", "CAP_DEV", "MAINTENANCE", "USER_ONSITE", "USER_REMOTE" };
+            EMSLUsageTypesSource = Enum.GetValues(typeof(EmslUsageType)).Cast<EmslUsageType>().Where(x => x != EmslUsageType.NONE).ToArray();
 
             LastSqliteCacheUpdateUtc = DateTime.UtcNow;
             LastLoadFromSqliteCacheUtc = DateTime.UtcNow.AddMinutes(-60);
@@ -162,7 +158,7 @@ namespace BuzzardWPF.Management
 
         public IReadOnlyList<string> InterestRatingCollection { get; }
 
-        public IReadOnlyList<string> EMSLUsageTypesSource { get; }
+        public IReadOnlyList<EmslUsageType> EMSLUsageTypesSource { get; }
 
         /// <summary>
         /// Proposal IDs observable list

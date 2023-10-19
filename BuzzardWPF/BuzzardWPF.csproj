@@ -85,6 +85,7 @@
     <Compile Include="Data\DMS\CartConfigInfo.cs" />
     <Compile Include="Data\DMS\DatasetFileInfo.cs" />
     <Compile Include="Data\DMS\DMSData.cs" />
+    <Compile Include="Data\DMS\EmslUsageType.cs" />
     <Compile Include="Data\DMS\ExperimentData.cs" />
     <Compile Include="Data\DMS\InstrumentGroupInfo.cs" />
     <Compile Include="Data\DMS\InstrumentInfo.cs" />

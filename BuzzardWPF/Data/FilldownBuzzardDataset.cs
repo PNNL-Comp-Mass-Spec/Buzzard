@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reactive.Linq;
+using BuzzardWPF.Data.DMS;
 using BuzzardWPF.Management;
 using BuzzardWPF.Properties;
 using ReactiveUI;
@@ -164,7 +165,7 @@ namespace BuzzardWPF.Data
             Settings.Default.FilldownCart = DmsData.CartName;
             Settings.Default.FilldownCartConfig = DmsData.CartConfigName;
             Settings.Default.FilldownInterest = InterestRating;
-            Settings.Default.FilldownEMSLUsageType = DmsData.EMSLUsageType;
+            Settings.Default.FilldownEMSLUsageType = DmsData.EMSLUsageType.ToString();
             Settings.Default.FilldownEMSLProposal = DmsData.EMSLProposalID;
             Settings.Default.FilldownExperimentName = DmsData.Experiment;
             Settings.Default.FillDownWorkPackage = DmsData.WorkPackage;
@@ -184,8 +185,7 @@ namespace BuzzardWPF.Data
             DmsData.CartConfigName = Settings.Default.FilldownCartConfig;
             InterestRating = Settings.Default.FilldownInterest;
             DmsData.Experiment = Settings.Default.FilldownExperimentName;
-
-            DmsData.EMSLUsageType = Settings.Default.FilldownEMSLUsageType;
+            DmsData.EMSLUsageType = Settings.Default.FilldownEMSLUsageType.ToEmslUsageType();
             DmsData.EMSLProposalID = Settings.Default.FilldownEMSLProposal;
             EMSLProposalUser = DMSDataAccessor.Instance.FindSavedEMSLProposalUser(DmsData.EMSLProposalID, Settings.Default.FilldownEMSLUser);
             DmsData.DatasetType = Settings.Default.FilldownDatasetType;

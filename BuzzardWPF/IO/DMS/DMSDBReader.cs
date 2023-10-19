@@ -218,7 +218,7 @@ namespace BuzzardWPF.IO.DMS
                 RequestName = reader["name"].CastDBValTo<string>(),
                 InstrumentGroup = reader["instrument"].CastDBValTo<string>(),
                 WorkPackage = reader["work_package"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
-                EMSLUsageType = reader["usage_type"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
+                EMSLUsageTypeDbText = reader["usage_type"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
                 EMSLProposalUser = reader["eus_users"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
                 CartName = reader["cart"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
                 Comment = reader["comment"].CastDBValTo<string>().LimitStringDuplication(deDupDictionary),
