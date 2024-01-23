@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 using BuzzardWPF.Management;
 using NUnit.Framework;
@@ -12,10 +13,11 @@ namespace BuzzardTests
         public void TestFind()
         {
             var files = InstrumentCriticalFiles.FindCriticalFiles();
+            var width = files.Max(x => x.File.FullName.Length) + 2;
+            var format = $"{{0,-{width}}} {{1}}";
             foreach (var file in files)
             {
-                Console.WriteLine(file.File.FullName);
-                Console.WriteLine(file.GetExtendedName());
+                Console.WriteLine(format, file.File.FullName, file.GetExtendedName());
             }
         }
 

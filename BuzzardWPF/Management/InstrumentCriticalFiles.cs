@@ -66,20 +66,33 @@ namespace BuzzardWPF.Management
          *   C:\Thermo\Instruments\TNG\TSQAltis\3.2\System\MSI\TNGCalFile.xmb
          *   C:\Thermo\Instruments\TNG\TSQAltis\3.2\System\MSI\TNGConfig.xmb
          *   C:\Thermo\Instruments\TNG\TSQAltis\3.2\System\MSI\TNGTuneFile.xmb
-         * Lumos
+         * Lumos/Eclipse/Ascend
          *   C:\Thermo\Instruments\TNG\OrbitrapFusionLumos\3.3\System\MSI\TNGCalFile.xmb
          *   C:\Thermo\Instruments\TNG\OrbitrapFusionLumos\3.3\System\MSI\TNGConfig.xmb
          *   C:\Thermo\Instruments\TNG\OrbitrapFusionLumos\3.3\System\MSI\TNGTuneFile.xmb
          *   C:\Thermo\Instruments\TNG\OrbitrapFusionLumos\2.1\System\MSI\TNGCalFile.xmb
          *   C:\Thermo\Instruments\TNG\OrbitrapFusionLumos\3.1\System\MSI\TNGCalFile.xmb
+         *   C:\Thermo\Instruments\TNG\OrbitrapFusionLumos\3.5\System\MSI\TNGCalFile.xmb
+         *   C:\Thermo\Instruments\TNG\OrbitrapEclipse\3.5\System\MSI\TNGCalFile.xmb
+         *   C:\Thermo\Instruments\TNG\OrbitrapAscend\4.0\System\MSI\TNGCalFile.xmb
+         *   Upcoming unknown:
+         *   C:\ProgramData\Thermo Scientific\Instruments\TNG\OrbitrapAscend\4.2\Systems\msx\TNGCalFile.xmb ?
+         *     or
+         *   C:Program Files\Thermo Scientific\Instruments\TNG\OrbitrapAscend\4.2\System\MSI\TNGCalFile.xmb
          * Exactive
          *   C:\Xcalibur\system\Exactive\instrument\msx_instrument_files\master_cal.mscal
          *   C:\Xcalibur\system\Exactive\instrument\msx_instrument_files\inst_config.cfg
+         *   C:\Xcalibur\system\Exactive\instrument\*licenses.txt
          * Exploris
          *   C:\ProgramData\Thermo\Exploris\Instrument\msx_instrument_files\master_cal.mscal
          *   C:\ProgramData\Thermo\Exploris\Instrument\msx_instrument_files\inst_config.cfg
-         *   C:\ProgramData\Thermo\Exploris\licenses.txt
-         *
+         *   C:\Thermo\Instruments\Exploris\[version]\System\Programs\dependencies\msi\TNGConfig.xmb
+         *   C:\ProgramData\Thermo\Exploris\*licenses.txt
+         * Astral
+         *   C:\ProgramData\Thermo\Astral\Instrument\msx_instrument_files\master_cal.mscal
+         *   C:\ProgramData\Thermo\Astral\Instrument\msx_instrument_files\inst_config.cfg
+         *   C:\Thermo\Instruments\Astral\[version]\System\Programs\dependencies\msi\TNGConfig.xmb
+         *   C:\ProgramData\Thermo\Astral\*licenses.txt
          */
 
         public static List<InstrumentCriticalFileInfo> FindCriticalFiles()
@@ -145,7 +158,7 @@ namespace BuzzardWPF.Management
 
         private static void FindThermoCriticalFiles(List<InstrumentCriticalFileInfo> criticalFiles)
         {
-            // QExactive (Plus, HF, HF-X)
+            // QExactive (Plus, HF, HF-X) (not backing up tune files, since they are saved to user-designated location)
             const string qePath = @"C:\Xcalibur\system\Exactive\instrument\msx_instrument_files";
             if (Directory.Exists(qePath))
             {
@@ -158,30 +171,12 @@ namespace BuzzardWPF.Management
                 // Backup the "ExactiveLicenses" file
                 if (qeDirectory.Parent != null)
                 {
-                    criticalFiles.AddRange(qeDirectory.Parent.EnumerateFiles("ExactiveLicenses.txt").Select(x => new InstrumentCriticalFileInfo(x)));
+                    criticalFiles.AddRange(qeDirectory.Parent.EnumerateFiles("*Licenses.txt").Select(x => new InstrumentCriticalFileInfo(x)));
                 }
-            }
-
-            // Exploris
-            const string explorisPath = @"C:\ProgramData\Thermo\Exploris\Instrument\msx_instrument_files";
-            if (Directory.Exists(explorisPath))
-            {
-                var explorisCalFileRegex = new Regex(@"^(master_cal\.mscal|inst_config\.cfg)$", RegexOptions.IgnoreCase);
-                var explorisDirectory = new DirectoryInfo(explorisPath);
-                criticalFiles.AddRange(explorisDirectory.EnumerateFiles()
-                    .Where(x => explorisCalFileRegex.IsMatch(x.Name))
-                    .Select(x => new InstrumentCriticalFileInfo(x)));
-
-                // Backup the "ExactiveLicenses" file
-                if (explorisDirectory.Parent?.Parent != null)
-                {
-                    criticalFiles.AddRange(explorisDirectory.Parent.Parent.EnumerateFiles("Licenses.txt").Select(x => new InstrumentCriticalFileInfo(x)));
-                }
-
-                // TODO: Supposed to back up C:\Thermo\Instrument\Exploris\[version]\System\Database too, but the one example I have only shows an empty directory (software 2.0; software 1.1 had some files)
             }
 
             const string thermoCommonPath = @"C:\Thermo\Instruments";
+            var tngCalFileRegex = new Regex(@"^(TNG((Cal|Tune)File|Config)\.xmb)$", RegexOptions.IgnoreCase);
             if (Directory.Exists(thermoCommonPath))
             {
                 const string ltqPath = thermoCommonPath + @"\LTQ\system\msx";
@@ -209,7 +204,6 @@ namespace BuzzardWPF.Management
                 if (Directory.Exists(tngPath))
                 {
                     // TODO: Find out if Thermo TNG licenses (e.g. for Lumos APD/Advanced Peak Determination or 1M Resolution) are stored in a file we can back up
-                    var tngCalFileRegex = new Regex(@"^(TNG((Cal|Tune)File|Config)\.xmb)$", RegexOptions.IgnoreCase);
                     const string tngSubPath = @"System\MSI";
                     var tngBase = new DirectoryInfo(tngPath);
                     foreach (var inst in tngBase.EnumerateDirectories())
@@ -223,6 +217,94 @@ namespace BuzzardWPF.Management
                                 criticalFiles.AddRange(tngDirectory.EnumerateFiles()
                                     .Where(x => tngCalFileRegex.IsMatch(x.Name))
                                     .Select(x => new InstrumentCriticalFileInfo(x, inst.Name, version.Name)));
+                            }
+                        }
+                    }
+                }
+
+                // Exploris/Astral, TNGConfig.xmb file
+                var orbiInstruments = new string[] { "Exploris", "Astral" };
+                const string orbiSubPath = @"System\Programs\dependencies\msi"; // for Exploris/Astral TNGConfig.xmb
+                foreach (var orbi in orbiInstruments)
+                {
+                    var inst = new DirectoryInfo(Path.Combine(thermoCommonPath, orbi));
+                    if (!inst.Exists)
+                    {
+                        continue;
+                    }
+
+                    foreach (var version in inst.EnumerateDirectories())
+                    {
+                        var dirPath = Path.Combine(version.FullName, orbiSubPath);
+                        if (Directory.Exists(dirPath))
+                        {
+                            var tngDirectory = new DirectoryInfo(dirPath);
+                            criticalFiles.AddRange(tngDirectory.EnumerateFiles()
+                                .Where(x => tngCalFileRegex.IsMatch(x.Name))
+                                .Select(x => new InstrumentCriticalFileInfo(x, inst.Name, version.Name)));
+                        }
+                    }
+                }
+            }
+
+            // Exploris/Astral, Cal files (not backing up tune files, since they are saved to user-designated location)
+            const string thermoProgDataPath = @"C:\ProgramData\Thermo";
+            if (Directory.Exists(thermoProgDataPath))
+            {
+                var matchedNames = new string[] { "Exploris", "Astral" };
+                // TODO: Check this for the Astral!
+                var explorisAstralCalFileRegex = new Regex(@"^(master_cal\.mscal|inst_config\.cfg)$", RegexOptions.IgnoreCase);
+                const string subPath = @"Instrument\msx_instrument_files";
+                foreach (var name in matchedNames)
+                {
+                    var instPath = Path.Combine(thermoProgDataPath, name, subPath);
+                    if (Directory.Exists(instPath))
+                    {
+                        var instDirectory = new DirectoryInfo(instPath);
+                        criticalFiles.AddRange(instDirectory.EnumerateFiles()
+                            .Where(x => explorisAstralCalFileRegex.IsMatch(x.Name))
+                            .Select(x => new InstrumentCriticalFileInfo(x)));
+
+                        // Backup the "ExactiveLicenses" file
+                        if (instDirectory.Parent?.Parent != null)
+                        {
+                            criticalFiles.AddRange(instDirectory.Parent.Parent.EnumerateFiles("*Licenses.txt").Select(x => new InstrumentCriticalFileInfo(x)));
+                        }
+
+                        // TODO: Supposed to back up C:\Thermo\Instrument\Exploris\[version]\System\Database too, but the one example I have only shows an empty directory (software 2.0; software 1.1 had some files)
+                    }
+                }
+            }
+
+            // Orbitrap Tribrid 4.2+ paths
+            // C:\ProgramData\Thermo Scientific\Instruments\TNG\OrbitrapAscend\4.2\Systems\msx\TNGCalFile.xmb? // TODO: 'Systems' might be a typo in their documents
+            //  or
+            // C:Program Files\Thermo Scientific\Instruments\TNG\OrbitrapAscend\4.2\System\MSI\TNGCalFile.xmb // TODO: I hope they don't store files that are regularly changed here...
+            const string thermoSciProgDataPath = @" C:\ProgramData\Thermo Scientific\Instruments\TNG";
+            const string thermoSciProgFilesPath = @" C:\Program Files\Thermo Scientific\Instruments\TNG";
+            var thermoSciPaths = new string[] { thermoSciProgDataPath, thermoSciProgFilesPath };
+            var thermoSciSubPaths1 = new string[] { "System", "Systems" };
+            var thermoSciSubPaths2 = new string[] { "msx", "MSI" };
+            var thermoSciSubPaths = thermoSciSubPaths1.SelectMany(x => thermoSciSubPaths2.Select(y => Path.Combine(x, y))).ToList();
+            foreach (var thermoSciPath in thermoSciPaths)
+            {
+                if (Directory.Exists(thermoSciPath))
+                {
+                    var pathBase = new DirectoryInfo(thermoSciPath);
+                    foreach (var inst in pathBase.EnumerateDirectories())
+                    {
+                        foreach (var version in inst.EnumerateDirectories())
+                        {
+                            foreach (var subPath in thermoSciSubPaths)
+                            {
+                                var dirPath = Path.Combine(version.FullName, subPath);
+                                if (Directory.Exists(dirPath))
+                                {
+                                    var tngDirectory = new DirectoryInfo(dirPath);
+                                    criticalFiles.AddRange(tngDirectory.EnumerateFiles()
+                                        .Where(x => tngCalFileRegex.IsMatch(x.Name))
+                                        .Select(x => new InstrumentCriticalFileInfo(x, inst.Name, version.Name)));
+                                }
                             }
                         }
                     }
