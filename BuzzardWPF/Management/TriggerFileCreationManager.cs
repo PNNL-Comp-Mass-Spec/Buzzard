@@ -7,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using BuzzardWPF.Data;
-using BuzzardWPF.Data.DMS;
 using BuzzardWPF.IO;
 using BuzzardWPF.Logging;
 using ReactiveUI;
@@ -154,22 +153,21 @@ namespace BuzzardWPF.Management
                     return;
                 }
 
+                // Check that the datasets do not match an already-uploaded dataset with a different name.
+                // This returns an IEnumerable that and the file checks are processed on consumption
                 var nonDuplicateDatasets = VerifyDatasetsNotDuplicates(stableDatasets);
-
-                var completedDatasets = new List<BuzzardDataset>();
 
                 foreach (var dataset in nonDuplicateDatasets)
                 {
-                    var triggerFilePath = DatasetManager.CreateTriggerFileBuzzard(dataset, forceSend: true, preview: false);
-
-                    if (abortTriggerCreationNow)
+                    if (!abortTriggerCreationNow)
                     {
-                        MarkAborted(nonDuplicateDatasets.Except(completedDatasets).ToList());
-                        return;
+                        var triggerFilePath = DatasetManager.CreateTriggerFileBuzzard(dataset, forceSend: true, preview: false);
                     }
-                    else
+
+                    if (abortTriggerCreationNow && dataset.DatasetStatus != DatasetStatus.TriggerFileSent)
                     {
-                        completedDatasets.Add(dataset);
+                        dataset.DatasetStatus = DatasetStatus.TriggerAborted;
+                        return;
                     }
                 }
 
@@ -339,10 +337,9 @@ namespace BuzzardWPF.Management
             return stableDatasets;
         }
 
-        private List<BuzzardDataset> VerifyDatasetsNotDuplicates(IReadOnlyCollection<BuzzardDataset> datasets)
+        // Return an IEnumerable and return data with yield return so that trigger files are created as this verification occurs, rather than no trigger files being created until all datasets are checked.
+        private IEnumerable<BuzzardDataset> VerifyDatasetsNotDuplicates(IReadOnlyCollection<BuzzardDataset> datasets)
         {
-            var nonDuplicateDatasets = new List<BuzzardDataset>();
-
             foreach (var dataset in datasets)
             {
                 ApplicationLogger.LogMessage(0, $"Verifying non-duplicate files for dataset {dataset.DmsData.DatasetName}...");
@@ -350,7 +347,7 @@ namespace BuzzardWPF.Management
 
                 if (hashes.Count == 0)
                 {
-                    nonDuplicateDatasets.Add(dataset);
+                    yield return dataset;
                     continue;
                 }
 
@@ -358,7 +355,7 @@ namespace BuzzardWPF.Management
                 var matches = DMSDataAccessor.Instance.GetMatchingDatasetFiles(hashes.Select(x => x.Sha1Hash).ToList()).ToList();
                 if (matches.Count == 0)
                 {
-                    nonDuplicateDatasets.Add(dataset);
+                    yield return dataset;
                     continue;
                 }
 
@@ -367,8 +364,6 @@ namespace BuzzardWPF.Management
                 dataset.SetDuplicateDatasetFiles(matches);
                 dataset.DatasetStatus = DatasetStatus.TriggerAbortedDuplicateFiles;
             }
-
-            return nonDuplicateDatasets;
         }
 
         private List<BuzzardDataset> VerifyDatasetsMatchInstrument(IReadOnlyCollection<BuzzardDataset> datasets)
