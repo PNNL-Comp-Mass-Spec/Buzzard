@@ -220,7 +220,7 @@ namespace BuzzardWPF.ViewModels
 
         private async Task BackupCalibrationFiles()
         {
-            await Task.Run(CriticalsBackups.CopyCriticalFilesToServer).ConfigureAwait(false);
+            await Task.Run(() => CriticalsBackups.CopyCriticalFilesToServer(true)).ConfigureAwait(false);
         }
 
         private void UseTestFolder()

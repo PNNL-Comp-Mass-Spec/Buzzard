@@ -41,6 +41,7 @@ namespace BuzzardWPF.Management
 
         private string serverPath;
         private readonly ObservableAsPropertyHelper<string> backupDir;
+        private DateTime lastCopyTime = DateTime.MinValue;
 
         public string ServerPath
         {
@@ -107,12 +108,26 @@ namespace BuzzardWPF.Management
             return criticalFiles;
         }
 
-        public void CopyCriticalFilesToServer()
+        public void CopyCriticalFilesToServer(bool force = false)
         {
+            if (!force && lastCopyTime.AddMinutes(5) > DateTime.Now)
+            {
+                // skip the upload, since it was done so recently
+                return;
+            }
+
+            var copyStartTime = DateTime.Now;
+
             var calFiles = FindCriticalFiles();
             if (calFiles.Count == 0)
             {
                 // No cal files found
+                return;
+            }
+
+            if (!force && calFiles.All(x => x.File.LastWriteTime < lastCopyTime))
+            {
+                // No cal files with last-modified dates after the last copy
                 return;
             }
 
@@ -136,7 +151,7 @@ namespace BuzzardWPF.Management
                 }
             }
 
-            foreach (var calFile in calFiles)
+            foreach (var calFile in calFiles.Where(x => force || x.File.LastWriteTime > lastCopyTime))
             {
                 var targetPath = Path.Combine(BackupDir, calFile.GetExtendedName());
 
@@ -154,6 +169,8 @@ namespace BuzzardWPF.Management
                     }
                 }
             }
+
+            lastCopyTime = copyStartTime;
         }
 
         private static void FindThermoCriticalFiles(List<InstrumentCriticalFileInfo> criticalFiles)
