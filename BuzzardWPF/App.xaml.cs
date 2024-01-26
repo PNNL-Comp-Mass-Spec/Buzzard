@@ -5,6 +5,7 @@ using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
+using BuzzardWPF.IO;
 using BuzzardWPF.IO.DMS;
 using BuzzardWPF.IO.SQLite;
 using BuzzardWPF.Logging;
@@ -115,6 +116,7 @@ namespace BuzzardWPF
             DatasetManager.Manager.Dispose();
             sqliteDisposable.Dispose();
             dmsDataAccessorInstance?.Dispose();
+            TriggerFileTools.Instance.Dispose();
             ViewModelCache.Instance.Dispose();
             mainWindowViewModel?.Dispose();
             ShutDownLogging();

@@ -175,7 +175,7 @@ namespace BuzzardWPF
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             if (SHOW_ERROR_MESSAGES_FORM)
             {
-                DisplayErrorMessagesForm();
+                TriggerFileTools.DisplayErrorMessagesTest();
                 return true;
             }
 
@@ -224,16 +224,13 @@ namespace BuzzardWPF
             try
             {
                 // Check to see if any trigger files need to be copied to the transfer server, and copy if necessary
-                var copyTriggerFiles = Settings.Default.CopyTriggerFiles;
-
-                if (copyTriggerFiles && TriggerFileTools.CheckLocalTriggerFiles())
+                if (Settings.Default.CopyTriggerFiles)
                 {
                     ApplicationLogger.LogMessage(-1, "Copying trigger files to DMS");
-                    TriggerFileTools.MoveLocalTriggerFiles();
 
-                    if (TriggerFileTools.ErrorMessages.Count > 0)
+                    if (!TriggerFileTools.ProcessLocalTriggerFiles() && TriggerFileTools.ErrorMessages.Count > 0)
                     {
-                        TriggerFileTools.ShowErrorMessages(TriggerFileTools.ErrorMessages);
+                        TriggerFileTools.ShowErrorMessages();
                     }
                 }
             }
@@ -277,21 +274,6 @@ namespace BuzzardWPF
         private static void DbTools_ProgressEvent(object sender, ProgressEventArgs e)
         {
             ApplicationLogger.LogMessage(-1, "Loading DMS data: " + e.CurrentTask);
-        }
-
-        private static void DisplayErrorMessagesForm()
-        {
-            var testErrorMessages = new List<string> {
-                "Test error message 1 - Lots of detail on the error message as populated by BuzzardWPF.AppInitializer.InitializeApplication(Window displayWindow, Action<string> instrumentNameAction = null)",
-                "Test error message 2 - Buzzard is a utility for manually and automatically adding datasets to DMS. Buzzard is licensed under the Apache License, Version 2.0; you may not use this file except in compliance with the License. You may obtain a copy of the License at https://opensource.org/licenses/Apache-2.0",
-                "Test error message 3 - Red",
-                "Test error message 4 - Blue",
-                "Test error message 5 - Green",
-                "Test error message 6 - Yellow",
-                "Test error message 7 - Brown",
-                "Test error message 8 - Orange"
-            };
-            TriggerFileTools.ShowErrorMessages(testErrorMessages);
         }
 
         private static void LogCriticalError(string errorMessage, Exception ex, bool showPopup = true)
