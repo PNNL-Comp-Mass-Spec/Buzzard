@@ -343,7 +343,20 @@ namespace BuzzardWPF.Management
             foreach (var dataset in datasets)
             {
                 ApplicationLogger.LogMessage(0, $"Verifying non-duplicate files for dataset {dataset.DmsData.DatasetName}...");
-                var hashes = FileHashChecks.GetHashedFiles(dataset.FilePath);
+
+                List<FileHashInfo> hashes;
+
+                try
+                {
+                    hashes = FileHashChecks.GetHashedFiles(dataset.FilePath);
+                }
+                catch (Exception ex)
+                {
+                    // Likely caused by cyclic redundancy check error or a moved/renamed file.
+                    ApplicationLogger.LogMessage(LogLevel.Error, $"Error reading dataset '{dataset.DmsData.DatasetName}': {ex.Message}", ex);
+                    dataset.DatasetStatus = DatasetStatus.FileReadError;
+                    continue;
+                }
 
                 if (hashes.Count == 0)
                 {

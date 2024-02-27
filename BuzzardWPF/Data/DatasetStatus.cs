@@ -97,5 +97,10 @@ namespace BuzzardWPF.Data
         /// </summary>
         [Description("Pending: File not stable")]
         PendingFileStable,
+        /// <summary>
+        /// Dataset file cannot be read - disk check probably needed
+        /// </summary>
+        [Description("File Read Error!")]
+        FileReadError,
     }
 }
