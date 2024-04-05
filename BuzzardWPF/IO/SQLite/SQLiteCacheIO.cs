@@ -560,6 +560,8 @@ namespace BuzzardWPF.IO.SQLite
             return $"CREATE TABLE {tableName}({string.Join(",", inpData.Select(x => $"'{x}' TEXT"))})";
         }
 
+        // ReSharper disable once CommentTypo
+
         /// <summary>
         /// Generic method to build a CREATE TABLE command
         /// </summary>
@@ -576,6 +578,7 @@ namespace BuzzardWPF.IO.SQLite
             var textToAppend = "";
             if (caseInsensitive)
             {
+                // ReSharper disable once StringLiteralTypo
                 textToAppend = " COLLATE NOCASE";
             }
 
@@ -933,6 +936,8 @@ namespace BuzzardWPF.IO.SQLite
 
             // Compatibility mappings
             // TODO: Remove these in the future
+
+            // ReSharper disable StringLiteralTypo
             if (nameMappings.TryGetValue("dms.emslusagetype", out var eusTypeVal) && !nameMappings.ContainsKey("dms.usagetype"))
             {
                 nameMappings.Add("dms.usagetype", eusTypeVal);
@@ -947,6 +952,8 @@ namespace BuzzardWPF.IO.SQLite
             {
                 nameMappings.Add("dms.userlist", eusUser);
             }
+
+            // ReSharper restore StringLiteralTypo
 
             // Get table containing cached data
             var sqlStr = "SELECT * FROM " + tableName;
@@ -1209,9 +1216,14 @@ namespace BuzzardWPF.IO.SQLite
             using (var connection = GetConnection(ConnString))
             using (var command = connection.CreateCommand())
             {
-                // SQLite by default uses case-sensitive comparisons for '=', and case-insensitive (for ASCII) comparisons for 'LIKE'
+                // ReSharper disable CommentTypo
+
+                // SQLite, by default, uses case-sensitive comparisons for '=', but case-insensitive (for ASCII) comparisons for 'LIKE'
                 // We cannot use just 'LIKE', because '_' is a one-character wildcard and can cause false "dataset already in DMS" reports.
                 // Because we already declare all columns as 'COLLATE NOCASE', we can just use '=' without needing to append 'COLLATE NOCASE'.
+
+                // ReSharper restore CommentTypo
+
                 // NOTE: we could also use $"SELECT COUNT(*) FROM {tableName} WHERE {columnName} LIKE :DatasetName ESCAPE '\\'";
                 command.CommandText = $"SELECT COUNT(*) FROM {tableName} WHERE {columnName} = :DatasetName";
                 command.Parameters.Add(new SQLiteParameter(":DatasetName", datasetName));

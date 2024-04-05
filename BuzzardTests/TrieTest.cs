@@ -12,6 +12,9 @@ namespace BuzzardTests
         private List<DMSData> m_datasets;
         private List<string> m_datasetNames;
         private List<string> m_fileNames;
+
+        // ReSharper disable once InconsistentNaming
+        // ReSharper disable once IdentifierTypo
         private Dictionary<int, string> m_valids;
 
         [OneTimeSetUp]

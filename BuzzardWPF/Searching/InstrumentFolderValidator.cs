@@ -58,6 +58,8 @@ namespace BuzzardWPF.Searching
             return shareList;
         }
 
+        // ReSharper disable once GrammarMistakeInComment
+
         /// <summary>
         /// Checks what effective permissions the provided user has on the provided shared directory.
         /// </summary>
@@ -102,6 +104,8 @@ namespace BuzzardWPF.Searching
 
             return canReadDir && canReadShare;
         }
+
+        // ReSharper disable once GrammarMistakeInComment
 
         /// <summary>
         /// Checks what permissions the provided user has on the provided directory.
@@ -179,6 +183,8 @@ namespace BuzzardWPF.Searching
 
             return hasReadPermissions;
         }
+
+        // ReSharper disable once GrammarMistakeInComment
 
         /// <summary>
         /// Checks what permissions the provided user has on the provided local shared directory.
@@ -374,6 +380,8 @@ namespace BuzzardWPF.Searching
                     // Base folder is on this computer
                     // Determine the local shares
                     localShares = GetLocalWindowsShares();
+
+                    // ReSharper disable once CommentTypo
 
                     // Uncomment the following for debugging
                     // if (string.Equals(baseFolderHostName, "monroe3", StringComparison.CurrentCultureIgnoreCase))

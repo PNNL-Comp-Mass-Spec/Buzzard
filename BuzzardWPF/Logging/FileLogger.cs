@@ -245,7 +245,14 @@ namespace BuzzardWPF.Logging
             // This path is one either set by the user, or %AppData%\AppName
             var basePath = PersistDataPaths.LocalDataPath;
 
+            // ReSharper disable CommentTypo
+
             //string logFileName = "Log_" + DateTime.UtcNow.Subtract(new TimeSpan(8, 0, 0)).ToString("MMddyyyy_HHmmss") + ".txt";
+
+            // ReSharper restore CommentTypo
+
+            // ReSharper disable once StringLiteralTypo
+
             var logFileName = "Log_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".txt";
             return Path.Combine(Path.Combine(basePath, "Log"), logFileName);
         }
