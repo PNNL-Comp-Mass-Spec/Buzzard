@@ -41,7 +41,7 @@ namespace BuzzardTests
         [Test]
         public void TestA()
         {
-            //actual buildconnectionstring call is in constructor
+            // The actual build connection string call is in constructor
             var folderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                                           CONST_TEST_FOLDER, CONST_TEST_CACHE);
             Console.WriteLine("ConnectionString: " + SQLiteTools.ConnString);
@@ -66,7 +66,7 @@ namespace BuzzardTests
         }
 
         /// <summary>
-        /// Tests that getseptypelist gets separations..specifically those stored by TestB.
+        /// Tests that GetSepTypeList gets separations, specifically those stored by TestB.
         /// </summary>
         [Test]
         public void TestC()

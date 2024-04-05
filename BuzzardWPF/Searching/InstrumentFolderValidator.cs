@@ -29,7 +29,7 @@ namespace BuzzardWPF.Searching
         }
 
         /// <summary>
-        /// Gets all local Windows shared directories, excluding ADMIN (ending in '$') shares
+        /// Gets all local Windows shared directories, excluding ADMIN (ending in $) shares
         /// </summary>
         /// <returns>
         /// Dictionary where key is the share name and path is the local path to that share.
@@ -81,7 +81,7 @@ namespace BuzzardWPF.Searching
 
             var trimPath = path.TrimEnd('\\');
             foreach (var share in GetLocalWindowsShares().Where(x => !x.Key.EndsWith("$") /* Exclude Admin shares */)
-                .OrderBy(x => x.Value.Length /* By default use the most specific share */))
+                .OrderBy(x => x.Value.Length /* By default, use the most specific share */))
             {
                 if (share.Value.Equals(trimPath, StringComparison.OrdinalIgnoreCase) ||
                     (!string.IsNullOrWhiteSpace(share.Value) && path.StartsWith(share.Value, StringComparison.OrdinalIgnoreCase)))
@@ -531,7 +531,6 @@ namespace BuzzardWPF.Searching
                                              expectedBaseDirectoryPath.Substring(REMOTE_COMPUTER_PREFIX.Length);
                 }
 
-                // TODO: Improve this message!!!
                 ErrorMessage = "Search folder not valid; it should be " + expectedBaseDirectoryPath + " or a subdirectory; -- dataset upload will fail; search aborted";
 
                 return false;

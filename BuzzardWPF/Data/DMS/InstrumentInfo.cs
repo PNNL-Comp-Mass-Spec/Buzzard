@@ -62,7 +62,7 @@ namespace BuzzardWPF.Data.DMS
         /// <summary>
         /// Clone - make a deep copy
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A copy of the instrument data tracked by this class</returns>
         public object Clone()
         {
             var newInstrumentInfo = new InstrumentInfo();

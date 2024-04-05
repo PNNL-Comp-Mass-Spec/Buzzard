@@ -67,9 +67,7 @@ namespace BuzzardWPF.Management
         public DatasetMonitor Monitor => DatasetMonitor.Monitor;
 
         /// <summary>
-        /// This value tells the DatasetManager whether or not
-        /// to create a dataset for an archived data source that
-        /// is found by the searcher.
+        /// When true, the DatasetManager can create a dataset for an archived data source that is found by the searcher.
         /// </summary>
         /// <remarks>
         /// the SearchConfigView is responsible for setting this.

@@ -689,7 +689,7 @@ namespace BuzzardWPF.IO.SQLite
                 {
                     if (!tableColumnsCorrect)
                     {
-                        // table column names mismatched, drop the table so we can re-create it
+                        // table column names mismatched, drop the table so that we can re-create it
                         var sqlStr = "DROP TABLE " + tableName;
                         ExecuteSQLiteCommand(sqlStr, connStr);
                     }
@@ -727,7 +727,7 @@ namespace BuzzardWPF.IO.SQLite
             string[] colNames = { columnName };
             var sqlCreateCmd = BuildGenericCreateTableCmd(tableName, colNames, columnName, true);
 
-            // If table exists, clear it. Otherwise create one
+            // If table exists, clear it. Otherwise, create it.
             var tableFormatGood = VerifyTableFormat(tableName, connStr, sqlCreateCmd);
             var tableExists = VerifyTableExists(tableName, ConnString, out _, out _, false);
             if (tableExists && tableFormatGood)
@@ -797,7 +797,7 @@ namespace BuzzardWPF.IO.SQLite
             // Set up table name
             var tableName = GetTableName(tableType);
 
-            // If table exists, clear it. Otherwise create one
+            // If table exists, clear it. Otherwise, create it.
             if (!VerifyTableExists(tableName, ConnString, out _, out var rowCount))
             {
                 if (!PrepareSingleColumnTable(tableType, ConnString, false, false))

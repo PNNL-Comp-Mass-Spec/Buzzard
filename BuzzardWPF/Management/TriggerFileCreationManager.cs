@@ -232,7 +232,7 @@ namespace BuzzardWPF.Management
 
             if (datasetsAlreadyInDMS > 0 && datasetsAlreadyInDMS == selectedDatasets.Count)
             {
-                // All of the datasets were already in DMS
+                // The datasets were already in DMS
                 return false;
             }
 

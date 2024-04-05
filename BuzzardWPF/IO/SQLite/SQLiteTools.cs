@@ -452,13 +452,12 @@ namespace BuzzardWPF.IO.SQLite
         }
 
         /// <summary>
-        /// Saves the Proposal Users list and a Proposal ID to Proposal User ID cross-reference
-        /// list to the cache.
+        /// Saves the Proposal Users list and a Proposal ID to Proposal User ID cross-reference list to the cache.
         /// </summary>
         /// <param name="users">A list of the Proposal Users to cache.</param>
-        /// <param name="crossReferenceList">A list of cross references to cache.</param>
+        /// <param name="crossReferenceList">A list of cross-referenced user ID to proposal ID list.</param>
         /// <param name="pidIndexedReferenceList">
-        /// A dictionary of cross reference lists that have been grouped by Proposal ID.
+        /// A dictionary of cross-referenced lists that have been grouped by Proposal ID.
         /// </param>
         public static void SaveProposalUsers(IEnumerable<ProposalUser> users,
             IEnumerable<UserIDPIDCrossReferenceEntry> crossReferenceList,

@@ -57,12 +57,9 @@ namespace BuzzardWPF.Management
         public ObservableCollectionExtended<QcMonitorData> QcMonitors { get; } = new ObservableCollectionExtended<QcMonitorData>();
 
         /// <summary>
-        /// This values tells the DatasetManager if it can create
-        /// a trigger file for datasets that fail to resolve their
-        /// DMS data. This only applies when the reason for the
-        /// trigger file creation is due to the count down running
-        /// out. If a user wants to create the trigger file without
-        /// DMS data, we won't stop them.
+        /// When true, the DatasetManager will create a trigger file for datasets that fail to resolve their DMS data.
+        /// This only applies when the reason for the trigger file creation is due to the countdown running out.
+        /// If a user wants to create the trigger file without DMS data, we won't stop them.
         /// </summary>
         /// <remarks>
         /// The Watcher Config control is responsible for setting this.

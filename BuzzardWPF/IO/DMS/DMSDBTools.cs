@@ -279,7 +279,7 @@ namespace BuzzardWPF.IO.DMS
         }
 
         /// <summary>
-        /// Gets a list of dataset types from DMS ans stores it in cache
+        /// Gets a list of dataset types from DMS and stores it in cache
         /// </summary>
         private void GetDatasetTypeListFromDMS()
         {
