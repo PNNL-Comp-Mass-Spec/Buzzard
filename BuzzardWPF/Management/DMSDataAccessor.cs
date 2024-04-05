@@ -365,10 +365,10 @@ namespace BuzzardWPF.Management
                 proposalID = string.Empty;
             }
 
-            if (proposalUserCollections.ContainsKey(proposalID))
             // We haven't yet built a quick reference collection for this PID
+            if (proposalUserCollections.TryGetValue(proposalID, out var proposalUsers))
             {
-                return proposalUserCollections[proposalID];
+                return proposalUsers;
             }
 
             List<ProposalUser> newUserCollection;
@@ -387,11 +387,9 @@ namespace BuzzardWPF.Management
                     return new List<ProposalUser>();
                 }
             }
-            else if (pidIndexedCrossReferenceList.ContainsKey(proposalID))
+            else if (pidIndexedCrossReferenceList.TryGetValue(proposalID, out var crossReferencedUsers))
             {
-                var crossReferenceList = pidIndexedCrossReferenceList[proposalID];
-
-                if (crossReferenceList.Count == 0)
+                if (crossReferencedUsers.Count == 0)
                 {
                     // This really shouldn't be possible because the PIDs are generated from the
                     // user lists, so if there are no users, a PID is not generated.
@@ -407,9 +405,9 @@ namespace BuzzardWPF.Management
                 }
                 else
                 {
-                    var uIDs = crossReferenceList.Select(xRef => xRef.UserID);
                     // The dictionary has already grouped the cross-referenced users by PID,
                     // so we just need to get the UIDs that are in that group.
+                    var uIDs = crossReferencedUsers.Select(xRef => xRef.UserID);
                     var hashedUIDs = new HashSet<int>(uIDs);
 
                     // Get the users based on the given UIDs.
