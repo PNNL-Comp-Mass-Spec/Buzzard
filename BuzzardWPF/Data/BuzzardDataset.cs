@@ -446,12 +446,12 @@ namespace BuzzardWPF.Data
             "\n* Dataset name must start with the run request name (case insensitive)" +
             "\n* Instrument group must match the instrument (did you assign the run request to this instrument?)";
 
-        private string FormatStatus(int waitSeconds, DatasetStatus status, DatasetSource source)
+        private string FormatStatus(int waitSeconds, DatasetStatus statusToFormat, DatasetSource source)
         {
             StatusToolTip = null; // needs to be null to not show an empty pop-up
             StatusWarning = false;
 
-            switch (status)
+            switch (statusToFormat)
             {
                 case DatasetStatus.TriggerFileSent:
                     return "Trigger File Sent";

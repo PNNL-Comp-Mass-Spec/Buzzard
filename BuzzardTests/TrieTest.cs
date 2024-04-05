@@ -88,30 +88,34 @@ namespace BuzzardTests
                 trie.AddData(datum);
             }
 
-            foreach (string name in m_valids.Values)
+            foreach (var name in m_valids.Values)
             {
-                DMSData datum  = null;
-                string nname        = Path.GetFileNameWithoutExtension(name);
+                var nameToFind = Path.GetFileNameWithoutExtension(name);
+
                 try
                 {
-                    datum = trie.FindData(nname);
-                    if (datum != null)
+                    var datasetMatch = trie.FindData(nameToFind);
+
+                    if (datasetMatch != null)
                     {
-                        int xx = 0;
-                        xx++;
+                        Console.WriteLine(datasetMatch.DatasetName);
                     }
                 }
-                catch(KeyNotFoundException)
+                catch (KeyNotFoundException)
                 {
                     try
                     {
-                        var xname    = Path.GetFileNameWithoutExtension(Path.GetDirectoryName(name));
-                        datum        = trie.FindData(xname);
+                        var directoryName = Path.GetFileNameWithoutExtension(Path.GetDirectoryName(name));
+                        var datasetMatch = trie.FindData(directoryName);
+
+                        if (datasetMatch != null)
+                        {
+                            Console.WriteLine(datasetMatch.DatasetName);
+                        }
                     }
-                    catch (KeyNotFoundException)
+                    catch (KeyNotFoundException ex)
                     {
-                        var xx = 0;
-                        xx++;
+                        Console.WriteLine(ex.Message);
                     }
                 }
             }

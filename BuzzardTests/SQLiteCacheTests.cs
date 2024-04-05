@@ -159,8 +159,8 @@ namespace BuzzardTests
         [Test]
         public void TestO()
         {
-            var insts = SQLiteTools.GetInstrumentList(false).ToList();
-            Assert.AreEqual("Test instrument", insts[0].CommonName);
+            var instruments = SQLiteTools.GetInstrumentList(false).ToList();
+            Assert.AreEqual("Test instrument", instruments[0].CommonName);
         }
 
         /// <summary>
