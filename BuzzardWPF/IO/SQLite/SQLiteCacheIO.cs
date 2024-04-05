@@ -464,7 +464,7 @@ namespace BuzzardWPF.IO.SQLite
                 myCmd.CommandText = cmdStr;
                 try
                 {
-                    var affectedRows = myCmd.ExecuteNonQuery();
+                    myCmd.ExecuteNonQuery();
                 }
                 catch (Exception ex)
                 {
@@ -535,7 +535,7 @@ namespace BuzzardWPF.IO.SQLite
 
                 try
                 {
-                    var rowCount = dataAdapter.Fill(returnTable);
+                    dataAdapter.Fill(returnTable);
                 }
                 catch (Exception ex)
                 {
@@ -641,10 +641,10 @@ namespace BuzzardWPF.IO.SQLite
         /// <param name="dropOnMismatch">If true, the table exists, and the column names don't match property names, drops and re-creates the table</param>
         /// <param name="clearExisting">If true and the table exists, the existing data will be truncated</param>
         /// <returns>True if table exists and is readable</returns>
-        private bool PrepareMultiColumnTable(string tableName, string connStr, Type dataType, bool dropOnMismatch = true, bool clearExisting = true)
+        private void PrepareMultiColumnTable(string tableName, string connStr, Type dataType, bool dropOnMismatch = true, bool clearExisting = true)
         {
             var mappings = propToColumnMap.GetPropertyColumnMapping(dataType).Values.ToList();
-            return PrepareMultiColumnTable(tableName, connStr, mappings, dropOnMismatch, clearExisting);
+            PrepareMultiColumnTable(tableName, connStr, mappings, dropOnMismatch, clearExisting);
         }
 
         /// <summary>
