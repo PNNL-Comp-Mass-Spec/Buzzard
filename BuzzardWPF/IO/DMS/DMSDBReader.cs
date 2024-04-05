@@ -245,14 +245,14 @@ namespace BuzzardWPF.IO.DMS
             // Get a list containing all active work packages
 
             // Filters:
-            // * Only get the last 6 years
+            // * Only get the last 10 years (switched from 6 years to 10 years in April 2024)
             // * None from an 'unallowable' subaccount
             // * None that are inactive and never used
             // * None that have not been used, where the owner name is unknown (not in DMS)
             var sqlCmd =
                 "SELECT charge_code, state, sub_account, work_breakdown_structure, title, owner_username, owner_name " +
                 $"FROM {db.SchemaPrefix}v_charge_code_export " +
-                $"WHERE setup_date > '{DateTime.Now.AddYears(-6):yyyy-MM-dd}' AND sub_account NOT LIKE '%UNALLOWABLE%' AND state <> 'Inactive, unused' AND (state LIKE '%, used%' OR owner_name IS NOT NULL)" +
+                $"WHERE setup_date > '{DateTime.Now.AddYears(-10):yyyy-MM-dd}' AND sub_account NOT LIKE '%UNALLOWABLE%' AND state <> 'Inactive, unused' AND (state LIKE '%, used%' OR owner_name IS NOT NULL)" +
                 "ORDER BY sort_key";
 
             var deDupDictionary = new Dictionary<string, string>();
