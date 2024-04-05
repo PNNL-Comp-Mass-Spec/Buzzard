@@ -74,9 +74,9 @@ namespace BuzzardTests
             // ReSharper restore StringLiteralTypo
 
             m_valids = new Dictionary<int, string>();
-            foreach(string name in m_datasetNames)
+            foreach (var name in m_datasetNames)
             {
-                for (int j = 0; j < m_fileNames.Count; j++)
+                for (var j = 0; j < m_fileNames.Count; j++)
                 {
                     if (m_fileNames[j].Contains(name))
                     {
@@ -89,7 +89,7 @@ namespace BuzzardTests
         [Test]
         public void TestTrieBuilding()
         {
-            DatasetTrie trie = new DatasetTrie();
+            var trie = new DatasetTrie();
             foreach (var datum in m_datasets)
             {
                 trie.AddData(datum);
