@@ -65,17 +65,16 @@ namespace BuzzardWPF.Data.DMS
         /// <returns>A copy of the instrument data tracked by this class</returns>
         public object Clone()
         {
-            var newInstrumentInfo = new InstrumentInfo();
-
-            newInstrumentInfo.DMSName = DMSName;
-            newInstrumentInfo.CommonName = CommonName;
-            newInstrumentInfo.InstrumentGroup = InstrumentGroup;
-            newInstrumentInfo.CaptureMethod = CaptureMethod;
-            newInstrumentInfo.Status = Status;
-            newInstrumentInfo.HostName = HostName;
-            newInstrumentInfo.SharePath = SharePath;
-
-            return newInstrumentInfo;
+            return new InstrumentInfo
+            {
+                DMSName = DMSName,
+                CommonName = CommonName,
+                InstrumentGroup = InstrumentGroup,
+                CaptureMethod = CaptureMethod,
+                Status = Status,
+                HostName = HostName,
+                SharePath = SharePath
+            };
         }
 
         public override string ToString()
