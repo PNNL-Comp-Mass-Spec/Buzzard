@@ -259,7 +259,7 @@ namespace BuzzardWPF.Management
             return false;
         }
 
-        private List<BuzzardDataset> VerifyDatasetsStable(IReadOnlyCollection<BuzzardDataset> selectedDatasets)
+        private List<BuzzardDataset> VerifyDatasetsStable(IEnumerable<BuzzardDataset> selectedDatasets)
         {
             const int SECONDS_TO_WAIT = 30;
 
@@ -268,7 +268,9 @@ namespace BuzzardWPF.Management
             // Values: Dataset exists (file or directory), size (in bytes), number of files
             var datasetsToVerify = new Dictionary<BuzzardDataset, (bool Exists, long Size, int FileCount)>();
 
-            foreach (var dataset in selectedDatasets)
+            var buzzardDatasets = selectedDatasets.ToList();
+
+            foreach (var dataset in buzzardDatasets)
             {
                 var stats = dataset.GetFileStats();
                 if (!stats.Exists)
@@ -293,7 +295,7 @@ namespace BuzzardWPF.Management
 
                 if (abortTriggerCreationNow)
                 {
-                    MarkAborted(selectedDatasets);
+                    MarkAborted(buzzardDatasets);
                     ApplicationLogger.LogMessage(0, "Aborted verification of stable dataset files");
                     return stableDatasets;
                 }
@@ -339,7 +341,7 @@ namespace BuzzardWPF.Management
         }
 
         // Return an IEnumerable and return data with yield return so that trigger files are created as this verification occurs, rather than no trigger files being created until all datasets are checked.
-        private IEnumerable<BuzzardDataset> VerifyDatasetsNotDuplicates(IReadOnlyCollection<BuzzardDataset> datasets)
+        private IEnumerable<BuzzardDataset> VerifyDatasetsNotDuplicates(IEnumerable<BuzzardDataset> datasets)
         {
             foreach (var dataset in datasets)
             {
@@ -380,7 +382,7 @@ namespace BuzzardWPF.Management
             }
         }
 
-        private List<BuzzardDataset> VerifyDatasetsMatchInstrument(IReadOnlyCollection<BuzzardDataset> datasets)
+        private List<BuzzardDataset> VerifyDatasetsMatchInstrument(IEnumerable<BuzzardDataset> datasets)
         {
             var verifiedDatasets = new List<BuzzardDataset>();
 
