@@ -51,8 +51,8 @@ namespace BuzzardWPF.Data
 
         private bool cartConfigError;
         private DateTime lastRecordedLastWriteTime;
-        private string statusToolTip = null;
-        private bool statusWarning = false;
+        private string statusToolTip;
+        private bool statusWarning;
         private readonly ObservableAsPropertyHelper<bool> isMonitored;
         private readonly List<IDisposable> disposables = new List<IDisposable>();
         private readonly ObservableAsPropertyHelper<string> emslProjectText;

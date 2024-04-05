@@ -37,7 +37,7 @@ namespace BuzzardWPF.Data.DMS
         public string CaptureMethod
         {
             get => captureMethod;
-            set => this.RaiseAndSetIfChanged(ref captureMethod, value, nameof(CaptureMethod));
+            set => this.RaiseAndSetIfChanged(ref captureMethod, value);
         }
 
         /// <summary>
