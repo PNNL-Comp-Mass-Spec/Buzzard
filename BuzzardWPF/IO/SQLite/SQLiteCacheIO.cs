@@ -512,6 +512,8 @@ namespace BuzzardWPF.IO.SQLite
             return value;
         }
 
+        // ReSharper disable once UnusedMember.Local
+
         /// <summary>
         /// Retrieves a data table from a SQLite database
         /// </summary>
@@ -1260,6 +1262,8 @@ namespace BuzzardWPF.IO.SQLite
             }
             return data;
         }
+
+        // ReSharper disable once UnusedMember.Global
 
         /// <summary>
         /// Generic method for retrieving data from a single column table

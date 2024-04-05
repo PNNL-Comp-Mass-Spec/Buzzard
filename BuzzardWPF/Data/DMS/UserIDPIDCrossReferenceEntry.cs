@@ -59,7 +59,11 @@ namespace BuzzardWPF.Data.DMS
         {
             unchecked
             {
+                // ReSharper disable NonReadonlyMemberInGetHashCode
+
                 return (userID * 397) ^ (pid?.GetHashCode() ?? 0);
+
+                // ReSharper restore NonReadonlyMemberInGetHashCode
             }
         }
     }

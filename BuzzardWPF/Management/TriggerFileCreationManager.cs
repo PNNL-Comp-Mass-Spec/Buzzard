@@ -161,6 +161,7 @@ namespace BuzzardWPF.Management
                 {
                     if (!abortTriggerCreationNow)
                     {
+                        // ReSharper disable once UnusedVariable
                         var triggerFilePath = DatasetManager.CreateTriggerFileBuzzard(dataset, forceSend: true, preview: false);
                     }
 

@@ -114,6 +114,8 @@ namespace BuzzardWPF.Data.DMS
 
         public override int GetHashCode()
         {
+            // ReSharper disable once NonReadonlyMemberInGetHashCode
+
             return DMSName?.GetHashCode() ?? 0;
         }
     }

@@ -5,6 +5,8 @@ using BuzzardWPF.ViewModels;
 
 namespace BuzzardWPF.Views
 {
+    // ReSharper disable once RedundantExtendsListEntry
+
     /// <summary>
     /// Interaction logic for ErrorMessagesView.xaml
     /// </summary>

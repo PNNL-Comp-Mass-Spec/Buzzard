@@ -18,6 +18,11 @@ namespace BuzzardWPF.Data
 
         public int Count => requestIDToDMSMap.Count;
 
+        // ReSharper disable once UnusedMember.Global
+
+        /// <summary>
+        /// Clear the root node and request ID to DMS data map
+        /// </summary>
         public void Clear()
         {
             rootNode.Clear();

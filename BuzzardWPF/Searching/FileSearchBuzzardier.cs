@@ -67,6 +67,8 @@ namespace BuzzardWPF.Searching
             searchingAsync = false;
         }
 
+        // ReSharper disable once UnusedMember.Global
+
         /// <summary>
         /// Searches
         /// </summary>
