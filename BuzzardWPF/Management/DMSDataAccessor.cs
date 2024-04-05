@@ -398,7 +398,7 @@ namespace BuzzardWPF.Management
                     ApplicationLogger.LogError(
                         0,
                         string.Format(
-                            "Requested Proposal ID '{0}' has no users. Returning empty collection of Proposal Users.",
+                            "Requested Proposal ID '{0}' has no users (see method GetProposalUsers in the DMSDataAccessor class). Returning empty collection of Proposal Users.",
                             proposalID));
 
                     newUserCollection = new List<ProposalUser>();
