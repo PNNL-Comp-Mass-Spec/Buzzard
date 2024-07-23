@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using BuzzardWPF.Data.DMS;
 using BuzzardWPF.Logging;
 using BuzzardWPF.Management;
 
@@ -36,70 +38,184 @@ namespace BuzzardWPF.Data
             }
 
             var di = new DirectoryInfo(dataset.FilePath);
+            var instrumentInfo = DMSDataAccessor.Instance.InstrumentDetailsData
+                .FirstOrDefault(x => x.DMSName.Equals(dataset.InstrumentName, StringComparison.OrdinalIgnoreCase));
 
             if (allowedInstrumentGroups.Count(x =>
                     x.Equals("MALDI-Imaging", StringComparison.OrdinalIgnoreCase) ||
                     x.Equals("Bruker_FTMS", StringComparison.OrdinalIgnoreCase)) == 2)
             {
-                // 'ser' file exists for any 'serial acquisition'; 'fid' is for single scans?
-                // Bruker_FTMS: must be a .d directory, may contain a 'fid' or 'ser' file, will not contain a 'ImagingInfo.xml' file
-                // MALDI-Imaging: must be a directory with the dataset name, and inside the directory is a .D directory (and typically some jpg files); should not contain any 'fid' files (but should have 'ImagingInfo.xml' file(s))
+                return CheckBrukerFTMS_MALDIImaging(dataset, di, allowedInstrumentGroups, instrumentInfo, out message);
+            }
 
-                var instrumentGroup = DMSDataAccessor.Instance.InstrumentDetailsData
-                    .FirstOrDefault(x => x.DMSName.Equals(dataset.InstrumentName, StringComparison.OrdinalIgnoreCase));
-
-                if (instrumentGroup == null ||
-                    !(instrumentGroup.InstrumentGroup.Equals("MALDI-Imaging", StringComparison.OrdinalIgnoreCase) ||
-                      instrumentGroup.InstrumentGroup.Equals("Bruker_FTMS", StringComparison.OrdinalIgnoreCase)))
-                {
-                    // There's a bigger problem, DMS will catch it
-                    return true;
-                }
-
-                // For these 2 instrument groups, the directory options considered are 'no extension' and '.d extension'
-                if (dataset.FilePath.EndsWith(".d", StringComparison.OrdinalIgnoreCase))
-                {
-                    // directory has an extension
-                    if (instrumentGroup.InstrumentGroup.Equals("MALDI-Imaging", StringComparison.OrdinalIgnoreCase))
-                    {
-                        message = brukerErrorMessage;
-                        ApplicationLogger.LogMessage(LogLevel.Warning, $"Blocking upload of dataset {dataset.FilePath}: instrument chosen is 'imaging', dataset folder ends with '.d'");
-                        return false;
-                    }
-
-                    // Check if the directory contains a 'ImagingInfo.xml' file
-                    if (di.GetFiles("ImagingInfo.xml", SearchOption.AllDirectories).Length > 0)
-                    {
-                        message = brukerErrorMessage;
-                        ApplicationLogger.LogMessage(LogLevel.Warning, $"Blocking upload of dataset {dataset.FilePath}: instrument chosen is not 'imaging', dataset folder contains a 'ImagingInfo.xml' file");
-                        return false;
-                    }
-
-                    // instrumentGroup.InstrumentGroup.Equals("Bruker_FTMS", StringComparison.OrdinalIgnoreCase)
-                    return true;
-                }
-
-                // directory does not have an extension; some checks are needed
-                // must be a directory with the dataset name, and inside the directory is a .D directory (and typically some jpg files)
-                if (instrumentGroup.InstrumentGroup.Equals("MALDI-Imaging", StringComparison.OrdinalIgnoreCase))
-                {
-                    // Check if the directory contains a 'ImagingInfo.xml' file
-                    if (di.GetFiles("ImagingInfo.xml", SearchOption.AllDirectories).Length == 0)
-                    {
-                        message = brukerErrorMessage;
-                        ApplicationLogger.LogMessage(LogLevel.Warning, $"Blocking upload of dataset {dataset.FilePath}: instrument chosen is 'imaging', dataset folder does not contain a 'ImagingInfo.xml' file");
-                        return false;
-                    }
-
-                    return true;
-                }
-
-                message = brukerErrorMessage;
-                ApplicationLogger.LogMessage(LogLevel.Warning, $"Blocking upload of dataset {dataset.FilePath}: instrument chosen is not 'imaging', dataset folder does not end with '.d'");
-                return false;
+            if (allowedInstrumentGroups.Count(x =>
+                         x.Equals("MALDI_timsTOF_Imaging", StringComparison.OrdinalIgnoreCase) ||
+                         x.Equals("timsTOF_Flex", StringComparison.OrdinalIgnoreCase)) == 2)
+            {
+                return CheckBrukerTimsTOF_MALDIImaging(dataset, di, allowedInstrumentGroups, instrumentInfo, out message);
             }
 
             return true;
+        }
+
+        private static bool CheckBrukerFTMS_MALDIImaging(BuzzardDataset dataset, DirectoryInfo di, IReadOnlyList<string> allowedInstrumentGroups, InstrumentInfo instrumentInfo, out string message)
+        {
+            message = "";
+            const string brukerErrorMessage = "Check dataset instrument!" +
+                                              "\nNon-imaging instrument dataset folders must end with '.d'" +
+                                              "\nMALDI imaging instrument dataset folders must NOT end with '.d' - instead should upload the folder containing the '.d' folder and .jpg files";
+
+            if (allowedInstrumentGroups.Count(x =>
+                    x.Equals("MALDI-Imaging", StringComparison.OrdinalIgnoreCase) ||
+                    x.Equals("Bruker_FTMS", StringComparison.OrdinalIgnoreCase)) != 2)
+            {
+                // Not a match, consider it valid
+                return true;
+            }
+
+            // 'ser' file exists for any 'serial acquisition'; 'fid' is for single scans?
+            // Bruker_FTMS: must be a .d directory, may contain a 'fid' or 'ser' file, will not contain a 'ImagingInfo.xml' file
+            // MALDI-Imaging: must be a directory with the dataset name, and inside the directory is a .D directory (and typically some jpg files); should not contain any 'fid' files (but should have 'ImagingInfo.xml' file(s))
+
+            if (instrumentInfo == null ||
+                !(instrumentInfo.InstrumentGroup.Equals("MALDI-Imaging", StringComparison.OrdinalIgnoreCase) ||
+                  instrumentInfo.InstrumentGroup.Equals("Bruker_FTMS", StringComparison.OrdinalIgnoreCase)))
+            {
+                // There's a bigger problem, DMS will catch it
+                return true;
+            }
+
+            // For these 2 instrument groups, the directory options considered are 'no extension' and '.d extension'
+            if (dataset.FilePath.EndsWith(".d", StringComparison.OrdinalIgnoreCase))
+            {
+                // directory has an extension
+                if (instrumentInfo.InstrumentGroup.Equals("MALDI-Imaging", StringComparison.OrdinalIgnoreCase))
+                {
+                    message = brukerErrorMessage;
+                    ApplicationLogger.LogMessage(LogLevel.Warning, $"Blocking upload of dataset {dataset.FilePath}: instrument chosen is 'imaging', dataset folder ends with '.d'");
+                    return false;
+                }
+
+                // Check if the directory contains a 'ImagingInfo.xml' file
+                if (di.GetFiles("ImagingInfo.xml", SearchOption.AllDirectories).Length > 0)
+                {
+                    message = brukerErrorMessage;
+                    ApplicationLogger.LogMessage(LogLevel.Warning, $"Blocking upload of dataset {dataset.FilePath}: instrument chosen is not 'imaging', dataset folder contains a 'ImagingInfo.xml' file");
+                    return false;
+                }
+
+                // instrumentGroup.InstrumentGroup.Equals("Bruker_FTMS", StringComparison.OrdinalIgnoreCase)
+                return true;
+            }
+
+            // directory does not have an extension; some checks are needed
+            // must be a directory with the dataset name, and inside the directory is a .D directory (and typically some jpg files)
+            if (instrumentInfo.InstrumentGroup.Equals("MALDI-Imaging", StringComparison.OrdinalIgnoreCase))
+            {
+                // Check if the directory contains a 'ImagingInfo.xml' file
+                if (di.GetFiles("ImagingInfo.xml", SearchOption.AllDirectories).Length == 0)
+                {
+                    message = brukerErrorMessage;
+                    ApplicationLogger.LogMessage(LogLevel.Warning, $"Blocking upload of dataset {dataset.FilePath}: instrument chosen is 'imaging', dataset folder does not contain a 'ImagingInfo.xml' file");
+                    return false;
+                }
+
+                return true;
+            }
+
+            message = brukerErrorMessage;
+            ApplicationLogger.LogMessage(LogLevel.Warning, $"Blocking upload of dataset {dataset.FilePath}: instrument chosen is not 'imaging', dataset folder does not end with '.d'");
+            return false;
+        }
+
+        private static bool CheckBrukerTimsTOF_MALDIImaging(BuzzardDataset dataset, DirectoryInfo di, IReadOnlyList<string> allowedInstrumentGroups, InstrumentInfo instrumentInfo, out string message)
+        {
+            message = "";
+            const string brukerErrorMessage = "Check dataset instrument!" +
+                                              "\nNon-imaging instrument dataset folders must end with '.d'" +
+                                              "\nMALDI imaging instrument dataset folders must NOT end with '.d' - instead should upload the folder containing the '.d' folder and .jpg files";
+
+            if (allowedInstrumentGroups.Count(x =>
+                    x.Equals("MALDI_timsTOF_Imaging", StringComparison.OrdinalIgnoreCase) ||
+                    x.Equals("timsTOF_Flex", StringComparison.OrdinalIgnoreCase)) != 2)
+            {
+                // Not a match, consider it valid
+                return true;
+            }
+
+            // 'analysis.tdf' file exists for any 'dual acquisition'?; 'analysis.tsf' is for single scans?
+            // timsTOF_Flex: must be a .d directory, contains an 'analysis.tdf' file, will not contain a '[dataset name].mis' file
+            // MALDI_timsTOF_Imaging: must be a directory with the dataset name, and inside the directory is a .D directory (and typically some jpg files); should not contain any 'analysis.tdf' files (but should have a '[dataset name].mis' file)
+
+            if (instrumentInfo == null ||
+                !(instrumentInfo.InstrumentGroup.Equals("MALDI_timsTOF_Imaging", StringComparison.OrdinalIgnoreCase) ||
+                  instrumentInfo.InstrumentGroup.Equals("timsTOF_Flex", StringComparison.OrdinalIgnoreCase)))
+            {
+                // There's a bigger problem, DMS will catch it
+                return true;
+            }
+
+            /* Bruker TimsTOF Flex Maldi file data:
+             * [dataset].bak file - backup of .mis
+             * [dataset].mis file - 'MALDI Imaging Sequence' file (XML contents)
+             * [dataset].info.txt file - 'FlexImaging Info File' (text)
+             * [dataset].msg.txt file - log messages, usually warnings
+             * [dataset].poslog.txt file - timestamps of laser position changes
+             * [name].jpg files
+             * [dataset].d folder:
+             *   analysis.tsf
+             *   analysis.tsf.bin
+             *   [method].m folder
+             *     diaSettings.diasqlite
+             *     InstrumentSetup.isset
+             *     lock.file
+             *     Maldi.method                     (also exists for non-MALDI datasets)
+             *     microTOFQImpacTemAcquisition.method
+             *     prmSettings.prmsqlite
+             *     submethods.xml
+             *     synchroSettings.syncsqlite         (might not exist for non-MALDI datasets)
+             */
+
+            // For these 2 instrument groups, the directory options considered are 'no extension' and '.d extension'
+            if (dataset.FilePath.EndsWith(".d", StringComparison.OrdinalIgnoreCase))
+            {
+                // directory has an extension
+                if (instrumentInfo.InstrumentGroup.Equals("MALDI_timsTOF_Imaging", StringComparison.OrdinalIgnoreCase))
+                {
+                    message = brukerErrorMessage;
+                    ApplicationLogger.LogMessage(LogLevel.Warning, $"Blocking upload of dataset {dataset.FilePath}: instrument chosen is 'imaging', dataset folder ends with '.d'");
+                    return false;
+                }
+
+                // Check if the directory contains a '[dataset name].mis' file
+                if (di.GetFiles("*.mis", SearchOption.AllDirectories).Length > 0)
+                {
+                    message = brukerErrorMessage;
+                    ApplicationLogger.LogMessage(LogLevel.Warning, $"Blocking upload of dataset {dataset.FilePath}: instrument chosen is not 'imaging', dataset folder contains a '[name].mis' file");
+                    return false;
+                }
+
+                return true;
+            }
+
+            // directory does not have an extension; some checks are needed
+            // must be a directory with the dataset name, and inside the directory is a .D directory (and typically some jpg files)
+            if (instrumentInfo.InstrumentGroup.Equals("MALDI_timsTOF_Imaging", StringComparison.OrdinalIgnoreCase))
+            {
+                // Check if the directory contains a '[dataset name].mis' file
+                if (di.GetFiles("*.mis", SearchOption.AllDirectories).Length == 0)
+                {
+                    message = brukerErrorMessage;
+                    ApplicationLogger.LogMessage(LogLevel.Warning, $"Blocking upload of dataset {dataset.FilePath}: instrument chosen is 'imaging', dataset folder does not contain a '[name].mis' file");
+                    return false;
+                }
+
+                return true;
+            }
+
+            message = brukerErrorMessage;
+            ApplicationLogger.LogMessage(LogLevel.Warning, $"Blocking upload of dataset {dataset.FilePath}: instrument chosen is not 'imaging', dataset folder does not end with '.d'");
+            return false;
         }
     }
 }
