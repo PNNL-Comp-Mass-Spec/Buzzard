@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml.XPath;
 using BuzzardWPF.Data.DMS;
 using BuzzardWPF.Logging;
 using BuzzardWPF.Management;
@@ -163,13 +164,13 @@ namespace BuzzardWPF.Data
              * [dataset].poslog.txt file - timestamps of laser position changes
              * [name].jpg files
              * [dataset].d folder:
-             *   analysis.tsf
-             *   analysis.tsf.bin
+             *   analysis.tsf/analysis.tdf
+             *   analysis.tsf.bin/analysis.tdf.bin
              *   [method].m folder
              *     diaSettings.diasqlite
              *     InstrumentSetup.isset
              *     lock.file
-             *     Maldi.method                     (also exists for non-MALDI datasets)
+             *     Maldi.method                     (also exists for non-MALDI datasets) - check value at 'root/fileinfo/Enabled'.InnerText for 1 or 0
              *     microTOFQImpacTemAcquisition.method
              *     prmSettings.prmsqlite
              *     submethods.xml
@@ -195,6 +196,13 @@ namespace BuzzardWPF.Data
                     return false;
                 }
 
+                if (IsTimsTOFMaldiImagingEnabled(di))
+                {
+                    message = brukerErrorMessage + "\nNon-imaging instrument selected, but dataset method reports MALDI Source was enabled";
+                    ApplicationLogger.LogMessage(LogLevel.Warning, $"Blocking upload of dataset {dataset.FilePath}: instrument chosen is not 'imaging', dataset method reports MALDI source enabled");
+                    return false;
+                }
+
                 return true;
             }
 
@@ -210,11 +218,57 @@ namespace BuzzardWPF.Data
                     return false;
                 }
 
+                foreach (var dotD in di.GetDirectories("*.d"))
+                {
+                    if (!IsTimsTOFMaldiImagingEnabled(dotD))
+                    {
+                        message = brukerErrorMessage + "\nImaging instrument selected, but dataset method reports MALDI Source was disabled";
+                        ApplicationLogger.LogMessage(LogLevel.Warning, $"Blocking upload of dataset {dataset.FilePath}: instrument chosen is 'imaging', dataset method reports MALDI source disabled: {dotD.FullName}");
+                        return false;
+                    }
+                }
+
                 return true;
             }
 
             message = brukerErrorMessage;
             ApplicationLogger.LogMessage(LogLevel.Warning, $"Blocking upload of dataset {dataset.FilePath}: instrument chosen is not 'imaging', dataset folder does not end with '.d'");
+            return false;
+        }
+
+        private static bool IsTimsTOFMaldiImagingEnabled(DirectoryInfo dotDDirectory)
+        {
+            if (!dotDDirectory.Exists)
+            {
+                return false;
+            }
+
+            var methods = dotDDirectory.GetDirectories("*.m");
+            foreach (var method in methods)
+            {
+                var maldiConfig = method.GetFiles("Maldi.method").FirstOrDefault();
+                if (maldiConfig == null)
+                {
+                    return false;
+                }
+
+                try
+                {
+                    var xml = new XPathDocument(maldiConfig.FullName);
+                    var nav = xml.CreateNavigator();
+                    var node = nav.SelectSingleNode("/root/MaldiSource/Enabled");
+                    if (node != null && node.IsNode)
+                    {
+                        var val = node.ValueAsInt;
+                        return val != 0;
+                    }
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+
             return false;
         }
     }
