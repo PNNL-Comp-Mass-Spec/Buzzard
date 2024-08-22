@@ -10,12 +10,12 @@ namespace BuzzardWPF.IO.DMS
 {
     public class DMSConfig : IEquatable<DMSConfig>
     {
-        public const string DefaultDatabaseServer = "Gigasax";
-        public const string DefaultDatabaseName = "DMS5";
-        public const string DefaultDatabaseSchemaPrefix = ""; // if non-empty, always needs to end with a '.'
-        public const string DefaultUsername = "LCMSNetUser";
-        public const string DefaultEncodedPassword = "Mprptq3v";
-        public const DbServerTypes DefaultDatabaseSoftware =  DbServerTypes.MSSQLServer;
+        public const string DefaultDatabaseServer = "prismdb2";
+        public const string DefaultDatabaseName = "dms";
+        public const string DefaultDatabaseSchemaPrefix = "public."; // if non-empty, always needs to end with a '.'
+        public const string DefaultUsername = "dmsreader";
+        public const string DefaultEncodedPassword = "cnr5evm";
+        public const DbServerTypes DefaultDatabaseSoftware =  DbServerTypes.PostgreSQL;
 
         public DMSConfig()
         {
@@ -122,13 +122,13 @@ namespace BuzzardWPF.IO.DMS
             var lines = new List<string>()
             {
                 "{",
-                "    // databaseServer is the server hosting DMS (defaults to Gigasax if missing)",
+                "    // databaseServer is the server hosting DMS (defaults to prismdb2 if missing)",
                 $"    \"databaseServer\" : \"{DatabaseServer}\",",
                 "    // database is the name of the database to connect to",
                 $"    \"databaseName\" : \"{DatabaseName}\",",
                 "    // databaseSchemaPrefix is the schema prefix for the database; can be an empty string for default/unspecified schema. If not empty, must end with a '.' (period)",
                 $"    \"databaseSchemaPrefix\" : \"{DatabaseSchemaPrefix}\",",
-                "    // username is the DMS username for SQL server user (default is LCMSNetUser)",
+                "    // username is the DMS username for SQL server user (default is dmsreader)",
                 $"    \"username\" : \"{Username}\",",
                 "    // encodedPassword is the encoded DMS password for the SQL server user",
                 $"    \"encodedPassword\" : \"{EncodedPassword}\",",
