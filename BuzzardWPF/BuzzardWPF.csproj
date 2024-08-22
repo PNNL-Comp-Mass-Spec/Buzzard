@@ -357,10 +357,10 @@
       <Version>6.1.94</Version>
     </PackageReference>
     <PackageReference Include="DynamicData">
-      <Version>7.14.2</Version>
+      <Version>9.0.4</Version>
     </PackageReference>
     <PackageReference Include="Nerdbank.GitVersioning">
-      <Version>3.6.133</Version>
+      <Version>3.6.141</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -368,16 +368,16 @@
       <Version>5.0.1</Version>
     </PackageReference>
     <PackageReference Include="PRISM-DatabaseUtils">
-      <Version>1.3.33</Version>
+      <Version>1.4.32</Version>
     </PackageReference>
     <PackageReference Include="PRISM-Library">
-      <Version>2.8.17</Version>
+      <Version>2.8.32</Version>
     </PackageReference>
     <PackageReference Include="PRISMWin-Library">
-      <Version>1.1.10</Version>
+      <Version>1.1.18</Version>
     </PackageReference>
     <PackageReference Include="ReactiveUI.WPF">
-      <Version>19.4.1</Version>
+      <Version>20.1.1</Version>
     </PackageReference>
     <PackageReference Include="System.Data.SQLite.Core">
       <Version>1.0.118</Version>

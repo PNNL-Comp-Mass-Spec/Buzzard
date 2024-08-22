@@ -67,7 +67,7 @@ Source: "bin\Release\DotNetProjects.Wpf.Extended.Toolkit.dll";        DestDir: "
 Source: "bin\Release\DynamicData.dll";                                DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\Microsoft.Bcl.AsyncInterfaces.dll";              DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\Microsoft.Bcl.HashCode.dll";                     DestDir: "{app}";     Flags: ignoreversion
-Source: "bin\Release\Microsoft.Extensions.Logging.Abstractions.dll";  DestDir: "{app}";     Flags: ignoreversion
+Source: "bin\Release\Microsoft.Extensions.*.dll";                     DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\Npgsql.dll";                                     DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\Ookii.Dialogs.Wpf.dll";                          DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\PRISM.dll";                                      DestDir: "{app}";     Flags: ignoreversion
@@ -78,6 +78,7 @@ Source: "bin\Release\ReactiveUI*.dll";                                DestDir: "
 Source: "bin\Release\Splat*.dll";                                     DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\System.Buffers.dll";                             DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\System.Collections.Immutable.dll";               DestDir: "{app}";     Flags: ignoreversion
+Source: "bin\Release\System.ComponentModel.Annotations.dll";          DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\System.Data.SQLite.dll";                         DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\System.Diagnostics.DiagnosticSource.dll";        DestDir: "{app}";     Flags: ignoreversion
 Source: "bin\Release\System.Memory.dll";                              DestDir: "{app}";     Flags: ignoreversion
