@@ -9,7 +9,7 @@ using BuzzardWPF.Management;
 
 namespace BuzzardWPF.Data
 {
-    public class DatasetInstrumentChecks
+    public static class DatasetInstrumentChecks
     {
         /// <summary>
         /// Make sure the files match the instrument group; this check is particularly for instrument computers supporting multiple instruments/dataset types
@@ -57,7 +57,7 @@ namespace BuzzardWPF.Data
             return true;
         }
 
-        private static bool CheckBrukerFTMS_MALDIImaging(BuzzardDataset dataset, DirectoryInfo di, IReadOnlyList<string> allowedInstrumentGroups, InstrumentInfo instrumentInfo, out string message)
+        private static bool CheckBrukerFTMS_MALDIImaging(BuzzardDataset dataset, DirectoryInfo di, IEnumerable<string> allowedInstrumentGroups, InstrumentInfo instrumentInfo, out string message)
         {
             message = "";
             const string brukerErrorMessage = "Check dataset instrument!" +
@@ -127,7 +127,7 @@ namespace BuzzardWPF.Data
             return false;
         }
 
-        private static bool CheckBrukerTimsTOF_MALDIImaging(BuzzardDataset dataset, DirectoryInfo di, IReadOnlyList<string> allowedInstrumentGroups, InstrumentInfo instrumentInfo, out string message)
+        private static bool CheckBrukerTimsTOF_MALDIImaging(BuzzardDataset dataset, DirectoryInfo di, IEnumerable<string> allowedInstrumentGroups, InstrumentInfo instrumentInfo, out string message)
         {
             message = "";
             const string brukerErrorMessage = "Check dataset instrument!" +
