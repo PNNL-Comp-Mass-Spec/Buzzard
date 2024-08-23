@@ -21,9 +21,7 @@ namespace BuzzardWPF.Data
         {
             // KEY ON INSTRUMENT GROUP (class would be better, but we don't grab that from DMS right now, and instrument group is close enough)
             message = "";
-            const string brukerErrorMessage = "Check dataset instrument!" +
-                                              "\nNon-imaging instrument dataset folders must end with '.d'" +
-                                              "\nMALDI imaging instrument dataset folders must NOT end with '.d' - instead should upload the folder containing the '.d' folder and .jpg files";
+
             if (!Directory.Exists(dataset.FilePath) || string.IsNullOrWhiteSpace(DMSDataAccessor.Instance.DeviceHostName))
             {
                 return true;
