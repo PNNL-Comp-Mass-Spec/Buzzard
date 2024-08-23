@@ -154,6 +154,8 @@ namespace BuzzardWPF.Data
                 return true;
             }
 
+            // ReSharper disable CommentTypo
+
             /* Bruker TimsTOF Flex Maldi file data:
              * [dataset].bak file - backup of .mis
              * [dataset].mis file - 'MALDI Imaging Sequence' file (XML contents)
@@ -174,6 +176,8 @@ namespace BuzzardWPF.Data
              *     submethods.xml
              *     synchroSettings.syncsqlite         (might not exist for non-MALDI datasets)
              */
+
+            // ReSharper restore CommentTypo
 
             // For these 2 instrument groups, the directory options considered are 'no extension' and '.d extension'
             if (dataset.FilePath.EndsWith(".d", StringComparison.OrdinalIgnoreCase))
@@ -255,6 +259,7 @@ namespace BuzzardWPF.Data
                     var xml = new XPathDocument(maldiConfig.FullName);
                     var nav = xml.CreateNavigator();
                     var node = nav.SelectSingleNode("/root/MaldiSource/Enabled");
+
                     if (node != null && node.IsNode)
                     {
                         var val = node.ValueAsInt;
