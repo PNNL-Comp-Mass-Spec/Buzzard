@@ -12,7 +12,7 @@ namespace BuzzardWPF.Data
 {
     public class BuzzardDataset : ReactiveObject, IDisposable
     {
-        // Ignore Spelling: Unreviewed
+        // Ignore Spelling: DMS, EMSL, Unreviewed, UTC
 
         private string filePath;
 
@@ -276,11 +276,13 @@ namespace BuzzardWPF.Data
         /// but came from different source data, then someone should
         /// set this to True.
         /// </summary>
+#pragma warning disable VSSpell001 // Spell Check
         public bool NotOnlyDatasource
         {
             get => notOnlySource;
             set => this.RaiseAndSetIfChanged(ref notOnlySource, value);
         }
+#pragma warning restore VSSpell001 // Spell Check
 
         /// <summary>
         /// Name of the instrument (as entered in DMS)

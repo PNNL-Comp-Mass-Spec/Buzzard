@@ -16,7 +16,7 @@ namespace BuzzardWPF.Management
 {
     public sealed class DatasetMonitor : ReactiveObject, IStoredSettingsMonitor, IDisposable
     {
-        // Ignore Spelling: uncheck
+        // Ignore Spelling: EMSL, uncheck
 
         static DatasetMonitor()
         {

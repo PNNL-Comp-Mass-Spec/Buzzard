@@ -16,7 +16,7 @@ namespace BuzzardWPF.Searching
 {
     public class InstrumentFolderValidator
     {
-        // Ignore Spelling: fso, secfso, ftms
+        // Ignore Spelling: fso, secfso, ftms, Validator
 
         public string ErrorMessage { get; private set; }
 
