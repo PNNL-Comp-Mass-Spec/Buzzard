@@ -191,17 +191,17 @@ namespace BuzzardWPF.Data
                 }
 
                 // Check if the directory contains a '[dataset name].mis' file
-                if (di.GetFiles("*.mis", SearchOption.AllDirectories).Length > 0)
+                if (TimsPathContainsDotMisFiles(di))
                 {
                     message = brukerErrorMessage;
                     ApplicationLogger.LogMessage(LogLevel.Warning, $"Blocking upload of dataset {dataset.FilePath}: instrument chosen is not 'imaging', dataset folder contains a '[name].mis' file");
                     return false;
                 }
 
-                if (IsTimsTOFMaldiImagingEnabled(di))
+                if (IsTimsTOFMaldiImagingEnabled(di) && TimsPathContainsDotMisFiles(di.Parent))
                 {
-                    message = brukerErrorMessage + "\nNon-imaging instrument selected, but dataset method reports MALDI Source was enabled";
-                    ApplicationLogger.LogMessage(LogLevel.Warning, $"Blocking upload of dataset {dataset.FilePath}: instrument chosen is not 'imaging', dataset method reports MALDI source enabled");
+                    message = brukerErrorMessage + "\nNon-imaging instrument selected, but dataset method reports MALDI Source was enabled and parent folder contains *.mis file(s)";
+                    ApplicationLogger.LogMessage(LogLevel.Warning, $"Blocking upload of dataset {dataset.FilePath}: instrument chosen is not 'imaging', dataset method reports MALDI source enabled and parent folder contains *.mis file(s)");
                     return false;
                 }
 
@@ -213,7 +213,7 @@ namespace BuzzardWPF.Data
             if (instrumentInfo.InstrumentGroup.Equals("MALDI_timsTOF_Imaging", StringComparison.OrdinalIgnoreCase))
             {
                 // Check if the directory contains a '[dataset name].mis' file
-                if (di.GetFiles("*.mis", SearchOption.AllDirectories).Length == 0)
+                if (TimsPathContainsDotMisFiles(di))
                 {
                     message = brukerErrorMessage;
                     ApplicationLogger.LogMessage(LogLevel.Warning, $"Blocking upload of dataset {dataset.FilePath}: instrument chosen is 'imaging', dataset folder does not contain a '[name].mis' file");
@@ -273,6 +273,16 @@ namespace BuzzardWPF.Data
             }
 
             return false;
+        }
+
+        private static bool TimsPathContainsDotMisFiles(DirectoryInfo directoryToCheck)
+        {
+            if (directoryToCheck == null || !directoryToCheck.Exists)
+            {
+                return false;
+            }
+
+            return directoryToCheck.GetFiles("*.mis", SearchOption.AllDirectories).Length > 0;
         }
     }
 }
