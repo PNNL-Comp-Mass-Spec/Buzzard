@@ -191,14 +191,14 @@ namespace BuzzardWPF.Data
                 }
 
                 // Check if the directory contains a '[dataset name].mis' file
-                if (TimsPathContainsDotMisFiles(di))
+                if (TimsPathContainsDotMisFiles(di, true))
                 {
                     message = brukerErrorMessage;
                     ApplicationLogger.LogMessage(LogLevel.Warning, $"Blocking upload of dataset {dataset.FilePath}: instrument chosen is not 'imaging', dataset folder contains a '[name].mis' file");
                     return false;
                 }
 
-                if (IsTimsTOFMaldiImagingEnabled(di) && TimsPathContainsDotMisFiles(di.Parent))
+                if (IsTimsTOFMaldiImagingEnabled(di) && TimsPathContainsDotMisFiles(di.Parent, false))
                 {
                     message = brukerErrorMessage + "\nNon-imaging instrument selected, but dataset method reports MALDI Source was enabled and parent folder contains *.mis file(s)";
                     ApplicationLogger.LogMessage(LogLevel.Warning, $"Blocking upload of dataset {dataset.FilePath}: instrument chosen is not 'imaging', dataset method reports MALDI source enabled and parent folder contains *.mis file(s)");
@@ -213,7 +213,7 @@ namespace BuzzardWPF.Data
             if (instrumentInfo.InstrumentGroup.Equals("MALDI_timsTOF_Imaging", StringComparison.OrdinalIgnoreCase))
             {
                 // Check if the directory contains a '[dataset name].mis' file
-                if (TimsPathContainsDotMisFiles(di))
+                if (!TimsPathContainsDotMisFiles(di, true))
                 {
                     message = brukerErrorMessage;
                     ApplicationLogger.LogMessage(LogLevel.Warning, $"Blocking upload of dataset {dataset.FilePath}: instrument chosen is 'imaging', dataset folder does not contain a '[name].mis' file");
@@ -275,14 +275,16 @@ namespace BuzzardWPF.Data
             return false;
         }
 
-        private static bool TimsPathContainsDotMisFiles(DirectoryInfo directoryToCheck)
+        private static bool TimsPathContainsDotMisFiles(DirectoryInfo directoryToCheck, bool checkSubdirectories)
         {
             if (directoryToCheck == null || !directoryToCheck.Exists)
             {
                 return false;
             }
 
-            return directoryToCheck.GetFiles("*.mis", SearchOption.AllDirectories).Length > 0;
+            var searchDepth = checkSubdirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
+
+            return directoryToCheck.GetFiles("*.mis", searchDepth).Length > 0;
         }
     }
 }
