@@ -113,6 +113,7 @@ namespace BuzzardWPF
                 splashScreen?.LoadComplete();
             }
 
+            InstrumentCriticalFiles.Instance.Dispose();
             DatasetManager.Manager.Dispose();
             sqliteDisposable.Dispose();
             dmsDataAccessorInstance?.Dispose();
@@ -216,6 +217,9 @@ namespace BuzzardWPF
                     ApplicationLogger.LogError(0, "Buzzard quit unexpectedly. " + ex.Message, ex);
                     mainWindow.Close();
                 }
+
+                // Not a necessary call, but we do want to trigger creation of the singleton
+                InstrumentCriticalFiles.Instance.LoadSettings();
             }
             else
             {

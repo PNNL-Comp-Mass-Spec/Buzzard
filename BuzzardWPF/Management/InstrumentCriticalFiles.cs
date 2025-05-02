@@ -4,13 +4,14 @@ using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using BuzzardWPF.Logging;
 using BuzzardWPF.Properties;
 using ReactiveUI;
 
 namespace BuzzardWPF.Management
 {
-    public sealed class InstrumentCriticalFiles : ReactiveObject
+    public sealed class InstrumentCriticalFiles : ReactiveObject, IDisposable
     {
         // ReSharper disable CommentTypo
 
@@ -37,11 +38,20 @@ namespace BuzzardWPF.Management
 
             backupDir = this.WhenAnyValue(x => x.ServerPath).Select(x => Path.Combine(x, InstrumentName))
                 .ToProperty(this, x => x.BackupDir);
+
+            autoBackupTimer = new Timer(AutoBackup, this, TimeSpan.FromMinutes(20), TimeSpan.FromHours(8));
         }
 
         private string serverPath;
         private readonly ObservableAsPropertyHelper<string> backupDir;
         private DateTime lastCopyTime = DateTime.MinValue;
+        private readonly Timer autoBackupTimer;
+
+        public void Dispose()
+        {
+            backupDir?.Dispose();
+            autoBackupTimer?.Dispose();
+        }
 
         public string ServerPath
         {
@@ -393,6 +403,11 @@ namespace BuzzardWPF.Management
             }
             // ReSharper restore StringLiteralTypo
             // ReSharper restore CommentTypo
+        }
+
+        private void AutoBackup(object state)
+        {
+            CopyCriticalFilesToServer();
         }
 
         public void LoadSettings()
