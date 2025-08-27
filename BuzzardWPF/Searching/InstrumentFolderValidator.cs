@@ -369,9 +369,14 @@ namespace BuzzardWPF.Searching
                     // Use Split() to account for that
                     baseFolderHostName = pathParts[0].Split('.').FirstOrDefault();
 
-                    localShares.Add(pathParts[1], REMOTE_COMPUTER_PREFIX + pathParts[1]);
+                    //localShares.Add(pathParts[1], REMOTE_COMPUTER_PREFIX + pathParts[1]);
+                    for (var i = 1; i < pathParts.Length; i++)
+                    {
+                        localShares.Add(pathParts[i], @"\\" + string.Join(@"\", pathParts.Take(i + 1)));
+                    }
 
-                    baseFolderPathToUse = REMOTE_COMPUTER_PREFIX + string.Join(@"\", pathParts.Skip(1));
+                    //baseFolderPathToUse = REMOTE_COMPUTER_PREFIX + string.Join(@"\", pathParts.Skip(1));
+                    baseFolderPathToUse = @"\\" + string.Join(@"\", pathParts);
                 }
                 else
                 {
