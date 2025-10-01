@@ -38,7 +38,6 @@ namespace BuzzardWPF.Management
         private Timer mTriggerCountdownTimer;
         private readonly ConcurrentDictionary<BuzzardDataset, bool> triggerCountdownDatasets = new ConcurrentDictionary<BuzzardDataset, bool>(3, 10);
 
-        private bool createTriggerOnDmsFail;
         private bool qcCreateTriggerOnDmsFail;
         private int triggerFileCreationWaitTime;
 
@@ -57,20 +56,6 @@ namespace BuzzardWPF.Management
         public ObservableCollectionExtended<QcMonitorData> QcMonitors { get; } = new ObservableCollectionExtended<QcMonitorData>();
 
         /// <summary>
-        /// When true, the DatasetManager will create a trigger file for datasets that fail to resolve their DMS data.
-        /// This only applies when the reason for the trigger file creation is due to the countdown running out.
-        /// If a user wants to create the trigger file without DMS data, we won't stop them.
-        /// </summary>
-        /// <remarks>
-        /// The Watcher Config control is responsible for setting this.
-        /// </remarks>
-        public bool CreateTriggerOnDMSFail
-        {
-            get => createTriggerOnDmsFail;
-            set => this.RaiseAndSetIfChangedMonitored(ref createTriggerOnDmsFail, value);
-        }
-
-        /// <summary>
         /// This is the amount of time that we should wait before
         /// creating a trigger file for a dataset that was found by the scanner.
         /// </summary>
@@ -86,6 +71,14 @@ namespace BuzzardWPF.Management
             set => this.RaiseAndSetIfChangedMonitored(ref triggerFileCreationWaitTime, value);
         }
 
+        /// <summary>
+        /// When true, the DatasetManager will create a trigger file for QC/Blank datasets that fail to resolve their DMS data and match a defined filter.
+        /// This only applies when the reason for the trigger file creation is due to the countdown running out.
+        /// If a user wants to create the trigger file without DMS data, we won't stop them.
+        /// </summary>
+        /// <remarks>
+        /// The Watcher Config control is responsible for setting this.
+        /// </remarks>
         public bool QcCreateTriggerOnDMSFail
         {
             get => qcCreateTriggerOnDmsFail;
@@ -95,7 +88,6 @@ namespace BuzzardWPF.Management
         public void ResetToDefaults()
         {
             TriggerFileCreationWaitTime = DefaultTriggerCreationWaitTimeMinutes;
-            CreateTriggerOnDMSFail = false;
         }
 
         private void SetupTimers()
@@ -261,12 +253,9 @@ namespace BuzzardWPF.Management
                         return;
                     }
                 }
-                else
+                else if (!dataset.DmsData.LockData)
                 {
-                    if (!dataset.DmsData.LockData && !CreateTriggerOnDMSFail)
-                    {
-                        return;
-                    }
+                    return;
                 }
 
                 if (!DatasetInstrumentChecks.DoFilesMatchInstrument(dataset, out var instrumentNameErrorMessage))
@@ -385,7 +374,7 @@ namespace BuzzardWPF.Management
             }
 
             Settings.Default.WatcherQCCreateTriggerOnDMSFail = QcCreateTriggerOnDMSFail;
-            Settings.Default.WatcherCreateTriggerOnDMSFail = CreateTriggerOnDMSFail;
+            //Settings.Default.WatcherCreateTriggerOnDMSFail = CreateTriggerOnDMSFail; // Obsolete
             Settings.Default.Watcher_WaitTime = TriggerFileCreationWaitTime;
 
             SettingsChanged = false;
@@ -406,7 +395,6 @@ namespace BuzzardWPF.Management
                 }));
             }
 
-            CreateTriggerOnDMSFail = Settings.Default.WatcherCreateTriggerOnDMSFail;
             TriggerFileCreationWaitTime = Settings.Default.Watcher_WaitTime;
 
             WatcherMetadata.LoadSettings();

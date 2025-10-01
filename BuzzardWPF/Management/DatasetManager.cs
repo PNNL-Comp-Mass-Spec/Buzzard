@@ -300,17 +300,14 @@ namespace BuzzardWPF.Management
                 }
                 else
                 {
-                    if (!Monitor.CreateTriggerOnDMSFail)
+                    // Either there was no match, or it was an ambiguous match
+                    if (ex.SearchDepth >= SEARCH_DEPTH_AMBIGUOUS_MATCH)
                     {
-                        // Either there was no match, or it was an ambiguous match
-                        if (ex.SearchDepth >= SEARCH_DEPTH_AMBIGUOUS_MATCH)
-                        {
-                            dataset.DatasetStatus = DatasetStatus.FailedAmbiguousDmsRequest;
-                        }
-                        else
-                        {
-                            dataset.DatasetStatus = DatasetStatus.FailedNoDmsRequest;
-                        }
+                        dataset.DatasetStatus = DatasetStatus.FailedAmbiguousDmsRequest;
+                    }
+                    else
+                    {
+                        dataset.DatasetStatus = DatasetStatus.FailedNoDmsRequest;
                     }
                 }
             }
@@ -646,7 +643,7 @@ namespace BuzzardWPF.Management
                 }
                 else
                 {
-                    if (!Monitor.CreateTriggerOnDMSFail && !(dataset.DmsData.LockData || matched))
+                    if (!(dataset.DmsData.LockData || matched))
                     {
                         // Not uploading when no request - block copying data to QCs/Blanks
                         qcsOrBlanksSinceLastMonitorNonQc = LastMonitorDataCopyMaxQcs;

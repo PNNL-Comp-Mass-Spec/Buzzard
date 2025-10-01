@@ -261,8 +261,7 @@ namespace BuzzardWPF.Management
 
             if (missingData.Count > 0)
             {
-                if (!Monitor.CreateTriggerOnDMSFail &&
-                    missingData.Contains(DatasetMonitor.EXPERIMENT_NAME_DESCRIPTION))
+                if (missingData.Contains(DatasetMonitor.EXPERIMENT_NAME_DESCRIPTION))
                 {
                     missingData.Remove(DatasetMonitor.EXPERIMENT_NAME_DESCRIPTION);
                 }
@@ -273,7 +272,7 @@ namespace BuzzardWPF.Management
                     missingData.Remove(DatasetMonitor.QC_MONITORS_DESCRIPTION);
                 }
 
-                if (!Monitor.QcCreateTriggerOnDMSFail && !Monitor.CreateTriggerOnDMSFail)
+                if (!Monitor.QcCreateTriggerOnDMSFail)
                 {
                     if (missingData.Contains(DatasetMonitor.WorkPackageDescription))
                     {
