@@ -252,7 +252,8 @@
                         IsEnabled="{Binding Path=IsNotMonitoring}"
                         ItemsSource="{Binding Path=DmsData.InterestRatingCollection, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                         SelectedItem="{Binding Path=WatcherMetadata.InterestRating, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        Style="{StaticResource ComboBoxStyle}">
+                        Style="{StaticResource ComboBoxStyle}"
+                        IsReadOnly="true">
                         <cueBannerOverlay:CueBannerService.CueBanner>
                             <TextBlock Text="Select" Margin="0" FontWeight="Regular" Style="{StaticResource TextBlockStyle}" />
                         </cueBannerOverlay:CueBannerService.CueBanner>

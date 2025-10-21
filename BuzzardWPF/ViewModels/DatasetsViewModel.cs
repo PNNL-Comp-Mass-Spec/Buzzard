@@ -489,6 +489,8 @@ namespace BuzzardWPF.ViewModels
                     dataset.InterestRating = filldownData.InterestRating;
                 }
 
+                dataset.InterestRating = "Unreviewed";
+
                 if (filldownData.UseComment)
                 {
                     dataset.DmsData.CommentAddition = filldownData.DmsData.CommentAddition;

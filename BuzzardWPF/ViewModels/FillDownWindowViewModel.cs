@@ -248,7 +248,7 @@ namespace BuzzardWPF.ViewModels
             Dataset.UseExperimentName = shouldWe;
 
             Dataset.UseLcColumn = shouldWe;
-            Dataset.UseInterestRating = shouldWe;
+            //Dataset.UseInterestRating = shouldWe;
             Dataset.UseEMSLProposalUser = shouldWe;
             Dataset.UseWorkPackage = shouldWe;
             Dataset.UseComment = shouldWe;

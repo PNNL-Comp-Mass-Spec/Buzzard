@@ -311,7 +311,8 @@
                         Margin="2"
                         ItemsSource="{Binding Path=DmsDbLists.InterestRatingCollection, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                         SelectedValue="{Binding Path=Dataset.InterestRating, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        Style="{StaticResource ComboBoxStyle}">
+                        Style="{StaticResource ComboBoxStyle}"
+                        IsReadOnly="True">
                         <cueBannerOverlay:CueBannerService.CueBanner>
                             <TextBlock Text="Select" Margin="0" FontWeight="Regular" Style="{StaticResource TextBlockStyle}" />
                         </cueBannerOverlay:CueBannerService.CueBanner>

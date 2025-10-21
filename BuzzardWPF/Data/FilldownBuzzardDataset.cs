@@ -132,7 +132,9 @@ namespace BuzzardWPF.Data
         public bool UseInterestRating
         {
             get => useInterestRating;
-            set => this.RaiseAndSetIfChanged(ref useInterestRating, value);
+            //set => this.RaiseAndSetIfChanged(ref useInterestRating, value);
+            // ReSharper disable once ValueParameterNotUsed
+            set => this.RaisePropertyChanged();
         }
 
         public bool UseEMSLProposalUser
@@ -195,6 +197,9 @@ namespace BuzzardWPF.Data
             {
                 DmsData.WorkPackage = "none";
             }
+
+            UseInterestRating = true;
+            InterestRating = "Unreviewed";
         }
     }
 }

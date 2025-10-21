@@ -38,6 +38,7 @@ namespace BuzzardWPF.Management
             EMSLProposalID = null;
             EMSLProposalUser = null;
             WorkPackage = "none";
+            InterestRating = "Unreviewed";
 
             // Set the instrument name to a value valid for the instrument host.
             DMSDataAccessor.Instance.WhenAnyValue(x => x.InstrumentsMatchingHost, x => x.InstrumentsMatchingHost.Count)
@@ -229,6 +230,7 @@ namespace BuzzardWPF.Management
 
             UserComments = Settings.Default.WatcherComment;
             InterestRating = Settings.Default.WatcherInterestRating;
+            InterestRating = "Unreviewed";
 
             /*
              * The following settings need to be checked before being applied
